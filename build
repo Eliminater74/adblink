@@ -1,0 +1,59 @@
+#!/bin/bash
+
+if [ $# -le 0 ]
+  then 
+   echo "set up adblink 1 2 3"
+  exit 1
+ fi
+
+
+
+if [ $1 -eq 1 ];
+ then
+# cp version1.h version.h
+  cp program1.h program.h
+  cp mainwindow1.ui mainwindow.ui
+  cp preferencesdialog1.ui preferencesdialog.ui
+  cp adblink1.pro adblink.pro
+  cp adblink1.ico adblink.ico
+  cp adblink1.icns adblink.icns
+  cp assets/menu1.html assets/menu.html
+  cp assets/adblink1.png assets/adblink.png
+  echo "adblink1 will compile"
+  exit 0
+fi
+
+
+if [ $1 -eq 2 ];
+ then
+ # cp version2.h version.h
+  cp program2.h program.h
+  cp mainwindow2.ui mainwindow.ui
+  cp preferencesdialog2.ui preferencesdialog.ui
+  cp adblink2.pro adblink.pro
+  cp adblink2.ico adblink.ico
+  cp adblink2.icns adblink.icns
+  cp assets/menu2.html assets/menu.html
+  cp assets/adblink2.png assets/adblink.png
+  echo "adblink2 will compile"
+  exit 0
+fi
+
+if [ $1 -eq 3 ];
+ then
+  # cp version3.h version.h
+  cp program3.h program.h
+  cp mainwindow3.ui mainwindow.ui
+  cp adblink3.pro adblink.pro
+  cp adblink3.ico adblink.ico
+  cp adblink3.icns adblink.icns  
+  cp assets/menu3.html assets/menu.html
+  cp assets/adblink3.png assets/adblink.png
+  echo "adblink 3 will compile"
+  exit 0
+fi
+
+ echo "set up adblink 1 2 3"
+
+exit 0
+
