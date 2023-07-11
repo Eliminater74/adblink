@@ -8204,15 +8204,21 @@ void MainWindow::move_kodi_data(QString n_data_root, int choice)
 
 
 
+
+
+
 if (choice ==1  )  // sdcard to external
 {  
     if (isScoped())
-    {  source="/sdcard/kodi_data/" + xbmcpackage;
+    {
+      kbase="/sdcard/kodi_data/";
+      source=kbase + xbmcpackage;
       destination = n_data_root + "kodi_data/" + xbmcpackage;
     }
     else {
         source="/sdcard/Android/data/" + xbmcpackage;
         destination = n_data_root + "Android/data/" + xbmcpackage;
+        kbase=source;
     }
 }
 
@@ -8222,16 +8228,17 @@ if (choice == 2  ) // external to sdcard
     if (isScoped())
     {  destination="/sdcard/kodi_data/" + xbmcpackage;
        source = n_data_root + "kodi_data/" + xbmcpackage;
+       kbase=n_data_root+"kodi_data/";
     }
     else {
         destination="/sdcard/Android/data/" + xbmcpackage;
         source = n_data_root + "Android/data/" + xbmcpackage;
+        kbase=source;
     }
 }
 
 
 
-kbase = source;
 
     cstring = getadb() +" shell ls "+source+"/files/.kodi";
 
@@ -8240,10 +8247,6 @@ kbase = source;
        QMessageBox::critical(this,"","Kodi's files not found at "+source);
        return;
     }
-
-
-
-
 
 
   cstring = getadb() +" shell ls "+destination+"/files/.kodi";
@@ -8264,8 +8267,8 @@ kbase = source;
 
            cstring=getadb() +" shell rm -r "+destination;
            command=getreturncode(cstring);
-          logfile(cstring);
-         //   qDebug() << "ERASE: " << command;
+          logfile("Erasing: "+cstring);
+
 
        }
 
@@ -8274,10 +8277,6 @@ kbase = source;
 
   cstring = getadb()+ " shell mkdir -p "+destination+"/files";
   command=getreturncode(cstring);
-
-
-
- // logfile("Create new data directory:"+command);
 
 
 
@@ -8336,14 +8335,13 @@ kbase = source;
       }
 
 
-  if (kbase.contains("kodi_data"))
-      cstring = getadb() +" shell rm -r "+n_data_root+"kodi_data";
-  else
-     cstring = getadb() +" shell rm -r "+kbase;
 
- command=RunLongProcess(cstring,"Erasing source data");
- logfile(cstring);
- logfile("Erasing source data:"+command);
+ //qDebug() << "deleting " << kbase;
+ cstring = getadb() +" shell rm -r "+kbase;
+
+ command=RunLongProcess(cstring,"Erasing "+kbase);
+ logfile("Erasing: "+cstring);
+
 
 QMessageBox::information(this,"","Data move complete");
 
