@@ -8281,16 +8281,8 @@ if (choice == 2  ) // external to sdcard
 
 
   cstring = getadb() +" shell cp -r "+source+"/files/.kodi " + destination +"/files";
-
-
-
-   command=RunLongProcess(cstring,"Copying data to "+destination);
-
-
-
-  logfile(command);
-
-
+  logfile("Kodi file move:"+cstring);
+  command=RunLongProcess(cstring,"Copying data to "+destination);
 
      cstring = getadb() +" shell test -e "+destination+"/files/.kodi";
 
@@ -8340,7 +8332,8 @@ if (choice == 2  ) // external to sdcard
  cstring = getadb() +" shell rm -r "+kbase;
 
  command=RunLongProcess(cstring,"Erasing "+kbase);
- logfile("Erasing: "+cstring);
+ logfile(
+     "Erasing: " + cstring);
 
 
 QMessageBox::information(this,"","Data move complete");
