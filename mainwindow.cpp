@@ -2419,8 +2419,8 @@
          if(isusb)
              port="";
 
-        uninstallDialog dialog(daddr,port);
-
+        uninstallDialog dialog(daddr,port,this);
+        dialog.setWindowModality(Qt::WindowModal);
 
         // dialog.setModal(true);
         if(dialog.exec() == QDialog::Accepted)
@@ -2717,14 +2717,10 @@
     /////////////////////////////////////////////////////////////////////////
     void MainWindow::on_actionAbout_triggered()
     {
-
-
-
-        Dialog2 dialog2;
-        dialog2.setModal(true);
+        Dialog2 dialog2(this);
+        dialog2.setWindowModality(Qt::WindowModal);
         dialog2.setaLabel(program+" "+version);
         dialog2.exec();
-
     }
 
 
@@ -3368,9 +3364,8 @@
 
        // disableroot=false;
 
-       preferencesDialog dialog;
-
-
+        preferencesDialog dialog(this);
+        dialog.setWindowModality(Qt::WindowModal);
 
 
 
@@ -3717,8 +3712,8 @@
                    return;
     }
 
-       cacheDialog dialog;
-
+        cacheDialog dialog(this);
+        dialog.setWindowModality(Qt::WindowModal);
         dialog.setxmlcheck(false);
         dialog.setcbuffermode(buffermode);
         dialog.setcbuffersize(buffersize);
@@ -4671,8 +4666,8 @@
                 }
 
 
-        forcequitDialog dialog(false);
-
+        forcequitDialog dialog(false,this);
+        dialog.setWindowModality(Qt::WindowModal);
         if(dialog.exec() == QDialog::Accepted)
         {
         QString cstring = getadb() + " shell am force-stop "+dialog.packagename();
@@ -4698,7 +4693,9 @@
 
 
 
-        forcequitDialog dialog(true);
+        forcequitDialog dialog(true,this);
+         dialog.setWindowModality(Qt::WindowModal);
+
 
         if(dialog.exec() == QDialog::Accepted)
         {
@@ -4721,7 +4718,8 @@
             return;
 
          QString cstring = getadb() + " shell input keyevent ";
-         keyboardDialog dialog;
+         keyboardDialog dialog(this);
+         dialog.setWindowModality(Qt::WindowModal);
          dialog.setdaddressLabel(cstring);
          dialog.exec();
 
@@ -4774,9 +4772,6 @@
 
         fmdialog = new usbfileDialog(this);
         fmdialog->setModal(false);
-
-
-
 
 
         cstring = getadb() + " shell ls /sdcard/xbmc_env.properties";
@@ -5007,7 +5002,8 @@
 
 
 
-             listfileDialog fdialog;
+             listfileDialog fdialog(this);
+             fdialog.setWindowModality(Qt::WindowModal);
              fdialog.setFilelist(filelist);
              fdialog.setDialogTitle("XML Files");
 
@@ -5583,7 +5579,8 @@
 
 
 
-        adbprefDialog dialog;
+        adbprefDialog dialog(this);
+        dialog.setWindowModality(Qt::WindowModal);
         QJsonObject obj;
         QJsonDocument doc(obj);
         QFile file(databasedir+"adblink.json");
@@ -6215,7 +6212,9 @@
         list.append(device);
          list.append(manufact);
 
-        deviceinfoDialog dialog;
+        deviceinfoDialog dialog(this);
+        dialog.setWindowModality(Qt::WindowModal);
+        dialog.setWindowFlags(dialog.windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
         dialog.setWindowTitle(description);
 
@@ -6273,8 +6272,8 @@
 
 
 
-           sleepDialog dialog;
-
+           sleepDialog dialog(this);
+           dialog.setWindowModality(Qt::WindowModal);
            cstring = getadb() + " shell settings get secure sleep_timeout ";
            command=getadbOutput(cstring);
             command = command.simplified();
@@ -7573,14 +7572,15 @@ list.insert(0, "/sdcard");
 
 if( list.count() > 1)
  {
-  restDialog dialog;
-  dialog.setWindowTitle("Backup");
-  dialog.setModal(true);
-  dialog.setadb_restore(list);
-  if (dialog.exec() == QDialog::Accepted)
-    {
-      n_data_root = dialog.restore_data_root();
-    } else return;
+
+    restDialog dialog(this);
+    dialog.setWindowModality(Qt::WindowModal);
+    dialog.setWindowTitle("Backup");
+    dialog.setadb_restore(list);
+    if (dialog.exec() == QDialog::Accepted)
+       {
+          n_data_root = dialog.restore_data_root();
+       } else return;
 }
 
 
@@ -7866,13 +7866,10 @@ list.insert(0, "/sdcard");
 
 if( list.count() > 1)
 {
-restDialog dialog;
-
-dialog.setWindowTitle("Restore");
-
-dialog.setModal(true);
-
-dialog.setadb_restore(list);
+  restDialog dialog(this);
+  dialog.setWindowModality(Qt::WindowModal);
+  dialog.setWindowTitle("Restore");
+  dialog.setadb_restore(list);
 
 
 if (dialog.exec() == QDialog::Accepted)
@@ -8159,11 +8156,14 @@ void MainWindow::on_mvdataButton_clicked()
     }
 
 
-    dataDialog dialog;
+    dataDialog dialog(this);
 
     dialog.setadb_data(list);
+    dialog.setWindowModality(Qt::WindowModal); // Set window modality
 
-    dialog.setModal(true);
+  //  dialog.setModal(true);
+
+
 
     if(dialog.exec() == QDialog::Accepted)
     {
