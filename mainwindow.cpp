@@ -8139,6 +8139,9 @@ void MainWindow::on_mvdataButton_clicked()
 
     QStringList list = s.split('\n');
 
+
+
+
     for (int i = 0; i < list.size(); i++) {
 
            list[i].remove('\r');
@@ -8155,6 +8158,12 @@ void MainWindow::on_mvdataButton_clicked()
            }
     }
 
+
+    if (list.size() <= 0)
+    {
+           QMessageBox::critical(this,"","No external devices found");
+           return;
+    }
 
     dataDialog dialog(this);
 
