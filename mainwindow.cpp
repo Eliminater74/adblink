@@ -4771,8 +4771,10 @@
 
 
         fmdialog = new usbfileDialog(this);
-        fmdialog->setModal(false);
 
+         //fmdialog->setModal(false);
+
+        fmdialog->setWindowModality(Qt::NonModal);
 
         cstring = getadb() + " shell ls /sdcard/xbmc_env.properties";
         if(getreturncode(cstring))
