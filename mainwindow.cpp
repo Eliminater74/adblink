@@ -8085,6 +8085,246 @@ void MainWindow::restoreOther()
 
 
 
+
+//////////////////////////////////////////////
+void MainWindow::on_mvdataButton_clicked()
+{
+
+
+    if (!check_devices() )
+           return;
+
+
+
+
+
+
+    QString cstring = getadb() + " shell ps | grep "+xbmcpackage;
+    QString command=getadbOutput(cstring);
+
+    QString destination;
+    QString source;
+    QString kbase;
+    QString n_data_root;
+    int choice;
+
+    if (command.contains(xbmcpackage))
+    {
+           QMessageBox::StandardButton reply;
+           reply = QMessageBox::question(this, "Stop Kodi", "Cannot move data while Kodi is running.\n Stop "+xbmcpackage+" on device?"  ,
+                                         QMessageBox::Yes|QMessageBox::No);
+           if (reply == QMessageBox::Yes)
+           {
+
+
+            QString cstring = getadb() + " shell am force-stop "+xbmcpackage;
+            QString command=getadbOutput(cstring);
+            logfile(command);
+           }
+
+
+           else {
+
+            logfile(xbmcpackage+" running. Move data failed");
+            return;
+           }
+
+
+    }
+
+
+
+    cstring = getadb()+ " shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
+
+    QString s = getadbOutput(cstring);
+
+
+
+    QStringList list = s.split('\n');
+
+    for (int i = 0; i < list.size(); i++) {
+
+           list[i].remove('\r');
+           list[i].remove('\n');
+
+           if (list[i] == "Android" ||
+               list[i] == "Permission denied" ||
+               list[i] == "/storage/emulated" ||
+               list[i] == "/storage" ||
+               list[i] == "/storage/self" ||
+               list[i] == NULL)          {
+            list.removeAt(i);
+            i--;
+           }
+    }
+
+
+    dataDialog dialog;
+
+    dialog.setadb_data(list);
+
+    dialog.setModal(true);
+
+    if(dialog.exec() == QDialog::Accepted)
+    {
+
+           n_data_root = dialog.externalLocation();
+           choice = dialog.returnval2();
+
+
+    }
+
+    else return;
+
+
+    if(!n_data_root.startsWith("/"))
+           n_data_root.prepend("/");
+
+    if(!n_data_root.endsWith("/"))
+           n_data_root.append("/") ;
+
+
+
+
+
+
+    if (choice ==1  )  // sdcard to external
+    {
+           if (isScoped())
+           {
+            kbase="/sdcard/kodi_data/";
+            source=kbase + xbmcpackage;
+            destination = n_data_root + "kodi_data/" + xbmcpackage;
+           }
+           else {
+            source="/sdcard/Android/data/" + xbmcpackage;
+            destination = n_data_root + "Android/data/" + xbmcpackage;
+            kbase=source;
+           }
+    }
+
+
+    if (choice == 2  ) // external to sdcard
+    {
+           if (isScoped())
+           {  destination="/sdcard/kodi_data/" + xbmcpackage;
+            source = n_data_root + "kodi_data/" + xbmcpackage;
+            kbase=n_data_root+"kodi_data/";
+           }
+           else {
+            destination="/sdcard/Android/data/" + xbmcpackage;
+            source = n_data_root + "Android/data/" + xbmcpackage;
+            kbase=source;
+           }
+    }
+
+
+
+
+    cstring = getadb() +" shell ls "+source+"/files/.kodi";
+
+    if (!getreturncode(cstring))
+    {
+           QMessageBox::critical(this,"","Kodi's files not found at "+source);
+           return;
+    }
+
+
+    cstring = getadb() +" shell ls "+destination+"/files/.kodi";
+
+
+    if (getreturncode(cstring))
+    {
+
+           QMessageBox::StandardButton reply;
+           reply = QMessageBox::question(this, "", "Kodi data already exists. Overwrite?",
+                                         QMessageBox::Yes|QMessageBox::No);
+           if (reply  == QMessageBox::No)
+           {
+            return;
+           }
+
+           else {
+
+            cstring=getadb() +" shell rm -r "+destination;
+            command=getreturncode(cstring);
+            logfile("Erasing: "+cstring);
+
+
+           }
+
+    }
+
+
+    cstring = getadb()+ " shell mkdir -p "+destination+"/files";
+    command=getreturncode(cstring);
+
+
+
+    cstring = getadb() +" shell cp -r "+source+"/files/.kodi " + destination +"/files";
+    logfile("Kodi file move:"+cstring);
+    command=RunLongProcess(cstring,"Copying data to "+destination);
+
+    cstring = getadb() +" shell test -e "+destination+"/files/.kodi";
+
+    if (!getreturncode(cstring)) {
+           QMessageBox::critical(this, "", "File copy failed. See log.");
+           return;
+    }
+
+
+    cstring = getadb() +" shell test -e /sdcard/xbmc_env.properties";
+    if (getreturncode(cstring)) {
+           getreturncode(getadb()+" shell rm /sdcard/xbmc_env.properties");
+    }
+
+
+
+
+
+
+    cstring = getadb() + " shell echo xbmc.data="+destination+"/files"+ " > /sdcard/xbmc_env.properties";
+
+    if (!cstring.contains("/sdcard/Android/data/org.xbmc.kodi"))
+    {
+           if(!getreturncode(cstring))
+            logfile("ERROR: "+command);
+
+
+    }
+
+
+
+
+
+
+    QMessageBox::StandardButton reply2;
+    reply2 = QMessageBox::question(this, "", "Erase "+kbase+"?",
+                                   QMessageBox::Yes|QMessageBox::No);
+    if (reply2  == QMessageBox::No)
+    {
+           QMessageBox::information(this,"","Data copy complete");
+           return;
+    }
+
+
+
+    //qDebug() << "deleting " << kbase;
+    cstring = getadb() +" shell rm -r "+kbase;
+
+    command=RunLongProcess(cstring,"Erasing "+kbase);
+    logfile(
+        "Erasing: " + cstring);
+
+
+    QMessageBox::information(this,"","Data move complete");
+
+
+}
+
+
+
+/*
 //////////////////////////////////////////////
 void MainWindow::on_mvdataButton_clicked()
 {
@@ -8340,6 +8580,7 @@ QMessageBox::information(this,"","Data move complete");
 
 
 }
+*/
 
 //////////////////////////////////////////
 

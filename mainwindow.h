@@ -210,7 +210,7 @@ private slots:
 
 
 
-     void move_kodi_data(QString externallocation, int choice);
+  //   void move_kodi_data(QString externallocation, int choice);
 
 
     void loaddevicebox();
