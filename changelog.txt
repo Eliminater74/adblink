@@ -39,12 +39,6 @@ automatically for Android 11 or greater devices.
 For adbLink and adbLink2, WSA (Windows Subsystem for Android)
 devices are connected via a utility menu selection.
 
-Dialogs now open on top of the main adbLink
-window by default, even if you move adbLink on
-your desktop after starting. Dialogs are also
-now "modal", with the file manager being
-the lone exception. 
-
 QT C++ framework updated to 5.15.2 for all platforms.
 
 Windows scrcpy updated to scrcpy-win64-v2.1 
