@@ -884,7 +884,7 @@
      <string>Edit XML</string>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>40</x>
@@ -909,7 +909,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Ad Hoc IP</string>
+        <string>IP:port</string>
        </property>
       </widget>
      </item>
@@ -928,7 +928,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;IP address of ad hoc device. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;IP address of ad hoc device. You may also specify a port by appending :&amp;lt;port&amp;gt; to the IP address.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
      </item>
