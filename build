@@ -10,7 +10,6 @@ if [ $# -le 0 ]
 
 if [ $1 -eq 1 ];
  then
-# cp version1.h version.h
   cp program1.h program.h
   cp mainwindow1.ui mainwindow.ui
   cp preferencesdialog1.ui preferencesdialog.ui
@@ -26,7 +25,6 @@ fi
 
 if [ $1 -eq 2 ];
  then
- # cp version2.h version.h
   cp program2.h program.h
   cp mainwindow2.ui mainwindow.ui
   cp preferencesdialog2.ui preferencesdialog.ui
@@ -41,7 +39,6 @@ fi
 
 if [ $1 -eq 3 ];
  then
-  # cp version3.h version.h
   cp program3.h program.h
   cp mainwindow3.ui mainwindow.ui
   cp adblink3.pro adblink.pro

@@ -10,8 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 #LIBS += -lQt5Concurrent
 
-
-TARGET = adblink
+TARGET = adblink2
 TEMPLATE = app
 
 SOURCES += main.cpp\
@@ -93,9 +92,9 @@ FORMS    += mainwindow.ui \
     helpdialog.ui \
     scpdialog.ui \
     uninstalldialog.ui \
-    preferencesdialog.ui \
     preferencesdialog1.ui \
     preferencesdialog2.ui \
+    preferencesdialog.ui \
     usbfiledialog.ui \
     adblogdialog.ui \
     kodidialog.ui \
@@ -137,9 +136,8 @@ linux {
 QMAKE_LFLAGS += -no-pie
 }
 
-CONFIG+=sdk_no_version_check
-
-
 QMAKE_CXXFLAGS += -Wno-deprecated-declarations
+
+CONFIG+=sdk_no_version_check
 
 OTHER_FILES +=

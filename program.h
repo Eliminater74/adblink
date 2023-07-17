@@ -1,1 +1,1 @@
-QString program="wsalink";
+QString program="adblink2";

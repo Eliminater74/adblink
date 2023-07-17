@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>724</width>
+    <width>709</width>
     <height>397</height>
    </rect>
   </property>
@@ -64,8 +64,8 @@
    <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
-      <x>250</x>
-      <y>9</y>
+      <x>279</x>
+      <y>3</y>
       <width>111</width>
       <height>16</height>
      </rect>
@@ -77,8 +77,8 @@
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>9</y>
+      <x>99</x>
+      <y>3</y>
       <width>117</width>
       <height>16</height>
      </rect>
@@ -90,8 +90,8 @@
    <widget class="QLabel" name="label_7">
     <property name="geometry">
      <rect>
-      <x>440</x>
-      <y>9</y>
+      <x>469</x>
+      <y>3</y>
       <width>79</width>
       <height>16</height>
      </rect>
@@ -103,8 +103,8 @@
    <widget class="QListWidget" name="listDevicesStatus">
     <property name="geometry">
      <rect>
-      <x>227</x>
-      <y>29</y>
+      <x>256</x>
+      <y>23</y>
       <width>170</width>
       <height>95</height>
      </rect>
@@ -131,8 +131,8 @@
    <widget class="QListWidget" name="listRunningJobs">
     <property name="geometry">
      <rect>
-      <x>404</x>
-      <y>29</y>
+      <x>433</x>
+      <y>23</y>
       <width>170</width>
       <height>95</height>
      </rect>
@@ -159,8 +159,8 @@
    <widget class="QListWidget" name="listDevices">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>29</y>
+      <x>79</x>
+      <y>23</y>
       <width>170</width>
       <height>95</height>
      </rect>
@@ -726,8 +726,8 @@
    <widget class="QPushButton" name="newRecord">
     <property name="geometry">
      <rect>
-      <x>300</x>
-      <y>141</y>
+      <x>329</x>
+      <y>135</y>
       <width>80</width>
       <height>32</height>
      </rect>
@@ -757,8 +757,8 @@
    <widget class="QPushButton" name="editRecord">
     <property name="geometry">
      <rect>
-      <x>387</x>
-      <y>141</y>
+      <x>416</x>
+      <y>135</y>
       <width>80</width>
       <height>32</height>
      </rect>
@@ -788,8 +788,8 @@
    <widget class="QPushButton" name="delRecord">
     <property name="geometry">
      <rect>
-      <x>474</x>
-      <y>141</y>
+      <x>503</x>
+      <y>135</y>
       <width>80</width>
       <height>32</height>
      </rect>
@@ -819,8 +819,8 @@
    <widget class="QPushButton" name="connButton">
     <property name="geometry">
      <rect>
-      <x>300</x>
-      <y>181</y>
+      <x>329</x>
+      <y>175</y>
       <width>80</width>
       <height>32</height>
      </rect>
@@ -850,8 +850,8 @@
    <widget class="QPushButton" name="disButton">
     <property name="geometry">
      <rect>
-      <x>387</x>
-      <y>181</y>
+      <x>416</x>
+      <y>175</y>
       <width>80</width>
       <height>32</height>
      </rect>
@@ -881,8 +881,8 @@
    <widget class="QPushButton" name="clearButton">
     <property name="geometry">
      <rect>
-      <x>474</x>
-      <y>181</y>
+      <x>503</x>
+      <y>175</y>
       <width>80</width>
       <height>32</height>
      </rect>
@@ -912,8 +912,8 @@
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>74</x>
-      <y>186</y>
+      <x>103</x>
+      <y>180</y>
       <width>43</width>
       <height>20</height>
      </rect>
@@ -925,8 +925,8 @@
    <widget class="QLineEdit" name="adhocip">
     <property name="geometry">
      <rect>
-      <x>124</x>
-      <y>186</y>
+      <x>153</x>
+      <y>180</y>
       <width>165</width>
       <height>25</height>
      </rect>
@@ -950,8 +950,8 @@
    <widget class="QComboBox" name="deviceBox">
     <property name="geometry">
      <rect>
-      <x>123</x>
-      <y>141</y>
+      <x>152</x>
+      <y>135</y>
       <width>170</width>
       <height>32</height>
      </rect>
@@ -981,8 +981,8 @@
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
-      <x>71</x>
-      <y>146</y>
+      <x>100</x>
+      <y>140</y>
       <width>45</width>
       <height>20</height>
      </rect>
@@ -998,8 +998,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>724</width>
-     <height>26</height>
+     <width>709</width>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

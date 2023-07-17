@@ -1,0 +1,45 @@
+#!/bin/bash
+
+if [ $# -le 0 ]
+  then 
+   echo "update adblink 1 2 3"
+  exit 1
+ fi
+
+
+
+if [ $1 -eq 1 ];
+ then
+  cp program.h program1.h
+  cp mainwindow.ui mainwindow1.ui
+  cp preferencesdialog.ui preferencesdialog1.ui
+  cp adblink.pro adblink1.pro
+  cp assets/menu.html assets/menu1.html
+  echo "adblink1 resource update"
+  exit 0
+fi
+
+
+if [ $1 -eq 2 ];
+ then
+  cp program.h program2.h
+  cp mainwindow.ui mainwindow2.ui
+  cp preferencesdialog.ui preferencesdialog2.ui
+  cp adblink.pro adblink2.pro
+  cp assets/menu.html assets/menu2.html
+  echo "adblink2 resource update"
+  exit 0
+fi
+
+if [ $1 -eq 3 ];
+ then
+  cp program.h program3.h
+  cp mainwindow.ui mainwindow3.ui
+  cp adblink.pro adblin3.pro
+  cp assets/menu3.html assets/menu3.html
+  echo "adblink3 resource update"
+  exit 0
+fi
+
+exit 0
+
