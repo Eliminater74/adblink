@@ -36,7 +36,7 @@ private slots:
 
     void on_connButton_clicked();
 
-
+    void systeminfo();
 
     void on_sideload_Button_clicked();
 
@@ -372,6 +372,7 @@ private slots:
   void on_actionWSA_triggered();
 
   void on_actionConnect_WSA_triggered();
+
 
   private:
     Ui::MainWindow *ui;

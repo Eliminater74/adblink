@@ -924,7 +924,7 @@
      <x>0</x>
      <y>0</y>
      <width>608</width>
-     <height>24</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -974,6 +974,7 @@
     <property name="title">
      <string>Utility</string>
     </property>
+    <addaction name="actionReiinstall_Busybox"/>
     <addaction name="actionPaste_path"/>
     <addaction name="actionStop_Application"/>
     <addaction name="actionStart_Application"/>
@@ -1176,6 +1177,14 @@
    </property>
    <property name="toolTip">
     <string>Connect to Windows Subsystem for Android</string>
+   </property>
+  </action>
+  <action name="actionReiinstall_Busybox">
+   <property name="text">
+    <string>Reinstall Busybox</string>
+   </property>
+   <property name="toolTip">
+    <string>Reinstall Busybox</string>
    </property>
   </action>
  </widget>

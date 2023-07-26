@@ -999,7 +999,7 @@
      <x>0</x>
      <y>0</y>
      <width>709</width>
-     <height>24</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -1051,7 +1051,7 @@
     <addaction name="actionPaste_path"/>
     <addaction name="actionStop_Application"/>
     <addaction name="actionStart_Application"/>
-    <addaction name="actionArchitecture_2"/>
+    <addaction name="actionArchitecture"/>
     <addaction name="actionConnect_WSA"/>
     <addaction name="View_Changelog"/>
     <addaction name="Erase_adbLink_database"/>
@@ -1254,7 +1254,7 @@
     <string>Erase database</string>
    </property>
   </action>
-  <action name="actionArchitecture_2">
+  <action name="actionArchitecture">
    <property name="text">
     <string>System information</string>
    </property>

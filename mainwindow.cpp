@@ -4364,7 +4364,7 @@
 
                busybox = apphome+"/adbfiles/busybox";
 
-          cstring = getadb() + " push "+busybox+ " /data/local/tmp/adblink/busybox";
+          cstring = getadb() + " push "+busybox+ " /data/local/tmp/adblink/";
 
           QString command=getadbOutput(cstring);
           if (!command.contains("bytes"))
@@ -6122,7 +6122,7 @@
 
         cstring = getadb() + " shell mkdir -p /data/local/tmp/adblink";
         command=getadbOutput(cstring);
-        cstring = getadb() + " push "+busybox+ " /data/local/tmp/adblink/busybox";
+        cstring = getadb() + " push "+busybox+ " /data/local/tmp/adblink/";
 
 
 
@@ -6184,15 +6184,25 @@
 ///////////////////////////////////////////////////////
     void MainWindow::on_actionArchitecture_triggered()
     {
+
+    systeminfo();
+
+    }
+
+
+
+    ///////////////////////////////////////////////////////
+    void MainWindow::systeminfo()
+    {
        if (!check_devices() )
-           return;
+         return;
 
-        QString android = QString::number(getandroid());
-        QString cstring;
-        QString archi;
+       QString android = QString::number(getandroid());
+       QString cstring;
+       QString archi;
 
-     QString device=devicename();
-     QString manufact=manufacturer();
+       QString device=devicename();
+       QString manufact=manufacturer();
 
        QString scoped;
        QString kbase = "/sdcard/Android/data/";
@@ -6201,28 +6211,28 @@
 
 
        if (!isScoped())
-           scoped = "false";
+         scoped = "false";
        else scoped = "true";
 
 
-        cstring = getadb() + " shell getprop ro.product.cpu.abi";
-        archi=getadbOutput(cstring);
+       cstring = getadb() + " shell getprop ro.product.cpu.abi";
+       archi=getadbOutput(cstring);
 
-        list.append(archi);
-        list.append(android);
-        list.append(scoped);
-        list.append(device);
-         list.append(manufact);
+       list.append(archi);
+       list.append(android);
+       list.append(scoped);
+       list.append(device);
+       list.append(manufact);
 
-        deviceinfoDialog dialog(this);
-        dialog.setWindowModality(Qt::WindowModal);
-        dialog.setWindowFlags(dialog.windowFlags() & ~Qt::WindowContextHelpButtonHint);
+       deviceinfoDialog dialog(this);
+       dialog.setWindowModality(Qt::WindowModal);
+       dialog.setWindowFlags(dialog.windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-        dialog.setWindowTitle(description);
+       dialog.setWindowTitle(description);
 
        dialog.devinfo(list);
 
-        dialog.setModal(true);
+       dialog.setModal(true);
 
        if(dialog.exec() == QDialog::Accepted)
        {
@@ -6234,6 +6244,8 @@
 
 
     }
+
+
 
 
 

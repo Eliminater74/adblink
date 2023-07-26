@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>580</width>
+    <width>573</width>
     <height>386</height>
    </rect>
   </property>
@@ -884,54 +884,16 @@
      <string>Edit XML</string>
     </property>
    </widget>
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>140</y>
-      <width>488</width>
+      <x>227</x>
+      <y>141</y>
+      <width>302</width>
       <height>34</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="label_2">
-       <property name="minimumSize">
-        <size>
-         <width>72</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>72</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>IP:port</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="adhocip">
-       <property name="minimumSize">
-        <size>
-         <width>100</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>100</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;IP address of ad hoc device. You may also specify a port by appending :&amp;lt;port&amp;gt; to the IP address.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-      </widget>
-     </item>
      <item>
       <widget class="QPushButton" name="clearButton">
        <property name="minimumSize">
@@ -985,6 +947,56 @@
      </item>
     </layout>
    </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>140</y>
+      <width>189</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="minimumSize">
+        <size>
+         <width>50</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>50</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>IP:port</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="adhocip">
+       <property name="minimumSize">
+        <size>
+         <width>130</width>
+         <height>29</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>130</width>
+         <height>29</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;IP address of ad hoc device. You may also specify a port by appending :&amp;lt;port&amp;gt; to the IP address. Port 5555 is default.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QMenuBar" name="menuBar">
@@ -992,7 +1004,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>580</width>
+     <width>573</width>
      <height>26</height>
     </rect>
    </property>
@@ -1045,7 +1057,7 @@
     <addaction name="actionPaste_path"/>
     <addaction name="actionStop_Application"/>
     <addaction name="actionStart_Application"/>
-    <addaction name="actionArchitecture_2"/>
+    <addaction name="actionArchitecture"/>
     <addaction name="View_Changelog"/>
     <addaction name="actionTest_adb_connection"/>
    </widget>
@@ -1251,14 +1263,6 @@
   <action name="View_Changelog">
    <property name="text">
     <string>View changelog</string>
-   </property>
-  </action>
-  <action name="actionArchitecture_2">
-   <property name="text">
-    <string>System information</string>
-   </property>
-   <property name="toolTip">
-    <string>Show system information</string>
    </property>
   </action>
  </widget>
