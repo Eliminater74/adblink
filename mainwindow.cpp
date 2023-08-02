@@ -3482,9 +3482,12 @@
         QString descrip = description;
 
         QMessageBox::StandardButton reply;
-         reply = QMessageBox::question(0, "", " Delete "+descrip+"?",
-                 QMessageBox::Yes|QMessageBox::No);
-           if (reply == QMessageBox::No)
+        reply = QMessageBox::question(this, "", " Delete " + descrip + "?",
+                                      QMessageBox::Yes | QMessageBox::No);
+
+
+
+         if (reply == QMessageBox::No)
             {
               return;
              }
@@ -6991,7 +6994,8 @@
 
 
 
-
+       if (daddr=="127.0.0.1")
+           port= "58526";
 
 
 
@@ -8270,8 +8274,9 @@ void MainWindow::on_mvdataButton_clicked()
            else {
 
             cstring=getadb() +" shell rm -r "+destination;
-            command=getreturncode(cstring);
             logfile("Erasing: "+cstring);
+            command=RunLongProcess(cstring,"Preparing target");
+            logfile(command);
 
 
            }
