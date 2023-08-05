@@ -90,7 +90,7 @@
     #endif
 
 
-    const QString vqurl = "http://www.jocala.com/version.txt";
+     QString vqurl = "http://www.jocala.com/version.txt";
 
 
     QRegularExpression validip( "[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
@@ -146,6 +146,7 @@
     QString idir;
     QString bdir;
     QString rdir;
+    QString busybox;
 
 
     QString adbstr1 = "ADB running. ";
@@ -206,12 +207,14 @@
        adbfiles=QCoreApplication::applicationDirPath()+"/adbfiles/";
        adb=QCoreApplication::applicationDirPath()+"/adbfiles/"+"adb";
        adb = '"'+adb+'"';
+       busybox = QCoreApplication::applicationDirPath()+"/adbfiles/busybox";
+       busybox = '"'+busybox+'"';
 
-       apphome = QCoreApplication::applicationDirPath();
-       scrcpydir=QCoreApplication::applicationDirPath()+"/adbfiles/"+"scrcpy/";
+        apphome = QCoreApplication::applicationDirPath();
+        scrcpydir=QCoreApplication::applicationDirPath()+"/adbfiles/"+"scrcpy/";
 
-       xmldir = adbfiles+"remotes/";
-       splashdir = adbfiles+"splash/";
+        xmldir = adbfiles+"remotes/";
+        splashdir = adbfiles+"splash/";
 
        if (!QFile::exists(adbfiles + "adb") && !QFile::exists(adbfiles + "adb.exe")) {
          QMessageBox::critical(0, "", "adb binary missing!\n", QMessageBox::Cancel);
@@ -278,16 +281,16 @@
       rotate_logfile();
 
 
+      QDateTime dateTime = QDateTime::currentDateTime();
+      QString dtstr = dateTime.toString("MM/dd/yy hh:mm:ss");
 
 
       logfile(program+" "+version);
-
-      QDateTime dateTime = QDateTime::currentDateTime();
-      QString dtstr = dateTime.toString("MMddyyhhmmss");
+      logfile(QCoreApplication::applicationDirPath());
       logfile(dtstr);
 
 
-
+/*
       QList<QHostAddress> list = QNetworkInterface::allAddresses();
         for(int nIter=0; nIter<list.count(); nIter++)
 
@@ -298,6 +301,25 @@
 
          }
 
+  */
+
+  //====================
+
+         QList<QHostAddress> list = QNetworkInterface::allAddresses();
+         QHostAddress primaryIP;
+
+         for (const QHostAddress& address : list) {
+             if (!address.isLoopback() && address.protocol() == QAbstractSocket::IPv4Protocol) {
+                 if (address != QHostAddress::LocalHost) {
+                     primaryIP = address;
+                     logfile("IP:"+primaryIP.toString());
+                    break;
+                 }
+             }
+         }
+
+
+//=============================
 
 
 
@@ -310,7 +332,7 @@
          if (os == 2)
 
               {
-            logfile("OS X");
+            logfile("macOS");
               }
 
 
@@ -322,7 +344,12 @@
 
               }
 
-     logfile("------------");
+
+
+
+
+
+              logfile("------------");
 
 
 
@@ -4361,11 +4388,8 @@
       if (command.contains("No such file or directory"))
          {
 
-            QString busybox;
-
-
-
-               busybox = apphome+"/adbfiles/busybox";
+      //      QString busybox;
+      //         busybox = apphome+"/adbfiles/busybox";
 
           cstring = getadb() + " push "+busybox+ " /data/local/tmp/adblink/";
 
@@ -6091,7 +6115,7 @@
     {
 
 
-        QString busybox;
+    //    QString busybox;
         QString cstring;
         QString command;
 
@@ -6116,8 +6140,12 @@
               busybox = apphome+"busybox.arm";
     */
 
-          busybox = apphome+"/adbfiles/busybox";
+//          busybox = apphome+"/adbfiles/busybox";
+    //      busybox = QCoreApplication::applicationDirPath()+"/adbfiles/busybox";
 
+    //     busybox= '"'+busybox+'"';
+
+      //  qDebug() << busybox;
 
         busypath="/data/local/tmp/adblink/";
         cstring = getadb() + " shell rm -r /data/local/tmp/adblink";
@@ -7629,7 +7657,7 @@ if (isScoped()) {
  if (!getreturncode(cstring))
   {
     QMessageBox::critical(this,"","Kodi's files not found at "+mcpath);
-    logfile("backup result: "+command+"/n"+cstring);
+    logfile("Backup: kodi's files not found at "+mcpath);
     return;
  }
 
@@ -8253,6 +8281,7 @@ void MainWindow::on_mvdataButton_clicked()
     if (!getreturncode(cstring))
     {
            QMessageBox::critical(this,"","Kodi's files not found at "+source);
+           logfile("Data move: files not found at "+source);
            return;
     }
 
