@@ -288,6 +288,7 @@
       logfile(program+" "+version);
       logfile(QCoreApplication::applicationDirPath());
       logfile(dtstr);
+      logfile(QDir::home().path());
 
 
 /*
@@ -6539,7 +6540,7 @@
 
 
 
-             QProcess::startDetached("cmd.exe", QStringList() << "/c" << "start" << commstr);
+             QProcess::startDetached("cmd.exe", QStringList() << "/c" << "start"  << "" << commstr);
 
         }
 
@@ -6736,7 +6737,7 @@
       // else
       //     QProcess::startDetached("wt -d c:\\ cmd /k "+commstr);
 
-              QProcess::startDetached("cmd.exe", QStringList() << "/c" << "start" << commstr);
+                       QProcess::startDetached("cmd.exe", QStringList() << "/c" << "start" << ""  << commstr);
 
     }
 
@@ -7125,7 +7126,7 @@ if (scrcpy)
                           //else
                            //    QProcess::startDetached("wt -d c:\\ cmd /k "+ commstr);
 
-                          QProcess::startDetached("cmd.exe", QStringList() << "/c" << "start" << commstr);
+                               QProcess::startDetached("cmd.exe", QStringList() << "/c" << "start"  << "" << commstr);
 
 
                     }
@@ -7421,7 +7422,7 @@ if (scrcpy)
                                file.close();
 
 
-                           QProcess::startDetached("cmd.exe", QStringList() << "/c" << "start" << commstr);
+                               QProcess::startDetached("cmd.exe", QStringList() << "/c" << "start"  << "" << commstr);
 
 
                       }
