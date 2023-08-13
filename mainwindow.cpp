@@ -4839,7 +4839,12 @@
 
 */
 
+
+  //  qDebug() << "mcpath:" << mcpath; return;
+
         fmdialog->setkodiPath(mcpath);
+
+
 
        if (!ui->adhocip->text().isEmpty())
        {

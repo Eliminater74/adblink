@@ -1,4 +1,25 @@
-07/xx/23
+08/14/2023
+
+v5.6b
+
+File manager function incorrectly initializing
+dropdown menu. Fixed.
+
+
+08/11/2023
+
+v5.6a
+
+Userids with embedded spaces resulted
+in scripting failure. Fixed.
+
+User home directory added to log.
+
+
+
+08/08/2023
+
+busybox location bug fixed
 
 File Manager now uses drag and drop for pushing files
 and directories from the local filesystem to the
@@ -12,7 +33,7 @@ APK install directory retains last location used.
 
 Backup/restore directory retains last location used.
 
-Scrcpy arguments dialog is now optional via preferences. 
+Scrcpy arguments dialog is now optional via preferences.
 
 Utility menu function added to clear database
 
@@ -22,12 +43,12 @@ utility menu function has been added to view changelog
 as well.
 
 Utility menu function added to view system information:
-(architecture, devicename, manufacturer, 
+(architecture, devicename, manufacturer,
 filesystem scope status and Android version)
 
 Ad hoc IP now accepts a port.
 Enter ip with format: <ip>:<port>
-Default is port 5555. 
+Default is port 5555.
 
 Edit Kodi XML files (scoped storage) bugfix
 
@@ -41,9 +62,14 @@ devices are connected via a utility menu selection.
 
 QT C++ framework updated to 5.15.2 for all platforms.
 
-Windows scrcpy updated to scrcpy-win64-v2.1 
+Windows scrcpy updated to scrcpy-win64-v2.1
 
-Windows adblink/adblink2/wsalink are now x86_64 only. 
+Windows adblink/adblink2/wsalink are now x86_64 only.
+
+07/27/23
+
+5.5 Bugfix for Windows.
+Console fails to open.
 
 
 05/26/23

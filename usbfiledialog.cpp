@@ -62,7 +62,7 @@ usbfileDialog::usbfileDialog(QWidget *parent) :
 
 QString programName = QCoreApplication::applicationName();
 
-//  qDebug() << programName;
+  logfile(programName);
 
   ui->kodiDirs->clear();
 
@@ -70,7 +70,7 @@ QString programName = QCoreApplication::applicationName();
   ui->kodiDirs->addItem("storage");
   ui->kodiDirs->addItem("data/local/tmp");
 
-  if (programName=="adblink")
+  if (programName=="adblink"  ||   programName=="adbLink"   )
   {
     ui->kodiDirs->addItem("kodi");
     ui->kodiDirs->addItem("userdata");
@@ -79,8 +79,9 @@ QString programName = QCoreApplication::applicationName();
 
 
 
-  ui->usbprogressBar->setHidden(true);
-  ui->usbprogressBar->setValue(0);
+
+   ui->usbprogressBar->setHidden(true);
+   ui->usbprogressBar->setValue(0);
 
    connect(ui->usblistWidget1, SIGNAL(itemClicked(QListWidgetItem*)), SLOT( assignWindow1()   ));
    connect(ui->usblistWidget2, SIGNAL(itemClicked(QListWidgetItem*)), SLOT( assignWindow2()   ));
@@ -783,6 +784,9 @@ void usbfileDialog::on_goButton_clicked()
  QString cstring;
 
 
+
+
+
  if(!is_directory(mcpath))
   {
      kpath1="/sdcard/";
@@ -802,10 +806,10 @@ void usbfileDialog::on_goButton_clicked()
       kpath3 = mcpath+"/addons";
   }
 
-  //qDebug() << mcpath;
- // qDebug() << kpath1;
- // qDebug() << kpath2;
- // qDebug() << kpath3;
+// qDebug() << mcpath;
+// qDebug() << kpath1;
+// qDebug() << kpath2;
+// qDebug() << kpath3;
 
 
 
