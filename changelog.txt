@@ -1,9 +1,11 @@
-08/14/2023
+08/13/2023
 
 v5.6b
 
 File manager function incorrectly initializing
 dropdown menu. Fixed.
+
+macOS download format changed from .pkg to .dmg
 
 
 08/11/2023
