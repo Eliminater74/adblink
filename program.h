@@ -1,1 +1,1 @@
-QString program="adblink2";
+QString program="adblink";

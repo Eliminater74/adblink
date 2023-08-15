@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>584</width>
-    <height>366</height>
+    <width>562</width>
+    <height>514</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,7 +33,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>270</y>
+     <y>440</y>
      <width>195</width>
      <height>32</height>
     </rect>
@@ -291,7 +291,7 @@
       <item>
        <widget class="QPushButton" name="pfolderButton">
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Override default pull folder&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Override global folder for pulled files&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="text">
          <string>Pull Folder</string>
@@ -312,8 +312,8 @@
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>280</x>
-     <y>740</y>
+     <x>10</x>
+     <y>240</y>
      <width>255</width>
      <height>135</height>
     </rect>
@@ -410,22 +410,12 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>191</y>
+     <y>190</y>
      <width>185</width>
      <height>31</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_8">
-    <item>
-     <widget class="QPushButton" name="clearPort">
-      <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Clear port field&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <property name="text">
-       <string>Clear</string>
-      </property>
-     </widget>
-    </item>
     <item>
      <widget class="QLabel" name="plabel">
       <property name="text">
@@ -452,6 +442,16 @@
       </property>
      </widget>
     </item>
+    <item>
+     <widget class="QPushButton" name="clearPort">
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Clear port field&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string>Clear</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QCheckBox" name="wsa">
@@ -460,7 +460,7 @@
    </property>
    <property name="geometry">
     <rect>
-     <x>160</x>
+     <x>390</x>
      <y>640</y>
      <width>56</width>
      <height>24</height>
@@ -476,8 +476,8 @@
   <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>230</y>
+     <x>11</x>
+     <y>391</y>
      <width>245</width>
      <height>26</height>
     </rect>
