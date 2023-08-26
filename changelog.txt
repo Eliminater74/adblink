@@ -1,3 +1,11 @@
+09/xx/2023
+
+v5.6c
+
+File manager: device record's pull directory
+not replacing the global value. Fixed.
+
+
 08/13/2023
 
 v5.6b
