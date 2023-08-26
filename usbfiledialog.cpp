@@ -348,7 +348,7 @@ void usbfileDialog::on_pullButton_clicked()
 
 
    QMessageBox::StandardButton reply;
-     reply = QMessageBox::question(this, "","Pull file?",
+     reply = QMessageBox::question(this, "","Pull file(s)?",
          QMessageBox::Yes|QMessageBox::No);
      if (reply == QMessageBox::No)
        return;
@@ -505,6 +505,8 @@ for (QStringList::iterator it = mstringlist.begin();
 
 if (error > 0)
 QMessageBox::critical(this,"","Error(s). See log");
+else
+QMessageBox::information(this,"","Pull(s) complete. See log.");
 
 
 //qDebug() << ufdlogfiledir+"adblink.log";

@@ -5,6 +5,10 @@ v5.6c
 File manager: device record's pull directory
 not replacing the global value. Fixed.
 
+File manager: comfirmation message added to file
+pull routine for successful pulls.
+
+
 
 08/13/2023
 
