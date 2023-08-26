@@ -4772,6 +4772,7 @@
         QString cstring;
         QString command;
         QString mcpath;
+        QString fmpullpath;
 
 
         QString ostypefm("");
@@ -4868,18 +4869,43 @@
         QString kp = data_root+filepath;
 
 
+   //     qDebug() <<  pulldir;
+  //      qDebug() << download;
+
+        if (pulldir.isEmpty() || pulldir == download)
+           fmpullpath=download;
+        else
+           fmpullpath=pulldir;
+
+
+
+        QDir directory(fmpullpath);
+
+        if (!directory.exists()) {
+
+           logfile("Pull path: "+fmpullpath+" not found");
+           logfile("Defaulting to home directory: "+QDir::homePath());
+           fmpullpath=QDir::homePath();
+
+        }
+
 
 
         fmdialog->setPath1("/sdcard/");
         fmdialog->setPath2("/sdcard/");
-        fmdialog->setPulldir(download);
+
+
+
+
         fmdialog->setdisableroot(disableroot);
         fmdialog->setuProgram(kp);
         fmdialog->setoldfm(oldfm);
 
 
 
-       // fmdialog->setPulldir(getdownloadpath());
+
+
+        fmdialog->setPulldir(fmpullpath);
 
         fmdialog->setAdbdir(apphome);
 
@@ -8757,4 +8783,5 @@ void MainWindow::on_actionConnect_WSA_triggered()
 
  on_connWSA_clicked();
 }
+
 
