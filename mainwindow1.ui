@@ -518,12 +518,12 @@
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>42</x>
       <y>232</y>
-      <width>503</width>
+      <width>524</width>
       <height>151</height>
      </rect>
     </property>
@@ -932,7 +932,7 @@
      <x>0</x>
      <y>0</y>
      <width>608</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -987,6 +987,7 @@
     <addaction name="actionStop_Application"/>
     <addaction name="actionStart_Application"/>
     <addaction name="actionArchitecture"/>
+    <addaction name="actionSet_Kodi_permissions"/>
     <addaction name="actionConnect_WSA"/>
     <addaction name="View_Changelog"/>
     <addaction name="Erase_adbLink_database"/>
@@ -1193,6 +1194,14 @@
    </property>
    <property name="toolTip">
     <string>Reinstall Busybox</string>
+   </property>
+  </action>
+  <action name="actionSet_Kodi_permissions">
+   <property name="text">
+    <string>Set Kodi permissions</string>
+   </property>
+   <property name="toolTip">
+    <string>Set Kodi's external read/write permissions</string>
    </property>
   </action>
  </widget>

@@ -1,3 +1,4 @@
+
     #include "mainwindow.h"
     #include "ui_mainwindow.h"
     #include "about.h"
@@ -4869,8 +4870,8 @@
         QString kp = data_root+filepath;
 
 
-   //     qDebug() <<  pulldir;
-  //      qDebug() << download;
+   //  qDebug() <<  pulldir;
+   //  qDebug() << download;
 
         if (pulldir.isEmpty() || pulldir == download)
            fmpullpath=download;
@@ -4904,7 +4905,7 @@
 
 
 
-
+   //   qDebug() <<  fmpullpath;
         fmdialog->setPulldir(fmpullpath);
 
         fmdialog->setAdbdir(apphome);
@@ -6999,7 +7000,8 @@
        {
 
 
-           //return;
+       //    qDebug() << port;
+       //    return;
 
 
             if (!check_devices() )
@@ -8784,4 +8786,29 @@ void MainWindow::on_actionConnect_WSA_triggered()
  on_connWSA_clicked();
 }
 
+
+
+void MainWindow::on_actionSet_Kodi_permissions_triggered()
+{
+
+
+ if (!check_devices() )
+            return;
+
+
+
+
+ QString cstring;
+
+
+ cstring = getadb()+ " shell appops set --uid "+ xbmcpackage  +" MANAGE_EXTERNAL_STORAGE allow";
+
+ if (!getreturncode(cstring))
+   QMessageBox::critical(this, "", "Error setting Kodi permissions");
+else
+  QMessageBox::information(this, "", "Kodi permissions set");
+
+
+
+}
 

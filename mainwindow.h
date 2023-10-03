@@ -374,6 +374,8 @@ private slots:
   void on_actionConnect_WSA_triggered();
 
 
+  void on_actionSet_Kodi_permissions_triggered();
+
   private:
     Ui::MainWindow *ui;
 
