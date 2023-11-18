@@ -732,7 +732,7 @@
      <rect>
       <x>20</x>
       <y>140</y>
-      <width>189</width>
+      <width>190</width>
       <height>31</height>
      </rect>
     </property>
@@ -777,12 +777,12 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>30</x>
       <y>190</y>
-      <width>503</width>
+      <width>524</width>
       <height>73</height>
      </rect>
     </property>
@@ -1049,6 +1049,8 @@
     <addaction name="actionPaste_path"/>
     <addaction name="actionStop_Application"/>
     <addaction name="actionStart_Application"/>
+    <addaction name="actionSet_Kodi_permissions"/>
+    <addaction name="actionGet_UID_from_APK_file"/>
     <addaction name="actionArchitecture"/>
     <addaction name="View_Changelog"/>
     <addaction name="actionTest_adb_connection"/>
@@ -1255,6 +1257,19 @@
   <action name="View_Changelog">
    <property name="text">
     <string>View changelog</string>
+   </property>
+  </action>
+  <action name="actionSet_Kodi_permissions">
+   <property name="text">
+    <string>Set app permissions</string>
+   </property>
+   <property name="toolTip">
+    <string>Set app MANAGE_EXTERNAL_STORAGE permissions</string>
+   </property>
+  </action>
+  <action name="actionGet_UID_from_APK_file">
+   <property name="text">
+    <string>Get package name</string>
    </property>
   </action>
  </widget>

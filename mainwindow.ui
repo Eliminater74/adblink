@@ -988,6 +988,7 @@
     <addaction name="actionStart_Application"/>
     <addaction name="actionArchitecture"/>
     <addaction name="actionSet_Kodi_permissions"/>
+    <addaction name="actionGet_UID_from_APK_file"/>
     <addaction name="actionConnect_WSA"/>
     <addaction name="View_Changelog"/>
     <addaction name="Erase_adbLink_database"/>
@@ -1198,10 +1199,15 @@
   </action>
   <action name="actionSet_Kodi_permissions">
    <property name="text">
-    <string>Set Kodi permissions</string>
+    <string>Set app permissions</string>
    </property>
    <property name="toolTip">
-    <string>Set Kodi's external read/write permissions</string>
+    <string>Set app MANAGE_EXTERNAL_STORAGE permissions</string>
+   </property>
+  </action>
+  <action name="actionGet_UID_from_APK_file">
+   <property name="text">
+    <string>Get package name</string>
    </property>
   </action>
  </widget>

@@ -319,7 +319,7 @@ private slots:
 
   void on_adhocip_returnPressed();
 
-  void on_actionGet_package_name_triggered();
+//  void on_actionGet_package_name_triggered();
 
   void on_actionReiinstall_Busybox_triggered();
 
@@ -375,6 +375,8 @@ private slots:
 
 
   void on_actionSet_Kodi_permissions_triggered();
+
+  void on_actionGet_UID_from_APK_file_triggered();
 
   private:
     Ui::MainWindow *ui;

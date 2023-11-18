@@ -45,6 +45,7 @@ SOURCES += main.cpp\
     pushfiledialog.cpp \
     adbprefdialog.cpp \
     downloaddialog.cpp \
+    setpdialog.cpp \
     sleepdialog.cpp
 
 
@@ -83,6 +84,7 @@ HEADERS  += mainwindow.h \
     downloaddialog.h \
     sleepdialog.h \
     version.h \
+    setpdialog.h \
     detachableprocess.h 
 
 FORMS    += mainwindow.ui \
@@ -117,6 +119,7 @@ FORMS    += mainwindow.ui \
     mainwindow1.ui \
     mainwindow2.ui \
     mainwindow3.ui \
+    setpdialog.ui \
     sleepdialog.ui
 
 

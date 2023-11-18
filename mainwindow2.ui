@@ -720,12 +720,12 @@
      <string>Device</string>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>25</x>
       <y>221</y>
-      <width>630</width>
+      <width>658</width>
       <height>73</height>
      </rect>
     </property>
@@ -987,7 +987,7 @@
      <x>0</x>
      <y>0</y>
      <width>709</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -1039,6 +1039,8 @@
     <addaction name="actionPaste_path"/>
     <addaction name="actionStop_Application"/>
     <addaction name="actionStart_Application"/>
+    <addaction name="actionSet_Kodi_permissions"/>
+    <addaction name="actionGet_UID_from_APK_file"/>
     <addaction name="actionArchitecture"/>
     <addaction name="actionConnect_WSA"/>
     <addaction name="View_Changelog"/>
@@ -1261,6 +1263,19 @@
    </property>
    <property name="toolTip">
     <string>Connect to Windows Subsystem for Android</string>
+   </property>
+  </action>
+  <action name="actionSet_Kodi_permissions">
+   <property name="text">
+    <string>Set app permissions</string>
+   </property>
+   <property name="toolTip">
+    <string>Set app MANAGE_EXTERNAL_STORAGE permissions</string>
+   </property>
+  </action>
+  <action name="actionGet_UID_from_APK_file">
+   <property name="text">
+    <string>Get package name</string>
    </property>
   </action>
  </widget>

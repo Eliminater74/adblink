@@ -28,7 +28,7 @@
     #include "program.h"
     #include "getadbdata.h"
     #include "logfile.h"
-
+    #include "setpdialog.h"
     #include <QDebug>
 
 
@@ -207,7 +207,9 @@
 
        adbfiles=QCoreApplication::applicationDirPath()+"/adbfiles/";
        adb=QCoreApplication::applicationDirPath()+"/adbfiles/"+"adb";
+       aapt=QCoreApplication::applicationDirPath()+"/adbfiles/"+"aapt";
        adb = '"'+adb+'"';
+        aapt = '"'+aapt+'"';
        busybox = QCoreApplication::applicationDirPath()+"/adbfiles/busybox";
        busybox = '"'+busybox+'"';
 
@@ -909,8 +911,10 @@
 
         QString cstring;
 
-        bool ro;
+        bool scoped;
 
+/*
+       int androidversion;
         cstring = cstring = getadb() +  " shell mkdir /sdcard/Android/data/tempadblink";
         if (getreturncode(cstring)) {
           cstring = cstring = getadb() +  " shell rm -r /sdcard/Android/data/tempadblink";
@@ -920,7 +924,20 @@
 
 
 
-       return ro;
+        androidversion=getandroid();
+
+    ro = androidversion == 11 || androidversion == 12;
+
+
+ */
+
+       scoped = getandroid() == 11 || getandroid() == 12;
+
+  //    qDebug() << ro;
+
+       return scoped;
+
+
 
 
     }
@@ -2756,9 +2773,12 @@
     //////////////////////////////////////////////
     void MainWindow::on_actionHelp_triggered()
     {
-        logfile("opening help");
+
         helpDialog helpdialog;
-        helpdialog.setModal(true);
+
+
+        helpdialog.setWindowModality(Qt::NonModal);
+        helpdialog.setWindowTitle("Help");
         helpdialog.exec();
     }
 
@@ -6082,42 +6102,6 @@
     }
 
 
-    void MainWindow::on_actionGet_package_name_triggered()
-    {
-       QString command;
-       QString cstring;
-       QStringList mstringlist;
-
-        QString filename = QFileDialog::getOpenFileName(this,tr("APK files"),QDir::currentPath(),tr("APK files (*.apk);;All files (*.*)") );
-        if( !filename.isEmpty() )
-        {
-
-            cstring = aapt + " dump badging  " + '"'+ filename+'"';
-            command=getadbOutput(cstring);
-            mstringlist=command.split(QRegExp("[\t\n\r]"),QString::SkipEmptyParts);
-
-
-           for (QStringList::iterator it = mstringlist.begin();
-                 it != mstringlist.end(); ++it)
-                    {
-                       QString item=*it;
-                        if (item.contains("package"))
-                         {
-                            QRegExp rx("(\\')");
-                            QStringList query = item.split(rx);
-                            QString packagename = query.at(1);
-                             QMessageBox::information(0, "",packagename);
-                           }
-                    }
-
-        }
-
-
-
-    }
-
-
-
     //////////////////////////////////////////////
     void MainWindow::open_pref_database()
 
@@ -6273,10 +6257,9 @@
        QStringList list;
 
 
-
-       if (!isScoped())
+      if (!isScoped())
          scoped = "false";
-       else scoped = "true";
+      else scoped = "true";
 
 
        cstring = getadb() + " shell getprop ro.product.cpu.abi";
@@ -7982,6 +7965,14 @@ if(!n_data_root.startsWith("/"))
 if (isScoped()) {
     mcpath=n_data_root + "kodi_data/" + xbmcpackage;
     kbase = n_data_root + "kodi_data/";
+
+    cstring = getadb()+ " shell appops set --uid "+  xbmcpackage +" MANAGE_EXTERNAL_STORAGE allow";
+    if (!getreturncode(cstring))
+    { QMessageBox::critical(this, "", "Error setting Kodi permissions");
+    return;
+    }
+
+
 } else {
     mcpath=n_data_root + "Android/data/" + xbmcpackage;
     kbase = n_data_root + "Android/data/";
@@ -8792,21 +8783,97 @@ void MainWindow::on_actionSet_Kodi_permissions_triggered()
 {
 
 
+ QString flag;
+
+ QString cstring;
+
  if (!check_devices() )
             return;
 
 
 
 
+ setpDialog dialog(this);
+ dialog.setWindowModality(Qt::WindowModal);
+
+ dialog.setpname(xbmcpackage);
+
+
+
+ if(dialog.exec() == QDialog::Accepted)
+ {
+
+            if (dialog.getbutton())
+              flag="allow";
+             else
+              flag="deny";
+
+
+            cstring = getadb()+ " shell appops set --uid "+  dialog.getpname() +" MANAGE_EXTERNAL_STORAGE "+flag;
+
+
+
+
+            if (!getreturncode(cstring))
+              QMessageBox::critical(this, "", "Error setting app permissions");
+            else
+              QMessageBox::information(this, "", "app permissions set");
+
+
+
+ }
+
+
+
+
+
+}
+
+
+void MainWindow::on_actionGet_UID_from_APK_file_triggered()
+{
+
+
+ QString command;
  QString cstring;
+ QStringList mstringlist;
 
 
- cstring = getadb()+ " shell appops set --uid "+ xbmcpackage  +" MANAGE_EXTERNAL_STORAGE allow";
 
- if (!getreturncode(cstring))
-   QMessageBox::critical(this, "", "Error setting Kodi permissions");
-else
-  QMessageBox::information(this, "", "Kodi permissions set");
+ QString filename = QFileDialog::getOpenFileName(
+    this,
+    "Open APK File",
+    QDir::homePath(),
+     "APK Files (*.apk);;All Files (*)"
+     );
+
+
+ if( !filename.isEmpty() )
+ {
+
+            cstring = aapt + " dump badging  " + '"'+ filename+'"';
+            command=getadbOutput(cstring);
+
+
+
+            mstringlist=command.split(QRegExp("[\t\n\r]"),QString::SkipEmptyParts);
+
+
+            for (QStringList::iterator it = mstringlist.begin();
+                 it != mstringlist.end(); ++it)
+            {
+              QString item=*it;
+              if (item.contains("package"))
+              {
+              QRegExp rx("(\\')");
+              QStringList query = item.split(rx);
+              QString packagename = query.at(1);
+              QMessageBox::information(this, "",packagename);
+              }
+            }
+
+ }
+
 
 
 

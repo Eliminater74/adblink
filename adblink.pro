@@ -24,6 +24,7 @@ SOURCES += main.cpp\
     about.cpp \
     helpdialog.cpp \
     scpdialog.cpp \
+    setpdialog.cpp \
     uninstalldialog.cpp \
     preferencesdialog.cpp \
     usbfiledialog.cpp \
@@ -60,6 +61,7 @@ HEADERS  += mainwindow.h \
     helpdialog.h \
     logfile.h \
     scpdialog.h \
+    setpdialog.h \
     uninstalldialog.h \
     preferencesdialog.h \
     usbfiledialog.h \
@@ -91,6 +93,7 @@ FORMS    += mainwindow.ui \
     dragdialog.ui \
     helpdialog.ui \
     scpdialog.ui \
+    setpdialog.ui \
     uninstalldialog.ui \
     preferencesdialog.ui \
     preferencesdialog1.ui \
