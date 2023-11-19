@@ -1,3 +1,44 @@
+11/XX/2023
+
+Version 5.8
+
+Scoped storage detection fails for Android 12. Fixed.
+
+
+10/05/2023
+
+Version 5.7
+
+http://www.jocala.com
+
+adb binary updated to 34.0.4-10411341
+
+aapt binary added for Windows & Mac. For Linux 
+users, adbfiles has a symlink to 
+/usr/bin/aapt which will need to be installed
+via apt-get.
+
+When using a Android 11/Fire OS 8.1 device, Kodi's 
+MANAGE_EXTERNAL_STORAGE permission is set
+to "allow" (to permit Kodi to access local 
+files outside of its sandbox). This occurs
+when a backup is restored.  
+
+See http://www.jocala.com/android11.html for
+more details.
+
+A "Set app permissions" function is added to the 
+Utility menu to allow changing the MANAGE_EXTERNAL_STORAGE 
+status for any application that includes this permission in
+its manifest. This is for Android 11/Fire OS 8.1 or greater 
+devices only.
+
+A "Get package name" function is added to the Utility 
+menu. The package name is required to change the 
+MANAGE_EXTERNAL_STORAGE permission for an application. This 
+function requires the aapt utility mentioned above.
+
+
 09/11/2023
 
 v5.6c
@@ -5,7 +46,7 @@ v5.6c
 File manager: device record's pull directory
 not replacing the global value. Fixed.
 
-File manager: comfirmation message added to file
+File manager: confirmation message added to file
 pull routine for successful pulls.
 
 
