@@ -45,19 +45,14 @@ void klogDialog::passdata(const QString &adbpath, const QString &dataroot, const
     kadbpath  = adbpath;
     kpackage  = xbmcpackage;
 
-   if(filepath.contains("kodi"))
-    { klogfile1 = "kodi.log";
-     klogfile2 = "kodi.old.log";
-     ui->klogfileName->setText("kodi.log");
-   }
-   else
-   { klogfile1 = "spmc.log";
-    klogfile2 = "spmc.old.log";
-    ui->klogfileName->setText("spmc.log");
-   }
+    klogfile1 = "kodi.log";
+    klogfile2 = "kodi.old.log";
+    ui->klogfileName->setText("kodi.log");
+
+    QString cstring = adbpath + " shell cat "+ filepath+klogfile1;
 
 
-QString cstring = adbpath + " shell cat "+dataroot+"Android/data/"+xbmcpackage+"/"+filepath+"/temp/"+klogfile1;
+
 
 QString command=getadbOutput(cstring);
 
@@ -74,24 +69,14 @@ void klogDialog::on_kswapButton_clicked()
     kgetfile = !kgetfile;
 
     if (kgetfile)
-    {
-          if (kpackage.contains("kodi") )
-              ui->klogfileName->setText("kodi.log");
-           else
-              ui->klogfileName->setText("spmc.log");
-      }
-
-    else
-    {
-        if (kpackage.contains("kodi") )
-            ui->klogfileName->setText("kodi.old.log");
-         else
-            ui->klogfileName->setText("spmc.old.log");
-
-    }
+       ui->klogfileName->setText("kodi.log");
+     else
+       ui->klogfileName->setText("kodi.old.log");
 
 
-    QString cstring = kadbpath + " shell cat "+kdataroot+"Android/data/"+kpackage+"/"+kfilepath+"/temp/"+ui->klogfileName->text();
+    QString cstring = kadbpath + " shell cat "+kfilepath+ui->klogfileName->text();
+
+
 
     QString command=getadbOutput(cstring);
     ui->klogBrowser->setPlainText(command);

@@ -4234,26 +4234,59 @@
             return;
 
 
+          QString xpath = "";
+          QString cstring;
+          QString command;
+          QString mcpath="";
 
 
-        if (!xbmcpackage.contains("kodi")  && !xbmcpackage.contains("spmc") )
+
+          cstring = getadb() + " shell ls /sdcard/xbmc_env.properties";
+          if(getreturncode(cstring))
+          {  cstring = getadb() + " shell cat /sdcard/xbmc_env.properties";
+            command=getadbOutput(cstring);
+            command.replace(QRegExp("[\r\n]"), "");
+            mcpath = command.mid(command.indexOf("xbmc.data=") + 10);
+            mcpath=mcpath+"/.kodi";
+          }
+          else
+
           {
+            if (isScoped())
+                  mcpath=data_root + "kodi_data/" + xbmcpackage+"/files/.kodi";
+            else
+                  mcpath=data_root + "Android/data/" + xbmcpackage+"/files/.kodi";
 
-            QMessageBox::critical(this,"","Use File Manager to view logs");
-            return;
-           }
+          }
 
 
-        QString cstring = getadb()+" shell "+busypath+"find "+data_root+"Android/data/"+xbmcpackage+" -name *.log";
-        QString command=getadbOutput(cstring);
-        logfile(command);
 
-        if (!command.contains("kodi.log") && !command.contains("spmc.log")          )
-         {
-            QMessageBox::critical(0,"","Log not found.");
+
+
+          xpath = mcpath+"/temp/";
+
+
+
+          cstring = getadb() + " shell "+busypath+"busybox find " +xpath+ " -maxdepth 1 -name kodi.log ";
+
+          command=getadbOutput(cstring);
+
+
+          if (command.isEmpty() || command.contains("No such file or directory"))
+          { QMessageBox::critical(this,"","Kodi log not found");
+
+            // logfile(cstring);
+            logfile(command);
+            logfile("Kodi log not found!");
             return;
           }
 
+
+
+
+
+
+        filepath=xpath;
 
         logfile("opening kodi log");
         klogDialog klogdialog;
