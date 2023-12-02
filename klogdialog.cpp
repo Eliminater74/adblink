@@ -45,9 +45,8 @@ void klogDialog::passdata(const QString &adbpath, const QString &dataroot, const
     kadbpath  = adbpath;
     kpackage  = xbmcpackage;
 
-    klogfile1 = "kodi.log";
-    klogfile2 = "kodi.old.log";
-    ui->klogfileName->setText("kodi.log");
+
+    ui->klogfileName->setText(klogfile1);
 
     QString cstring = adbpath + " shell cat "+ filepath+klogfile1;
 
@@ -69,16 +68,18 @@ void klogDialog::on_kswapButton_clicked()
     kgetfile = !kgetfile;
 
     if (kgetfile)
-       ui->klogfileName->setText("kodi.log");
+       ui->klogfileName->setText(klogfile1);
      else
-       ui->klogfileName->setText("kodi.old.log");
+       ui->klogfileName->setText(klogfile2);
 
 
     QString cstring = kadbpath + " shell cat "+kfilepath+ui->klogfileName->text();
-
-
-
     QString command=getadbOutput(cstring);
+
+
+    if (command.contains("No such file or directory"))
+       command="";
+
     ui->klogBrowser->setPlainText(command);
     kcontent = command;
 
@@ -90,4 +91,3 @@ void klogDialog::on_kcopyButton_clicked()
     klogDialog::accept();
 
 }
-
