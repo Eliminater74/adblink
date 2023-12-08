@@ -133,7 +133,7 @@ RC_FILE = adblink.rc
 
 # QMAKE_MAC_SDK = macosx12.3
 
-QMAKE_MAC_SDK = macosx13.0
+# QMAKE_MAC_SDK = macosx13.0
 
 linux {
 QMAKE_LFLAGS += -no-pie
