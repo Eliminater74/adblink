@@ -6351,28 +6351,55 @@
        //   adb shell settings get system screen_off_timeout
 
 
+        // settings put global stay_on_while_plugged_in 1
+
        if (!check_devices() )
             return;
 
            QString cstring;
            QString command;
-
-
+           QString android = QString::number(getandroid());
 
 
            //  dialog.setdownloaddir(getdownloadpath());
 
        //    dialog.setversionLabel(version);
 
-
+        //   qDebug() << android;
 
            sleepDialog dialog(this);
            dialog.setWindowModality(Qt::WindowModal);
+           dialog.setFixedSize(450,300);
+
+
+           if (android.toInt() < 11)
+           {
+
            cstring = getadb() + " shell settings get secure sleep_timeout ";
            command=getadbOutput(cstring);
             command = command.simplified();
            command.replace( " ", "" );
            dialog.setcurrentsleep("Current: "+command);
+
+
+
+           }
+
+
+           else {
+
+           cstring = getadb() + " shell settings get global stay_on_while_plugged_in ";
+           command=getadbOutput(cstring);
+           // qDebug() << command;
+           command = command.simplified();
+           command.replace( " ", "" );
+           dialog.setcurrentsleep("Current: "+command);
+
+
+           }
+
+
+
 
            cstring = getadb() + " shell settings get system screen_off_timeout ";
            command=getadbOutput(cstring);
@@ -6381,6 +6408,10 @@
            dialog.setcurrentscreen("Current: "+command);
 
            dialog.setdevicelabel("Device: "+description);
+           dialog.setandroidlabel(android);
+
+
+
 
             if(dialog.exec() == QDialog::Accepted)
             {
@@ -6389,26 +6420,41 @@
 
 
 
-
-         //       return;
-
-
-
                 // settings put secure sleep_timeout 0
                 // settings put system screen_off_timeout 2147460000
 
 
-                cstring = getadb() + " shell settings put secure sleep_timeout "+sleepval;
+
+                if (android.toInt() < 11)
+                  cstring = getadb() + " shell settings put secure sleep_timeout "+sleepval;
+                else
+                  cstring = getadb() + " shell settings put global stay_on_while_plugged_in "+sleepval;
+
                 command=getadbOutput(cstring);
 
                 cstring = getadb() + " shell settings put system screen_off_timeout "+screenval;
                 command=getadbOutput(cstring);
 
+                QString sleep1;
+
+                if (android.toInt() < 11)
+                {
 
                 cstring = getadb() + " shell settings get secure sleep_timeout ";
-                QString sleep1=getadbOutput(cstring);
+                sleep1=getadbOutput(cstring);
                 sleep1 = sleep1.simplified();
                 sleep1.replace( " ", "" );
+
+                }
+                else {
+                cstring = getadb() + " shell settings get global stay_on_while_plugged_in ";
+                sleep1=getadbOutput(cstring);
+                sleep1 = sleep1.simplified();
+                sleep1.replace( " ", "" );
+
+                }
+
+
 
 
                 cstring = getadb() + " shell settings get system screen_off_timeout ";
@@ -6417,8 +6463,21 @@
                 screen1.replace( " ", "" );
 
 
+                if (android.toInt() < 11)
+                {
+                 QMessageBox::information(this,"","Values: sleep: " + sleep1 + "\n" + "screensaver: " + screen1 +"\n");
 
-                 QMessageBox::information(this,"","Timer values in milliseconds\nSleep: " + sleep1 + "\n" + "Screensaver: " + screen1 +"\n");
+                }
+
+                else
+                {
+                 if (sleep1.toInt() >0 )
+                  QMessageBox::information(this,"","Sleep off");
+                 else
+                 QMessageBox::information(this,"","Sleep on");
+
+                }
+
 
             }
 

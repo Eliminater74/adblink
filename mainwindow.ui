@@ -932,7 +932,7 @@
      <x>0</x>
      <y>0</y>
      <width>608</width>
-     <height>22</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -984,8 +984,8 @@
     </property>
     <addaction name="actionReiinstall_Busybox"/>
     <addaction name="actionPaste_path"/>
-    <addaction name="actionStop_Application"/>
     <addaction name="actionStart_Application"/>
+    <addaction name="actionStop_Application"/>
     <addaction name="actionArchitecture"/>
     <addaction name="actionSet_Kodi_permissions"/>
     <addaction name="actionGet_UID_from_APK_file"/>

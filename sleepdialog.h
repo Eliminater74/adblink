@@ -19,7 +19,7 @@ public:
     void setcurrentsleep(const QString &csleep);
     void setcurrentscreen(const QString &cscreen);
     void setdevicelabel(const QString &description);
-
+    void setandroidlabel(const QString &android);
 
     QString sleepValue();
     QString screenValue();
