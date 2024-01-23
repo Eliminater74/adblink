@@ -15,6 +15,12 @@ sleepDialog::sleepDialog(QWidget *parent) :
     ui->screenEdit->setInputMask("#9999999999");
     ui->sleepEdit->setInputMask("#9999999999");
 
+    ui->title->adjustSize();
+    ui->deviceLabel->adjustSize();
+
+    ui->title->move((450 - ui->title->size().width()) / 2, 10);
+    ui->deviceLabel->move((450 - ui->deviceLabel->size().width()) / 2, 30);
+
      //ui->screenEdit->setFocusPolicy(Qt::NoFocus);
     // ui->sleepEdit->setFocusPolicy(Qt::NoFocus);
 

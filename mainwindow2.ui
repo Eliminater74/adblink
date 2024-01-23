@@ -987,7 +987,7 @@
      <x>0</x>
      <y>0</y>
      <width>709</width>
-     <height>22</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -1042,6 +1042,7 @@
     <addaction name="actionSet_Kodi_permissions"/>
     <addaction name="actionGet_UID_from_APK_file"/>
     <addaction name="actionArchitecture"/>
+    <addaction name="actionSleep_adjust"/>
     <addaction name="actionConnect_WSA"/>
     <addaction name="View_Changelog"/>
     <addaction name="Erase_adbLink_database"/>

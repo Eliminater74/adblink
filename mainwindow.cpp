@@ -6353,6 +6353,8 @@
 
         // settings put global stay_on_while_plugged_in 1
 
+       //  settings put global ambient_experience_enabled 0
+
        // android 11  put system screen_off_timeout  2147483647
 
        if (!check_devices() )
@@ -6409,7 +6411,7 @@
            command.replace( " ", "" );
            dialog.setcurrentscreen("Current: "+command);
 
-           dialog.setdevicelabel("Device: "+description);
+           dialog.setdevicelabel(description);
            dialog.setandroidlabel(android);
 
 

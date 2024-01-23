@@ -197,25 +197,25 @@
     <string>android</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label">
+  <widget class="QLabel" name="title">
    <property name="geometry">
     <rect>
-     <x>110</x>
+     <x>100</x>
      <y>10</y>
-     <width>224</width>
+     <width>211</width>
      <height>16</height>
     </rect>
    </property>
    <property name="text">
-    <string>Sleep / Screensaver flags &amp;  timer</string>
+    <string>Sleep &amp; Screensaver</string>
    </property>
   </widget>
   <widget class="QLabel" name="deviceLabel">
    <property name="geometry">
     <rect>
-     <x>82</x>
+     <x>150</x>
      <y>36</y>
-     <width>103</width>
+     <width>81</width>
      <height>16</height>
     </rect>
    </property>
