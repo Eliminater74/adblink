@@ -15,8 +15,8 @@ sleepDialog::sleepDialog(QWidget *parent) :
     ui->screenEdit->setInputMask("#9999999999");
     ui->sleepEdit->setInputMask("#9999999999");
 
-    //   ui->sleepOff->setChecked(true);
-    //   ui->sleepOn->setChecked(false);
+     //ui->screenEdit->setFocusPolicy(Qt::NoFocus);
+    // ui->sleepEdit->setFocusPolicy(Qt::NoFocus);
 
 
 
@@ -64,14 +64,14 @@ void sleepDialog::setcurrentscreen(const QString &cscreen)
 
 
 
-    if (cscreen == "2147460000")
-    {  ui->screenOff->setChecked(true);
-        ui->screenOn->setChecked(false);
+    if (cscreen == "30000")
+    {  ui->screenOff->setChecked(false);
+        ui->screenOn->setChecked(true);
     }
     else
     {
-        ui->screenOff->setChecked(false);
-        ui->screenOn->setChecked(true);
+        ui->screenOff->setChecked(true);
+        ui->screenOn->setChecked(false);
     }
 
 
@@ -100,7 +100,7 @@ void sleepDialog::setandroidlabel(const QString &android)
     if (andos >= 11 )
       {
 
-        ui->groupBox_2->setEnabled(false);
+   //     ui->groupBox_2->setEnabled(false);
 
         if (ui->sleepEdit->text() == "1")
           {

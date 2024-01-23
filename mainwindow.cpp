@@ -6353,6 +6353,8 @@
 
         // settings put global stay_on_while_plugged_in 1
 
+       // android 11  put system screen_off_timeout  2147483647
+
        if (!check_devices() )
             return;
 
@@ -6463,20 +6465,7 @@
                 screen1.replace( " ", "" );
 
 
-                if (android.toInt() < 11)
-                {
-                 QMessageBox::information(this,"","Values: sleep: " + sleep1 + "\n" + "screensaver: " + screen1 +"\n");
-
-                }
-
-                else
-                {
-                 if (sleep1.toInt() >0 )
-                  QMessageBox::information(this,"","Sleep off");
-                 else
-                 QMessageBox::information(this,"","Sleep on");
-
-                }
+                QMessageBox::information(this,"","Sleep/Screensaver values adjusted");
 
 
             }
