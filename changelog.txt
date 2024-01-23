@@ -1,4 +1,19 @@
-11/XX/2023
+01/23/24
+
+Version 6.0
+
+Sleep off/on fixed for max4K stick and Android 11
+
+Timer dialog added to adblink2 and wsalink utility menu
+
+
+12/02/2023
+
+Version 5.9
+
+Log viewer fails with scoped storage. Fixed.
+
+11/20/2023
 
 Version 5.8
 
