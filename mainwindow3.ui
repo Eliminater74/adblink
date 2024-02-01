@@ -1218,7 +1218,7 @@
   </action>
   <action name="actionArchitecture">
    <property name="text">
-    <string>Show architecture</string>
+    <string>System information</string>
    </property>
    <property name="toolTip">
     <string>Get system architecture</string>
