@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>386</width>
-    <height>380</height>
+    <width>542</width>
+    <height>290</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -83,10 +83,36 @@
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>150</x>
+     <y>230</y>
+     <width>154</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QPushButton" name="cancelButton">
+      <property name="text">
+       <string>Cancel</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="okButton">
+      <property name="text">
+       <string>OK</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>11</x>
      <y>70</y>
-     <width>210</width>
-     <height>212</height>
+     <width>488</width>
+     <height>140</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
@@ -94,13 +120,13 @@
      <widget class="QLabel" name="label_5">
       <property name="minimumSize">
        <size>
-        <width>100</width>
+        <width>110</width>
         <height>16</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>100</width>
+        <width>110</width>
         <height>16</height>
        </size>
       </property>
@@ -111,6 +137,18 @@
     </item>
     <item row="0" column="1">
      <widget class="QComboBox" name="proximityBox">
+      <property name="minimumSize">
+       <size>
+        <width>105</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>105</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <property name="toolTip">
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'-apple-system','system-ui','Segoe UI Adjusted','Segoe UI','Liberation Sans','sans-serif'; font-size:15px; color:#0c0d0e; background-color:#ffffff;&quot;&gt;This will set whether to keep your device awake (prevent sleeping) or not while it's being charged on specific platform: USB charging, AC power, wireless charging, or all of them.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
@@ -131,17 +169,85 @@
       </item>
      </widget>
     </item>
+    <item row="0" column="2">
+     <widget class="QLabel" name="label_3">
+      <property name="minimumSize">
+       <size>
+        <width>110</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>110</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>CPU level</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="3">
+     <widget class="QComboBox" name="cpulevelBox">
+      <property name="minimumSize">
+       <size>
+        <width>105</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>105</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'-apple-system','system-ui','Segoe UI Adjusted','Segoe UI','Liberation Sans','sans-serif'; font-size:15px; color:#0c0d0e; background-color:#ffffff;&quot;&gt;This will set whether to keep your device awake (prevent sleeping) or not while it's being charged on specific platform: USB charging, AC power, wireless charging, or all of them.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <item>
+       <property name="text">
+        <string>Ignore</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>0</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>1</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>2</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>3</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>4</string>
+       </property>
+      </item>
+     </widget>
+    </item>
     <item row="1" column="0">
      <widget class="QLabel" name="label_6">
       <property name="minimumSize">
        <size>
-        <width>100</width>
+        <width>110</width>
         <height>16</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>100</width>
+        <width>110</width>
         <height>16</height>
        </size>
       </property>
@@ -152,6 +258,18 @@
     </item>
     <item row="1" column="1">
      <widget class="QComboBox" name="guardianBox">
+      <property name="minimumSize">
+       <size>
+        <width>105</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>105</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <property name="toolTip">
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'-apple-system','system-ui','Segoe UI Adjusted','Segoe UI','Liberation Sans','sans-serif'; font-size:15px; color:#0c0d0e; background-color:#ffffff;&quot;&gt;This will set whether to keep your device awake (prevent sleeping) or not while it's being charged on specific platform: USB charging, AC power, wireless charging, or all of them.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
@@ -172,17 +290,85 @@
       </item>
      </widget>
     </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="label">
+    <item row="1" column="2">
+     <widget class="QLabel" name="label_4">
       <property name="minimumSize">
        <size>
-        <width>100</width>
+        <width>110</width>
         <height>0</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>100</width>
+        <width>110</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>GPU level</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="3">
+     <widget class="QComboBox" name="gpulevelBox">
+      <property name="minimumSize">
+       <size>
+        <width>105</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>105</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'-apple-system','system-ui','Segoe UI Adjusted','Segoe UI','Liberation Sans','sans-serif'; font-size:15px; color:#0c0d0e; background-color:#ffffff;&quot;&gt;This will set whether to keep your device awake (prevent sleeping) or not while it's being charged on specific platform: USB charging, AC power, wireless charging, or all of them.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <item>
+       <property name="text">
+        <string>Ignore</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>0</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>1</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>2</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>3</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>4</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label">
+      <property name="minimumSize">
+       <size>
+        <width>110</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>110</width>
         <height>16777215</height>
        </size>
       </property>
@@ -193,6 +379,18 @@
     </item>
     <item row="2" column="1">
      <widget class="QComboBox" name="powerBox">
+      <property name="minimumSize">
+       <size>
+        <width>105</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>105</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <property name="toolTip">
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'-apple-system','system-ui','Segoe UI Adjusted','Segoe UI','Liberation Sans','sans-serif'; font-size:15px; color:#0c0d0e; background-color:#ffffff;&quot;&gt;This will set whether to keep your device awake (prevent sleeping) or not while it's being charged on specific platform: USB charging, AC power, wireless charging, or all of them.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
@@ -228,17 +426,85 @@
       </item>
      </widget>
     </item>
-    <item row="3" column="0">
-     <widget class="QLabel" name="label_2">
+    <item row="2" column="2">
+     <widget class="QLabel" name="label_8">
       <property name="minimumSize">
        <size>
         <width>100</width>
+        <height>16</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>110</width>
+        <height>16</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Foveation level</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="3">
+     <widget class="QComboBox" name="foveation2Box">
+      <property name="minimumSize">
+       <size>
+        <width>105</width>
         <height>0</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>100</width>
+        <width>105</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'-apple-system','system-ui','Segoe UI Adjusted','Segoe UI','Liberation Sans','sans-serif'; font-size:15px; color:#0c0d0e; background-color:#ffffff;&quot;&gt;This will set whether to keep your device awake (prevent sleeping) or not while it's being charged on specific platform: USB charging, AC power, wireless charging, or all of them.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <item>
+       <property name="text">
+        <string>Ignore</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>0</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>1</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>2</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>3</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>4</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="label_2">
+      <property name="minimumSize">
+       <size>
+        <width>110</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>110</width>
         <height>16777215</height>
        </size>
       </property>
@@ -249,6 +515,18 @@
     </item>
     <item row="3" column="1">
      <widget class="QComboBox" name="refreshBox">
+      <property name="minimumSize">
+       <size>
+        <width>105</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>105</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <property name="toolTip">
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'-apple-system','system-ui','Segoe UI Adjusted','Segoe UI','Liberation Sans','sans-serif'; font-size:15px; color:#0c0d0e; background-color:#ffffff;&quot;&gt;This will set whether to keep your device awake (prevent sleeping) or not while it's being charged on specific platform: USB charging, AC power, wireless charging, or all of them.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
@@ -274,27 +552,39 @@
       </item>
      </widget>
     </item>
-    <item row="4" column="0">
-     <widget class="QLabel" name="label_3">
+    <item row="3" column="2">
+     <widget class="QLabel" name="label_7">
       <property name="minimumSize">
        <size>
-        <width>100</width>
+        <width>110</width>
+        <height>16</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>110</width>
+        <height>16</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Dynamic Foveation</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="3">
+     <widget class="QComboBox" name="foveation1Box">
+      <property name="minimumSize">
+       <size>
+        <width>105</width>
         <height>0</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>100</width>
+        <width>105</width>
         <height>16777215</height>
        </size>
       </property>
-      <property name="text">
-       <string>CPU level</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="1">
-     <widget class="QComboBox" name="cpulevelBox">
       <property name="toolTip">
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'-apple-system','system-ui','Segoe UI Adjusted','Segoe UI','Liberation Sans','sans-serif'; font-size:15px; color:#0c0d0e; background-color:#ffffff;&quot;&gt;This will set whether to keep your device awake (prevent sleeping) or not while it's being charged on specific platform: USB charging, AC power, wireless charging, or all of them.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
@@ -305,111 +595,14 @@
       </item>
       <item>
        <property name="text">
-        <string>0</string>
+        <string>Enable</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>1</string>
+        <string>Disable</string>
        </property>
       </item>
-      <item>
-       <property name="text">
-        <string>2</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>3</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>4</string>
-       </property>
-      </item>
-     </widget>
-    </item>
-    <item row="5" column="0">
-     <widget class="QLabel" name="label_4">
-      <property name="minimumSize">
-       <size>
-        <width>100</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>100</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>GPU level</string>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="1">
-     <widget class="QComboBox" name="gpulevelBox">
-      <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'-apple-system','system-ui','Segoe UI Adjusted','Segoe UI','Liberation Sans','sans-serif'; font-size:15px; color:#0c0d0e; background-color:#ffffff;&quot;&gt;This will set whether to keep your device awake (prevent sleeping) or not while it's being charged on specific platform: USB charging, AC power, wireless charging, or all of them.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <item>
-       <property name="text">
-        <string>Ignore</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>0</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>1</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>2</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>3</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>4</string>
-       </property>
-      </item>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="layoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>310</y>
-     <width>154</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
-     <widget class="QPushButton" name="cancelButton">
-      <property name="text">
-       <string>Cancel</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="okButton">
-      <property name="text">
-       <string>OK</string>
-      </property>
      </widget>
     </item>
    </layout>
