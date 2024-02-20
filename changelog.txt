@@ -1,3 +1,17 @@
+02/XX/24
+
+Utility menu additions:
+
+Send text to device:
+Ssend text string to active input
+field on connected device
+
+Oculus Quest:
+Change various settings on the Oculus Quest 
+headset. Tested with Quest 2. Changes are
+not persistent, cleared by rebooting device.
+ 
+
 01/24/24
 
 Version 6.0

@@ -10,7 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 #LIBS += -lQt5Concurrent
 
-TARGET = adblink
+TARGET = wsalink
 TEMPLATE = app
 
 SOURCES += main.cpp\
@@ -24,7 +24,6 @@ SOURCES += main.cpp\
     about.cpp \
     helpdialog.cpp \
     scpdialog.cpp \
-    setpdialog.cpp \
     uninstalldialog.cpp \
     preferencesdialog.cpp \
     usbfiledialog.cpp \
@@ -46,7 +45,10 @@ SOURCES += main.cpp\
     pushfiledialog.cpp \
     adbprefdialog.cpp \
     downloaddialog.cpp \
-    sleepdialog.cpp
+    setpdialog.cpp \
+    sleepdialog.cpp \
+    oculusdialog.cpp 
+
 
 
 RESOURCES = adbLink.qrc
@@ -61,7 +63,6 @@ HEADERS  += mainwindow.h \
     helpdialog.h \
     logfile.h \
     scpdialog.h \
-    setpdialog.h \
     uninstalldialog.h \
     preferencesdialog.h \
     usbfiledialog.h \
@@ -85,7 +86,11 @@ HEADERS  += mainwindow.h \
     downloaddialog.h \
     sleepdialog.h \
     version.h \
-    detachableprocess.h 
+    setpdialog.h \
+    detachableprocess.h \
+    oculusdialog.h 
+ 
+
 
 FORMS    += mainwindow.ui \
     about.ui \
@@ -93,11 +98,10 @@ FORMS    += mainwindow.ui \
     dragdialog.ui \
     helpdialog.ui \
     scpdialog.ui \
-    setpdialog.ui \
     uninstalldialog.ui \
-    preferencesdialog.ui \
     preferencesdialog1.ui \
     preferencesdialog2.ui \
+    preferencesdialog.ui \
     usbfiledialog.ui \
     adblogdialog.ui \
     kodidialog.ui \
@@ -120,7 +124,9 @@ FORMS    += mainwindow.ui \
     mainwindow1.ui \
     mainwindow2.ui \
     mainwindow3.ui \
-    sleepdialog.ui
+    setpdialog.ui \
+    sleepdialog.ui\
+    oculusdialog.ui
 
 
 QMAKE_CXXFLAGS += -Wno-deprecated
@@ -133,15 +139,14 @@ RC_FILE = adblink.rc
 
 # QMAKE_MAC_SDK = macosx12.3
 
-#QMAKE_MAC_SDK = macosx15.0.1
+# QMAKE_MAC_SDK = macosx13.0
 
 linux {
 QMAKE_LFLAGS += -no-pie
 }
 
-CONFIG+=sdk_no_version_check
-
-
 QMAKE_CXXFLAGS += -Wno-deprecated-declarations
+
+CONFIG+=sdk_no_version_check
 
 OTHER_FILES +=

@@ -23,14 +23,13 @@
     #include "oslogdialog.h"
     #include "adbprefdialog.h"
     #include "sleepdialog.h"
+    #include "oculusdialog.h"
     #include "scpdialog.h"
     #include "version.h"
     #include "program.h"
     #include "getadbdata.h"
     #include "logfile.h"
     #include "setpdialog.h"
-    #include <QDebug>
-
 
     #ifdef __WIN32__
       #include "windows.h"
@@ -80,6 +79,8 @@
     #include <QFileInfo>
     #include<QClipboard>
     #include <QShortcut>
+    #include <QDebug>
+    #include <QRegularExpression>
 
 
     #ifdef Q_OS_LINUX
@@ -5470,6 +5471,7 @@
        QString tcpstatus = getadb() +   " shell getprop persist.adb.tcp.port 5555";
            QString command=getadbOutput(tcpstatus);
 
+           logfile(command);
 
            if (command.contains("5555"))
              dialog.settcplabel("ADB/WIFI is enabled");
@@ -8956,6 +8958,433 @@ void MainWindow::on_actionGet_UID_from_APK_file_triggered()
             }
 
  }
+
+
+
+
+}
+
+
+void MainWindow::on_actionSend_text_triggered()
+{
+
+ if (!check_devices() )
+            return;
+
+
+ QString command;
+ QString cstring;
+
+ bool ok;
+ QString text = QInputDialog::getText(this, tr("Text to Device"),
+                                      tr("Send text:"), QLineEdit::Normal,
+                                      QString(), &ok);
+ if (ok && !text.isEmpty()) {
+
+            text.replace(" ", "%s");
+            cstring = getadb() + " shell input text " + text;
+            command=getadbOutput(cstring);
+            logfile(cstring);
+            logfile(command);
+ }
+
+ return;
+
+}
+
+
+
+
+
+void MainWindow::on_actionOculus_VR_triggered()
+{
+
+
+ /*
+
+
+adb shell 'dumpsys OVRRemoteService | grep Battery' // controllers
+adb shell 'dumpsys CompanionService | grep Battery' // headset
+
+
+adb shell setprop debug.oculus.guardian_pause 0  // disable
+adb shell setprop debug.oculus.guardian_pause 1 //  enable
+
+adb shell settings put system screen_off_timeout 7200000
+// default 86400000
+adb shell svc power stayon true
+
+ // svc power stayon [true|false|usb|ac|wireless]
+
+Turn off sensor:
+shell am broadcast -a com.oculus.vrpowermanager.prox_close
+
+Turn on sensor:
+shell
+am broadcast -a com.oculus.vrpowermanager.automation_disable
+
+
+adb shell setprop debug.oculus.refreshrate NNN
+
+Quest 2 supports 60, 72, 80, 90 and 120)
+
+adb shell setprop debug.oculus.gpuLevel 2
+adb shell setprop debug.oculus.cpuLevel 2
+
+
+
+
+
+
+command to turn on full rate capture for Quest 2:
+
+adb shell setprop debug.oculus.fullRateCapture 1
+
+
+
+
+// Disable dynamic FFR
+adb shell setprop debug.oculus.foveation.dynamic 0
+
+// Set FFR Level between 0 - 4 (Higher = Better Performance)
+adb shell setprop debug.oculus.foveation.level 4
+
+
+
+480 (852×480 pixels)
+720 (1280×720 pixels
+1080 (1920×1080 pixels)
+
+adb shell setprop debug.oculus.capture.width [value]
+adb shell setprop debug.oculus.capture.height [value]
+
+
+
+
+command to disable chromatic aberration (correction):
+
+//0 for disabling, 1 for enabling (default)
+adb shell setprop debug.oculus.forceChroma 0
+
+
+
+
+*/
+
+ if (!check_devices() )
+            return;
+
+ QString cstring;
+ QString command;
+ QString android = QString::number(getandroid());
+ QString battery1;
+ QString battery2;
+ QString b1;
+ QString b2;
+
+ bool notQuest=false;
+
+ //  dialog.setdownloaddir(getdownloadpath());
+
+ //    dialog.setversionLabel(version);
+
+ //   qDebug() << android;
+
+ oculusDialog dialog(this);
+ dialog.setWindowModality(Qt::WindowModal);
+// dialog.setFixedSize(450,300);
+
+
+ cstring = getadb() + " shell dumpsys CompanionService | grep Battery";
+ QString temp=getadbOutput(cstring);
+
+ if (temp.contains("Can't find service: CompanionService"))
+ {
+
+
+
+            QMessageBox::StandardButton reply;
+            reply = QMessageBox::question(this, "Quest", "Not a Quest device. Proceed?"  ,
+                                          QMessageBox::Yes|QMessageBox::No);
+            if (reply == QMessageBox::No)
+            {
+
+              return;
+            }
+
+
+            else {
+
+              notQuest=true;
+
+            }
+
+
+
+ }
+
+
+ int colonPos = temp.indexOf(":");
+
+
+ if (colonPos != -1) {
+           b1 = temp.mid(colonPos + 2).trimmed();
+
+ } else {
+            b1="";
+ }
+
+
+
+ // qDebug() << b1;
+
+
+ cstring = getadb() + " shell dumpsys OVRRemoteService | grep Battery";
+ battery2=getadbOutput(cstring);
+
+ static QRegularExpression pattern("Battery:\\s*(\\d+)%");
+
+ // Create a regular expression match iterator
+ QRegularExpressionMatchIterator iterator = pattern.globalMatch(battery2);
+
+ // Store results in QStrings
+ QString rightBattery, leftBattery;
+
+ // Iterate over matches
+ int matchCount = 0;
+ while (iterator.hasNext() && matchCount < 2) {
+            QRegularExpressionMatch match = iterator.next();
+            QString batteryPercentage = match.captured(1);
+
+            // Store in respective QStrings
+            if (matchCount == 0) {
+              rightBattery = batteryPercentage;
+            } else {
+              leftBattery = batteryPercentage;
+            }
+
+            matchCount++;
+ }
+
+
+ b1 = "Headset:"+b1+ "%  "+"Controllers: L "+leftBattery+"%"+" R "+rightBattery+"%";
+
+
+ // qDebug() << b1;
+
+ if (!notQuest)
+ {
+    dialog.setbattery1label("Batteries: "+b1);
+
+ }
+
+ else
+ {
+    dialog.setbattery1label("Battery levels not found");
+
+
+ }
+
+
+/*
+            cstring = getadb() + " shell getprop debug.oculus.guardian_pause";
+            command=getadbOutput(cstring);
+
+
+
+            command = command.simplified();
+            command.replace( " ", "" );
+
+
+            if (command.isEmpty()) {
+            command = "1";
+            }
+
+            dialog.setcurrentguardian("Current: "+command);
+
+
+
+
+
+ cstring = getadb() + " shell settings get system screen_off_timeout ";
+ command=getadbOutput(cstring);
+ command = command.simplified();
+ command.replace( " ", "" );
+ dialog.setcurrentscreen("Current: "+command);
+
+*/
+
+
+
+ if(dialog.exec() == QDialog::Accepted)
+ {
+
+    bool execute_true=false;
+
+            switch(dialog.refreshSelected()) {
+            case 0:
+              break;
+            case 1:
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.refreshrate 72";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+            case 2:
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.refreshrate 90";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+            case 3:
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.refreshrate 120";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+
+            default:
+              break;
+            }
+
+
+
+            switch(dialog.proximitySelected()) {
+            case 0:
+              break;
+            case 1:
+              execute_true=true;
+              cstring = getadb() + " shell am broadcast -a com.oculus.vrpowermanager.prox_close";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+            case 2:
+              execute_true=true;
+              cstring = getadb() + " shell am broadcast -a com.oculus.vrpowermanager.automation_disable";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+            default:
+              break;
+            }
+
+            switch(dialog.guardianSelected()) {
+            case 0:
+              break;
+            case 1:
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.guardian_pause 0";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+            case 2:
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.guardian_pause 1";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+            default:
+              break;
+            }
+
+
+
+
+            switch(dialog.powerSelected()) {
+            case 0:
+              break;
+            case 1:
+              execute_true=true;
+              cstring = getadb() + " shell svc power stayon false";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+            case 2:
+              execute_true=true;
+              cstring = getadb() + " shell svc power stayon true";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+            case 3:
+              execute_true=true;
+              cstring = getadb() + " shell svc power stayon usb";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+            case 4:
+              execute_true=true;
+              cstring = getadb() + " shell svc power stayon ac";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+            case 5:
+              execute_true=true;
+              cstring = getadb() + " shell svc power stayon wireless";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+            default:
+              break;
+            }
+
+
+            switch(dialog.cpuSelected()) {
+            case 0:
+              break;
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+                execute_true=true;
+                cstring = getadb() + " shell setprop debug.oculus.cpuLevel "+ QString::number(dialog.cpuSelected()-1);
+                command=getadbOutput(cstring);
+                logfile(cstring);
+                logfile(command);
+              break;
+            default:
+              break;
+            }
+
+
+            switch(dialog.gpuSelected()) {
+            case 0:
+              break;
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.gpuLevel "+ QString::number(dialog.gpuSelected()-1);
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+            default:
+              break;
+            }
+
+            if (execute_true)
+            {
+              QMessageBox::information(this,"","Values adjusted");
+            }
+
+
+ }
+
 
 
 

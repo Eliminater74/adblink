@@ -378,6 +378,10 @@ private slots:
 
   void on_actionGet_UID_from_APK_file_triggered();
 
+  void on_actionOculus_VR_triggered();
+
+  void on_actionSend_text_triggered();
+
   private:
     Ui::MainWindow *ui;
 

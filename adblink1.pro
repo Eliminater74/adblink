@@ -46,7 +46,8 @@ SOURCES += main.cpp\
     pushfiledialog.cpp \
     adbprefdialog.cpp \
     downloaddialog.cpp \
-    sleepdialog.cpp
+    sleepdialog.cpp \
+    oculusdialog.cpp
 
 
 RESOURCES = adbLink.qrc
@@ -84,6 +85,7 @@ HEADERS  += mainwindow.h \
     adbprefdialog.h \
     downloaddialog.h \
     sleepdialog.h \
+    oculusdialog.h \
     version.h \
     detachableprocess.h 
 
@@ -120,8 +122,8 @@ FORMS    += mainwindow.ui \
     mainwindow1.ui \
     mainwindow2.ui \
     mainwindow3.ui \
+    oculusdialog.ui \
     sleepdialog.ui
-
 
 QMAKE_CXXFLAGS += -Wno-deprecated
 

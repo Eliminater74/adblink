@@ -1042,6 +1042,8 @@
     <addaction name="actionSet_Kodi_permissions"/>
     <addaction name="actionGet_UID_from_APK_file"/>
     <addaction name="actionArchitecture"/>
+    <addaction name="actionOculus_VR"/>
+    <addaction name="actionSend_text"/>
     <addaction name="actionSleep_adjust"/>
     <addaction name="actionConnect_WSA"/>
     <addaction name="View_Changelog"/>
@@ -1277,6 +1279,22 @@
   <action name="actionGet_UID_from_APK_file">
    <property name="text">
     <string>Get package name</string>
+   </property>
+  </action>
+  <action name="actionOculus_VR">
+   <property name="text">
+    <string>Oculus Quest</string>
+   </property>
+   <property name="toolTip">
+    <string>Oculus Quest values and flags</string>
+   </property>
+  </action>
+  <action name="actionSend_text">
+   <property name="text">
+    <string>Send text to device</string>
+   </property>
+   <property name="toolTip">
+    <string>Send text to Android device</string>
    </property>
   </action>
  </widget>
