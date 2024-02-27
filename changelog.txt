@@ -3,14 +3,17 @@
 Utility menu additions:
 
 Send text to device:
-Ssend text string to active input
-field on connected device
+Send text string to active input field on connected device
 
 Oculus Quest:
-Change various settings on the Oculus Quest 
-headset. Tested with Quest 2. Changes are
-not persistent, cleared by rebooting device.
+Change various settings on the Oculus Quest headset.
+Tested with Quest 2/3. Changes are not persistent, 
+and can be cleared by rebooting the device.
  
+start/stop program intent, investigate?
+
+
+
 
 01/24/24
 

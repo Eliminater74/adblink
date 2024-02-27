@@ -9066,7 +9066,7 @@ command to disable chromatic aberration (correction):
 //0 for disabling, 1 for enabling (default)
 adb shell setprop debug.oculus.forceChroma 0
 
-
+adb shell setprop debug.oculus.fullRateCapture 1
 
 
 */
@@ -9081,8 +9081,26 @@ adb shell setprop debug.oculus.forceChroma 0
  QString battery2;
  QString b1;
  QString b2;
+ bool questexists;
 
  bool notQuest=false;
+
+
+ int power;
+ int proximity;
+ int guardian;
+ int cpu;
+ int gpu;
+ int refresh;
+ int texture;
+ int recording;
+ int fovlevel;
+ int dynamicfov;
+ int ratecap;
+ int chromatic;
+ QString customwidth;
+ QString customheight;
+
 
  //  dialog.setdownloaddir(getdownloadpath());
 
@@ -9094,6 +9112,8 @@ adb shell setprop debug.oculus.forceChroma 0
  dialog.setWindowModality(Qt::WindowModal);
 // dialog.setFixedSize(450,300);
 
+
+ //enteredText=dialog.getEnteredText();
 
  cstring = getadb() + " shell dumpsys CompanionService | grep Battery";
  QString temp=getadbOutput(cstring);
@@ -9122,6 +9142,134 @@ adb shell setprop debug.oculus.forceChroma 0
 
 
  }
+
+
+// quest json
+
+
+
+ if (QFileInfo::exists(databasedir+"/quest.json"))
+            questexists = true;
+ else
+            questexists = false;
+
+ if (!questexists)
+ {
+
+
+
+            QJsonObject obj;
+
+
+            obj["power"] = 0;
+            obj["proximity"] = 0;
+            obj["guardian"] = 0;
+            obj["cpu"] = 0;
+            obj["gpu"] = 0;
+            obj["refresh"] = 0;
+
+
+            obj["texture"] = 0;
+
+            obj["recording"] = 0;
+            obj["fovlevel"] = 0;
+            obj["dynamicfov"] = 0;
+            obj["ratecap"] = 0;
+            obj["chromatic"] = 0;
+
+
+            obj["customheight"] = "";
+            obj["customwidth"] = "";
+
+            QJsonDocument doc(obj);
+
+            QFile file(databasedir+"quest.json");
+            file.open(QIODevice::WriteOnly);
+            file.write(doc.toJson());
+            file.close();
+
+
+
+
+ }
+
+
+
+            QJsonObject obj;
+            QJsonDocument doc(obj);
+            QFile file(databasedir+"quest.json");
+            file.open(QIODevice::ReadOnly);
+            doc = QJsonDocument::fromJson(file.readAll());
+            obj = doc.object();
+
+
+            power = obj["power"].toInt();
+            proximity = obj["proximity"].toInt();
+            guardian = obj["guardian"].toInt();
+            cpu = obj["cpu"].toInt();
+            gpu = obj["gpu"].toInt();
+            refresh = obj["refresh"].toInt();
+
+
+            texture = obj["texture"].toInt();
+
+            recording = obj["recording"].toInt();
+            fovlevel = obj["fovlevel"].toInt();
+            dynamicfov = obj["dynamicfov"].toInt();
+            ratecap = obj["ratecap"].toInt();
+            chromatic = obj["chromatic"].toInt();
+            customheight = obj["customheight"].toString();
+            customwidth=obj["customwidth"].toString();
+
+
+
+
+            file.close();
+
+
+  //          qDebug() << customwidth;
+  //          qDebug() << customheight;
+
+
+// end
+
+/*
+            qDebug() <<    power ;
+             qDebug() << proximity;
+            qDebug() <<  guardian ;
+            qDebug() <<  cpu;
+             qDebug() << gpu;
+             qDebug() << refresh;
+
+
+            qDebug() <<  texture;
+            qDebug() <<  recording;
+            qDebug() <<  fovlevel ;
+             qDebug() << dynamicfov;
+             qDebug() << ratecap ;
+             qDebug() << chromatic;
+
+--crop 1600:900:2017:510 -m 1600 -b 25M -d
+
+*/
+
+     dialog.powerSet(power);
+     dialog.proximitySet(proximity);
+     dialog.guardianSet(guardian);
+     dialog.cpuSet(cpu);
+     dialog.gpuSet(gpu);
+     dialog.refreshSet(refresh);
+
+     dialog.textureSet(texture);
+
+
+     dialog.recordingSet(recording);
+     dialog.fovlevelSet(fovlevel);
+     dialog.dynamicfovSet(dynamicfov);
+     dialog.ratecapSet(ratecap);
+     dialog.chromaticSet(chromatic);
+     dialog.cwidthSet(customwidth);
+     dialog.cheightSet(customheight);
 
 
  int colonPos = temp.indexOf(":");
@@ -9170,6 +9318,8 @@ adb shell setprop debug.oculus.forceChroma 0
  b1 = "Headset:"+b1+ "%  "+"Controllers: L "+leftBattery+"%"+" R "+rightBattery+"%";
 
 
+
+
  // qDebug() << b1;
 
  if (!notQuest)
@@ -9186,40 +9336,161 @@ adb shell setprop debug.oculus.forceChroma 0
  }
 
 
-/*
-            cstring = getadb() + " shell getprop debug.oculus.guardian_pause";
-            command=getadbOutput(cstring);
-
-
-
-            command = command.simplified();
-            command.replace( " ", "" );
-
-
-            if (command.isEmpty()) {
-            command = "1";
-            }
-
-            dialog.setcurrentguardian("Current: "+command);
-
-
-
-
-
- cstring = getadb() + " shell settings get system screen_off_timeout ";
- command=getadbOutput(cstring);
- command = command.simplified();
- command.replace( " ", "" );
- dialog.setcurrentscreen("Current: "+command);
-
-*/
-
-
+    bool execute_true=false;
 
  if(dialog.exec() == QDialog::Accepted)
  {
 
-    bool execute_true=false;
+
+
+
+
+    if (dialog.clickedButton==0) {
+
+              bool validInt;
+
+
+              if (dialog.cheightSelected().toInt(&validInt) && dialog.cwidthSelected().toInt(&validInt))
+              {
+                execute_true=true;
+                cstring = getadb() + " shell setprop debug.oculus.capture.textureWidth "+dialog.cwidthSelected();
+                command=getadbOutput(cstring);
+                logfile(cstring);
+                logfile(command);
+                cstring = getadb() + " shell setprop debug.oculus.capture.textureHeight "+dialog.cheightSelected();
+                command=getadbOutput(cstring);
+                logfile(cstring);
+                logfile(command);
+              }
+
+
+
+
+              else {
+
+
+
+           switch(dialog.textureSelected()) {
+              case 0:
+                 break;
+              case 1:
+                 execute_true=true;
+                 cstring = getadb() + " shell setprop debug.oculus.capture.textureWidth 1536";
+                 command=getadbOutput(cstring);
+                 logfile(cstring);
+                 logfile(command);
+                 cstring = getadb() + " shell setprop debug.oculus.capture.textureHeight 1690";
+                 command=getadbOutput(cstring);
+                 logfile(cstring);
+                 logfile(command);
+                 break;
+              case 2:
+                 execute_true=true;
+                 cstring = getadb() + " shell setprop debug.oculus.capture.textureWidth 1440";
+                 command=getadbOutput(cstring);
+                 logfile(cstring);
+                 logfile(command);
+                 cstring = getadb() + " shell setprop debug.oculus.capture.textureHeight 1584";
+                 command=getadbOutput(cstring);
+                 logfile(cstring);
+                 logfile(command);
+                 break;
+              default:
+                 break;
+              }
+         }
+
+
+
+
+
+              switch(dialog.proximitySelected()) {
+              case 0:
+              break;
+              case 1:
+              execute_true=true;
+              cstring = getadb() + " shell am broadcast -a com.oculus.vrpowermanager.prox_close";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+              case 2:
+              execute_true=true;
+              cstring = getadb() + " shell am broadcast -a com.oculus.vrpowermanager.automation_disable";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+              default:
+              break;
+              }
+
+              switch(dialog.guardianSelected()) {
+              case 0:
+              break;
+              case 1:
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.guardian_pause 0";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+              case 2:
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.guardian_pause 1";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+              default:
+              break;
+              }
+
+
+              switch(dialog.powerSelected()) {
+              case 0:
+              break;
+              case 1:
+              execute_true=true;
+              cstring = getadb() + " shell svc power stayon false";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+              case 2:
+              execute_true=true;
+              cstring = getadb() + " shell svc power stayon true";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+              case 3:
+              execute_true=true;
+              cstring = getadb() + " shell svc power stayon usb";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+              case 4:
+              execute_true=true;
+              cstring = getadb() + " shell svc power stayon ac";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+              case 5:
+              execute_true=true;
+              cstring = getadb() + " shell svc power stayon wireless";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+              default:
+              break;
+              }
+
+
+
 
             switch(dialog.refreshSelected()) {
             case 0:
@@ -9252,92 +9523,8 @@ adb shell setprop debug.oculus.forceChroma 0
 
 
 
-            switch(dialog.proximitySelected()) {
-            case 0:
-              break;
-            case 1:
-              execute_true=true;
-              cstring = getadb() + " shell am broadcast -a com.oculus.vrpowermanager.prox_close";
-              command=getadbOutput(cstring);
-              logfile(cstring);
-              logfile(command);
-              break;
-            case 2:
-              execute_true=true;
-              cstring = getadb() + " shell am broadcast -a com.oculus.vrpowermanager.automation_disable";
-              command=getadbOutput(cstring);
-              logfile(cstring);
-              logfile(command);
-              break;
-            default:
-              break;
-            }
-
-            switch(dialog.guardianSelected()) {
-            case 0:
-              break;
-            case 1:
-              execute_true=true;
-              cstring = getadb() + " shell setprop debug.oculus.guardian_pause 0";
-              command=getadbOutput(cstring);
-              logfile(cstring);
-              logfile(command);
-              break;
-            case 2:
-              execute_true=true;
-              cstring = getadb() + " shell setprop debug.oculus.guardian_pause 1";
-              command=getadbOutput(cstring);
-              logfile(cstring);
-              logfile(command);
-              break;
-            default:
-              break;
-            }
 
 
-
-
-            switch(dialog.powerSelected()) {
-            case 0:
-              break;
-            case 1:
-              execute_true=true;
-              cstring = getadb() + " shell svc power stayon false";
-              command=getadbOutput(cstring);
-              logfile(cstring);
-              logfile(command);
-              break;
-            case 2:
-              execute_true=true;
-              cstring = getadb() + " shell svc power stayon true";
-              command=getadbOutput(cstring);
-              logfile(cstring);
-              logfile(command);
-              break;
-            case 3:
-              execute_true=true;
-              cstring = getadb() + " shell svc power stayon usb";
-              command=getadbOutput(cstring);
-              logfile(cstring);
-              logfile(command);
-              break;
-            case 4:
-              execute_true=true;
-              cstring = getadb() + " shell svc power stayon ac";
-              command=getadbOutput(cstring);
-              logfile(cstring);
-              logfile(command);
-              break;
-            case 5:
-              execute_true=true;
-              cstring = getadb() + " shell svc power stayon wireless";
-              command=getadbOutput(cstring);
-              logfile(cstring);
-              logfile(command);
-              break;
-            default:
-              break;
-            }
 
 
             switch(dialog.cpuSelected()) {
@@ -9377,10 +9564,239 @@ adb shell setprop debug.oculus.forceChroma 0
               break;
             }
 
-            if (execute_true)
-            {
-              QMessageBox::information(this,"","Values adjusted");
+
+
+
+            switch(dialog.chromaticSelected()) {
+            case 0:
+              break;
+            case 1:
+              execute_true=true;
+
+              cstring = getadb() + " shell setprop debug.oculus.forceChroma 0";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+            case 2:
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.forceChroma 1";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+
+            default:
+              break;
             }
+
+
+
+            switch(dialog.ratecapSelected()) {
+            case 0:
+              break;
+            case 1:
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.fullRateCapture 1";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+            case 2:
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.fullRateCapture 0";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+
+            default:
+              break;
+            }
+
+
+
+            switch(dialog.dynamicfovSelected()) {
+            case 0:
+              break;
+            case 1:
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.foveation.dynamic 1";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+            case 2:
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.foveation.dynamic 0";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+
+            default:
+              break;
+            }
+
+
+
+            switch(dialog.fovlevelSelected()) {
+            case 0:
+              break;
+            case 1:
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.foveation.level 0";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+            case 2:
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.foveation.level 1";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+            case 3:
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.foveation.level 2";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+            case 4:
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.foveation.level 3";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+            case 5:
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.foveation.level 4";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+            default:
+              break;
+            }
+
+
+
+            switch(dialog.recordingSelected()) {
+            case 0:
+              break;
+            case 1:
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.capture.width 852";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              cstring = getadb() + " shell setprop debug.oculus.capture.height 480";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+
+            case 2:
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.capture.width 1280";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              cstring = getadb() + " shell setprop debug.oculus.capture.height 720";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+
+            case 3:
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.capture.width 1920";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              cstring = getadb() + " shell setprop debug.oculus.capture.height 1280";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+
+
+            case 4:
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.capture.width 1024";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              cstring = getadb() + " shell setprop debug.oculus.capture.height 1024";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+
+            default:
+              break;
+
+
+            }
+
+
+
+            if (execute_true)
+               QMessageBox::information(this,"","Values adjusted");
+
+    }
+
+
+           if (dialog.clickedButton==0 || dialog.clickedButton==1)
+
+           {
+              texture=dialog.textureSelected();
+              recording=dialog.recordingSelected();
+              fovlevel=dialog.fovlevelSelected();
+              dynamicfov=dialog.dynamicfovSelected();
+              ratecap=dialog.ratecapSelected();
+              chromatic=dialog.chromaticSelected();
+              proximity=dialog.proximitySelected();
+              guardian=dialog.guardianSelected();
+              power=dialog.powerSelected();
+              cpu=dialog.cpuSelected();
+              gpu=dialog.gpuSelected();
+              refresh=dialog.refreshSelected();
+              customwidth=dialog.cwidthSelected();
+              customheight=dialog.cheightSelected();
+
+
+              QJsonObject obj;
+
+
+              obj["power"] = power;
+              obj["proximity"] = proximity;
+              obj["guardian"] = guardian;
+              obj["cpu"] = cpu;
+              obj["gpu"] = gpu;
+              obj["customwidth"] = customwidth;
+              obj["customheight"] = customheight;
+              obj["refresh"] = refresh;
+              obj["texture"] = texture;
+              obj["recording"] = recording;
+              obj["fovlevel"] = fovlevel;
+              obj["dynamicfov"] = dynamicfov;
+              obj["ratecap"] = ratecap;
+              obj["chromatic"] = chromatic;
+
+
+              QJsonDocument doc(obj);
+
+              QFile file(databasedir+"quest.json");
+              file.open(QIODevice::WriteOnly);
+              file.write(doc.toJson());
+              file.close();
+
+           }
+
 
 
  }
@@ -9390,4 +9806,7 @@ adb shell setprop debug.oculus.forceChroma 0
 
 
 }
+
+
+
 

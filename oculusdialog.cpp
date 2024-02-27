@@ -1,6 +1,7 @@
 #include "oculusdialog.h"
 #include "ui_oculusdialog.h"
 #include <QDebug>
+#include <QLineEdit>
 
 int xandos;
 bool guardian;
@@ -15,8 +16,14 @@ oculusDialog::oculusDialog(QWidget *parent) :
 
     this->setWindowTitle("Quest Settings");
 
-   // ui->screenEdit->setInputMask("#9999999999");
-   // ui->guardianEdit->setInputMask("#9999999999");
+connect(ui->okButton, &QPushButton::clicked, this, &oculusDialog::on_okButton_clicked);
+connect(ui->saveButton, &QPushButton::clicked, this, &oculusDialog::on_saveButton_clicked);
+connect(ui->cancelButton, &QPushButton::clicked, this, &oculusDialog::on_cancelButton_clicked);
+
+
+//qDebug() << "textureBox type:" << typeid(ui->textureBox).name();
+//qDebug() << "lineEdit type:" << typeid(ui->textureBox->lineEdit()).name();
+
 
 
 }
@@ -27,6 +34,114 @@ oculusDialog::~oculusDialog()
 }
 
 
+
+void oculusDialog::cwidthSet(QString cwidth) {
+   ui->customWidth->setText(cwidth);
+}
+
+
+void oculusDialog::cheightSet(QString cheight) {
+   ui->customHeight->setText(cheight);
+}
+
+
+
+void oculusDialog::chromaticSet(int index) {
+    ui->chromaticBox->setCurrentIndex(index);
+}
+
+
+
+void oculusDialog::ratecapSet(int index) {
+    ui->ratecaptureBox->setCurrentIndex(index);
+}
+
+
+void oculusDialog::dynamicfovSet(int index) {
+    ui->foveation2Box->setCurrentIndex(index);
+}
+
+void oculusDialog::fovlevelSet(int index) {
+    ui->foveation1Box->setCurrentIndex(index);
+}
+
+
+void oculusDialog::powerSet(int index) {
+    ui->powerBox->setCurrentIndex(index);
+}
+
+
+
+void oculusDialog::proximitySet(int index) {
+    ui->proximityBox->setCurrentIndex(index);
+}
+
+
+
+void oculusDialog::guardianSet(int index) {
+    ui->guardianBox->setCurrentIndex(index);
+}
+
+
+
+void oculusDialog::cpuSet(int index) {
+    ui->cpulevelBox->setCurrentIndex(index);
+}
+
+
+
+void oculusDialog::gpuSet(int index) {
+    ui->gpulevelBox->setCurrentIndex(index);
+}
+
+
+
+void oculusDialog::refreshSet(int index) {
+    ui->refreshBox->setCurrentIndex(index);
+}
+
+
+
+void oculusDialog::textureSet(int index) {
+    ui->textureBox->setCurrentIndex(index);
+}
+
+
+
+
+void oculusDialog::recordingSet(int index) {
+    ui->resolutionBox->setCurrentIndex(index);
+}
+
+
+
+
+
+
+int  oculusDialog::textureSelected() const {
+    return ui->textureBox->currentIndex();
+}
+
+int  oculusDialog::recordingSelected()  const {
+   return ui->resolutionBox->currentIndex();
+}
+
+int  oculusDialog::fovlevelSelected()  const {
+    return ui->foveation1Box->currentIndex();
+}
+
+int  oculusDialog::dynamicfovSelected() const {
+    return ui->foveation2Box->currentIndex();
+}
+
+int  oculusDialog::ratecapSelected() const {
+    return ui->ratecaptureBox->currentIndex();
+
+}
+
+int  oculusDialog::chromaticSelected() const {
+    return ui->chromaticBox->currentIndex();
+}
 
 
 
@@ -65,6 +180,15 @@ int oculusDialog::refreshSelected() const {
 }
 
 
+QString oculusDialog::cheightSelected() const {
+    return ui->customHeight->text();
+}
+
+
+
+QString oculusDialog::cwidthSelected() const {
+    return ui->customWidth->text();
+}
 
 
 
@@ -73,80 +197,40 @@ void oculusDialog::setbattery1label(const QString &b1)
     ui->battery1Label->setText(b1);
 }
 
-
 /*
-
-void oculusDialog::on_guardianOff_clicked()
-{
-
- //           ui->guardianOff->setChecked(true);
- //           ui->guardianOn->setChecked(true);
-            guardian=false;
-
-
-
-
 }
 
-void oculusDialog::on_guardianOn_clicked()
+void YourDialogClass::onSaveButtonClicked()
 {
+    clickedButton = QDialog::CustomButton1;  // Set to a unique value for Save
+    accept();
+}
+ */
 
-  //          ui->guardianOff->setChecked(false);
-//            ui->guardianOn->setChecked(true);
-            guardian=true;
 
+
+void oculusDialog::on_cancelButton_clicked()
+{
+    clickedButton=2;
+    reject();
 }
 
 
-
-
-void oculusDialog::on_screenOff_clicked()
+void oculusDialog::on_saveButton_clicked()
 {
 
-
- //   ui->screenOff->setChecked(true);
- //   ui->screenOn->setChecked(false);
-    screentimer=false;
-
-
-}
-
-void oculusDialog::on_screenOn_clicked()
-{
-
- //   ui->screenOff->setChecked(false);
- //   ui->screenOn->setChecked(true);
-    screentimer=true;
-
+    //qDebug() << ui->textureBox->lineEdit()->text();
+    clickedButton=1;
+    accept();
 }
 
 
-void oculusDialog::on_proximityOff_clicked()
+void oculusDialog::on_okButton_clicked()
 {
 
- //   ui->proximityOff->setChecked(true);
- //   ui->proximityOn->setChecked(false);
-    proximity=false;
+    //qDebug() << ui->textureBox->lineEdit()->text();
 
+     clickedButton=0;
+    accept();
 }
 
-
-void oculusDialog::on_proximityOn_clicked()
-{
-
-  //  ui->proximityOff->setChecked(false);
-   // ui->proximityOn->setChecked(true);
-    proximity=true;
-
-}
-
-
-void oculusDialog::on_defaultButton_clicked()
-{
-    
-    ui->proximityBox2->setChecked(false);
-    ui->guardianBox2->setChecked(false);
-
-}
-
-*/

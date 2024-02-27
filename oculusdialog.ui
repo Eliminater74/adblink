@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>542</width>
-    <height>290</height>
+    <width>591</width>
+    <height>424</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -54,38 +54,12 @@
     <string>battery1</string>
    </property>
   </widget>
-  <widget class="QCheckBox" name="proximityBox2">
-   <property name="geometry">
-    <rect>
-     <x>55</x>
-     <y>430</y>
-     <width>144</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Proximity sensor off</string>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="guardianBox2">
-   <property name="geometry">
-    <rect>
-     <x>200</x>
-     <y>430</y>
-     <width>99</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Guardian off</string>
-   </property>
-  </widget>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>150</x>
-     <y>230</y>
-     <width>154</width>
+     <y>350</y>
+     <width>228</width>
      <height>32</height>
     </rect>
    </property>
@@ -94,6 +68,19 @@
      <widget class="QPushButton" name="cancelButton">
       <property name="text">
        <string>Cancel</string>
+      </property>
+      <property name="autoDefault">
+       <bool>false</bool>
+      </property>
+      <property name="default">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="saveButton">
+      <property name="text">
+       <string>Save</string>
       </property>
      </widget>
     </item>
@@ -109,10 +96,10 @@
   <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
-     <x>11</x>
+     <x>42</x>
      <y>70</y>
-     <width>488</width>
-     <height>140</height>
+     <width>496</width>
+     <height>248</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
@@ -120,13 +107,13 @@
      <widget class="QLabel" name="label_5">
       <property name="minimumSize">
        <size>
-        <width>110</width>
+        <width>130</width>
         <height>16</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>110</width>
+        <width>130</width>
         <height>16</height>
        </size>
       </property>
@@ -154,7 +141,7 @@
       </property>
       <item>
        <property name="text">
-        <string>Ignore</string>
+        <string>Choose</string>
        </property>
       </item>
       <item>
@@ -170,26 +157,26 @@
      </widget>
     </item>
     <item row="0" column="2">
-     <widget class="QLabel" name="label_3">
+     <widget class="QLabel" name="label_8">
       <property name="minimumSize">
        <size>
-        <width>110</width>
-        <height>0</height>
+        <width>130</width>
+        <height>16</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>110</width>
-        <height>16777215</height>
+        <width>130</width>
+        <height>16</height>
        </size>
       </property>
       <property name="text">
-       <string>CPU level</string>
+       <string>Foveation level</string>
       </property>
      </widget>
     </item>
     <item row="0" column="3">
-     <widget class="QComboBox" name="cpulevelBox">
+     <widget class="QComboBox" name="foveation2Box">
       <property name="minimumSize">
        <size>
         <width>105</width>
@@ -207,7 +194,7 @@
       </property>
       <item>
        <property name="text">
-        <string>Ignore</string>
+        <string>Choose</string>
        </property>
       </item>
       <item>
@@ -241,13 +228,13 @@
      <widget class="QLabel" name="label_6">
       <property name="minimumSize">
        <size>
-        <width>110</width>
+        <width>130</width>
         <height>16</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>110</width>
+        <width>130</width>
         <height>16</height>
        </size>
       </property>
@@ -275,7 +262,7 @@
       </property>
       <item>
        <property name="text">
-        <string>Ignore</string>
+        <string>Choose</string>
        </property>
       </item>
       <item>
@@ -291,26 +278,26 @@
      </widget>
     </item>
     <item row="1" column="2">
-     <widget class="QLabel" name="label_4">
+     <widget class="QLabel" name="label_7">
       <property name="minimumSize">
        <size>
-        <width>110</width>
-        <height>0</height>
+        <width>130</width>
+        <height>16</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>110</width>
-        <height>16777215</height>
+        <width>130</width>
+        <height>16</height>
        </size>
       </property>
       <property name="text">
-       <string>GPU level</string>
+       <string>Dynamic Foveation</string>
       </property>
      </widget>
     </item>
     <item row="1" column="3">
-     <widget class="QComboBox" name="gpulevelBox">
+     <widget class="QComboBox" name="foveation1Box">
       <property name="minimumSize">
        <size>
         <width>105</width>
@@ -328,32 +315,17 @@
       </property>
       <item>
        <property name="text">
-        <string>Ignore</string>
+        <string>Choose</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>0</string>
+        <string>Enable</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>1</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>2</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>3</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>4</string>
+        <string>Disable</string>
        </property>
       </item>
      </widget>
@@ -362,13 +334,13 @@
      <widget class="QLabel" name="label">
       <property name="minimumSize">
        <size>
-        <width>110</width>
+        <width>130</width>
         <height>0</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>110</width>
+        <width>130</width>
         <height>16777215</height>
        </size>
       </property>
@@ -396,7 +368,7 @@
       </property>
       <item>
        <property name="text">
-        <string>Ignore</string>
+        <string>Choose</string>
        </property>
       </item>
       <item>
@@ -427,26 +399,26 @@
      </widget>
     </item>
     <item row="2" column="2">
-     <widget class="QLabel" name="label_8">
+     <widget class="QLabel" name="label_9">
       <property name="minimumSize">
        <size>
-        <width>100</width>
+        <width>130</width>
         <height>16</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>110</width>
+        <width>130</width>
         <height>16</height>
        </size>
       </property>
       <property name="text">
-       <string>Foveation level</string>
+       <string>Chromatic aberration</string>
       </property>
      </widget>
     </item>
     <item row="2" column="3">
-     <widget class="QComboBox" name="foveation2Box">
+     <widget class="QComboBox" name="chromaticBox">
       <property name="minimumSize">
        <size>
         <width>105</width>
@@ -464,7 +436,290 @@
       </property>
       <item>
        <property name="text">
-        <string>Ignore</string>
+        <string>Choose</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Enable</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Disable</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="label_10">
+      <property name="minimumSize">
+       <size>
+        <width>130</width>
+        <height>16</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>130</width>
+        <height>16</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Full rate capture</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QComboBox" name="ratecaptureBox">
+      <property name="minimumSize">
+       <size>
+        <width>105</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>105</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'-apple-system','system-ui','Segoe UI Adjusted','Segoe UI','Liberation Sans','sans-serif'; font-size:15px; color:#0c0d0e; background-color:#ffffff;&quot;&gt;This will set whether to keep your device awake (prevent sleeping) or not while it's being charged on specific platform: USB charging, AC power, wireless charging, or all of them.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <item>
+       <property name="text">
+        <string>Choose</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Enable</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Disable</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="3" column="2">
+     <widget class="QLabel" name="label_11">
+      <property name="minimumSize">
+       <size>
+        <width>130</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>130</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Recording resolution</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="3">
+     <widget class="QComboBox" name="resolutionBox">
+      <property name="minimumSize">
+       <size>
+        <width>105</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>105</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; color:#363940; background-color:#ffffff;&quot;&gt;Set recording resolution to:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; color:#363940; background-color:#ffffff;&quot;&gt;480p: (852x480)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; color:#363940; background-color:#ffffff;&quot;&gt;720p: (1080x720)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; color:#363940; background-color:#ffffff;&quot;&gt;1080p:(1920x1080)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; color:#363940; background-color:#ffffff;&quot;&gt;Default: (1024x1024)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <item>
+       <property name="text">
+        <string>Choose</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>480p</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>720p</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>1080p</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Default</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_2">
+      <property name="minimumSize">
+       <size>
+        <width>130</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>130</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Refresh rate</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QComboBox" name="refreshBox">
+      <property name="minimumSize">
+       <size>
+        <width>105</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>105</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'-apple-system','system-ui','Segoe UI Adjusted','Segoe UI','Liberation Sans','sans-serif'; font-size:15px; color:#0c0d0e; background-color:#ffffff;&quot;&gt;This will set whether to keep your device awake (prevent sleeping) or not while it's being charged on specific platform: USB charging, AC power, wireless charging, or all of them.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <item>
+       <property name="text">
+        <string>Choose</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>72</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>90</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>120</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="4" column="2">
+     <widget class="QLabel" name="label_12">
+      <property name="minimumSize">
+       <size>
+        <width>130</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>130</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Texture resolution</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="3">
+     <widget class="QComboBox" name="textureBox">
+      <property name="minimumSize">
+       <size>
+        <width>105</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>105</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'-apple-system','system-ui','Segoe UI Adjusted','Segoe UI','Liberation Sans','sans-serif'; font-size:15px; color:#0c0d0e; background-color:#ffffff;&quot;&gt;This will set whether to keep your device awake (prevent sleeping) or not while it's being charged on specific platform: USB charging, AC power, wireless charging, or all of them.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="editable">
+       <bool>false</bool>
+      </property>
+      <item>
+       <property name="text">
+        <string>Choose</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>1536p</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>1440p</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLabel" name="label_3">
+      <property name="minimumSize">
+       <size>
+        <width>130</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>130</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>CPU level</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="1">
+     <widget class="QComboBox" name="cpulevelBox">
+      <property name="minimumSize">
+       <size>
+        <width>105</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>105</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'-apple-system','system-ui','Segoe UI Adjusted','Segoe UI','Liberation Sans','sans-serif'; font-size:15px; color:#0c0d0e; background-color:#ffffff;&quot;&gt;This will set whether to keep your device awake (prevent sleeping) or not while it's being charged on specific platform: USB charging, AC power, wireless charging, or all of them.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <item>
+       <property name="text">
+        <string>Choose</string>
        </property>
       </item>
       <item>
@@ -494,27 +749,69 @@
       </item>
      </widget>
     </item>
-    <item row="3" column="0">
-     <widget class="QLabel" name="label_2">
+    <item row="5" column="2" colspan="2">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QLabel" name="label_13">
+        <property name="minimumSize">
+         <size>
+          <width>130</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>130</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Custom width</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="customWidth">
+        <property name="minimumSize">
+         <size>
+          <width>105</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>105</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter custom texture resolution, e.g. 1024x768&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="label_4">
       <property name="minimumSize">
        <size>
-        <width>110</width>
+        <width>130</width>
         <height>0</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>110</width>
+        <width>130</width>
         <height>16777215</height>
        </size>
       </property>
       <property name="text">
-       <string>Refresh rate</string>
+       <string>GPU level</string>
       </property>
      </widget>
     </item>
-    <item row="3" column="1">
-     <widget class="QComboBox" name="refreshBox">
+    <item row="6" column="1">
+     <widget class="QComboBox" name="gpulevelBox">
       <property name="minimumSize">
        <size>
         <width>105</width>
@@ -532,115 +829,81 @@
       </property>
       <item>
        <property name="text">
-        <string>Ignore</string>
+        <string>Choose</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>72</string>
+        <string>0</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>90</string>
+        <string>1</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>120</string>
+        <string>2</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>3</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>4</string>
        </property>
       </item>
      </widget>
     </item>
-    <item row="3" column="2">
-     <widget class="QLabel" name="label_7">
-      <property name="minimumSize">
-       <size>
-        <width>110</width>
-        <height>16</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>110</width>
-        <height>16</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Dynamic Foveation</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="3">
-     <widget class="QComboBox" name="foveation1Box">
-      <property name="minimumSize">
-       <size>
-        <width>105</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>105</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'-apple-system','system-ui','Segoe UI Adjusted','Segoe UI','Liberation Sans','sans-serif'; font-size:15px; color:#0c0d0e; background-color:#ffffff;&quot;&gt;This will set whether to keep your device awake (prevent sleeping) or not while it's being charged on specific platform: USB charging, AC power, wireless charging, or all of them.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
+    <item row="6" column="2" colspan="2">
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
-       <property name="text">
-        <string>Ignore</string>
-       </property>
+       <widget class="QLabel" name="label_14">
+        <property name="minimumSize">
+         <size>
+          <width>130</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>130</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Custom height</string>
+        </property>
+       </widget>
       </item>
       <item>
-       <property name="text">
-        <string>Enable</string>
-       </property>
+       <widget class="QLineEdit" name="customHeight">
+        <property name="minimumSize">
+         <size>
+          <width>105</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>105</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter custom texture resolution, e.g. 1024x768&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
       </item>
-      <item>
-       <property name="text">
-        <string>Disable</string>
-       </property>
-      </item>
-     </widget>
+     </layout>
     </item>
    </layout>
   </widget>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>cancelButton</sender>
-   <signal>clicked()</signal>
-   <receiver>oculusDialog</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>126</x>
-     <y>225</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>206</x>
-     <y>135</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>okButton</sender>
-   <signal>clicked()</signal>
-   <receiver>oculusDialog</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>266</x>
-     <y>225</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>206</x>
-     <y>135</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
