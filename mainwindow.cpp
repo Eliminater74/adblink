@@ -9068,6 +9068,28 @@ adb shell setprop debug.oculus.forceChroma 0
 
 adb shell setprop debug.oculus.fullRateCapture 1
 
+adb shell setprop debug.oculus.eyeFovDown 49
+adb shell setprop debug.oculus.eyeFovUp 48
+adb shell setprop debug.oculus.eyeFovOutward 50
+adb shell setprop debug.oculus.eyeFovInward 50
+
+
+How to enable Link through ADB
+
+adb shell am start "xrstreamingclient://?launch_location=ODH&alink=true&adaptiveSrcLatencyMs=100&maxAdaptiveSrcLatencyMs=400&posePerSecond=500&sessionId=ODH"
+How to disable Link through ADB
+
+adb shell am force-stop com.oculus.xrstreamingclient
+How to enable Air Link through ADB
+
+adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enable_airlink 1
+How to disable Air Link through ADB
+
+adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enable_airlink 0
+
+
+
+
 
 */
 
@@ -9100,6 +9122,13 @@ adb shell setprop debug.oculus.fullRateCapture 1
  int chromatic;
  QString customwidth;
  QString customheight;
+ QString custombitrate;
+ QString fovdown;
+ QString fovup;
+ QString fovout;
+ QString fovin;
+
+
 
 
  //  dialog.setdownloaddir(getdownloadpath());
@@ -9179,7 +9208,14 @@ adb shell setprop debug.oculus.fullRateCapture 1
 
 
             obj["customheight"] = "";
-            obj["customwidth"] = "";
+            obj["customwidth"] = "";            
+            obj["custombitrate"] = "";
+
+            obj["fovdown"] = "";
+            obj["fovup"] = "";
+            obj["fovout"] = "";
+            obj["fovin"] = "";
+
 
             QJsonDocument doc(obj);
 
@@ -9218,8 +9254,15 @@ adb shell setprop debug.oculus.fullRateCapture 1
             dynamicfov = obj["dynamicfov"].toInt();
             ratecap = obj["ratecap"].toInt();
             chromatic = obj["chromatic"].toInt();
+
             customheight = obj["customheight"].toString();
             customwidth=obj["customwidth"].toString();
+            custombitrate=obj["custombitrate"].toString();
+            fovdown=obj["fovdown"].toString();
+            fovup=obj["fovup"].toString();
+            fovout=obj["fovout"].toString();
+            fovin=obj["fovin"].toString();
+
 
 
 
@@ -9253,6 +9296,8 @@ adb shell setprop debug.oculus.fullRateCapture 1
 
 */
 
+
+
      dialog.powerSet(power);
      dialog.proximitySet(proximity);
      dialog.guardianSet(guardian);
@@ -9270,7 +9315,12 @@ adb shell setprop debug.oculus.fullRateCapture 1
      dialog.chromaticSet(chromatic);
      dialog.cwidthSet(customwidth);
      dialog.cheightSet(customheight);
+     dialog.bitrateSet(custombitrate);
 
+      dialog.fovupSet(fovup);
+      dialog.fovdownSet(fovdown);
+      dialog.fovinSet(fovin);
+      dialog.fovoutSet(fovout);
 
  int colonPos = temp.indexOf(":");
 
@@ -9284,7 +9334,7 @@ adb shell setprop debug.oculus.fullRateCapture 1
 
 
 
- // qDebug() << b1;
+
 
 
  cstring = getadb() + " shell dumpsys OVRRemoteService | grep Battery";
@@ -9320,20 +9370,23 @@ adb shell setprop debug.oculus.fullRateCapture 1
 
 
 
- // qDebug() << b1;
-
  if (!notQuest)
  {
-    dialog.setbattery1label("Batteries: "+b1);
-
+            dialog.titleSet("Quest Headset");
+            dialog.setbattery1label("Batteries: "+b1);
  }
 
  else
  {
-    dialog.setbattery1label("Battery levels not found");
-
-
+            dialog.titleSet("Unknown device");
+            dialog.setbattery1label("Battery levels not found");
  }
+
+
+
+
+
+ // qDebug() << b1;
 
 
     bool execute_true=false;
@@ -9348,6 +9401,63 @@ adb shell setprop debug.oculus.fullRateCapture 1
     if (dialog.clickedButton==0) {
 
               bool validInt;
+
+
+              if (dialog.fovinSelected().toInt(&validInt) || dialog.fovinSelected() == "0" )
+              {
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.eyeFovInward  "+dialog.fovinSelected();
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              }
+
+
+
+              if (dialog.fovoutSelected().toInt(&validInt) || dialog.fovoutSelected() == "0" )
+              {
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.eyeFovOutward  "+dialog.fovoutSelected();
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              }
+
+
+              if (dialog.fovupSelected().toInt(&validInt) || dialog.fovupSelected() == "0" )
+              {
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.eyeFovUp  "+dialog.fovupSelected();
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              }
+
+
+
+              if (dialog.fovdownSelected().toInt(&validInt) || dialog.fovdownSelected() == "0" )
+              {
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.eyeFovDown  "+dialog.fovdownSelected();
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              }
+
+
+
+
+
+              if (dialog.bitrateSelected().toInt(&validInt) || dialog.bitrateSelected() == "0" )
+              {
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.capture.bitrate "+dialog.bitrateSelected();
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              }
+
+
 
 
               if (dialog.cheightSelected().toInt(&validInt) && dialog.cwidthSelected().toInt(&validInt))
@@ -9767,6 +9877,14 @@ adb shell setprop debug.oculus.fullRateCapture 1
               refresh=dialog.refreshSelected();
               customwidth=dialog.cwidthSelected();
               customheight=dialog.cheightSelected();
+              custombitrate=dialog.bitrateSelected();
+              fovdown=dialog.fovdownSelected();
+              fovup=dialog.fovupSelected();
+              fovout=dialog.fovoutSelected();
+              fovin=dialog.fovinSelected();
+
+
+
 
 
               QJsonObject obj;
@@ -9777,8 +9895,16 @@ adb shell setprop debug.oculus.fullRateCapture 1
               obj["guardian"] = guardian;
               obj["cpu"] = cpu;
               obj["gpu"] = gpu;
+
               obj["customwidth"] = customwidth;
               obj["customheight"] = customheight;
+              obj["custombitrate"] = custombitrate;
+
+              obj["fovdown"]=fovdown;
+              obj["fovup"]=fovup;
+              obj["fovout"]=fovout;
+              obj["fovin"]=fovin;
+
               obj["refresh"] = refresh;
               obj["texture"] = texture;
               obj["recording"] = recording;

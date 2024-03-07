@@ -1045,7 +1045,6 @@
     <addaction name="actionOculus_VR"/>
     <addaction name="actionSend_text"/>
     <addaction name="actionSleep_adjust"/>
-    <addaction name="actionConnect_WSA"/>
     <addaction name="View_Changelog"/>
     <addaction name="Erase_adbLink_database"/>
     <addaction name="actionWireless_ADBD"/>

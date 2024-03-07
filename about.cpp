@@ -19,9 +19,13 @@ Dialog2::Dialog2(QWidget *parent) :
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
 
+    ui->betaLabel->setVisible(true);
+
+
     ui->alabel->setAlignment(Qt::AlignCenter);
-    ui->label_2->setAlignment(Qt::AlignCenter);
-    ui->label_7->setAlignment(Qt::AlignCenter);
+    ui->betaLabel->setAlignment(Qt::AlignCenter);
+    ui->thankLabel->setAlignment(Qt::AlignCenter);
+    ui->linkLabel->setAlignment(Qt::AlignCenter);
 
 
 
@@ -29,7 +33,6 @@ Dialog2::Dialog2(QWidget *parent) :
     QIcon icon(pix);
     ui->donate->setIcon(icon);
     ui->donate->setIconSize(pix.size());
-
 
 
 

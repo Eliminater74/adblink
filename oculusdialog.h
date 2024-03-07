@@ -36,7 +36,17 @@ public:
 
      QString  cheightSelected() const;
      QString  cwidthSelected() const;
+     QString  bitrateSelected() const;
 
+     QString fovdownSelected() const;
+     QString fovupSelected() const;
+     QString fovoutSelected() const;
+     QString fovinSelected() const;
+
+     void fovdownSet(QString fovdown);
+     void fovupSet(QString fovup);
+     void fovoutSet(QString fovout);
+     void fovinSet(QString fovin);
 
      void  powerSet(int index);
      void  proximitySet(int index);
@@ -55,6 +65,11 @@ public:
 
      void  cwidthSet(QString cwidth);
      void  cheightSet(QString cheight);
+     void  bitrateSet(QString cheight);
+
+     void  titleSet(QString title);
+
+
 
 
 

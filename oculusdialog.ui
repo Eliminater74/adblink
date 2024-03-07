@@ -9,24 +9,24 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>591</width>
-    <height>424</height>
+    <width>575</width>
+    <height>569</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Quest Headset</string>
   </property>
   <widget class="QLabel" name="title">
    <property name="geometry">
     <rect>
      <x>11</x>
      <y>13</y>
-     <width>81</width>
+     <width>151</width>
      <height>16</height>
     </rect>
    </property>
    <property name="text">
-    <string>Oculus Quest</string>
+    <string>Quest Headset</string>
    </property>
   </widget>
   <widget class="QLabel" name="battery1Label">
@@ -57,8 +57,8 @@
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>150</x>
-     <y>350</y>
+     <x>130</x>
+     <y>500</y>
      <width>228</width>
      <height>32</height>
     </rect>
@@ -66,6 +66,9 @@
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="QPushButton" name="cancelButton">
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Close dialog without taking any action.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
       <property name="text">
        <string>Cancel</string>
       </property>
@@ -79,6 +82,9 @@
     </item>
     <item>
      <widget class="QPushButton" name="saveButton">
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Close dialog and save settings without applying.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
       <property name="text">
        <string>Save</string>
       </property>
@@ -86,6 +92,9 @@
     </item>
     <item>
      <widget class="QPushButton" name="okButton">
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Save settings and apply to device&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
       <property name="text">
        <string>OK</string>
       </property>
@@ -93,16 +102,395 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
-     <x>42</x>
-     <y>70</y>
-     <width>496</width>
-     <height>248</height>
+     <x>30</x>
+     <y>310</y>
+     <width>231</width>
+     <height>171</height>
     </rect>
    </property>
-   <layout class="QGridLayout" name="gridLayout">
+   <property name="title">
+    <string>Field of View (degrees)</string>
+   </property>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>30</y>
+      <width>187</width>
+      <height>142</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_16">
+       <property name="minimumSize">
+        <size>
+         <width>70</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>70</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Up</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="fovup">
+       <property name="minimumSize">
+        <size>
+         <width>105</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>105</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::ClickFocus</enum>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#ffffff;&quot;&gt;Field of view upward in degrees&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_17">
+       <property name="minimumSize">
+        <size>
+         <width>70</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>70</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Inward</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_18">
+       <property name="minimumSize">
+        <size>
+         <width>70</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>70</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Down</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="fovout">
+       <property name="minimumSize">
+        <size>
+         <width>105</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>105</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::ClickFocus</enum>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#ffffff;&quot;&gt;Field of view outward in degrees&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="fovdown">
+       <property name="minimumSize">
+        <size>
+         <width>105</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>105</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::ClickFocus</enum>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#ffffff;&quot;&gt;Field of view downward in degrees&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_19">
+       <property name="minimumSize">
+        <size>
+         <width>70</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>70</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Outward</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="fovin">
+       <property name="minimumSize">
+        <size>
+         <width>105</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>105</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::ClickFocus</enum>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#ffffff;&quot;&gt;Field of view inward in degrees&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_2">
+   <property name="geometry">
+    <rect>
+     <x>290</x>
+     <y>310</y>
+     <width>221</width>
+     <height>151</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Custom recording values</string>
+   </property>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>30</y>
+      <width>185</width>
+      <height>85</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_13">
+       <property name="minimumSize">
+        <size>
+         <width>70</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>70</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Width</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="customWidth">
+       <property name="minimumSize">
+        <size>
+         <width>105</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>105</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::ClickFocus</enum>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#ffffff;&quot;&gt;Override the default texture resolution width&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_14">
+       <property name="minimumSize">
+        <size>
+         <width>70</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>70</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Height</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="customHeight">
+       <property name="minimumSize">
+        <size>
+         <width>105</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>105</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::ClickFocus</enum>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#ffffff;&quot;&gt;Override the default texture resolution height&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_15">
+       <property name="minimumSize">
+        <size>
+         <width>70</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>70</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Bitrate</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="customBitrate">
+       <property name="minimumSize">
+        <size>
+         <width>105</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>105</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::ClickFocus</enum>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#ffffff;&quot;&gt;Override the default capture bitrate. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>37</x>
+     <y>71</y>
+     <width>488</width>
+     <height>212</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_3">
     <item row="0" column="0">
      <widget class="QLabel" name="label_5">
       <property name="minimumSize">
@@ -137,7 +525,7 @@
        </size>
       </property>
       <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'-apple-system','system-ui','Segoe UI Adjusted','Segoe UI','Liberation Sans','sans-serif'; font-size:15px; color:#0c0d0e; background-color:#ffffff;&quot;&gt;This will set whether to keep your device awake (prevent sleeping) or not while it's being charged on specific platform: USB charging, AC power, wireless charging, or all of them.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; color:#363940; background-color:#ffffff;&quot;&gt;The proximity sensor is used to detect headset movement.  If the headset is inactive, it triggers sleep after a configural period. Deactivating this sensor prevents the headset from sleeping.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <item>
        <property name="text">
@@ -190,7 +578,7 @@
        </size>
       </property>
       <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'-apple-system','system-ui','Segoe UI Adjusted','Segoe UI','Liberation Sans','sans-serif'; font-size:15px; color:#0c0d0e; background-color:#ffffff;&quot;&gt;This will set whether to keep your device awake (prevent sleeping) or not while it's being charged on specific platform: USB charging, AC power, wireless charging, or all of them.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#ffffff;&quot;&gt;Override the rendering quality in the outer edges of your view. Higher is better performance, lower is better quality.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <item>
        <property name="text">
@@ -258,7 +646,7 @@
        </size>
       </property>
       <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'-apple-system','system-ui','Segoe UI Adjusted','Segoe UI','Liberation Sans','sans-serif'; font-size:15px; color:#0c0d0e; background-color:#ffffff;&quot;&gt;This will set whether to keep your device awake (prevent sleeping) or not while it's being charged on specific platform: USB charging, AC power, wireless charging, or all of them.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#ffffff;&quot;&gt;Used to disable the guardian boundary system&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <item>
        <property name="text">
@@ -311,7 +699,7 @@
        </size>
       </property>
       <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'-apple-system','system-ui','Segoe UI Adjusted','Segoe UI','Liberation Sans','sans-serif'; font-size:15px; color:#0c0d0e; background-color:#ffffff;&quot;&gt;This will set whether to keep your device awake (prevent sleeping) or not while it's being charged on specific platform: USB charging, AC power, wireless charging, or all of them.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#f0f0f0;&quot;&gt;Set to disabled if you want to test your app with a fixed foveation level.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <item>
        <property name="text">
@@ -364,7 +752,7 @@
        </size>
       </property>
       <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'-apple-system','system-ui','Segoe UI Adjusted','Segoe UI','Liberation Sans','sans-serif'; font-size:15px; color:#0c0d0e; background-color:#ffffff;&quot;&gt;This will set whether to keep your device awake (prevent sleeping) or not while it's being charged on specific platform: USB charging, AC power, wireless charging, or all of them.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'-apple-system','system-ui','Segoe UI Adjusted','Segoe UI','Liberation Sans','sans-serif'; font-size:15px; color:#0c0d0e; background-color:#ffffff;&quot;&gt;The command will set whether to keep your device awake  or not while it's being charged on specific platform: USB charging, AC power, wireless charging, or all of them. False clears all flags.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <item>
        <property name="text">
@@ -432,7 +820,7 @@
        </size>
       </property>
       <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'-apple-system','system-ui','Segoe UI Adjusted','Segoe UI','Liberation Sans','sans-serif'; font-size:15px; color:#0c0d0e; background-color:#ffffff;&quot;&gt;This will set whether to keep your device awake (prevent sleeping) or not while it's being charged on specific platform: USB charging, AC power, wireless charging, or all of them.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#f0f0f0;&quot;&gt;Chromatic aberration counters unwanted colors at the edges of objects caused by the lenses. Enabled by default.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <item>
        <property name="text">
@@ -452,6 +840,64 @@
      </widget>
     </item>
     <item row="3" column="0">
+     <widget class="QLabel" name="label_2">
+      <property name="minimumSize">
+       <size>
+        <width>130</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>130</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Refresh rate</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QComboBox" name="refreshBox">
+      <property name="minimumSize">
+       <size>
+        <width>105</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>105</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#f0f0f0;&quot;&gt;Override the default refresh rate of the screen. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <item>
+       <property name="text">
+        <string>Choose</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>72</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>90</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>120</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="3" column="2">
      <widget class="QLabel" name="label_10">
       <property name="minimumSize">
        <size>
@@ -470,7 +916,7 @@
       </property>
      </widget>
     </item>
-    <item row="3" column="1">
+    <item row="3" column="3">
      <widget class="QComboBox" name="ratecaptureBox">
       <property name="minimumSize">
        <size>
@@ -485,7 +931,7 @@
        </size>
       </property>
       <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'-apple-system','system-ui','Segoe UI Adjusted','Segoe UI','Liberation Sans','sans-serif'; font-size:15px; color:#0c0d0e; background-color:#ffffff;&quot;&gt;This will set whether to keep your device awake (prevent sleeping) or not while it's being charged on specific platform: USB charging, AC power, wireless charging, or all of them.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#ffffff;&quot;&gt;Used to enable / disable video capture at full refresh rate. It is half by default.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <item>
        <property name="text">
@@ -504,7 +950,75 @@
       </item>
      </widget>
     </item>
-    <item row="3" column="2">
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_3">
+      <property name="minimumSize">
+       <size>
+        <width>130</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>130</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>CPU level</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QComboBox" name="cpulevelBox">
+      <property name="minimumSize">
+       <size>
+        <width>105</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>105</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#ffffff;&quot;&gt;Override the default CPU level.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <item>
+       <property name="text">
+        <string>Choose</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>0</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>1</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>2</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>3</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>4</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="4" column="2">
      <widget class="QLabel" name="label_11">
       <property name="minimumSize">
        <size>
@@ -519,11 +1033,11 @@
        </size>
       </property>
       <property name="text">
-       <string>Recording resolution</string>
+       <string>Capture resolution</string>
       </property>
      </widget>
     </item>
-    <item row="3" column="3">
+    <item row="4" column="3">
      <widget class="QComboBox" name="resolutionBox">
       <property name="minimumSize">
        <size>
@@ -538,7 +1052,7 @@
        </size>
       </property>
       <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; color:#363940; background-color:#ffffff;&quot;&gt;Set recording resolution to:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; color:#363940; background-color:#ffffff;&quot;&gt;480p: (852x480)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; color:#363940; background-color:#ffffff;&quot;&gt;720p: (1080x720)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; color:#363940; background-color:#ffffff;&quot;&gt;1080p:(1920x1080)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; color:#363940; background-color:#ffffff;&quot;&gt;Default: (1024x1024)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Override the standard 1024x1024 recording resolution.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <item>
        <property name="text">
@@ -567,8 +1081,8 @@
       </item>
      </widget>
     </item>
-    <item row="4" column="0">
-     <widget class="QLabel" name="label_2">
+    <item row="5" column="0">
+     <widget class="QLabel" name="label_4">
       <property name="minimumSize">
        <size>
         <width>130</width>
@@ -582,12 +1096,12 @@
        </size>
       </property>
       <property name="text">
-       <string>Refresh rate</string>
+       <string>GPU level</string>
       </property>
      </widget>
     </item>
-    <item row="4" column="1">
-     <widget class="QComboBox" name="refreshBox">
+    <item row="5" column="1">
+     <widget class="QComboBox" name="gpulevelBox">
       <property name="minimumSize">
        <size>
         <width>105</width>
@@ -601,7 +1115,7 @@
        </size>
       </property>
       <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'-apple-system','system-ui','Segoe UI Adjusted','Segoe UI','Liberation Sans','sans-serif'; font-size:15px; color:#0c0d0e; background-color:#ffffff;&quot;&gt;This will set whether to keep your device awake (prevent sleeping) or not while it's being charged on specific platform: USB charging, AC power, wireless charging, or all of them.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#ffffff;&quot;&gt;Override the default GPU level.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <item>
        <property name="text">
@@ -610,22 +1124,32 @@
       </item>
       <item>
        <property name="text">
-        <string>72</string>
+        <string>0</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>90</string>
+        <string>1</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>120</string>
+        <string>2</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>3</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>4</string>
        </property>
       </item>
      </widget>
     </item>
-    <item row="4" column="2">
+    <item row="5" column="2">
      <widget class="QLabel" name="label_12">
       <property name="minimumSize">
        <size>
@@ -639,12 +1163,15 @@
         <height>16777215</height>
        </size>
       </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#ffffff;&quot;&gt;Override the default texture resolution&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
       <property name="text">
        <string>Texture resolution</string>
       </property>
      </widget>
     </item>
-    <item row="4" column="3">
+    <item row="5" column="3">
      <widget class="QComboBox" name="textureBox">
       <property name="minimumSize">
        <size>
@@ -680,226 +1207,6 @@
        </property>
       </item>
      </widget>
-    </item>
-    <item row="5" column="0">
-     <widget class="QLabel" name="label_3">
-      <property name="minimumSize">
-       <size>
-        <width>130</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>130</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>CPU level</string>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="1">
-     <widget class="QComboBox" name="cpulevelBox">
-      <property name="minimumSize">
-       <size>
-        <width>105</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>105</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'-apple-system','system-ui','Segoe UI Adjusted','Segoe UI','Liberation Sans','sans-serif'; font-size:15px; color:#0c0d0e; background-color:#ffffff;&quot;&gt;This will set whether to keep your device awake (prevent sleeping) or not while it's being charged on specific platform: USB charging, AC power, wireless charging, or all of them.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <item>
-       <property name="text">
-        <string>Choose</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>0</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>1</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>2</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>3</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>4</string>
-       </property>
-      </item>
-     </widget>
-    </item>
-    <item row="5" column="2" colspan="2">
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <item>
-       <widget class="QLabel" name="label_13">
-        <property name="minimumSize">
-         <size>
-          <width>130</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>130</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Custom width</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="customWidth">
-        <property name="minimumSize">
-         <size>
-          <width>105</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>105</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter custom texture resolution, e.g. 1024x768&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item row="6" column="0">
-     <widget class="QLabel" name="label_4">
-      <property name="minimumSize">
-       <size>
-        <width>130</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>130</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>GPU level</string>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="1">
-     <widget class="QComboBox" name="gpulevelBox">
-      <property name="minimumSize">
-       <size>
-        <width>105</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>105</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'-apple-system','system-ui','Segoe UI Adjusted','Segoe UI','Liberation Sans','sans-serif'; font-size:15px; color:#0c0d0e; background-color:#ffffff;&quot;&gt;This will set whether to keep your device awake (prevent sleeping) or not while it's being charged on specific platform: USB charging, AC power, wireless charging, or all of them.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <item>
-       <property name="text">
-        <string>Choose</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>0</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>1</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>2</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>3</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>4</string>
-       </property>
-      </item>
-     </widget>
-    </item>
-    <item row="6" column="2" colspan="2">
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
-      <item>
-       <widget class="QLabel" name="label_14">
-        <property name="minimumSize">
-         <size>
-          <width>130</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>130</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Custom height</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="customHeight">
-        <property name="minimumSize">
-         <size>
-          <width>105</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>105</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter custom texture resolution, e.g. 1024x768&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
     </item>
    </layout>
   </widget>

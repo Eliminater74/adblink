@@ -991,7 +991,6 @@
     <addaction name="actionSend_text"/>
     <addaction name="actionSet_Kodi_permissions"/>
     <addaction name="actionGet_UID_from_APK_file"/>
-    <addaction name="actionConnect_WSA"/>
     <addaction name="View_Changelog"/>
     <addaction name="Erase_adbLink_database"/>
     <addaction name="actionWireless_ADBD"/>
