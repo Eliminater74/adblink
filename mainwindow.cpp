@@ -9120,8 +9120,12 @@ adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enabl
  int dynamicfov;
  int ratecap;
  int chromatic;
- QString customwidth;
- QString customheight;
+ int exper;
+
+ QString customCaptureWidth;
+ QString customCaptureHeight;
+ QString customTextureWidth;
+ QString customTextureHeight;
  QString custombitrate;
  QString fovdown;
  QString fovup;
@@ -9196,7 +9200,7 @@ adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enabl
             obj["cpu"] = 0;
             obj["gpu"] = 0;
             obj["refresh"] = 0;
-
+            obj["exper"] = 0;
 
             obj["texture"] = 0;
 
@@ -9207,8 +9211,17 @@ adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enabl
             obj["chromatic"] = 0;
 
 
-            obj["customheight"] = "";
-            obj["customwidth"] = "";            
+            obj["customCaptureHeight"] = "";
+            obj["customCaptureWidth"] = "";
+
+
+
+            obj["customTextureHeight"] = "";
+            obj["customTextureWidth"] = "";
+
+
+
+
             obj["custombitrate"] = "";
 
             obj["fovdown"] = "";
@@ -9244,8 +9257,8 @@ adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enabl
             guardian = obj["guardian"].toInt();
             cpu = obj["cpu"].toInt();
             gpu = obj["gpu"].toInt();
+            exper = obj["exper"].toInt();
             refresh = obj["refresh"].toInt();
-
 
             texture = obj["texture"].toInt();
 
@@ -9255,8 +9268,12 @@ adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enabl
             ratecap = obj["ratecap"].toInt();
             chromatic = obj["chromatic"].toInt();
 
-            customheight = obj["customheight"].toString();
-            customwidth=obj["customwidth"].toString();
+            customCaptureHeight = obj["customCaptureHeight"].toString();
+            customCaptureWidth=obj["customCaptureWidth"].toString();
+
+            customTextureHeight = obj["customTextureHeight"].toString();
+            customTextureWidth=obj["customTextureWidth"].toString();
+
             custombitrate=obj["custombitrate"].toString();
             fovdown=obj["fovdown"].toString();
             fovup=obj["fovup"].toString();
@@ -9304,7 +9321,7 @@ adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enabl
      dialog.cpuSet(cpu);
      dialog.gpuSet(gpu);
      dialog.refreshSet(refresh);
-
+     dialog.experSet(exper);
      dialog.textureSet(texture);
 
 
@@ -9313,8 +9330,14 @@ adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enabl
      dialog.dynamicfovSet(dynamicfov);
      dialog.ratecapSet(ratecap);
      dialog.chromaticSet(chromatic);
-     dialog.cwidthSet(customwidth);
-     dialog.cheightSet(customheight);
+
+     dialog.customCaptureHeightSet(customCaptureHeight);
+     dialog.customCaptureWidthSet(customCaptureWidth);
+
+     dialog.customTextureHeightSet(customTextureHeight);
+     dialog.customTextureWidthSet(customTextureWidth);
+
+
      dialog.bitrateSet(custombitrate);
 
       dialog.fovupSet(fovup);
@@ -9460,14 +9483,14 @@ adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enabl
 
 
 
-              if (dialog.cheightSelected().toInt(&validInt) && dialog.cwidthSelected().toInt(&validInt))
+              if (dialog.customCaptureHeightSelected().toInt(&validInt) && dialog.customCaptureWidthSelected().toInt(&validInt))
               {
                 execute_true=true;
-                cstring = getadb() + " shell setprop debug.oculus.capture.textureWidth "+dialog.cwidthSelected();
+                cstring = getadb() + " shell setprop debug.oculus.capture.textureWidth "+dialog.customCaptureWidthSelected();
                 command=getadbOutput(cstring);
                 logfile(cstring);
                 logfile(command);
-                cstring = getadb() + " shell setprop debug.oculus.capture.textureHeight "+dialog.cheightSelected();
+                cstring = getadb() + " shell setprop debug.oculus.capture.textureHeight "+dialog.customCaptureHeightSelected();
                 command=getadbOutput(cstring);
                 logfile(cstring);
                 logfile(command);
@@ -9724,6 +9747,30 @@ adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enabl
               break;
             }
 
+    //    qDebug() << ;
+
+
+            switch(dialog.experSelected() ) {
+            case 0:
+              break;
+            case 1:
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.experimentalEnabled 1";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+            case 2:
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.experimentalEnabled 0";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+
+            default:
+              break;
+            }
 
 
             switch(dialog.dynamicfovSelected()) {
@@ -9755,6 +9802,12 @@ adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enabl
               break;
             case 1:
               execute_true=true;
+
+              cstring = getadb() + " shell setprop debug.oculus.foveation.dynamic 0";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+
               cstring = getadb() + " shell setprop debug.oculus.foveation.level 0";
               command=getadbOutput(cstring);
               logfile(cstring);
@@ -9762,6 +9815,11 @@ adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enabl
               break;
             case 2:
               execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.foveation.dynamic 0";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+
               cstring = getadb() + " shell setprop debug.oculus.foveation.level 1";
               command=getadbOutput(cstring);
               logfile(cstring);
@@ -9769,6 +9827,12 @@ adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enabl
               break;
             case 3:
               execute_true=true;
+
+              cstring = getadb() + " shell setprop debug.oculus.foveation.dynamic 0";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+
               cstring = getadb() + " shell setprop debug.oculus.foveation.level 2";
               command=getadbOutput(cstring);
               logfile(cstring);
@@ -9776,6 +9840,11 @@ adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enabl
               break;
             case 4:
               execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.foveation.dynamic 0";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+
               cstring = getadb() + " shell setprop debug.oculus.foveation.level 3";
               command=getadbOutput(cstring);
               logfile(cstring);
@@ -9783,6 +9852,12 @@ adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enabl
               break;
             case 5:
               execute_true=true;
+
+              cstring = getadb() + " shell setprop debug.oculus.foveation.dynamic 0";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+
               cstring = getadb() + " shell setprop debug.oculus.foveation.level 4";
               command=getadbOutput(cstring);
               logfile(cstring);
@@ -9871,12 +9946,18 @@ adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enabl
               chromatic=dialog.chromaticSelected();
               proximity=dialog.proximitySelected();
               guardian=dialog.guardianSelected();
+              exper=dialog.experSelected();
               power=dialog.powerSelected();
               cpu=dialog.cpuSelected();
               gpu=dialog.gpuSelected();
               refresh=dialog.refreshSelected();
-              customwidth=dialog.cwidthSelected();
-              customheight=dialog.cheightSelected();
+
+              customCaptureWidth=dialog.customCaptureWidthSelected();
+              customCaptureHeight=dialog.customCaptureHeightSelected();
+
+              customTextureWidth=dialog.customTextureWidthSelected();
+              customTextureHeight=dialog.customTextureHeightSelected();
+
               custombitrate=dialog.bitrateSelected();
               fovdown=dialog.fovdownSelected();
               fovup=dialog.fovupSelected();
@@ -9895,10 +9976,21 @@ adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enabl
               obj["guardian"] = guardian;
               obj["cpu"] = cpu;
               obj["gpu"] = gpu;
+              obj["exper"] = exper;
 
-              obj["customwidth"] = customwidth;
-              obj["customheight"] = customheight;
+
+              obj["customCaptureWidth"] = customCaptureWidth;
+              obj["customCaptureHeight"] = customCaptureHeight;
+
+
+              obj["customTextureWidth"] = customTextureWidth;
+              obj["customTextureHeight"] = customTextureHeight;
+
               obj["custombitrate"] = custombitrate;
+
+
+
+
 
               obj["fovdown"]=fovdown;
               obj["fovup"]=fovup;

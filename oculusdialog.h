@@ -33,9 +33,12 @@ public:
      int  dynamicfovSelected() const;
      int  ratecapSelected() const;
      int  chromaticSelected() const;
+     int  experSelected() const;
 
-     QString  cheightSelected() const;
-     QString  cwidthSelected() const;
+
+
+
+
      QString  bitrateSelected() const;
 
      QString fovdownSelected() const;
@@ -54,6 +57,8 @@ public:
      void  cpuSet(int index);
      void  gpuSet(int index);
      void  refreshSet(int index);
+      void  experSet(int index);
+
 
 
      void  textureSet(int index);
@@ -63,9 +68,27 @@ public:
      void  ratecapSet(int index);
      void  chromaticSet(int index);
 
-     void  cwidthSet(QString cwidth);
-     void  cheightSet(QString cheight);
-     void  bitrateSet(QString cheight);
+
+     void  customCaptureWidthSet(QString customCaptureWidth);
+     void  customCaptureHeightSet(QString customCaptureHeight);
+
+     QString  customCaptureHeightSelected() const;
+     QString  customCaptureWidthSelected() const;
+
+
+
+     QString  customTextureHeightSelected() const;
+     QString  customTextureWidthSelected() const;
+
+     void  customTextureWidthSet(QString customTextureWidth);
+     void  customTextureHeightSet(QString customTextureHeight);
+
+
+
+
+
+
+     void  bitrateSet(QString customBitrate);
 
      void  titleSet(QString title);
 

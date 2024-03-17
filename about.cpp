@@ -19,7 +19,7 @@ Dialog2::Dialog2(QWidget *parent) :
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
 
-    ui->betaLabel->setVisible(true);
+    ui->betaLabel->setVisible(false);
 
 
     ui->alabel->setAlignment(Qt::AlignCenter);

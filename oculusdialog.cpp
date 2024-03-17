@@ -110,14 +110,52 @@ void oculusDialog::fovinSet(QString fovin) {
 
 // setprop debug.oculus.capture.width
 
-QString oculusDialog::cwidthSelected() const {
-    return ui->customWidth->text();
+QString oculusDialog::customCaptureWidthSelected() const {
+    return ui->captureWidth->text();
 }
 
 
-void oculusDialog::cwidthSet(QString cwidth) {
-   ui->customWidth->setText(cwidth);
+void oculusDialog::customCaptureWidthSet(QString cwidth) {
+   ui->captureWidth->setText(cwidth);
 }
+
+
+
+
+QString oculusDialog::customCaptureHeightSelected() const {
+   return ui->captureHeight->text();
+}
+
+
+void oculusDialog::customCaptureHeightSet(QString cwidth) {
+   ui->captureHeight->setText(cwidth);
+}
+
+
+
+
+
+QString oculusDialog::customTextureWidthSelected() const {
+   return ui->textureWidth->text();
+}
+
+
+void oculusDialog::customTextureWidthSet(QString twidth) {
+   ui->textureWidth->setText(twidth);
+}
+
+
+
+
+QString oculusDialog::customTextureHeightSelected() const {
+   return ui->textureHeight->text();
+}
+
+
+void oculusDialog::customTextureHeightSet(QString theight) {
+   ui->textureHeight->setText(theight);
+}
+
 
 
 
@@ -125,30 +163,16 @@ void oculusDialog::cwidthSet(QString cwidth) {
 // setprop debug.oculus.capture.bitrate
 
 void oculusDialog::bitrateSet(QString bitrate) {
-   ui->customBitrate->setText(bitrate);
+   ui->captureBitrate->setText(bitrate);
 }
 
 
 
 
 QString oculusDialog::bitrateSelected() const {
-   return ui->customBitrate->text();
+   return ui->captureBitrate->text();
 }
 
-
-
-
-// setprop debug.oculus.capture.textureHeight
-
-QString oculusDialog::cheightSelected() const {
-   return ui->customHeight->text();
-}
-
-
-
-void oculusDialog::cheightSet(QString cheight) {
-   ui->customHeight->setText(cheight);
-}
 
 
 
@@ -281,6 +305,25 @@ void oculusDialog::refreshSet(int index) {
 int oculusDialog::refreshSelected() const {
     return ui->refreshBox->currentIndex();
 }
+
+
+
+
+
+// setprop debug.oculus.exper
+
+void oculusDialog::experSet(int index) {
+    ui->experBox->setCurrentIndex(index);
+}
+
+
+
+
+int oculusDialog::experSelected() const {
+    return ui->experBox->currentIndex();
+}
+
+
 
 
 
