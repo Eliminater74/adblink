@@ -42,7 +42,6 @@ void oculusDialog::setbattery1label(const QString &b1)
 }
 
 
-// setprop debug.oculus.capture.textureWidth
 
 int  oculusDialog::textureSelected() const {
     return ui->textureBox->currentIndex();

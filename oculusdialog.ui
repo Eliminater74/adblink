@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>574</width>
-    <height>628</height>
+    <width>581</width>
+    <height>644</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -57,8 +57,8 @@
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>150</x>
-     <y>560</y>
+     <x>140</x>
+     <y>580</y>
      <width>228</width>
      <height>32</height>
     </rect>
@@ -102,16 +102,514 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
-     <x>37</x>
-     <y>71</y>
-     <width>494</width>
-     <height>248</height>
+     <x>30</x>
+     <y>380</y>
+     <width>251</width>
+     <height>171</height>
     </rect>
    </property>
-   <layout class="QGridLayout" name="gridLayout_3">
+   <property name="title">
+    <string>Custom resolutions</string>
+   </property>
+   <widget class="QLabel" name="label_21">
+    <property name="geometry">
+     <rect>
+      <x>11</x>
+      <y>31</y>
+      <width>100</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>100</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>100</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="text">
+     <string>Texture Width</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="textureWidth">
+    <property name="geometry">
+     <rect>
+      <x>119</x>
+      <y>31</y>
+      <width>105</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>105</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>105</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::ClickFocus</enum>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#ffffff;&quot;&gt;Override the default texture resolution width&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="clearButtonEnabled">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_23">
+    <property name="geometry">
+     <rect>
+      <x>11</x>
+      <y>62</y>
+      <width>100</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>100</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>100</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="text">
+     <string>Texture Height</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="textureHeight">
+    <property name="geometry">
+     <rect>
+      <x>119</x>
+      <y>62</y>
+      <width>105</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>105</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>105</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::ClickFocus</enum>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#ffffff;&quot;&gt;Override the default texture resolution height&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="clearButtonEnabled">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_22">
+    <property name="geometry">
+     <rect>
+      <x>11</x>
+      <y>93</y>
+      <width>100</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>100</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>100</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="text">
+     <string>Capture Width</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="captureWidth">
+    <property name="geometry">
+     <rect>
+      <x>119</x>
+      <y>93</y>
+      <width>105</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>105</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>105</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::ClickFocus</enum>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#ffffff;&quot;&gt;Override the default capture resolution width&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="clearButtonEnabled">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_24">
+    <property name="geometry">
+     <rect>
+      <x>11</x>
+      <y>124</y>
+      <width>100</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>100</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>100</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="text">
+     <string>Capture Height</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="captureHeight">
+    <property name="geometry">
+     <rect>
+      <x>119</x>
+      <y>124</y>
+      <width>105</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>105</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>105</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::ClickFocus</enum>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#ffffff;&quot;&gt;Override the default capture resolution height&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="clearButtonEnabled">
+     <bool>true</bool>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_2">
+   <property name="geometry">
+    <rect>
+     <x>290</x>
+     <y>380</y>
+     <width>231</width>
+     <height>171</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Field of View (Degrees)</string>
+   </property>
+   <widget class="QLabel" name="label_18">
+    <property name="geometry">
+     <rect>
+      <x>11</x>
+      <y>31</y>
+      <width>70</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>70</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>70</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="text">
+     <string>Down</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="fovdown">
+    <property name="geometry">
+     <rect>
+      <x>89</x>
+      <y>31</y>
+      <width>105</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>105</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>105</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::ClickFocus</enum>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#ffffff;&quot;&gt;Field of view downward in degrees&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="clearButtonEnabled">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_16">
+    <property name="geometry">
+     <rect>
+      <x>11</x>
+      <y>62</y>
+      <width>70</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>70</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>70</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="text">
+     <string>Up</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="fovup">
+    <property name="geometry">
+     <rect>
+      <x>89</x>
+      <y>62</y>
+      <width>105</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>105</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>105</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::ClickFocus</enum>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#ffffff;&quot;&gt;Field of view upward in degrees&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="clearButtonEnabled">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_17">
+    <property name="geometry">
+     <rect>
+      <x>11</x>
+      <y>93</y>
+      <width>70</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>70</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>70</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="text">
+     <string>Inward</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="fovin">
+    <property name="geometry">
+     <rect>
+      <x>89</x>
+      <y>93</y>
+      <width>105</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>105</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>105</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::ClickFocus</enum>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#ffffff;&quot;&gt;Field of view inward in degrees&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="clearButtonEnabled">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_19">
+    <property name="geometry">
+     <rect>
+      <x>11</x>
+      <y>124</y>
+      <width>70</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>70</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>70</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="text">
+     <string>Outward</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="fovout">
+    <property name="geometry">
+     <rect>
+      <x>89</x>
+      <y>124</y>
+      <width>105</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>105</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>105</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::ClickFocus</enum>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#ffffff;&quot;&gt;Field of view outward in degrees&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="clearButtonEnabled">
+     <bool>true</bool>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>31</x>
+     <y>71</y>
+     <width>494</width>
+     <height>284</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
      <widget class="QLabel" name="label_5">
       <property name="minimumSize">
@@ -935,505 +1433,113 @@
       </property>
      </widget>
     </item>
+    <item row="7" column="0">
+     <widget class="QLabel" name="label_13">
+      <property name="minimumSize">
+       <size>
+        <width>130</width>
+        <height>16</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>130</width>
+        <height>16</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Link</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="1">
+     <widget class="QComboBox" name="linkBox">
+      <property name="minimumSize">
+       <size>
+        <width>105</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>105</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; color:#363940; background-color:#ffffff;&quot;&gt;Enable/disable Link&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <item>
+       <property name="text">
+        <string>Choose</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Enable</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Disable</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="7" column="2">
+     <widget class="QLabel" name="label_14">
+      <property name="minimumSize">
+       <size>
+        <width>130</width>
+        <height>16</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>130</width>
+        <height>16</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Air Link</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="3">
+     <widget class="QComboBox" name="airlinkBox">
+      <property name="minimumSize">
+       <size>
+        <width>105</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>105</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; color:#363940; background-color:#ffffff;&quot;&gt;Enable/disable Air Link&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <item>
+       <property name="text">
+        <string>Choose</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Enable</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Disable</string>
+       </property>
+      </item>
+     </widget>
+    </item>
    </layout>
-  </widget>
-  <widget class="QGroupBox" name="groupBox">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>340</y>
-     <width>251</width>
-     <height>171</height>
-    </rect>
-   </property>
-   <property name="title">
-    <string>Custom resolutions</string>
-   </property>
-   <widget class="QLabel" name="label_21">
-    <property name="geometry">
-     <rect>
-      <x>11</x>
-      <y>31</y>
-      <width>100</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>100</width>
-      <height>0</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>100</width>
-      <height>16777215</height>
-     </size>
-    </property>
-    <property name="text">
-     <string>Texture Width</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="textureWidth">
-    <property name="geometry">
-     <rect>
-      <x>119</x>
-      <y>31</y>
-      <width>105</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>105</width>
-      <height>0</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>105</width>
-      <height>16777215</height>
-     </size>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::ClickFocus</enum>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#ffffff;&quot;&gt;Override the default texture resolution width&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="clearButtonEnabled">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_23">
-    <property name="geometry">
-     <rect>
-      <x>11</x>
-      <y>62</y>
-      <width>100</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>100</width>
-      <height>0</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>100</width>
-      <height>16777215</height>
-     </size>
-    </property>
-    <property name="text">
-     <string>Texture Height</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="textureHeight">
-    <property name="geometry">
-     <rect>
-      <x>119</x>
-      <y>62</y>
-      <width>105</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>105</width>
-      <height>0</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>105</width>
-      <height>16777215</height>
-     </size>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::ClickFocus</enum>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#ffffff;&quot;&gt;Override the default texture resolution height&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="clearButtonEnabled">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_22">
-    <property name="geometry">
-     <rect>
-      <x>11</x>
-      <y>93</y>
-      <width>100</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>100</width>
-      <height>0</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>100</width>
-      <height>16777215</height>
-     </size>
-    </property>
-    <property name="text">
-     <string>Capture Width</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="captureWidth">
-    <property name="geometry">
-     <rect>
-      <x>119</x>
-      <y>93</y>
-      <width>105</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>105</width>
-      <height>0</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>105</width>
-      <height>16777215</height>
-     </size>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::ClickFocus</enum>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#ffffff;&quot;&gt;Override the default capture resolution width&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="clearButtonEnabled">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_24">
-    <property name="geometry">
-     <rect>
-      <x>11</x>
-      <y>124</y>
-      <width>100</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>100</width>
-      <height>0</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>100</width>
-      <height>16777215</height>
-     </size>
-    </property>
-    <property name="text">
-     <string>Capture Height</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="captureHeight">
-    <property name="geometry">
-     <rect>
-      <x>119</x>
-      <y>124</y>
-      <width>105</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>105</width>
-      <height>0</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>105</width>
-      <height>16777215</height>
-     </size>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::ClickFocus</enum>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#ffffff;&quot;&gt;Override the default capture resolution height&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="clearButtonEnabled">
-     <bool>true</bool>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QGroupBox" name="groupBox_2">
-   <property name="geometry">
-    <rect>
-     <x>300</x>
-     <y>340</y>
-     <width>231</width>
-     <height>171</height>
-    </rect>
-   </property>
-   <property name="title">
-    <string>Field of View (Degrees)</string>
-   </property>
-   <widget class="QLabel" name="label_18">
-    <property name="geometry">
-     <rect>
-      <x>11</x>
-      <y>31</y>
-      <width>70</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>70</width>
-      <height>0</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>70</width>
-      <height>16777215</height>
-     </size>
-    </property>
-    <property name="text">
-     <string>Down</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="fovdown">
-    <property name="geometry">
-     <rect>
-      <x>89</x>
-      <y>31</y>
-      <width>105</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>105</width>
-      <height>0</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>105</width>
-      <height>16777215</height>
-     </size>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::ClickFocus</enum>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#ffffff;&quot;&gt;Field of view downward in degrees&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="clearButtonEnabled">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_16">
-    <property name="geometry">
-     <rect>
-      <x>11</x>
-      <y>62</y>
-      <width>70</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>70</width>
-      <height>0</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>70</width>
-      <height>16777215</height>
-     </size>
-    </property>
-    <property name="text">
-     <string>Up</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="fovup">
-    <property name="geometry">
-     <rect>
-      <x>89</x>
-      <y>62</y>
-      <width>105</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>105</width>
-      <height>0</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>105</width>
-      <height>16777215</height>
-     </size>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::ClickFocus</enum>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#ffffff;&quot;&gt;Field of view upward in degrees&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="clearButtonEnabled">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_17">
-    <property name="geometry">
-     <rect>
-      <x>11</x>
-      <y>93</y>
-      <width>70</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>70</width>
-      <height>0</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>70</width>
-      <height>16777215</height>
-     </size>
-    </property>
-    <property name="text">
-     <string>Inward</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="fovin">
-    <property name="geometry">
-     <rect>
-      <x>89</x>
-      <y>93</y>
-      <width>105</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>105</width>
-      <height>0</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>105</width>
-      <height>16777215</height>
-     </size>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::ClickFocus</enum>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#ffffff;&quot;&gt;Field of view inward in degrees&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="clearButtonEnabled">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_19">
-    <property name="geometry">
-     <rect>
-      <x>11</x>
-      <y>124</y>
-      <width>70</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>70</width>
-      <height>0</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>70</width>
-      <height>16777215</height>
-     </size>
-    </property>
-    <property name="text">
-     <string>Outward</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="fovout">
-    <property name="geometry">
-     <rect>
-      <x>89</x>
-      <y>124</y>
-      <width>105</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>105</width>
-      <height>0</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>105</width>
-      <height>16777215</height>
-     </size>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::ClickFocus</enum>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; font-weight:300; color:#363940; background-color:#ffffff;&quot;&gt;Field of view outward in degrees&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="clearButtonEnabled">
-     <bool>true</bool>
-    </property>
-   </widget>
   </widget>
  </widget>
  <resources/>

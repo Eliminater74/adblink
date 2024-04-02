@@ -2416,6 +2416,8 @@
 
 
 
+          //    adb install --bypass-low-target-sdk-block someapp.apk
+
               if (installer)
               {
 
@@ -4809,7 +4811,6 @@
     }
 
 
-
     ///////////////////////////////////////////////////////
 
     void MainWindow::on_fmButton_clicked()
@@ -4881,19 +4882,19 @@
 
 
 
-    /*
-       QString fpath="/files/.kodi";
 
-        if (isScoped())
-        {    fmdialog->setkodiPath(data_root+"kodi_data/"+xbmcpackage+fpath);
+ //      QString fpath="/files/.kodi";
+
+  //      if (isScoped())
+  //      {    fmdialog->setkodiPath(data_root+"kodi_data/"+xbmcpackage+fpath);
              // qDebug() << data_root+"kodi_data/"+xbmcpackage+fpath;
-        }
-        else {
-             fmdialog->setkodiPath(data_root+"Android/data/"+xbmcpackage+fpath);
+   //     }
+    //    else {
+    //         fmdialog->setkodiPath(data_root+"Android/data/"+xbmcpackage+fpath);
              // qDebug() << data_root+"Android/data/"+xbmcpackage+fpath;
-        }
+  //      }
 
-*/
+
 
 
   //  qDebug() << "mcpath:" << mcpath; return;
@@ -4969,9 +4970,6 @@
 
 
     }
-
-
-
 
 
     ///////////////////////////////////////////
@@ -8995,7 +8993,7 @@ void MainWindow::on_actionSend_text_triggered()
 
 
 
-
+//////////////////////////////////////////////////////////////
 void MainWindow::on_actionOculus_VR_triggered()
 {
 
@@ -9287,31 +9285,10 @@ adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enabl
             file.close();
 
 
-  //          qDebug() << customwidth;
-  //          qDebug() << customheight;
+
+// --crop 1600:900:2017:510 -m 1600 -b 25M -d
 
 
-// end
-
-/*
-            qDebug() <<    power ;
-             qDebug() << proximity;
-            qDebug() <<  guardian ;
-            qDebug() <<  cpu;
-             qDebug() << gpu;
-             qDebug() << refresh;
-
-
-            qDebug() <<  texture;
-            qDebug() <<  recording;
-            qDebug() <<  fovlevel ;
-             qDebug() << dynamicfov;
-             qDebug() << ratecap ;
-             qDebug() << chromatic;
-
---crop 1600:900:2017:510 -m 1600 -b 25M -d
-
-*/
 
 
 
@@ -9426,6 +9403,10 @@ adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enabl
               bool validInt;
 
 
+
+
+              // FOV
+
               if (dialog.fovinSelected().toInt(&validInt) || dialog.fovinSelected() == "0" )
               {
               execute_true=true;
@@ -9467,6 +9448,8 @@ adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enabl
               logfile(command);
               }
 
+         // end FOV
+
 
 
 
@@ -9481,16 +9464,18 @@ adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enabl
               }
 
 
+// custom resolutions
 
+// texture
 
-              if (dialog.customCaptureHeightSelected().toInt(&validInt) && dialog.customCaptureWidthSelected().toInt(&validInt))
+              if (dialog.customTextureHeightSelected().toInt(&validInt) && dialog.customTextureWidthSelected().toInt(&validInt))
               {
                 execute_true=true;
-                cstring = getadb() + " shell setprop debug.oculus.capture.textureWidth "+dialog.customCaptureWidthSelected();
+                cstring = getadb() + " shell setprop debug.oculus.textureWidth "+dialog.customTextureWidthSelected();
                 command=getadbOutput(cstring);
                 logfile(cstring);
                 logfile(command);
-                cstring = getadb() + " shell setprop debug.oculus.capture.textureHeight "+dialog.customCaptureHeightSelected();
+                cstring = getadb() + " shell setprop debug.oculus.textureHeight "+dialog.customTextureHeightSelected();
                 command=getadbOutput(cstring);
                 logfile(cstring);
                 logfile(command);
@@ -9508,22 +9493,22 @@ adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enabl
                  break;
               case 1:
                  execute_true=true;
-                 cstring = getadb() + " shell setprop debug.oculus.capture.textureWidth 1536";
+                 cstring = getadb() + " shell setprop debug.oculus.textureWidth 1536";
                  command=getadbOutput(cstring);
                  logfile(cstring);
                  logfile(command);
-                 cstring = getadb() + " shell setprop debug.oculus.capture.textureHeight 1690";
+                 cstring = getadb() + " shell setprop debug.oculus.textureHeight 1690";
                  command=getadbOutput(cstring);
                  logfile(cstring);
                  logfile(command);
                  break;
               case 2:
                  execute_true=true;
-                 cstring = getadb() + " shell setprop debug.oculus.capture.textureWidth 1440";
+                 cstring = getadb() + " shell setprop debug.oculus.textureWidth 1440";
                  command=getadbOutput(cstring);
                  logfile(cstring);
                  logfile(command);
-                 cstring = getadb() + " shell setprop debug.oculus.capture.textureHeight 1584";
+                 cstring = getadb() + " shell setprop debug.oculus.textureHeight 1584";
                  command=getadbOutput(cstring);
                  logfile(cstring);
                  logfile(command);
@@ -9532,6 +9517,92 @@ adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enabl
                  break;
               }
          }
+
+
+ // end texture
+
+ // capture
+
+
+         if (dialog.customCaptureHeightSelected().toInt(&validInt) && dialog.customCaptureWidthSelected().toInt(&validInt))
+         {
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.capture.width "+dialog.customCaptureWidthSelected();
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              cstring = getadb() + " shell setprop debug.oculus.capture.height "+dialog.customCaptureHeightSelected();
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+         }
+
+
+
+         else {
+
+         switch(dialog.recordingSelected()) {
+         case 0:
+              break;
+         case 1:
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.capture.width 852";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              cstring = getadb() + " shell setprop debug.oculus.capture.height 480";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+
+         case 2:
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.capture.width 1280";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              cstring = getadb() + " shell setprop debug.oculus.capture.height 720";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+
+         case 3:
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.capture.width 1920";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              cstring = getadb() + " shell setprop debug.oculus.capture.height 1280";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+
+
+         case 4:
+              execute_true=true;
+              cstring = getadb() + " shell setprop debug.oculus.capture.width 1024";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              cstring = getadb() + " shell setprop debug.oculus.capture.height 1024";
+              command=getadbOutput(cstring);
+              logfile(cstring);
+              logfile(command);
+              break;
+
+         default:
+              break;
+
+
+         }
+      }
+
+     // end capture
+
+// end resolutions
 
 
 
@@ -9867,65 +9938,6 @@ adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enabl
               break;
             }
 
-
-
-            switch(dialog.recordingSelected()) {
-            case 0:
-              break;
-            case 1:
-              execute_true=true;
-              cstring = getadb() + " shell setprop debug.oculus.capture.width 852";
-              command=getadbOutput(cstring);
-              logfile(cstring);
-              logfile(command);
-              cstring = getadb() + " shell setprop debug.oculus.capture.height 480";
-              command=getadbOutput(cstring);
-              logfile(cstring);
-              logfile(command);
-              break;
-
-            case 2:
-              execute_true=true;
-              cstring = getadb() + " shell setprop debug.oculus.capture.width 1280";
-              command=getadbOutput(cstring);
-              logfile(cstring);
-              logfile(command);
-              cstring = getadb() + " shell setprop debug.oculus.capture.height 720";
-              command=getadbOutput(cstring);
-              logfile(cstring);
-              logfile(command);
-              break;
-
-            case 3:
-              execute_true=true;
-              cstring = getadb() + " shell setprop debug.oculus.capture.width 1920";
-              command=getadbOutput(cstring);
-              logfile(cstring);
-              logfile(command);
-              cstring = getadb() + " shell setprop debug.oculus.capture.height 1280";
-              command=getadbOutput(cstring);
-              logfile(cstring);
-              logfile(command);
-              break;
-
-
-            case 4:
-              execute_true=true;
-              cstring = getadb() + " shell setprop debug.oculus.capture.width 1024";
-              command=getadbOutput(cstring);
-              logfile(cstring);
-              logfile(command);
-              cstring = getadb() + " shell setprop debug.oculus.capture.height 1024";
-              command=getadbOutput(cstring);
-              logfile(cstring);
-              logfile(command);
-              break;
-
-            default:
-              break;
-
-
-            }
 
 
 

@@ -1213,7 +1213,7 @@
   </action>
   <action name="actionOculus_VR">
    <property name="text">
-    <string>Oculus Quest</string>
+    <string>Quest Headset</string>
    </property>
    <property name="toolTip">
     <string>Oculus Quest values and flags</string>
