@@ -1,19 +1,20 @@
-02/XX/24
+04/XX/24
 
 Utility menu additions:
 
 Send text to device:
 Send text string to active input field on connected device
 
-Oculus Quest:
-Change various settings on the Oculus Quest headset.
+Quest headset:
+Change various settings on the Quest headset.
 Tested with Quest 2/3. Changes are not persistent, 
-and can be cleared by rebooting the device.
- 
-start/stop program intent, investigate?
+and are cleared by rebooting the device.
 
+Start program dialog: 
+The Start program intent is now saved between sessions
 
-
+Stop program dialog: 
+The Stop program package name is now saved between sessions
 
 01/24/24
 

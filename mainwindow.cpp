@@ -4750,14 +4750,63 @@
                  return;
                 }
 
+          bool startstop;
 
-        forcequitDialog dialog(false,this);
+          QString stopapp;
+
+          if (QFileInfo::exists(databasedir+"/stopapp.json"))
+                 startstop = true;
+          else
+                 startstop = false;
+
+          if (!startstop)
+          {
+
+
+
+                 QJsonObject obj;
+                 obj["stopapp"] = "org.xbmc.kodi";
+                 QJsonDocument doc(obj);
+                 QFile file(databasedir+"stopapp.json");
+                 file.open(QIODevice::WriteOnly);
+                 file.write(doc.toJson());
+                 file.close();
+
+
+          }
+
+
+
+          QJsonObject obj;
+          QJsonDocument doc(obj);
+          QFile file(databasedir+"stopapp.json");
+          file.open(QIODevice::ReadOnly);
+          doc = QJsonDocument::fromJson(file.readAll());
+          obj = doc.object();
+          stopapp=obj["stopapp"].toString();
+          file.close();
+
+
+        forcequitDialog dialog(false,stopapp,this);
         dialog.setWindowModality(Qt::WindowModal);
+
         if(dialog.exec() == QDialog::Accepted)
         {
+
+
         QString cstring = getadb() + " shell am force-stop "+dialog.packagename();
         QString command=getadbOutput(cstring);
-        logfile(command);
+         logfile(cstring);
+         logfile(command);
+
+        QJsonObject obj;
+        obj["stopapp"] = dialog.packagename();
+        QJsonDocument doc(obj);
+        QFile file(databasedir+"stopapp.json");
+        file.open(QIODevice::WriteOnly);
+        file.write(doc.toJson());
+        file.close();
+
         }
 
 
@@ -4778,7 +4827,40 @@
 
 
 
-        forcequitDialog dialog(true,this);
+                bool startstop;
+                QString startapp;
+
+
+                if (QFileInfo::exists(databasedir+"/startapp.json"))
+                  startstop = true;
+                else
+                 startstop = false;
+
+                if (!startstop)
+                {
+                  QJsonObject obj;
+                  obj["startapp"] = "org.xbmc.kodi/org.xbmc.kodi.Xplash";
+                  QJsonDocument doc(obj);
+                  QFile file(databasedir+"startapp.json");
+                  file.open(QIODevice::WriteOnly);
+                  file.write(doc.toJson());
+                  file.close();
+                }
+
+
+
+                QJsonObject obj;
+                QJsonDocument doc(obj);
+                QFile file(databasedir+"startapp.json");
+                file.open(QIODevice::ReadOnly);
+                doc = QJsonDocument::fromJson(file.readAll());
+                obj = doc.object();
+                startapp=obj["startapp"].toString();
+                file.close();
+
+
+
+         forcequitDialog dialog(true,startapp, this);
          dialog.setWindowModality(Qt::WindowModal);
 
 
@@ -4787,7 +4869,16 @@
 
             QString cstring = getadb() + " shell am start -n "+dialog.packagename();
             QString command=getadbOutput(cstring);
+            logfile(cstring);
             logfile(command);
+
+            QJsonObject obj;
+            obj["startapp"] = dialog.packagename();
+            QJsonDocument doc(obj);
+            QFile file(databasedir+"startapp.json");
+            file.open(QIODevice::WriteOnly);
+            file.write(doc.toJson());
+            file.close();
 
         }
 
