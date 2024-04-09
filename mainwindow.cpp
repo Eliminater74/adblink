@@ -4907,7 +4907,6 @@
     void MainWindow::on_fmButton_clicked()
     {
 
-
         QJsonObject obj;
         QJsonDocument doc(obj);
         QFile file(databasedir+"adblink.json");
@@ -4930,16 +4929,8 @@
 
          busybox_permissions();
 
-
-
-
-    //   if (ui->listDevices->currentRow() < 0)
-     //    ui->listDevices->setCurrentRow(0);
-
       fmdaddr = getDevice(ui->listDevices->currentItem()->text());
       ostypefm = getOSType(ui->listDevices->currentItem()->text());
-
-      //return;
 
            if (fmdaddr.size() <=0)
             fmdaddr = ui->listDevices->currentItem()->text();
@@ -4947,10 +4938,8 @@
 
 
         fmdialog = new usbfileDialog(this);
-
-         //fmdialog->setModal(false);
-
         fmdialog->setWindowModality(Qt::NonModal);
+
 
         cstring = getadb() + " shell ls /sdcard/xbmc_env.properties";
         if(getreturncode(cstring))
@@ -4970,29 +4959,7 @@
 
         }
 
-
-
-
-
- //      QString fpath="/files/.kodi";
-
-  //      if (isScoped())
-  //      {    fmdialog->setkodiPath(data_root+"kodi_data/"+xbmcpackage+fpath);
-             // qDebug() << data_root+"kodi_data/"+xbmcpackage+fpath;
-   //     }
-    //    else {
-    //         fmdialog->setkodiPath(data_root+"Android/data/"+xbmcpackage+fpath);
-             // qDebug() << data_root+"Android/data/"+xbmcpackage+fpath;
-  //      }
-
-
-
-
-  //  qDebug() << "mcpath:" << mcpath; return;
-
         fmdialog->setkodiPath(mcpath);
-
-
 
        if (!ui->adhocip->text().isEmpty())
        {
@@ -5010,51 +4977,29 @@
 
        }
 
-
-
-
         QString kp = data_root+filepath;
-
-
-   //  qDebug() <<  pulldir;
-   //  qDebug() << download;
 
         if (pulldir.isEmpty() || pulldir == download)
            fmpullpath=download;
         else
            fmpullpath=pulldir;
 
-
-
         QDir directory(fmpullpath);
 
         if (!directory.exists()) {
-
            logfile("Pull path: "+fmpullpath+" not found");
            logfile("Defaulting to home directory: "+QDir::homePath());
            fmpullpath=QDir::homePath();
-
         }
-
-
 
         fmdialog->setPath1("/sdcard/");
         fmdialog->setPath2("/sdcard/");
-
-
-
-
         fmdialog->setdisableroot(disableroot);
         fmdialog->setuProgram(kp);
         fmdialog->setoldfm(oldfm);
-
-
-
-
-   //   qDebug() <<  fmpullpath;
         fmdialog->setPulldir(fmpullpath);
-
         fmdialog->setAdbdir(apphome);
+
 
         fmdialog->show();
 
