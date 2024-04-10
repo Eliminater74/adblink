@@ -1,5 +1,7 @@
 04/XX/24
 
+File manager dialog geometry saved between sessions.
+
 Utility menu additions:
 
 Send text to device:

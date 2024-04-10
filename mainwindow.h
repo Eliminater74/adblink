@@ -28,7 +28,7 @@ public:
 
 private slots:
 
-
+    void handleFilemanagerFinished();
 
     void onReqCompleted();
 

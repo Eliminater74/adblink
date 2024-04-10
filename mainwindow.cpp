@@ -5000,6 +5000,17 @@
         fmdialog->setPulldir(fmpullpath);
         fmdialog->setAdbdir(apphome);
 
+       connect(fmdialog, &QDialog::finished, this, &MainWindow::handleFilemanagerFinished);
+
+        QSettings settings("com.jocala", "adblink");
+
+       QByteArray savedGeometry = settings.value("fmdialogGeometry").toByteArray();
+        if (!savedGeometry.isEmpty()) {
+          // qDebug() << "Restoring geometry";
+           fmdialog->restoreGeometry(savedGeometry);
+        } else {
+          // qDebug() << "No saved geometry found";
+        }
 
         fmdialog->show();
 
@@ -5008,7 +5019,19 @@
     }
 
 
-    ///////////////////////////////////////////
+/////////////////////////////////////////////////
+ void MainWindow::handleFilemanagerFinished()
+    {
+        if (fmdialog) {
+           QByteArray geometryData = fmdialog->saveGeometry();
+           // qDebug() << "Geometry data:" << geometryData;
+           QSettings settings("com.jocala", "adblink");
+           settings.setValue("fmdialogGeometry", geometryData);
+        }
+    }
+
+
+///////////////////////////////////////////
     void MainWindow::editOther()
     {
 
