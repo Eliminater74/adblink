@@ -1216,7 +1216,7 @@
     <string>Quest Headset</string>
    </property>
    <property name="toolTip">
-    <string>Oculus Quest values and flags</string>
+    <string>Quest headset values and flags</string>
    </property>
   </action>
   <action name="actionSend_text">

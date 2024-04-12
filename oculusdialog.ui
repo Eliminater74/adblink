@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>581</width>
-    <height>644</height>
+    <height>602</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -58,7 +58,7 @@
    <property name="geometry">
     <rect>
      <x>140</x>
-     <y>580</y>
+     <y>540</y>
      <width>228</width>
      <height>32</height>
     </rect>
@@ -106,7 +106,7 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>380</y>
+     <y>340</y>
      <width>251</width>
      <height>171</height>
     </rect>
@@ -355,7 +355,7 @@
    <property name="geometry">
     <rect>
      <x>290</x>
-     <y>380</y>
+     <y>340</y>
      <width>231</width>
      <height>171</height>
     </rect>
@@ -600,13 +600,143 @@
     </property>
    </widget>
   </widget>
+  <widget class="QLabel" name="label_13">
+   <property name="geometry">
+    <rect>
+     <x>28</x>
+     <y>777</y>
+     <width>130</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>130</width>
+     <height>16</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>130</width>
+     <height>16</height>
+    </size>
+   </property>
+   <property name="text">
+    <string>Link</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="linkBox">
+   <property name="geometry">
+    <rect>
+     <x>163</x>
+     <y>770</y>
+     <width>105</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>105</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>105</width>
+     <height>16777215</height>
+    </size>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; color:#363940; background-color:#ffffff;&quot;&gt;Enable/disable Link&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <item>
+    <property name="text">
+     <string>Choose</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Enable</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Disable</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QLabel" name="label_14">
+   <property name="geometry">
+    <rect>
+     <x>275</x>
+     <y>777</y>
+     <width>130</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>130</width>
+     <height>16</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>130</width>
+     <height>16</height>
+    </size>
+   </property>
+   <property name="text">
+    <string>Air Link</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="airlinkBox">
+   <property name="geometry">
+    <rect>
+     <x>410</x>
+     <y>770</y>
+     <width>105</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>105</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>105</width>
+     <height>16777215</height>
+    </size>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; color:#363940; background-color:#ffffff;&quot;&gt;Enable/disable Air Link&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <item>
+    <property name="text">
+     <string>Choose</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Enable</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Disable</string>
+    </property>
+   </item>
+  </widget>
   <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
-     <x>31</x>
-     <y>71</y>
+     <x>34</x>
+     <y>72</y>
      <width>494</width>
-     <height>284</height>
+     <height>248</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
@@ -1431,112 +1561,6 @@
       <property name="clearButtonEnabled">
        <bool>true</bool>
       </property>
-     </widget>
-    </item>
-    <item row="7" column="0">
-     <widget class="QLabel" name="label_13">
-      <property name="minimumSize">
-       <size>
-        <width>130</width>
-        <height>16</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>130</width>
-        <height>16</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Link</string>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="1">
-     <widget class="QComboBox" name="linkBox">
-      <property name="minimumSize">
-       <size>
-        <width>105</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>105</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; color:#363940; background-color:#ffffff;&quot;&gt;Enable/disable Link&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <item>
-       <property name="text">
-        <string>Choose</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Enable</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Disable</string>
-       </property>
-      </item>
-     </widget>
-    </item>
-    <item row="7" column="2">
-     <widget class="QLabel" name="label_14">
-      <property name="minimumSize">
-       <size>
-        <width>130</width>
-        <height>16</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>130</width>
-        <height>16</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Air Link</string>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="3">
-     <widget class="QComboBox" name="airlinkBox">
-      <property name="minimumSize">
-       <size>
-        <width>105</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>105</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Libre Franklin','Arial','Helvetica','sans-serif'; font-size:18px; color:#363940; background-color:#ffffff;&quot;&gt;Enable/disable Air Link&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <item>
-       <property name="text">
-        <string>Choose</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Enable</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Disable</string>
-       </property>
-      </item>
      </widget>
     </item>
    </layout>

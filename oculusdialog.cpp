@@ -261,9 +261,27 @@ void oculusDialog::guardianSet(int index) {
 
 
 
+
+
+
+
 int oculusDialog::guardianSelected() const {
     return ui->guardianBox->currentIndex();
 }
+
+
+
+
+void oculusDialog::linkboxSet(int index) {
+    ui->linkBox->setCurrentIndex(index);
+}
+
+
+
+int oculusDialog::linkboxSelected() const {
+    return ui->linkBox->currentIndex();
+}
+
 
 
 //  setprop debug.oculus.cpuLevel

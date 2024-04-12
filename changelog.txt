@@ -2,21 +2,20 @@
 
 File manager dialog geometry saved between sessions.
 
-Utility menu additions:
+Start program dialog: 
+The Start program choice is now saved between sessions
+
+Stop program dialog: 
+The Stop program choice is now saved between sessions
 
 Send text to device:
 Send text string to active input field on connected device
+
 
 Quest headset:
 Change various settings on the Quest headset.
 Tested with Quest 2/3. Changes are not persistent, 
 and are cleared by rebooting the device.
-
-Start program dialog: 
-The Start program intent is now saved between sessions
-
-Stop program dialog: 
-The Stop program package name is now saved between sessions
 
 01/24/24
 

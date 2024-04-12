@@ -25,7 +25,7 @@ public:
      int  cpuSelected() const;
      int  gpuSelected() const;
      int  refreshSelected() const;
-
+     int  linkboxSelected() const;
 
      int  textureSelected() const;
      int  recordingSelected() const;
@@ -54,6 +54,7 @@ public:
      void  powerSet(int index);
      void  proximitySet(int index);
      void  guardianSet(int index);
+     void  linkboxSet(int index);
      void  cpuSet(int index);
      void  gpuSet(int index);
      void  refreshSet(int index);

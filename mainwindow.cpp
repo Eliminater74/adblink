@@ -5002,7 +5002,7 @@
 
        connect(fmdialog, &QDialog::finished, this, &MainWindow::handleFilemanagerFinished);
 
-        QSettings settings("com.jocala", "adblink");
+        QSettings settings("jocala", "adblink");
 
        QByteArray savedGeometry = settings.value("fmdialogGeometry").toByteArray();
         if (!savedGeometry.isEmpty()) {
@@ -5025,7 +5025,7 @@
         if (fmdialog) {
            QByteArray geometryData = fmdialog->saveGeometry();
            // qDebug() << "Geometry data:" << geometryData;
-           QSettings settings("com.jocala", "adblink");
+           QSettings settings("jocala", "adblink");
            settings.setValue("fmdialogGeometry", geometryData);
         }
     }
@@ -9144,7 +9144,11 @@ How to disable Air Link through ADB
 
 adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enable_airlink 0
 
+Start Link (button 1):
+adb shell am start -S com.oculus.xrstreamingclient/.MainActivity
 
+Stop Link (button 2):
+adb shell am force-stop com.oculus.xrstreamingclient
 
 
 
@@ -9178,6 +9182,7 @@ adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enabl
  int ratecap;
  int chromatic;
  int exper;
+ int link;
 
  QString customCaptureWidth;
  QString customCaptureHeight;
@@ -9315,6 +9320,7 @@ adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enabl
             cpu = obj["cpu"].toInt();
             gpu = obj["gpu"].toInt();
             exper = obj["exper"].toInt();
+
             refresh = obj["refresh"].toInt();
 
             texture = obj["texture"].toInt();
@@ -9358,6 +9364,7 @@ adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enabl
      dialog.gpuSet(gpu);
      dialog.refreshSet(refresh);
      dialog.experSet(exper);
+
      dialog.textureSet(texture);
 
 
@@ -10000,8 +10007,9 @@ adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enabl
 
 
 
+
             if (execute_true)
-               QMessageBox::information(this,"","Values adjusted");
+               QMessageBox::information(this,"","Values adjusted.\n\nThese changes are not persistent. Reboot headset to return values to default.");
 
     }
 
@@ -10017,6 +10025,7 @@ adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enabl
               chromatic=dialog.chromaticSelected();
               proximity=dialog.proximitySelected();
               guardian=dialog.guardianSelected();
+
               exper=dialog.experSelected();
               power=dialog.powerSelected();
               cpu=dialog.cpuSelected();
