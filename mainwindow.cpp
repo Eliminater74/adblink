@@ -57,7 +57,7 @@
     #include <preferencesdialog.h>
     #include <QElapsedTimer>
     #include <QTextStream>
-    #include <QStringRef>
+//  #include <QStringRef>
     #include <QDate>
     #include <QRegularExpression>
     #include <QStringList>
