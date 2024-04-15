@@ -1,4 +1,4 @@
-04/XX/24
+04/12/24
 
 File manager dialog geometry saved between sessions.
 
@@ -11,8 +11,7 @@ The Stop program choice is now saved between sessions
 Send text to device:
 Send text string to active input field on connected device
 
-
-Quest headset:
+Quest headset (beta):
 Change various settings on the Quest headset.
 Tested with Quest 2/3. Changes are not persistent, 
 and are cleared by rebooting the device.
