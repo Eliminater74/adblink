@@ -1230,7 +1230,7 @@
   </action>
   <action name="actionCreate_kodi_data">
    <property name="text">
-    <string>Create kodi data</string>
+    <string>Create Kodi data</string>
    </property>
   </action>
  </widget>

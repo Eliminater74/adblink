@@ -2703,24 +2703,20 @@
           }
 
 
-        if (checkscope)
+
+          if (checkscope && program == "adblink" && isScoped())
           {
-          if (program == "adblink")
-          {
-           if (isScoped()) {
            cstring = getadb() + " shell ls /sdcard/xbmc_env.properties";
-           if (!getreturncode(cstring)) {
+              if (!getreturncode(cstring))
+              {
                    QMessageBox::StandardButton reply;
-                   reply = QMessageBox::question(this, "Restore", "Scoped storage in effect\nCreate /sdcard/kodi_data?",
-                                                 QMessageBox::Yes | QMessageBox::No);
+                   reply = QMessageBox::question(this, "Restore", "Scoped storage in effect\nCreate /sdcard/kodi_data?",                                                 QMessageBox::Yes | QMessageBox::No);
                    if (reply == QMessageBox::Yes) {
-                      on_actionCreate_kodi_data_triggered();
-                   }
-                   // No return needed as the function will continue naturally if reply is No
+                      on_actionCreate_kodi_data_triggered(); }
               }
-            }
-          }
-        }
+
+
+           }
 
 
 
@@ -6882,9 +6878,10 @@
          command=getadbOutput(cstring);
 
 
-        if (command.contains("No such file or directory"))
-        {
+     //    qDebug() << command;
 
+      if (!command.contains("No such file or directory"))
+        {
         QMessageBox::StandardButton reply;
         reply = QMessageBox::question(this, "Create Kodi Data", "This will overwrite /sdcard/kodi_data/\nProceed?",
                                       QMessageBox::Yes|QMessageBox::No);
@@ -6892,9 +6889,6 @@
            return;
 
         }
-
-
-
 
         is_package(xbmcpackage);
         if (is_packageInstalled)
@@ -6948,7 +6942,7 @@
         logfile(command);
 
 
-        QMessageBox::information(this,"","Data area created");
+        QMessageBox::information(this,"","Kodi data area created");
 
     }
 
