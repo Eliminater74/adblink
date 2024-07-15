@@ -220,6 +220,13 @@ void adbprefDialog::setoldfm(const bool &oldfm)
 
 
 
+void adbprefDialog::setscopecheck(const bool &scopecheck)
+{
+    ui->scopecheck->setChecked(scopecheck);
+}
+
+
+
 void adbprefDialog::setversioncheck(const bool &versioncheck)
 {
     ui->versioncheck->setChecked(versioncheck);
@@ -227,10 +234,17 @@ void adbprefDialog::setversioncheck(const bool &versioncheck)
 
 
 
+bool adbprefDialog::scopecheck() {
+   return ui->scopecheck->isChecked();
+}
+
+
+
+
+
 bool adbprefDialog::versioncheck() {
    return ui->versioncheck->isChecked();
 }
-
 
 
 
@@ -339,3 +353,4 @@ void adbprefDialog::changelog()
     QDesktopServices::openUrl(QUrl(link));
 
 }
+

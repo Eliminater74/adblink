@@ -1,4 +1,11 @@
+07/xx/24
+
+Utility menu:
+Setup initial Kodi data area for scoped storage. 
+
 04/12/24
+
+Version 6.1
 
 File manager dialog geometry saved between sessions.
 

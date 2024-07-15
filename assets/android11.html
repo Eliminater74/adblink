@@ -8,16 +8,26 @@
      Kodi's data located at /sdcard/Android/data/org.xbmc.kodi. This means no 
      backup/restore, no cloning, no  edit of xml files, etc. 
 <p>
-     Luckily, Kodi allows us to relocate its data to an accessible location. If 
-     adblink determines that the file location /sdcard/Android/data is 
-     sandboxed it will instruct Kodi to look for its data at /sdcard/kodi_data/ via
-     the text file /sdcard/xbmc_env.properties file which adblink will create.
-     Kodi will read this file at startup to determine its data's location.
+     Luckily, Kodi allows us to relocate its data to an accessible location via
+     the text file /sdcard/xbmc_env.properties. Kodi looks for this file at
+     startup, and reads it to find the location for its data.
+<p>
+
+     When adblink connects to a device it will detect if scoped storage
+     is in effect.
      <p>
-     Additionally, when restoring a backup to a Android 11 device, adblink
-     will set the MANAGE_EXTERNAL_STORAGE permission to "allow" which will
-     permit Kodi to read the xbmc_env.properties file at startup. Otherwise
-     Kodi is not permitted to access local files outside of its sandbox.
+     If scoped, and /sdcard/xbmc_env.properties does not exist, adblink will offer
+     to create it and the /sdcard/kodi_data/ root folder for Kodi's data. This
+     check at connection can be turned off in adblink's preferences.
+     <p>
+     You may also manually create /sdcard/kodi_data/ and xbmc_env.properties
+     via the utility menu function, Create Kodi data.
+     <p>
+     When adblink creates the alternate location for Kodi's data,
+     adblink will set the MANAGE_EXTERNAL_STORAGE permission to
+     "allow" which will permit Kodi to read the xbmc_env.properties
+     file at startup. Otherwise Kodi is not permitted to access local
+     files outside of its sandbox.
      <p>
      
      If you need to grant or revoke the MANAGE_EXTERNAL_STORAGE permission manually,

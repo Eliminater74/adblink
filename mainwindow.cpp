@@ -281,6 +281,7 @@
 
          ui->server_running->setText(adbstr2);
 
+     //    qDebug() << program;
 
       rotate_logfile();
 
@@ -516,6 +517,7 @@
                      obj["oldfm"] = false;
                      obj["checkversion"] = true;
                      obj["scrcpy"] = true;
+                     obj["checkscope"] = true;
                      obj["dropdown"] = "0";
                      obj["download"] = QDir::homePath();
                      obj["install"] = QDir::homePath();
@@ -914,26 +916,21 @@
 
         bool scoped;
 
-/*
-       int androidversion;
-        cstring = cstring = getadb() +  " shell mkdir /sdcard/Android/data/tempadblink";
+
+
+        cstring = cstring = getadb() +  " shell ls /sdcard/Android/data/";
         if (getreturncode(cstring)) {
-          cstring = cstring = getadb() +  " shell rm -r /sdcard/Android/data/tempadblink";
-          getreturncode(cstring);
-          ro = false;
-        } else ro = true;
+          scoped = false;
+        } else scoped = true;
+
+      //  qDebug() << scoped;
 
 
 
-        androidversion=getandroid();
-
-    ro = androidversion == 11 || androidversion == 12;
-
-
- */
-
-       scoped = getandroid() == 11 || getandroid() == 12;
-
+    //    int androidversion;
+    //    androidversion=getandroid();
+   // ro = androidversion == 11 || androidversion == 12;
+ //      scoped = getandroid() == 11 || getandroid() == 12;
   //    qDebug() << ro;
 
        return scoped;
@@ -2550,6 +2547,16 @@
         QString s;
 
 
+        QJsonObject obj;
+        QJsonDocument doc(obj);
+        QFile file(databasedir+"adblink.json");
+        file.open(QIODevice::ReadOnly);
+        doc = QJsonDocument::fromJson(file.readAll());
+        obj = doc.object();
+        bool checkscope = doc.object()["checkscope"].toBool();
+
+
+
 
         if (!ui->adhocip->text().isEmpty())
          {
@@ -2646,6 +2653,10 @@
 
 
 
+
+
+
+
             on_refreshConnectedDevices_clicked();
 
 
@@ -2690,6 +2701,26 @@
            isConnected=searchlistDevices(ui->deviceBox->currentText());
 
           }
+
+
+        if (checkscope)
+          {
+          if (program == "adblink")
+          {
+           if (isScoped()) {
+           cstring = getadb() + " shell ls /sdcard/xbmc_env.properties";
+           if (!getreturncode(cstring)) {
+                   QMessageBox::StandardButton reply;
+                   reply = QMessageBox::question(this, "Restore", "Scoped storage in effect\nCreate /sdcard/kodi_data?",
+                                                 QMessageBox::Yes | QMessageBox::No);
+                   if (reply == QMessageBox::Yes) {
+                      on_actionCreate_kodi_data_triggered();
+                   }
+                   // No return needed as the function will continue naturally if reply is No
+              }
+            }
+          }
+        }
 
 
 
@@ -4054,8 +4085,13 @@
 
 
 
+ //   QString fileName = QFileDialog::getOpenFileName(this,
+//     "Choose splash screen file", splashdir, tr("Files (*.png)"));
+
+
      QString fileName = QFileDialog::getOpenFileName(this,
-     "Choose splash screen file", splashdir, tr("Files (*.png)"));
+     "Choose splash screen file", splashdir, tr("Files (*.png *.jpg *.jpeg)"));
+
 
      if (!fileName.isEmpty() )
      {
@@ -5773,6 +5809,7 @@
 
 
         bool checkversion = doc.object()["checkversion"].toBool();
+        bool checkscope = doc.object()["checkscope"].toBool();
         bool scrcpy = doc.object()["scrcpy"].toBool();
         bool oldfm = doc.object()["oldfm"].toBool();
 
@@ -5784,6 +5821,11 @@
      dialog.setversioncheck(true);
      else
     dialog.setversioncheck(false);
+
+     if (checkscope)
+     dialog.setscopecheck(true);
+     else
+     dialog.setscopecheck(false);
 
     if (scrcpy)
      dialog.setscrcpyargs(true);
@@ -5827,6 +5869,7 @@
 
 
              obj["checkversion"] = dialog.versioncheck();
+             obj["checkscope"] = dialog.scopecheck();
              obj["scrcpy"] = dialog.scrcpyargs();
              obj["oldfm"] = dialog.oldfm();
 
@@ -6363,6 +6406,7 @@
        list.append(device);
        list.append(manufact);
 
+
        deviceinfoDialog dialog(this);
        dialog.setWindowModality(Qt::WindowModal);
        dialog.setWindowFlags(dialog.windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -6781,6 +6825,146 @@
 
     ///////////////////////////////////
     void MainWindow::on_actionCreate_kodi_data_triggered()
+
+
+
+    {
+        if (!check_devices() )
+           return;
+
+
+
+
+
+        QString cstring;
+        QString command;
+        QString mcpath;
+        QString kbase;
+
+        mcpath ="/sdcard/kodi_data/" + xbmcpackage;
+        kbase = "/sdcard/kodi_data/";
+
+        cstring = cstring = getadb() +  " shell ps | grep "+xbmcpackage;
+
+        command=getadbOutput(cstring);
+
+        if (command.contains(xbmcpackage))
+        {
+
+
+           QMessageBox::StandardButton reply;
+           reply = QMessageBox::question(this, "Stop Kodi", "Cannot create path while Kodi is running.\n Stop "+xbmcpackage+" on device?"  ,
+                                         QMessageBox::Yes|QMessageBox::No);
+           if (reply == QMessageBox::Yes)
+           {
+
+
+                    QString cstring = getadb() + " shell am force-stop "+xbmcpackage;
+                    QString command=getadbOutput(cstring);
+                    logfile(command);
+           }
+
+
+           else {
+
+
+                    logfile(xbmcpackage+" running. Path creation failed");
+                    return;
+           }
+
+
+
+
+        }
+
+
+         cstring = getadb() + " shell ls "+mcpath;
+         command=getadbOutput(cstring);
+
+
+        if (command.contains("No such file or directory"))
+        {
+
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Create Kodi Data", "This will overwrite /sdcard/kodi_data/\nProceed?",
+                                      QMessageBox::Yes|QMessageBox::No);
+        if (reply == QMessageBox::No)
+           return;
+
+        }
+
+
+
+
+        is_package(xbmcpackage);
+        if (is_packageInstalled)
+        {
+        cstring = getadb()+ " shell appops set --uid "+  xbmcpackage +" MANAGE_EXTERNAL_STORAGE allow";
+        if (!getreturncode(cstring))
+          { QMessageBox::critical(this, "", "Error setting Kodi permissions");
+           // return;
+          }
+        }
+
+
+
+        cstring = getadb() + " shell rm -r "+mcpath;
+        command=RunLongProcess(cstring,"Preparing target");
+        logfile(command);
+
+        cstring = getadb() + " shell ls "+mcpath;
+
+        command=getadbOutput(cstring);
+
+
+        if (command.contains("No such file or directory"))
+        {
+           cstring = getadb() + " shell mkdir -p "+mcpath+"/files/.kodi";
+           command=getadbOutput(cstring);
+           logfile(command);
+           QString errorp = command;
+           cstring = getadb() + " shell ls "+mcpath+"/files/.kodi";
+           command=getadbOutput(cstring);
+
+           //qDebug() << command;
+
+           if (command.contains("No such file or directory"))
+           {
+                    QMessageBox::critical(this,"","Error creating Kodi data folder");
+                    logfile("Restore error:"+ errorp);
+                    return;
+           }
+
+        } // nuke existing
+
+
+
+
+
+
+        cstring = getadb() + " shell echo xbmc.data="+mcpath+"/files > /sdcard/xbmc_env.properties";
+        command=getadbOutput(cstring);
+        logfile("create /sdcard/xbmc_env.properties");
+        logfile(command);
+
+
+        QMessageBox::information(this,"","Data area created");
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+ /*
+
     {
 
      QString rtpath="/sdcard/";
@@ -6833,6 +7017,7 @@
     }
 
 
+*/
 
 
     ////////////////////////////////////////
@@ -10104,6 +10289,8 @@ adb shell am force-stop com.oculus.xrstreamingclient
 
 
 }
+
+
 
 
 

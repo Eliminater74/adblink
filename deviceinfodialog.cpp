@@ -29,6 +29,9 @@ void deviceinfoDialog::devinfo(const QStringList &list)
     QString device = list.at(3);
     QString manufact = list.at(4);
 
+
+
+
     int av = droid.toInt();
 
     ui->scoped->setFixedHeight(100);
@@ -75,10 +78,13 @@ void deviceinfoDialog::devinfo(const QStringList &list)
         if (!scoped)
             ui->scoped->setText("/sdcard/Android/data/ is not restricted by scoped storage.");
         else
-            ui->scoped->setText("Scoped storage is in effect. Kodi's default data area in /sdcard/Android/data is restricted and can't be accessed by adbLink. Kodi's data will be relocated from scoped storage to /sdcard/kodi_data/ or to a /kodi_data/ folder on external storage.");
+            ui->scoped->setText("Scoped storage is in effect. /sdcard/Android/data is sandboxed and can't be accessed by adbLink.");
     } else {
         ui->scoped->setText("Scoped storage is not implemented on this device.");
     }
+
+
+
 
 
     ui->archilabel->move(xPosition, yPosition);

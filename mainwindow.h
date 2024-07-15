@@ -382,6 +382,7 @@ private slots:
 
   void on_actionSend_text_triggered();
 
+
   private:
     Ui::MainWindow *ui;
 

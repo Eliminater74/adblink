@@ -18,6 +18,7 @@ public:
     QString version2;
 
      void setversioncheck(const bool &versioncheck);
+      void setscopecheck(const bool &scopecheck);
      void setscrcpyargs(const bool &scrcpyargs);
      void setoldfm(const bool &oldfm);
 
@@ -35,6 +36,7 @@ void setbackupdir(const QString &bdir);
 
 
 bool versioncheck();
+bool scopecheck();
 bool scrcpyargs();
 bool oldfm();
 QString downloaddir();
