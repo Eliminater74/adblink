@@ -4,7 +4,8 @@ Scoped storage detection expanded to
 optionally create an alternative folder
 for Kodi's data at /sdcard/kodi_data/ and
 the pointer file /sdcard/xbmc_env.properties 
-upon connection.
+upon connection to an Android 11 or greater 
+device.
 
 This functionality is also available via the Utility
 menu function: Create Kodi data
