@@ -10,7 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 #LIBS += -lQt5Concurrent
 
-TARGET = adblink
+TARGET = adblink2
 TEMPLATE = app
 
 SOURCES += main.cpp\
