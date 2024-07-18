@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>709</width>
-    <height>397</height>
+    <width>608</width>
+    <height>494</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>adbLink2</string>
+   <string>adblink</string>
   </property>
   <property name="styleSheet">
    <string notr="true"/>
@@ -26,8 +26,8 @@
    <widget class="QLabel" name="server_running">
     <property name="geometry">
      <rect>
-      <x>210</x>
-      <y>440</y>
+      <x>480</x>
+      <y>500</y>
       <width>51</width>
       <height>20</height>
      </rect>
@@ -39,8 +39,8 @@
    <widget class="QPushButton" name="donate">
     <property name="geometry">
      <rect>
-      <x>180</x>
-      <y>300</y>
+      <x>130</x>
+      <y>410</y>
       <width>301</width>
       <height>31</height>
      </rect>
@@ -64,8 +64,8 @@
    <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
-      <x>279</x>
-      <y>3</y>
+      <x>230</x>
+      <y>10</y>
       <width>111</width>
       <height>16</height>
      </rect>
@@ -77,8 +77,8 @@
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>99</x>
-      <y>3</y>
+      <x>50</x>
+      <y>10</y>
       <width>117</width>
       <height>16</height>
      </rect>
@@ -90,8 +90,8 @@
    <widget class="QLabel" name="label_7">
     <property name="geometry">
      <rect>
-      <x>469</x>
-      <y>3</y>
+      <x>420</x>
+      <y>10</y>
       <width>79</width>
       <height>16</height>
      </rect>
@@ -103,8 +103,8 @@
    <widget class="QListWidget" name="listDevicesStatus">
     <property name="geometry">
      <rect>
-      <x>256</x>
-      <y>23</y>
+      <x>207</x>
+      <y>30</y>
       <width>170</width>
       <height>95</height>
      </rect>
@@ -131,8 +131,8 @@
    <widget class="QListWidget" name="listRunningJobs">
     <property name="geometry">
      <rect>
-      <x>433</x>
-      <y>23</y>
+      <x>384</x>
+      <y>30</y>
       <width>170</width>
       <height>95</height>
      </rect>
@@ -159,8 +159,8 @@
    <widget class="QListWidget" name="listDevices">
     <property name="geometry">
      <rect>
-      <x>79</x>
-      <y>23</y>
+      <x>30</x>
+      <y>30</y>
       <width>170</width>
       <height>95</height>
      </rect>
@@ -250,306 +250,11 @@
      <string>PushButton</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="backupButton">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>620</y>
-      <width>120</width>
-      <height>32</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>120</width>
-      <height>32</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>120</width>
-      <height>32</height>
-     </size>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Backup Kodi's data files. Shortcut: Ctrl-J&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="text">
-     <string>Backup</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="splashButton">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>590</y>
-      <width>120</width>
-      <height>32</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>120</width>
-      <height>32</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>120</width>
-      <height>32</height>
-     </size>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Give Kodi a custom splash screen. Shortcut: Ctrl-V&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="text">
-     <string>Splash Screen</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="mvdataButton">
-    <property name="geometry">
-     <rect>
-      <x>310</x>
-      <y>630</y>
-      <width>120</width>
-      <height>32</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>120</width>
-      <height>32</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>120</width>
-      <height>32</height>
-     </size>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Move Kodi data to/from external partition. Shortcut: Ctrl-N&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="text">
-     <string>Move Kodi Data</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="restoreButton">
-    <property name="geometry">
-     <rect>
-      <x>150</x>
-      <y>620</y>
-      <width>120</width>
-      <height>32</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>120</width>
-      <height>32</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>120</width>
-      <height>32</height>
-     </size>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Restore Kodi's data files. Shortcut: Ctrl-K&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="text">
-     <string>Restore</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushTimers">
-    <property name="geometry">
-     <rect>
-      <x>300</x>
-      <y>590</y>
-      <width>98</width>
-      <height>32</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>Edit rimers for Sleep and Screensaver</string>
-    </property>
-    <property name="text">
-     <string>Edit Timers</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="cacheButton">
-    <property name="geometry">
-     <rect>
-      <x>160</x>
-      <y>590</y>
-      <width>120</width>
-      <height>32</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>120</width>
-      <height>32</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>120</width>
-      <height>32</height>
-     </size>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Adjust Kodi's video cache settings. Shortcut: Ctrl-S&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="text">
-     <string>Edit Cache</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="editXML">
-    <property name="geometry">
-     <rect>
-      <x>530</x>
-      <y>490</y>
-      <width>120</width>
-      <height>32</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>120</width>
-      <height>32</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>120</width>
-      <height>32</height>
-     </size>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Give Kodi a custom splash screen. Shortcut: Ctrl-V&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="text">
-     <string>Edit XML</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="newRecord">
-    <property name="geometry">
-     <rect>
-      <x>329</x>
-      <y>135</y>
-      <width>80</width>
-      <height>32</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>80</width>
-      <height>32</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>80</width>
-      <height>32</height>
-     </size>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Create new device record. Shortcut: Ctrl-B&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="text">
-     <string>New</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="editRecord">
-    <property name="geometry">
-     <rect>
-      <x>416</x>
-      <y>135</y>
-      <width>80</width>
-      <height>32</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>80</width>
-      <height>32</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>80</width>
-      <height>32</height>
-     </size>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Edit device record. Shortcut: Ctrl-C&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="text">
-     <string>Edit</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="delRecord">
-    <property name="geometry">
-     <rect>
-      <x>503</x>
-      <y>135</y>
-      <width>80</width>
-      <height>32</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>80</width>
-      <height>32</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>80</width>
-      <height>32</height>
-     </size>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Delete device record. Shortcut: Ctrl-D&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="text">
-     <string>Delete</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="connButton">
     <property name="geometry">
      <rect>
-      <x>329</x>
-      <y>175</y>
+      <x>282</x>
+      <y>191</y>
       <width>80</width>
       <height>32</height>
      </rect>
@@ -579,8 +284,8 @@
    <widget class="QPushButton" name="disButton">
     <property name="geometry">
      <rect>
-      <x>416</x>
-      <y>175</y>
+      <x>376</x>
+      <y>191</y>
       <width>80</width>
       <height>32</height>
      </rect>
@@ -610,8 +315,8 @@
    <widget class="QPushButton" name="clearButton">
     <property name="geometry">
      <rect>
-      <x>503</x>
-      <y>175</y>
+      <x>470</x>
+      <y>191</y>
       <width>80</width>
       <height>32</height>
      </rect>
@@ -638,13 +343,106 @@
      <string>Clear</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="delRecord">
+    <property name="geometry">
+     <rect>
+      <x>470</x>
+      <y>151</y>
+      <width>80</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>80</width>
+      <height>32</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>80</width>
+      <height>32</height>
+     </size>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Delete device record. Shortcut: Ctrl-D&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="text">
+     <string>Delete</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="newRecord">
+    <property name="geometry">
+     <rect>
+      <x>282</x>
+      <y>151</y>
+      <width>80</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>80</width>
+      <height>32</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>80</width>
+      <height>32</height>
+     </size>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Create new device record. Shortcut: Ctrl-B&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="text">
+     <string>New</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="editRecord">
+    <property name="geometry">
+     <rect>
+      <x>376</x>
+      <y>151</y>
+      <width>80</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>80</width>
+      <height>32</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>80</width>
+      <height>32</height>
+     </size>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Edit device record. Shortcut: Ctrl-C&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="text">
+     <string>Edit</string>
+    </property>
+   </widget>
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>103</x>
-      <y>180</y>
-      <width>43</width>
-      <height>20</height>
+      <x>50</x>
+      <y>195</y>
+      <width>41</width>
+      <height>16</height>
      </rect>
     </property>
     <property name="text">
@@ -654,21 +452,21 @@
    <widget class="QLineEdit" name="adhocip">
     <property name="geometry">
      <rect>
-      <x>153</x>
-      <y>180</y>
-      <width>165</width>
-      <height>25</height>
+      <x>102</x>
+      <y>195</y>
+      <width>160</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="minimumSize">
      <size>
-      <width>165</width>
+      <width>160</width>
       <height>0</height>
      </size>
     </property>
     <property name="maximumSize">
      <size>
-      <width>165</width>
+      <width>160</width>
       <height>16777215</height>
      </size>
     </property>
@@ -676,11 +474,24 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;IP address of ad hoc device. Use this to connect to devices that are not entered into the adbLink database. You can also specify a port by appending :&amp;lt;port&amp;gt; to the IP address.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>158</y>
+      <width>41</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Device</string>
+    </property>
+   </widget>
    <widget class="QComboBox" name="deviceBox">
     <property name="geometry">
      <rect>
-      <x>152</x>
-      <y>135</y>
+      <x>101</x>
+      <y>151</y>
       <width>170</width>
       <height>32</height>
      </rect>
@@ -707,26 +518,13 @@
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QLabel" name="label_5">
-    <property name="geometry">
-     <rect>
-      <x>100</x>
-      <y>140</y>
-      <width>45</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Device</string>
-    </property>
-   </widget>
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>25</x>
-      <y>221</y>
-      <width>658</width>
-      <height>73</height>
+      <x>42</x>
+      <y>232</y>
+      <width>524</width>
+      <height>151</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
@@ -756,53 +554,6 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QPushButton" name="sideload_Button">
-       <property name="minimumSize">
-        <size>
-         <width>120</width>
-         <height>32</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>120</width>
-         <height>32</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Install app(s) to device. Shortcut: Ctrl-L&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="text">
-        <string>Install APK</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QPushButton" name="uninstall_Button">
-       <property name="minimumSize">
-        <size>
-         <width>120</width>
-         <height>32</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>120</width>
-         <height>32</height>
-        </size>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Unistall app from device. Shortcut: Ctrl-M&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="text">
-        <string>Uninstall APK</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="3">
       <widget class="QPushButton" name="adbshellButton">
        <property name="minimumSize">
         <size>
@@ -827,8 +578,8 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="4">
-      <widget class="QPushButton" name="doConsole">
+     <item row="0" column="2">
+      <widget class="QPushButton" name="backupButton">
        <property name="minimumSize">
         <size>
          <width>120</width>
@@ -845,14 +596,133 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open adb-capable command prompt. Shortcut: Ctrl-T&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Backup Kodi's data files. Shortcut: Ctrl-J&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="text">
-        <string>Console</string>
+        <string>Backup</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <widget class="QPushButton" name="restoreButton">
+       <property name="minimumSize">
+        <size>
+         <width>120</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>120</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Restore Kodi's data files. Shortcut: Ctrl-K&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string>Restore</string>
        </property>
       </widget>
      </item>
      <item row="1" column="0">
+      <widget class="QPushButton" name="sideload_Button">
+       <property name="minimumSize">
+        <size>
+         <width>120</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>120</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Install app(s) to device. Shortcut: Ctrl-L&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string>Install APK</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QPushButton" name="uninstall_Button">
+       <property name="minimumSize">
+        <size>
+         <width>120</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>120</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Unistall app from device. Shortcut: Ctrl-M&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string>Uninstall APK</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QPushButton" name="mvdataButton">
+       <property name="minimumSize">
+        <size>
+         <width>120</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>120</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Move Kodi data to/from external partition. Shortcut: Ctrl-N&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string>Move Kodi Data</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="3">
+      <widget class="QPushButton" name="pushTimers">
+       <property name="minimumSize">
+        <size>
+         <width>120</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>120</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Edit rimers for Sleep and Screensaver</string>
+       </property>
+       <property name="text">
+        <string>Edit Timers</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
       <widget class="QPushButton" name="refreshConnectedDevices">
        <property name="minimumSize">
         <size>
@@ -877,7 +747,7 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
+     <item row="2" column="1">
       <widget class="QPushButton" name="killServer">
        <property name="minimumSize">
         <size>
@@ -905,7 +775,7 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="2">
+     <item row="2" column="2">
       <widget class="QPushButton" name="scpyButton">
        <property name="minimumSize">
         <size>
@@ -920,15 +790,15 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Start the scrcpy Android screen viewer. Shortcut: Ctrl-R&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Start scrcpy Android screen viewer&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="text">
         <string>ScrCpy</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="3">
-      <widget class="QPushButton" name="screencapButton">
+     <item row="2" column="3">
+      <widget class="QPushButton" name="cacheButton">
        <property name="minimumSize">
         <size>
          <width>120</width>
@@ -945,14 +815,39 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Get screen capture from device. Shortcut: Ctrl-W&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Adjust Kodi's video cache settings. Shortcut: Ctrl-S&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="text">
-        <string>Screencap</string>
+        <string>Edit Cache</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="4">
+     <item row="3" column="0">
+      <widget class="QPushButton" name="doConsole">
+       <property name="minimumSize">
+        <size>
+         <width>120</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>120</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Open adb-capable command prompt. Shortcut: Ctrl-T&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string>Console</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
       <widget class="QPushButton" name="keypadButton">
        <property name="minimumSize">
         <size>
@@ -977,6 +872,56 @@
        </property>
       </widget>
      </item>
+     <item row="3" column="2">
+      <widget class="QPushButton" name="editXML">
+       <property name="minimumSize">
+        <size>
+         <width>120</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>120</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Edit Kodi XML files&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string>Edit XML</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="3">
+      <widget class="QPushButton" name="screencapButton">
+       <property name="minimumSize">
+        <size>
+         <width>120</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>120</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Get screen capture from device. Shortcut: Ctrl-W&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="text">
+        <string>Screencap</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
   </widget>
@@ -986,7 +931,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>709</width>
+     <width>608</width>
      <height>24</height>
     </rect>
    </property>
@@ -995,6 +940,7 @@
      <string>File</string>
     </property>
     <addaction name="actionPreferences"/>
+    <addaction name="actionDownload_Kodi"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -1015,6 +961,7 @@
      <string>Logs</string>
     </property>
     <addaction name="actionView_adbLink_Log"/>
+    <addaction name="actionView_Kodi_Log"/>
    </widget>
    <widget class="QMenu" name="menuReboot">
     <property name="title">
@@ -1037,18 +984,21 @@
     </property>
     <addaction name="actionReiinstall_Busybox"/>
     <addaction name="actionPaste_path"/>
-    <addaction name="actionStop_Application"/>
     <addaction name="actionStart_Application"/>
-    <addaction name="actionSet_Kodi_permissions"/>
-    <addaction name="actionGet_UID_from_APK_file"/>
+    <addaction name="actionStop_Application"/>
     <addaction name="actionArchitecture"/>
     <addaction name="actionOculus_VR"/>
     <addaction name="actionSend_text"/>
-    <addaction name="actionSleep_adjust"/>
+    <addaction name="actionSet_Kodi_permissions"/>
+    <addaction name="actionCreate_kodi_data"/>
+    <addaction name="actionGet_UID_from_APK_file"/>
     <addaction name="View_Changelog"/>
     <addaction name="Erase_adbLink_database"/>
     <addaction name="actionWireless_ADBD"/>
+    <addaction name="actionSplash_Screen"/>
+    <addaction name="actionPush_remote"/>
     <addaction name="actionTest_adb_connection"/>
+    <addaction name="actiondelthumb"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuLogs"/>
@@ -1108,11 +1058,6 @@
    </property>
    <property name="toolTip">
     <string>View/Copy adbLink Log</string>
-   </property>
-  </action>
-  <action name="actionEdit_XML_files">
-   <property name="text">
-    <string>Edit XML files</string>
    </property>
   </action>
   <action name="actionPaste_path">
@@ -1186,14 +1131,6 @@
     <string>Application preferences</string>
    </property>
   </action>
-  <action name="actionDown_SPMC">
-   <property name="text">
-    <string>Download SPMC</string>
-   </property>
-   <property name="toolTip">
-    <string>Download SPMC</string>
-   </property>
-  </action>
   <action name="actionGet_package_name">
    <property name="text">
     <string>Get package name</string>
@@ -1202,12 +1139,12 @@
     <string>Get package name of android program</string>
    </property>
   </action>
-  <action name="actionReiinstall_Busybox">
+  <action name="actionArchitecture">
    <property name="text">
-    <string>Reinstall Busybox</string>
+    <string>System information</string>
    </property>
    <property name="toolTip">
-    <string>Reinstall Busybox</string>
+    <string>Show system information</string>
    </property>
   </action>
   <action name="actionSleep_adjust">
@@ -1220,7 +1157,7 @@
   </action>
   <action name="actiondelthumb">
    <property name="text">
-    <string>Del Thumbnails</string>
+    <string>Delete thumbnails</string>
    </property>
   </action>
   <action name="actionPush_remote">
@@ -1228,35 +1165,22 @@
     <string>Push remote</string>
    </property>
   </action>
-  <action name="actionInstall_XAPK">
+  <action name="actionSplash_Screen">
    <property name="text">
-    <string>Install XAPK</string>
-   </property>
-  </action>
-  <action name="actionCreate_kodi_data">
-   <property name="text">
-    <string>Create kodi_data</string>
+    <string>Splash Screen</string>
    </property>
    <property name="toolTip">
-    <string>Create kodi_data for Android 11</string>
-   </property>
-  </action>
-  <action name="Erase_adbLink_database">
-   <property name="text">
-    <string>Erase database</string>
-   </property>
-  </action>
-  <action name="actionArchitecture">
-   <property name="text">
-    <string>System information</string>
-   </property>
-   <property name="toolTip">
-    <string>Show system information</string>
+    <string>Change Kodi's Splash Screen</string>
    </property>
   </action>
   <action name="View_Changelog">
    <property name="text">
     <string>View changelog</string>
+   </property>
+  </action>
+  <action name="Erase_adbLink_database">
+   <property name="text">
+    <string>Erase device database</string>
    </property>
   </action>
   <action name="actionConnect_WSA">
@@ -1265,6 +1189,14 @@
    </property>
    <property name="toolTip">
     <string>Connect to Windows Subsystem for Android</string>
+   </property>
+  </action>
+  <action name="actionReiinstall_Busybox">
+   <property name="text">
+    <string>Reinstall Busybox</string>
+   </property>
+   <property name="toolTip">
+    <string>Reinstall Busybox</string>
    </property>
   </action>
   <action name="actionSet_Kodi_permissions">
@@ -1285,7 +1217,7 @@
     <string>Quest Headset</string>
    </property>
    <property name="toolTip">
-    <string>Oculus Quest values and flags</string>
+    <string>Quest headset values and flags</string>
    </property>
   </action>
   <action name="actionSend_text">
@@ -1294,6 +1226,11 @@
    </property>
    <property name="toolTip">
     <string>Send text to Android device</string>
+   </property>
+  </action>
+  <action name="actionCreate_kodi_data">
+   <property name="text">
+    <string>Create Kodi data</string>
    </property>
   </action>
  </widget>

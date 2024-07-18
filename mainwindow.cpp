@@ -908,39 +908,10 @@
 
     //////////////////////////////////////////////
     bool MainWindow::isScoped()
-
     {
-
-
-        QString cstring;
-
         bool scoped;
-
-
-
-    //    cstring = cstring = getadb() +  " shell ls /sdcard/Android/data/";
-    //    if (getreturncode(cstring)) {
-    //      scoped = false;
-    //    } else scoped = true;
-
-      //  qDebug() << scoped;
-
-
-
-    //    int androidversion;
-    //    androidversion=getandroid();
-   // ro = androidversion == 11 || androidversion == 12;
- //      scoped = getandroid() == 11 || getandroid() == 12;
-  //    qDebug() << ro;
-
-
-   scoped = getandroid() == 11 || getandroid() == 12;
-
-       return scoped;
-
-
-
-
+        scoped = getandroid() == 11 || getandroid() == 12;
+        return scoped;
     }
 
 
