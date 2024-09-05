@@ -10263,3 +10263,33 @@ adb shell am force-stop com.oculus.xrstreamingclient
 
 
 
+
+void MainWindow::on_test_clicked()
+{
+
+
+ QString cstring;
+ QString command;
+ QString mcpath;
+
+
+
+ if (!check_devices() )
+           return;
+
+ cstring = getadb() + " shell ls /sdcard/xbmc_env.properties";
+ if(getreturncode(cstring))
+ {  cstring = getadb() + " shell cat /sdcard/xbmc_env.properties";
+           command=getadbOutput(cstring);
+           command.replace(QRegExp("[\r\n]"), "");
+           mcpath = command.mid(command.indexOf("xbmc.data=") + 10);
+          // mcpath=mcpath+"/.kodi";
+ }
+
+
+ qDebug() << mcpath;
+
+
+
+}
+

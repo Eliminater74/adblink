@@ -1,3 +1,13 @@
+XX/XX/XX
+
+When pulling files, if the selected file exists at the
+pull destination an override dialog is presented. If an
+overwrite is denied, it is logged.  
+
+When files are successfully pulled, file manager now
+notes the destination directory in the log.
+
+
 07/15/24
 
 Scoped storage detection expanded to

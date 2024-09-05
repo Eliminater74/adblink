@@ -335,197 +335,155 @@ void usbfileDialog::oldPush()
 
 void usbfileDialog::on_pullButton_clicked()
 {
+       // qDebug() << pulldir_ufd;
 
-   //    qDebug() << pulldir_ufd;
-
-    if (!QDir(pulldir_ufd).exists())
-     {   QMessageBox::critical(this,"","Pull destination does not exist");
-         return;
-     }
-
-
-    // stat -c "%a" test.gz | grep 7 get permissions
-
-
-   QMessageBox::StandardButton reply;
-     reply = QMessageBox::question(this, "","Pull file(s)?",
-         QMessageBox::Yes|QMessageBox::No);
-     if (reply == QMessageBox::No)
-       return;
-
-
-   QStringList mstringlist;
-   QString fileName;
-   QString fname;
-   QString command;
-   QString cstring;
-   bool dtest;
-   QString dirname;
-   int error=0;
-
-
-
-if (hasfocus)
-{
-   if( ui->usblistWidget1->selectedItems().count() >= 1 )
-     {
-       foreach( QListWidgetItem *item, ui->usblistWidget1->selectedItems() )
-       {
-            if (item->text() == "..")
-            return;
-            else
-           mstringlist << item->text();
+       if (!QDir(pulldir_ufd).exists()) {
+        QMessageBox::critical(this, "", "Pull destination does not exist");
+        return;
        }
 
-      }
-}
+       QMessageBox::StandardButton reply;
+       reply = QMessageBox::question(this, "", "Pull file(s)?", QMessageBox::Yes | QMessageBox::No);
+       if (reply == QMessageBox::No)
+        return;
 
-else
+       QStringList mstringlist;
+       QString fileName;
+       QString fname;
+       QString command;
+       QString cstring;
+       bool dtest;
+       QString dirname;
+       int error = 0;
+       bool overwriteRejected = false; // Flag to track if any overwrite was rejected
 
-{
-    if( ui->usblistWidget2->selectedItems().count() >= 1 )
-    {
-       foreach( QListWidgetItem *item, ui->usblistWidget2->selectedItems() )
-       {
-            if (item->text() == "..")
-            return;
-            else
-           mstringlist << item->text();
+       if (hasfocus) {
+        if (ui->usblistWidget1->selectedItems().count() >= 1) {
+            foreach (QListWidgetItem *item, ui->usblistWidget1->selectedItems()) {
+                if (item->text() == "..")
+                    return;
+                else
+                    mstringlist << item->text();
+            }
+        }
+       } else {
+        if (ui->usblistWidget2->selectedItems().count() >= 1) {
+            foreach (QListWidgetItem *item, ui->usblistWidget2->selectedItems()) {
+                if (item->text() == "..")
+                    return;
+                else
+                    mstringlist << item->text();
+            }
+        }
        }
 
-       }
-}
+       if (mstringlist.count() < 1)
+        return;
 
+       logfile("Pull Files");
+       logfile("----------");
 
+       for (QStringList::iterator it = mstringlist.begin(); it != mstringlist.end(); ++it) {
+        fileName = *it;
 
-
-if (mstringlist.count() < 1)
-   return;
-
-
-
-
-logfile("Pull Files");
-logfile("----------");
-
-for (QStringList::iterator it = mstringlist.begin();
-      it != mstringlist.end(); ++it)
-{
-    fileName = *it;
-
-
-    int r = fileName.lastIndexOf("/");
-    fname=fileName.mid(r+1,fileName.length());
-
-
-
-    //cstring=adb21+rootShell+" stat -c %a "+fileName;
-    //command=getadbOutput(cstring); // permissions
-
-   cstring = adb21+rootShell+ " test -d "+ fileName +" && echo true || echo false";
-
-   command=RunLongProcess_ufd(cstring);  // is directory
-
-
-    if (command.contains("true"))
-    {
         int r = fileName.lastIndexOf("/");
-        dirname = fileName.mid(r,fileName.count());
-        dirname=fix_directory(dirname);
-        dtest=true;
-    }
+        fname = fileName.mid(r + 1, fileName.length());
 
-    else dtest=false;
+        // Construct the full destination file path
+        QString destFilePath = pulldir_ufd + "/" + fname;
 
+        // Check if the file already exists at the destination
+        if (QFile::exists(destFilePath)) {
+            QMessageBox::StandardButton overwriteReply;
+            overwriteReply = QMessageBox::question(this, "", QString("File %1 already exists. Overwrite?").arg(fname),
+                                                   QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+            if (overwriteReply == QMessageBox::Cancel) {
+                // Cancel the entire pull process
+                return;
+            } else if (overwriteReply == QMessageBox::No) {
+                // Skip this file and continue with the next one
 
+                logfile(destFilePath + " not overwritten.");
+                overwriteRejected = true; // Mark that an overwrite was rejected
+                continue;
+            }
+        }
 
+        // Check if the file is a directory
+        cstring = adb21 + rootShell + " test -d " + fileName + " && echo true || echo false";
+        command = RunLongProcess_ufd(cstring);
 
+        if (command.contains("true")) {
+            int r = fileName.lastIndexOf("/");
+            dirname = fileName.mid(r, fileName.count());
+            dirname = fix_directory(dirname);
+            dtest = true;
+        } else {
+            dtest = false;
+        }
 
-
-    if (dtest)
-         cstring = adb21 + " pull "+'"'+fileName+'"'+" "+'"'+pulldir_ufd+dirname+'"';
+        // Construct the adb pull command based on directory test
+        if (dtest)
+            cstring = adb21 + " pull " + '"' + fileName + '"' + " " + '"' + pulldir_ufd + dirname + '"';
         else
-        cstring = adb21 + " pull "+'"'+fileName+'"'+" "+'"'+pulldir_ufd+'"';
+            cstring = adb21 + " pull " + '"' + fileName + '"' + " " + '"' + pulldir_ufd + '"';
 
-         command=RunLongProcess_ufd(cstring);
+        command = RunLongProcess_ufd(cstring);
 
+        if (!command.contains("pulled")) {
+            // Attempt to copy file to /data/local/tmp then re-attempt pull
+            cstring = adb21 + rootShell + " cp -R " + fileName + " /data/local/tmp";
+            command = RunLongProcess_ufd(cstring);
 
-        //if (!command.contains("bytes"))
+            if (!command.isEmpty()) {
+                error = error + 1;
+                logfile("Error: " + command);
+                QMessageBox::critical(this, "", "Error(s). See log");
+                return;
+            }
 
-       if (!command.contains("pulled"))
-        {
+            fname = "/data/local/tmp/" + fname;
 
-           // copy fileName to /data/local/tmp then re-attempt pull
+            cstring = adb21 + rootShell + " chmod -R 755 " + fname;
+            command = getadbOutput(cstring);
 
-           cstring=adb21+rootShell+" cp -R " +fileName+ " /data/local/tmp";
-           command=RunLongProcess_ufd(cstring);
+            if (dtest)
+                cstring = adb21 + " pull " + '"' + fname + '"' + " " + '"' + pulldir_ufd + dirname + '"';
+            else
+                cstring = adb21 + " pull " + '"' + fname + '"' + " " + '"' + pulldir_ufd + '"';
 
-          if (!command.isEmpty())
-          {
-              error=error+1;
-              logfile("Error: "+command);
-              QMessageBox::critical(this,"","Error(s). See log");
-              return;
-          }
+            QString cmd = RunLongProcess_ufd(cstring);
 
+            if (!cmd.contains("pulled")) {
+                logfile("pull failed:" + fileName);
+                logfile(cstring);
+                logfile(cmd);
+                error = error + 1;
+            }
 
-           fname="/data/local/tmp/"+fname;
-
-
-           cstring=adb21+rootShell+" chmod -R 755 " +fname;
-           command=getadbOutput(cstring);
-
-
-
-           if (dtest)
-                cstring = adb21 + " pull "+'"'+fname+'"'+" "+'"'+pulldir_ufd+dirname+'"';
-               else
-               cstring = adb21 + " pull "+'"'+fname+'"'+" "+'"'+pulldir_ufd+'"';
-
-           QString cmd=RunLongProcess_ufd(cstring);
-
-  //   if (!cmd.contains("bytes"))
-
-           if (!cmd.contains("pulled"))
-                 {
-                    logfile("pull failed:"+ fileName);
-                    logfile(cstring);
-                    logfile(cmd);
-                    error=error+1;
-
-                 }
-
-               cstring=adb21+rootShell+" rm -r " +fname;
-               command=getadbOutput(cstring);
+            cstring = adb21 + rootShell + " rm -r " + fname;
+            command = getadbOutput(cstring);
+        } else {
+            logfile( "Destination: " + pulldir_ufd + "\n" + fileName + " " + command);
+        }
        }
 
-    else logfile("pull succeeded:"+ fileName + " "+command);
+       // Display the final status message
+       if (error > 0) {
+        QMessageBox::critical(this, "", "Error(s). See log");
+       } else if (overwriteRejected) {
+        QMessageBox::information(this, "", "Pull(s) complete. Some files were not overwritten. See log.");
+       } else {
+        QMessageBox::information(this, "", "Pull(s) complete. See log.");
+       }
 
- }
+       // Clear selections and reset paths
+       ui->usblistWidget1->clearSelection();
+       ui->usblistWidget2->clearSelection();
 
-if (error > 0)
-QMessageBox::critical(this,"","Error(s). See log");
-else
-QMessageBox::information(this,"","Pull(s) complete. See log.");
-
-
-//qDebug() << ufdlogfiledir+"adblink.log";
-//qDebug() << pulldir_ufd;
-
-
-ui->usblistWidget1->clearSelection();
-ui->usblistWidget2->clearSelection();
-
-setPath1(current_directory1);
-setPath2(current_directory2);
-
+       setPath1(current_directory1);
+       setPath2(current_directory2);
 }
-
-
-
-
-
-
 
 
 
