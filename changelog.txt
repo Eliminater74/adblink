@@ -7,6 +7,8 @@ overwrite is denied, it is logged.
 When files are successfully pulled, file manager now
 notes the destination directory in the log.
 
+scrcpy updated: scrcpy-win64-v2.6.1
+
 
 07/15/24
 
