@@ -8136,6 +8136,8 @@ void MainWindow::restoreAndroid()
     return;
 
 
+
+
 is_package(xbmcpackage);
 
 if (!is_packageInstalled)
@@ -8149,7 +8151,44 @@ QString cstring;
 QString command;
 QString n_data_root;
 QString mcpath;
+QString xbmcpath;
 QString kbase;
+
+
+/*
+
+bool xbmc_env=false;
+
+cstring = getadb() + " shell ls /sdcard/xbmc_env.properties";
+if(getreturncode(cstring))
+{
+
+    cstring = getadb() + " shell cat /sdcard/xbmc_env.properties";
+    command=getadbOutput(cstring);
+    command.replace(QRegExp("[\r\n]"), "");
+    xbmcpath = command.mid(command.indexOf("xbmc.data=") + 10);
+    xbmcpath=xbmcpath+"/.kodi";
+
+
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "xbmc properties", "xbmc_env.properties file found.\n"+xbmcpath+"\nUse these values for restore?"  ,
+                                  QMessageBox::Yes|QMessageBox::No);
+    if (reply == QMessageBox::Yes)
+    {
+
+         xbmc_env=true;
+
+    }
+
+
+    return;
+
+
+}
+
+
+*/
+
 //int androidRelease=getandroid();
 QString backup = readBackup(databasedir);
 
