@@ -8119,7 +8119,359 @@ void MainWindow::on_restoreButton_clicked()
 
 
 
-          restoreAndroid();
+  //        restoreAndroid();
+
+  // end
+
+//////////////////////////////////////////
+
+          if (!check_devices() )
+            return;
+
+
+
+
+          is_package(xbmcpackage);
+
+          if (!is_packageInstalled)
+          {
+
+            QMessageBox::critical(this,"",xbmcpackage+" not installed");
+            return;
+          }
+
+          QString cstring;
+          QString command;
+          QString n_data_root;
+          QString mcpath;
+          QString xbmcpath;
+          QString kbase;
+
+
+
+
+          bool xbmc_env=false;
+
+          cstring = getadb() + " shell ls /sdcard/xbmc_env.properties";
+          if(getreturncode(cstring))
+          {
+
+            cstring = getadb() + " shell cat /sdcard/xbmc_env.properties";
+            command=getadbOutput(cstring);
+            command.replace(QRegExp("[\r\n]"), "");
+            xbmcpath = command.mid(command.indexOf("xbmc.data=") + 10);
+            // xbmcpath=xbmcpath+"/.kodi";
+
+
+            QMessageBox::StandardButton reply;
+            reply = QMessageBox::question(this, "xbmc properties", "xbmc_env.properties file found.\nUse its values?",
+                                          QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+
+            if (reply == QMessageBox::Yes)
+            {
+          xbmc_env = true;
+          mcpath = xbmcpath;
+            }
+            else if (reply == QMessageBox::No)
+            {
+          xbmc_env = false;
+          // Handle the No choice
+            }
+            else if (reply == QMessageBox::Cancel)
+            {
+          return;
+            }
+
+
+
+          }
+
+
+
+
+          //int androidRelease=getandroid();
+
+
+          QString backup = readBackup(databasedir);
+
+
+          cstring = cstring = getadb() +  " shell ps | grep "+xbmcpackage;
+
+          command=getadbOutput(cstring);
+
+          if (command.contains(xbmcpackage))
+          {
+
+
+            QMessageBox::StandardButton reply;
+            reply = QMessageBox::question(this, "Stop Kodi", "Cannot restore while Kodi is running.\n Stop "+xbmcpackage+" on device?"  ,
+                                          QMessageBox::Yes|QMessageBox::No);
+            if (reply == QMessageBox::Yes)
+            {
+
+
+          QString cstring = getadb() + " shell am force-stop "+xbmcpackage;
+          QString command=getadbOutput(cstring);
+          logfile(command);
+            }
+
+
+            else {
+
+
+          logfile(xbmcpackage+" running. Restore failed");
+          return;
+            }
+
+
+
+
+          }
+
+          if (!xbmc_env)
+
+          {
+
+            cstring = getadb()+ " shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
+
+            QString s = getadbOutput(cstring);
+
+
+
+            QStringList list = s.split('\n');
+
+            for (int i = 0; i < list.size(); i++) {
+
+          list[i].remove('\r');
+          list[i].remove('\n');
+
+          if (list[i] == "Android" ||
+              list[i] == "Permission denied" ||
+              list[i] == "/storage/emulated" ||
+              list[i] == "/storage" ||
+              list[i] == "/storage/self" ||
+              list[i] == NULL)          {
+            list.removeAt(i);
+            i--;
+          }
+
+
+
+            }
+
+
+
+
+
+            list.insert(0, "/sdcard");
+
+            if( list.count() > 1)
+            {
+          restDialog dialog(this);
+          dialog.setWindowModality(Qt::WindowModal);
+          dialog.setWindowTitle("Restore");
+          dialog.setadb_restore(list);
+
+
+          if (dialog.exec() == QDialog::Accepted)
+          {
+
+            n_data_root = dialog.restore_data_root();
+
+          }
+
+          else return;
+
+
+
+            }
+
+
+            if (n_data_root.isEmpty())
+          n_data_root = "sdcard";
+
+
+
+            if(!n_data_root.startsWith("/"))
+          n_data_root.prepend("/");
+
+            if(!n_data_root.endsWith("/"))
+          n_data_root.append("/") ;
+
+
+
+            if (isScoped()) {
+          mcpath=n_data_root + "kodi_data/" + xbmcpackage;
+          kbase = n_data_root + "kodi_data/";
+
+          cstring = getadb()+ " shell appops set --uid "+  xbmcpackage +" MANAGE_EXTERNAL_STORAGE allow";
+          if (!getreturncode(cstring))
+          { QMessageBox::critical(this, "", "Error setting Kodi permissions");
+            return;
+          }
+
+
+
+            } else {
+          mcpath=n_data_root + "Android/data/" + xbmcpackage;
+          kbase = n_data_root + "Android/data/";
+            }
+
+
+          } // end_xbmc_env
+
+          QElapsedTimer rtimer;
+          int nMilliseconds;
+          rtimer.start();
+
+
+
+
+          QDir backupDir(backup);
+          QString dir = QFileDialog::getExistingDirectory(this, tr("Choose Backup Folder"),
+                                                          backupDir.absolutePath(),
+                                                          QFileDialog::ShowDirsOnly
+                                                              | QFileDialog::DontResolveSymlinks);
+
+          if (dir.isEmpty()) {
+            return;
+          }
+
+
+
+
+          if (!QDir(dir+"/userdata").exists() )
+
+          {
+
+
+            QMessageBox::critical(0,"","Invalid backup. No userdata folder." );
+
+
+
+            return;
+          }
+
+
+
+
+          if (!QDir(dir+"/addons").exists() )
+          {
+            QMessageBox::critical(0,"","Invalid backup. addons folder not found." );
+            return;
+          }
+
+
+
+
+
+          if (dir.isEmpty() )
+            return;
+
+
+
+          QMessageBox::StandardButton reply;
+          reply = QMessageBox::question(this, "Restore", "Restore this backup? This will overwrite existing Kodi data.",
+                                        QMessageBox::Yes|QMessageBox::No);
+          if (reply == QMessageBox::No)
+            return;
+
+
+
+          logfile("Restoring Android Kodi");
+
+
+
+
+          cstring = getadb() + " shell rm -r "+mcpath;
+          command=RunLongProcess(cstring,"Preparing target");
+          logfile(command);
+
+          cstring = getadb() + " shell ls "+mcpath;
+
+          command=getadbOutput(cstring);
+
+
+          if (command.contains("No such file or directory"))
+          {
+            cstring = getadb() + " shell mkdir -p "+mcpath+"/files/.kodi";
+            command=getadbOutput(cstring);
+            logfile(command);
+            QString errorp = command;
+            cstring = getadb() + " shell ls "+mcpath+"/files/.kodi";
+            command=getadbOutput(cstring);
+
+            //qDebug() << command;
+
+            if (command.contains("No such file or directory"))
+            {
+          QMessageBox::critical(this,"","Error creating restore point");
+          logfile("Restore error:"+ errorp);
+          return;
+            }
+
+          } // nuke existing
+
+
+
+
+
+          dir=dir+"/.";
+
+          cstring = getadb() + " push "+'"'+dir+'"'+ " "+mcpath+"/files/.kodi/";
+
+
+          command=RunLongProcess(cstring,"Restore");
+          nMilliseconds = rtimer.elapsed();
+          logfile("process time duration: "+ QString::number(nMilliseconds/1000)+ " seconds" );
+
+          //qDebug() << command;
+
+          if (command.contains("bytes"))
+
+          {
+
+
+            cstring = getadb() + " shell rm /sdcard/xbmc_env.properties";
+            command=getadbOutput(cstring);
+
+
+
+
+            if (isScoped())
+            {
+          cstring = getadb() + " shell echo xbmc.data="+mcpath+"/files > /sdcard/xbmc_env.properties";
+          command=getadbOutput(cstring);
+          logfile("create /sdcard/xbmc_env.properties");
+          logfile(command);
+            }
+            else
+            {
+          if (n_data_root != "/sdcard/")
+          {
+            cstring = getadb() + " shell echo xbmc.data="+mcpath+"/files > /sdcard/xbmc_env.properties";
+            command=getadbOutput(cstring);
+            logfile("create /sdcard/xbmc_env.properties");
+            logfile(command);
+          }
+
+            }
+
+
+            writeBackup(dir);
+
+            QMessageBox::information(this,"","Restore complete");
+
+          }
+
+          else
+
+          {
+            QMessageBox::critical(this,"","Restore Failed. See log.");
+            logfile(cstring);
+            logfile(command);
+          }
+
 
 
 
@@ -8155,7 +8507,7 @@ QString xbmcpath;
 QString kbase;
 
 
-/*
+
 
 bool xbmc_env=false;
 
@@ -8177,19 +8529,19 @@ if(getreturncode(cstring))
     {
 
          xbmc_env=true;
+          mcpath=xbmcpath;
 
     }
-
-
-    return;
 
 
 }
 
 
-*/
+
 
 //int androidRelease=getandroid();
+
+
 QString backup = readBackup(databasedir);
 
 
@@ -8226,7 +8578,9 @@ if (command.contains(xbmcpackage))
 
 }
 
+if (!xbmc_env)
 
+{
 
 cstring = getadb()+ " shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
 
@@ -8307,17 +8661,19 @@ if (isScoped()) {
     }
 
 
+
 } else {
     mcpath=n_data_root + "Android/data/" + xbmcpackage;
     kbase = n_data_root + "Android/data/";
 }
 
 
-
+} // end_xbmc_env
 
 QElapsedTimer rtimer;
 int nMilliseconds;
 rtimer.start();
+
 
 
 

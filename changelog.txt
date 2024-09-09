@@ -9,6 +9,11 @@ notes the destination directory in the log.
 
 scrcpy updated: scrcpy-win64-v2.6.1
 
+If /sdcard/xbmc_env.properties exists, its value
+can be used as the restore location.
+
+
+
 
 07/15/24
 
