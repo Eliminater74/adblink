@@ -544,28 +544,27 @@
 
 
 
-     ui->clearButton->setShortcut(QKeySequence("Ctrl+Y"));
+
 
      ui->newRecord->setShortcut(QKeySequence("Ctrl+B"));
      ui->editRecord->setShortcut(QKeySequence("Ctrl+C"));
      ui->delRecord->setShortcut(QKeySequence("Ctrl+D"));
      ui->connButton->setShortcut(QKeySequence("Ctrl+E"));
      ui->disButton->setShortcut(QKeySequence("Ctrl+F"));
-
     ui->fmButton->setShortcut(QKeySequence("Ctrl+G"));
     ui->adbshellButton->setShortcut(QKeySequence("Ctrl+I"));
     ui->sideload_Button->setShortcut(QKeySequence("Ctrl+L"));
     ui->uninstall_Button->setShortcut(QKeySequence("Ctrl+M"));
-
-
-
-    ui->refreshConnectedDevices->setShortcut(QKeySequence("Ctrl+P"));
-    ui->killServer->setShortcut(QKeySequence("Ctrl+Z"));
+    ui->refreshConnectedDevices->setShortcut(QKeySequence("Ctrl+P")); 
     ui->scpyButton->setShortcut(QKeySequence("Ctrl+R"));
     ui->doConsole->setShortcut(QKeySequence("Ctrl+T"));
     ui->keypadButton->setShortcut(QKeySequence("Ctrl+U"));
-
     ui->screencapButton->setShortcut(QKeySequence("Ctrl+W"));
+    ui->clearButton->setShortcut(QKeySequence("Ctrl+Y"));
+    ui->killServer->setShortcut(QKeySequence("Ctrl+Z"));
+
+    new QShortcut (QKeySequence("Ctrl+O"), this, SLOT(on_actionSend_text_triggered()));
+
 
 
     if (program=="adblink")
@@ -574,10 +573,10 @@
       ui->mvdataButton->setShortcut(QKeySequence("Ctrl+N"));
       ui->backupButton->setShortcut(QKeySequence("Ctrl+J"));
       ui->restoreButton->setShortcut(QKeySequence("Ctrl+K"));
-      ui->cacheButton->setShortcut(QKeySequence("Ctrl+S"));
+      // ui->cacheButton->setShortcut(QKeySequence("Ctrl+S"));
     }
 
-
+    new QShortcut(QKeySequence("Ctrl+S"), this, SLOT(on_actionSend_text_triggered()));
 
 
         start_server();
@@ -2520,6 +2519,27 @@
         QString command;
         QString s;
 
+/*
+        cstring = adb + " devices";
+        command=connectadb(cstring);
+
+        QString adbCommand = "/Users/jeff/qtbuild/adblink.app/Contents/MacOS/adbfiles/adb connect 192.168.1.30:5555";
+        QString result = executeCommand(adbCommand);  // Assuming executeCommand runs adb command and returns the output
+
+        if (result.contains("No route to host")) {
+                            qDebug() << "First connection failed. Retrying...";
+                            QThread::sleep(2);  // Wait 2 seconds before retrying
+                            result = executeCommand(adbCommand);  // Retry the connection
+        }
+
+        qDebug() << "ADB Result:" << result;
+
+
+
+
+         cstring.clear();
+         command.clear();
+*/
 
         QJsonObject obj;
         QJsonDocument doc(obj);
@@ -8119,11 +8139,6 @@ void MainWindow::on_restoreButton_clicked()
 
 
 
-  //        restoreAndroid();
-
-  // end
-
-//////////////////////////////////////////
 
           if (!check_devices() )
             return;
@@ -8159,8 +8174,12 @@ void MainWindow::on_restoreButton_clicked()
             cstring = getadb() + " shell cat /sdcard/xbmc_env.properties";
             command=getadbOutput(cstring);
             command.replace(QRegExp("[\r\n]"), "");
-            xbmcpath = command.mid(command.indexOf("xbmc.data=") + 10);
-            // xbmcpath=xbmcpath+"/.kodi";
+
+            int startIndex = command.indexOf("=") + 1;
+            int endIndex = command.indexOf(".kodi") + 5;
+
+            QString xbmcpath = command.mid(startIndex, endIndex - startIndex);
+
 
 
             QMessageBox::StandardButton reply;
@@ -8169,17 +8188,16 @@ void MainWindow::on_restoreButton_clicked()
 
             if (reply == QMessageBox::Yes)
             {
-          xbmc_env = true;
-          mcpath = xbmcpath;
+                xbmc_env = true;
+                mcpath = xbmcpath;
             }
             else if (reply == QMessageBox::No)
             {
-          xbmc_env = false;
-          // Handle the No choice
+                xbmc_env = false;
             }
             else if (reply == QMessageBox::Cancel)
             {
-          return;
+                return;
             }
 
 
@@ -9572,6 +9590,7 @@ void MainWindow::on_actionGet_UID_from_APK_file_triggered()
 
 void MainWindow::on_actionSend_text_triggered()
 {
+
 
  if (!check_devices() )
             return;

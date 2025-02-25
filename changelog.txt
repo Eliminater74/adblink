@@ -1,5 +1,7 @@
 XX/XX/XX
 
+Send text to device: keyboard shortcut Ctrl-O added
+
 When pulling files, if the selected file exists at the
 pull destination an override dialog is presented. If an
 overwrite is denied, it is logged.  
@@ -12,6 +14,8 @@ scrcpy updated: scrcpy-win64-v2.6.1
 If /sdcard/xbmc_env.properties exists, its value
 can be used as the restore location.
 
+
+todo?: add scrcpy args to device record.
 
 
 
