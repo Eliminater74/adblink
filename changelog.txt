@@ -1,4 +1,4 @@
-XX/XX/XX
+03/XX/25
 
 Send text to device: keyboard shortcut Ctrl-O added
 
@@ -12,11 +12,7 @@ notes the destination directory in the log.
 If /sdcard/xbmc_env.properties exists, its value
 can be read and used as the restore location.
 
-
 Windows scrcpy updated: scrcpy-win64-v3.1
-
-todo?: add scrcpy args to device record.
-
 
 
 07/15/24
