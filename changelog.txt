@@ -3,17 +3,17 @@ XX/XX/XX
 Send text to device: keyboard shortcut Ctrl-O added
 
 When pulling files, if the selected file exists at the
-pull destination an override dialog is presented. If an
+pull destination an overwrite dialog is presented. If an
 overwrite is denied, it is logged.  
 
 When files are successfully pulled, file manager now
 notes the destination directory in the log.
 
-scrcpy updated: scrcpy-win64-v2.6.1
-
 If /sdcard/xbmc_env.properties exists, its value
-can be used as the restore location.
+can be read and used as the restore location.
 
+
+Windows scrcpy updated: scrcpy-win64-v3.1
 
 todo?: add scrcpy args to device record.
 
