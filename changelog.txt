@@ -1,5 +1,7 @@
 03/XX/25
 
+Version 6.3
+
 Send text to device: keyboard shortcut Ctrl-O added
 
 When pulling files, if the selected file exists at the
@@ -16,6 +18,8 @@ Windows scrcpy updated: scrcpy-win64-v3.1
 
 
 07/15/24
+
+Version 6.2
 
 Scoped storage detection expanded to
 optionally create an alternative folder
