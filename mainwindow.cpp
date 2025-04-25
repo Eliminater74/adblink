@@ -4359,78 +4359,72 @@
     void MainWindow::on_screencapButton_clicked()
     {
 
+        isConnected=check_Connection();
 
-        if (!check_devices() )
+        if (!isConnected)
+        {
+            QMessageBox::critical(this,"",devstr2);
             return;
+        }
 
-         QElapsedTimer rtimer;
-         int nMilliseconds;
-         rtimer.start();
+        bool startstop;
 
-             QDateTime dateTime = QDateTime::currentDateTime();
-             QString dtstr = dateTime.toString("MMddyyhhmmss");
+        QString stopapp;
 
-             QString cstring = getadb() + " shell screencap -p " +tempdir+dtstr+".png";
+        if (QFileInfo::exists(databasedir+"/stopapp.json"))
+            startstop = true;
+        else
+            startstop = false;
 
-
-         QString command=getadbOutput(cstring);
-
-         if (!command.isEmpty())
-
-         {
-             // logfile(cstring);
-             logfile(command);
-
-             QMessageBox::critical(
-                         this,
-                        "",
-                         "Screenshot failed");
-         }
-
-         else
-         {
-
-             // logfile(cstring);
-             logfile(command);
-
-             QString cstring = getadb() + " pull "+tempdir+dtstr+".png "  +'"'+pulldir+'"';
-
-             command=getadbOutput(cstring);
+        if (!startstop)
+        {
 
 
-             logfile(command);
+
+            QJsonObject obj;
+            obj["stopapp"] = "org.xbmc.kodi";
+            QJsonDocument doc(obj);
+            QFile file(databasedir+"stopapp.json");
+            file.open(QIODevice::WriteOnly);
+            file.write(doc.toJson());
+            file.close();
 
 
-             if (!command.contains("bytes"))
-              {
-
-                 logfile(command);
-                 QMessageBox::critical(
-                             this,
-                            "",
-                             "Screenshot failed");
-             }
-             else
-             {
-                 // logfile(cstring);
-                 logfile(command);
-
-                 QMessageBox::information(
-                                this,
-                               "",
-                                "Screenshot "+dtstr+ " copied to "+pulldir);
-             }
-
-             cstring = getadb() + " shell rm "+tempdir+dtstr+".png " ;
-             command=getadbOutput(cstring);
-             // logfile(cstring);
+        }
 
 
-         }
 
-         nMilliseconds = rtimer.elapsed();
-         logfile("process time duration: "+ QString::number(nMilliseconds/1000)+ " seconds" );
+        QJsonObject obj;
+        QJsonDocument doc(obj);
+        QFile file(databasedir+"stopapp.json");
+        file.open(QIODevice::ReadOnly);
+        doc = QJsonDocument::fromJson(file.readAll());
+        obj = doc.object();
+        stopapp=obj["stopapp"].toString();
+        file.close();
 
+
+        forcequitDialog dialog(false,stopapp,this);
+        dialog.setWindowModality(Qt::WindowModal);
+
+        if(dialog.exec() == QDialog::Accepted)
+        {
+
+
+            QString cstring = getadb() + " shell am force-stop "+dialog.packagename();
+            QString command=getadbOutput(cstring);
+            logfile(cstring);
+            logfile(command);
+
+            QJsonObject obj;
+            obj["stopapp"] = dialog.packagename();
+            QJsonDocument doc(obj);
+            QFile file(databasedir+"stopapp.json");
+            file.open(QIODevice::WriteOnly);
+            file.write(doc.toJson());
+            file.close();
+
+        }
 
 
     }
@@ -9425,15 +9419,70 @@ void MainWindow::on_actionChangeSplash_triggered()
 void MainWindow::on_editXML_clicked()
 {
 
+    isConnected=check_Connection();
 
-            getRecord(ui->deviceBox->currentText());
+    if (!isConnected)
+    {
+     QMessageBox::critical(this,"",devstr2);
+     return;
+    }
 
-            if  (ostype == "0")
-            editAndroid();
 
 
-            else
-            editOther();
+    bool startstop;
+    QString startapp;
+
+
+    if (QFileInfo::exists(databasedir+"/startapp.json"))
+     startstop = true;
+    else
+     startstop = false;
+
+    if (!startstop)
+    {
+     QJsonObject obj;
+     obj["startapp"] = "org.xbmc.kodi/org.xbmc.kodi.Xplash";
+     QJsonDocument doc(obj);
+     QFile file(databasedir+"startapp.json");
+     file.open(QIODevice::WriteOnly);
+     file.write(doc.toJson());
+     file.close();
+    }
+
+
+
+    QJsonObject obj;
+    QJsonDocument doc(obj);
+    QFile file(databasedir+"startapp.json");
+    file.open(QIODevice::ReadOnly);
+    doc = QJsonDocument::fromJson(file.readAll());
+    obj = doc.object();
+    startapp=obj["startapp"].toString();
+    file.close();
+
+
+
+    forcequitDialog dialog(true,startapp, this);
+    dialog.setWindowModality(Qt::WindowModal);
+
+
+    if(dialog.exec() == QDialog::Accepted)
+    {
+
+     QString cstring = getadb() + " shell am start -n "+dialog.packagename();
+     QString command=getadbOutput(cstring);
+     logfile(cstring);
+     logfile(command);
+
+     QJsonObject obj;
+     obj["startapp"] = dialog.packagename();
+     QJsonDocument doc(obj);
+     QFile file(databasedir+"startapp.json");
+     file.open(QIODevice::WriteOnly);
+     file.write(doc.toJson());
+     file.close();
+
+    }
 
 
 }
@@ -10703,6 +10752,101 @@ void MainWindow::on_test_clicked()
 
  qDebug() << mcpath;
 
+
+
+}
+
+
+void MainWindow::on_actionEdit_XML_triggered()
+{
+
+
+ getRecord(ui->deviceBox->currentText());
+
+ if  (ostype == "0")
+           editAndroid();
+
+
+ else
+           editOther();
+
+
+}
+
+
+void MainWindow::on_actionScreen_Capture_triggered()
+{
+
+ if (!check_devices() )
+           return;
+
+ QElapsedTimer rtimer;
+ int nMilliseconds;
+ rtimer.start();
+
+ QDateTime dateTime = QDateTime::currentDateTime();
+ QString dtstr = dateTime.toString("MMddyyhhmmss");
+
+ QString cstring = getadb() + " shell screencap -p " +tempdir+dtstr+".png";
+
+
+ QString command=getadbOutput(cstring);
+
+ if (!command.isEmpty())
+
+ {
+           // logfile(cstring);
+           logfile(command);
+
+           QMessageBox::critical(
+               this,
+               "",
+               "Screenshot failed");
+ }
+
+ else
+ {
+
+           // logfile(cstring);
+           logfile(command);
+
+           QString cstring = getadb() + " pull "+tempdir+dtstr+".png "  +'"'+pulldir+'"';
+
+           command=getadbOutput(cstring);
+
+
+           logfile(command);
+
+
+           if (!command.contains("bytes"))
+           {
+
+              logfile(command);
+              QMessageBox::critical(
+                  this,
+                  "",
+                  "Screenshot failed");
+           }
+           else
+           {
+              // logfile(cstring);
+              logfile(command);
+
+              QMessageBox::information(
+                  this,
+                  "",
+                  "Screenshot "+dtstr+ " copied to "+pulldir);
+           }
+
+           cstring = getadb() + " shell rm "+tempdir+dtstr+".png " ;
+           command=getadbOutput(cstring);
+           // logfile(cstring);
+
+
+ }
+
+ nMilliseconds = rtimer.elapsed();
+ logfile("process time duration: "+ QString::number(nMilliseconds/1000)+ " seconds" );
 
 
 }

@@ -385,6 +385,10 @@ private slots:
 
   void on_test_clicked();
 
+  void on_actionEdit_XML_triggered();
+
+  void on_actionScreen_Capture_triggered();
+
   private:
     Ui::MainWindow *ui;
 
