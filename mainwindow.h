@@ -252,8 +252,8 @@ private slots:
 
    void on_actionView_adbLink_Log_triggered();
 
-   void on_screencapButton_clicked();
 
+   void on_stopapp_clicked();
 
 
    void restoreAndroid();
@@ -359,9 +359,7 @@ private slots:
 
   void on_actionView_Changelog_triggered();
 
-
-
-  void on_editXML_clicked();
+  void  on_startapp_clicked();
 
   void on_actionSplash_Screen_triggered();
 

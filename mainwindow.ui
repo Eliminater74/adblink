@@ -873,7 +873,7 @@
       </widget>
      </item>
      <item row="3" column="2">
-      <widget class="QPushButton" name="editXML">
+      <widget class="QPushButton" name="startapp">
        <property name="minimumSize">
         <size>
          <width>120</width>
@@ -898,7 +898,7 @@
       </widget>
      </item>
      <item row="3" column="3">
-      <widget class="QPushButton" name="screencapButton">
+      <widget class="QPushButton" name="stopapp">
        <property name="minimumSize">
         <size>
          <width>120</width>

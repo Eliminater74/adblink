@@ -559,7 +559,7 @@
     ui->scpyButton->setShortcut(QKeySequence("Ctrl+R"));
     ui->doConsole->setShortcut(QKeySequence("Ctrl+T"));
     ui->keypadButton->setShortcut(QKeySequence("Ctrl+U"));
-    ui->screencapButton->setShortcut(QKeySequence("Ctrl+W"));
+    ui->stopapp->setShortcut(QKeySequence("Ctrl+W"));
     ui->clearButton->setShortcut(QKeySequence("Ctrl+Y"));
     ui->killServer->setShortcut(QKeySequence("Ctrl+Z"));
 
@@ -569,7 +569,7 @@
 
     if (program=="adblink")
     {
-      ui->editXML->setShortcut(QKeySequence("Ctrl+V"));
+                    ui->startapp->setShortcut(QKeySequence("Ctrl+V"));
       ui->mvdataButton->setShortcut(QKeySequence("Ctrl+N"));
       ui->backupButton->setShortcut(QKeySequence("Ctrl+J"));
       ui->restoreButton->setShortcut(QKeySequence("Ctrl+K"));
@@ -4356,7 +4356,9 @@
     }
 
     /////////////////////////////////////////////
-    void MainWindow::on_screencapButton_clicked()
+
+     void MainWindow::on_stopapp_clicked()
+
     {
 
         isConnected=check_Connection();
@@ -9416,7 +9418,9 @@ void MainWindow::on_actionChangeSplash_triggered()
 }
 */
 
-void MainWindow::on_editXML_clicked()
+// void MainWindow::on_editXML_clicked()
+void MainWindow::on_startapp_clicked()
+
 {
 
     isConnected=check_Connection();
