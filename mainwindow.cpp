@@ -558,8 +558,8 @@
     ui->refreshConnectedDevices->setShortcut(QKeySequence("Ctrl+P")); 
     ui->scpyButton->setShortcut(QKeySequence("Ctrl+R"));
     ui->doConsole->setShortcut(QKeySequence("Ctrl+T"));
-    ui->keypadButton->setShortcut(QKeySequence("Ctrl+U"));
-    ui->stopapp->setShortcut(QKeySequence("Ctrl+W"));
+    ui->stopapp->setShortcut(QKeySequence("Ctrl+U"));
+    ui->startapp->setShortcut(QKeySequence("Ctrl+W"));
     ui->clearButton->setShortcut(QKeySequence("Ctrl+Y"));
     ui->killServer->setShortcut(QKeySequence("Ctrl+Z"));
 
@@ -10853,5 +10853,11 @@ void MainWindow::on_actionScreen_Capture_triggered()
  logfile("process time duration: "+ QString::number(nMilliseconds/1000)+ " seconds" );
 
 
+}
+
+
+void MainWindow::on_actionKeypad_triggered()
+{
+ on_keypadButton_clicked();
 }
 

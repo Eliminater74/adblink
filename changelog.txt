@@ -1,3 +1,12 @@
+XX/XX/25
+
+Version 6.4
+
+App Start/Stop buttons now on main panel
+Edit XML function moved to utility menu
+Screen capture function  moved to utility menu
+
+
 03/03/25
 
 Version 6.3

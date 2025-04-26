@@ -387,6 +387,8 @@ private slots:
 
   void on_actionScreen_Capture_triggered();
 
+  void on_actionKeypad_triggered();
+
   private:
     Ui::MainWindow *ui;
 

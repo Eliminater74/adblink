@@ -928,7 +928,7 @@
       </widget>
      </item>
      <item row="1" column="3">
-      <widget class="QPushButton" name="screencapButton">
+      <widget class="QPushButton" name="startapp">
        <property name="minimumSize">
         <size>
          <width>120</width>
@@ -948,12 +948,12 @@
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Get screen capture from device. Shortcut: Ctrl-W&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="text">
-        <string>Screencap</string>
+        <string>Start App</string>
        </property>
       </widget>
      </item>
      <item row="1" column="4">
-      <widget class="QPushButton" name="keypadButton">
+      <widget class="QPushButton" name="stopapp">
        <property name="minimumSize">
         <size>
          <width>120</width>
@@ -973,7 +973,7 @@
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Remote Android keypad. Shortcut: Ctrl-U&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="text">
-        <string>Keypad</string>
+        <string>Stop App</string>
        </property>
       </widget>
      </item>
@@ -1037,8 +1037,8 @@
     </property>
     <addaction name="actionReiinstall_Busybox"/>
     <addaction name="actionPaste_path"/>
-    <addaction name="actionStop_Application"/>
-    <addaction name="actionStart_Application"/>
+    <addaction name="actionScreen_Capture"/>
+    <addaction name="actionKeypad"/>
     <addaction name="actionSet_Kodi_permissions"/>
     <addaction name="actionGet_UID_from_APK_file"/>
     <addaction name="actionArchitecture"/>
@@ -1129,16 +1129,6 @@
    </property>
    <property name="toolTip">
     <string>Test adb connection</string>
-   </property>
-  </action>
-  <action name="actionStop_Application">
-   <property name="text">
-    <string>Stop Application</string>
-   </property>
-  </action>
-  <action name="actionStart_Application">
-   <property name="text">
-    <string>Start Application</string>
    </property>
   </action>
   <action name="actionMount_system_RO">
@@ -1294,6 +1284,16 @@
    </property>
    <property name="toolTip">
     <string>Send text to Android device</string>
+   </property>
+  </action>
+  <action name="actionKeypad">
+   <property name="text">
+    <string>Keypad</string>
+   </property>
+  </action>
+  <action name="actionScreen_Capture">
+   <property name="text">
+    <string>Screen Capture</string>
    </property>
   </action>
  </widget>
