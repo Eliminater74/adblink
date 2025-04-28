@@ -566,6 +566,22 @@
     new QShortcut (QKeySequence("Ctrl+O"), this, SLOT(on_actionSend_text_triggered()));
 
 
+    QFont buttonFont("Arial", 8); // Small size to fit 30x30
+    ui->ascend->setFont(buttonFont);
+    ui->descend->setFont(buttonFont);
+
+    // Set button size and arrows
+    ui->ascend->setFixedSize(30, 30);
+    ui->descend->setFixedSize(30, 30);
+    ui->ascend->setText(QString::fromUtf8("\u2193"));
+    ui->descend->setText(QString::fromUtf8("\u2191"));
+
+    // Style buttons to avoid clipping
+    ui->ascend->setStyleSheet("padding: 2px; text-align: center;");
+    ui->descend->setStyleSheet("padding: 2px; text-align: center;");
+
+
+
 
     if (program=="adblink")
     {
@@ -592,7 +608,17 @@
 
 
 
+        ui->deviceTable->setColumnCount(2);
+        ui->deviceTable->setHorizontalHeaderLabels(QStringList() << "Device" << "Status");
+        ui->deviceTable->verticalHeader()->setVisible(false);
+        ui->deviceTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
+
+        ui->listRunningJobs->setStyleSheet("QListWidget { background: transparent;} QListWidget::item { color: black; }");
+        ui->listRunningJobs->setSelectionMode(QAbstractItemView::NoSelection);
+        ui->listRunningJobs->setFocusPolicy(Qt::NoFocus);
+
+        loadDeviceTable();
         on_refreshConnectedDevices_clicked();
         do_versioncheck();
 
@@ -2509,6 +2535,146 @@
     }
 
 
+    ////////////////////////////////////
+    void MainWindow::on_connButton_clicked()
+    {
+                      QString cstring;
+                      QString command;
+                      QString s;
+
+                      QJsonObject obj;
+                      QJsonDocument doc(obj);
+                      QFile file(databasedir + "adblink.json");
+                      file.open(QIODevice::ReadOnly);
+                      doc = QJsonDocument::fromJson(file.readAll());
+                      obj = doc.object();
+                      bool checkscope = doc.object()["checkscope"].toBool();
+
+                      if (!ui->adhocip->text().isEmpty())
+                      {
+                            QString adhocIPText = ui->adhocip->text();
+
+                            int colonIndex = adhocIPText.indexOf(':');
+                            if (colonIndex != -1) {
+                              daddr = adhocIPText.left(colonIndex);
+                              port = adhocIPText.mid(colonIndex + 1);
+                            } else {
+                              daddr = adhocIPText;
+                              port = "5555";
+                            }
+
+                            cstring = adb + " connect " + daddr + ":" + port;
+                            logfile(cstring);
+                            command = connectadb(cstring);
+
+                            if (command.contains("connected to"))
+                            {
+                              isConnected = true;
+                              // Add new row to deviceTable with daddr and Connected
+                              int newRow = ui->deviceTable->rowCount();
+                              ui->deviceTable->insertRow(newRow);
+                              ui->deviceTable->setItem(newRow, 0, new QTableWidgetItem(daddr)); // Description = daddr
+                              ui->deviceTable->setItem(newRow, 1, new QTableWidgetItem("Connected")); // Status = Connected
+                              default_device_values();
+                              on_refreshConnectedDevices_clicked();
+                              logfile("Connected to " + daddr);
+                              logfile("Android version: " + s.setNum(getandroid()));
+                            }
+                            else {
+                              isConnected = false;
+                              logfile("Unable to connect to: " + daddr + ":" + port);
+                              QMessageBox::critical(this, "", "Unable to connect to: " + daddr + ":" + port);
+                            }
+
+                            return;
+                      }
+
+                      // Get selected description from deviceTable
+                      QString selectedDescription;
+                      int selectedRow = ui->deviceTable->currentRow();
+                      if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
+                            selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+                      } else {
+                            QMessageBox::critical(this, "", "No device selected in table");
+                            return;
+                      }
+                      getRecord(selectedDescription); // Use deviceTable's selected description
+
+                      if (isusb) {
+                            QMessageBox::critical(this, "", "Inactive for USB connections");
+                            return;
+                      }
+
+                      if (daddr.isEmpty()) {
+                            QMessageBox::critical(this, "", "Device address required");
+                            return;
+                      }
+
+                      if (port.isEmpty()) {
+                            port = "5555";
+                      }
+
+                      QElapsedTimer rtimer;
+                      int nMilliseconds;
+                      rtimer.start();
+
+                      QString udaddr = daddr + ":" + port;
+                      cstring = adb + " connect " + udaddr;
+                      command = connectadb(cstring);
+
+                      logfile(cstring);
+                      logfile(command);
+
+                      // Update Status column based on connection outcome
+                      if (command.contains("connected to")) {
+                            isConnected = true;
+                            ui->deviceTable->setItem(selectedRow, 1, new QTableWidgetItem("Connected")); // Set Status to Connected
+                            on_refreshConnectedDevices_clicked();
+                            logfile("Connected to " + udaddr);
+                            logfile("Android version: " + s.setNum(getandroid()));
+
+                            if (searchlistDevices(selectedDescription)) {
+                              QString mstring = selectedDescription;
+                              for (int i = 0; i < ui->listDevices->count(); ++i) {
+                  QString str = ui->listDevices->item(i)->text();
+                  if (str == mstring) {
+                        ui->listDevices->item(i)->setSelected(true);
+                  }
+                              }
+                            }
+                      } else {
+                            isConnected = false;
+                            ui->deviceTable->setItem(selectedRow, 1, new QTableWidgetItem("NA")); // Set Status to NA
+                            logfile("Unable to connect to: " + udaddr);
+                            QMessageBox::critical(this, "", "Unable to connect to: " + udaddr);
+                      }
+
+                      if (isConnected) {
+                            ui->server_running->setText(adbstr1);
+                            serverRunning = true;
+                            isConnected = searchlistDevices(selectedDescription);
+                      }
+
+                      if (checkscope && program == "adblink" && isScoped()) {
+                            cstring = getadb() + " shell ls /sdcard/xbmc_env.properties";
+                            if (!getreturncode(cstring)) {
+                              QMessageBox::StandardButton reply;
+                              reply = QMessageBox::question(this, "Restore", "Scoped storage in effect\nCreate /sdcard/kodi_data?",
+                                                            QMessageBox::Yes | QMessageBox::No);
+                              if (reply == QMessageBox::Yes) {
+                  on_actionCreate_kodi_data_triggered();
+                              }
+                            }
+                      }
+
+                      nMilliseconds = rtimer.elapsed();
+                      logfile("process time duration: " + QString::number(nMilliseconds / 1000) + " seconds");
+    }
+
+
+
+
+    /*
     /////////////////////////////////////////////////////////////////////////
     void MainWindow::on_connButton_clicked()
     {
@@ -2518,9 +2684,7 @@
         QString cstring;
         QString command;
         QString s;
-
-/*
-        cstring = adb + " devices";
+     cstring = adb + " devices";
         command=connectadb(cstring);
 
         QString adbCommand = "/Users/jeff/qtbuild/adblink.app/Contents/MacOS/adbfiles/adb connect 192.168.1.30:5555";
@@ -2539,7 +2703,6 @@
 
          cstring.clear();
          command.clear();
-*/
 
         QJsonObject obj;
         QJsonDocument doc(obj);
@@ -2721,29 +2884,45 @@
 
 
 
-
+    */
 
     ////////////////////////////////////////////////////////////////
+
+
     void MainWindow::on_disButton_clicked()
     {
 
 
-        getRecord(ui->deviceBox->currentText());
+  //      getRecord(ui->deviceBox->currentText());
 
 
-        if (!ui->adhocip->text().isEmpty())
-
-          {
-                daddr=ui->adhocip->text();
-                // port="5555";
-                QString cstring = adb + " disconnect "+daddr; // +":"+port ;
-                QString command=getadbOutput(cstring);
-                logfile("disconnect: "+daddr);
-                on_refreshConnectedDevices_clicked();
-                return;
-            }
+    QMessageBox::StandardButton reply;
+   reply = QMessageBox::question(this, "Disconnect", "Disconnect device?",
+       QMessageBox::Yes | QMessageBox::No);
+   if (reply == QMessageBox::No) {
+           return;
+     }
 
 
+
+     if (!ui->adhocip->text().isEmpty())
+     {
+           daddr = ui->adhocip->text();
+           QString cstring = adb + " disconnect " + daddr;
+           QString command = getadbOutput(cstring);
+           logfile("disconnect: " + daddr);
+           logfile(command);
+
+           int selectedRow = ui->deviceTable->currentRow();
+           if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0) &&
+               ui->deviceTable->item(selectedRow, 0)->text() == daddr) {
+                              ui->deviceTable->removeRow(selectedRow);
+           }
+
+           ui->adhocip->setText("");
+           on_refreshConnectedDevices_clicked();
+           return;
+     }
 
 
         if (isusb )
@@ -2754,14 +2933,28 @@
           }
 
 
-        if (daddr.isEmpty())
-        {
-           QMessageBox::critical(this,"","Device address required.");
+   //     if (daddr.isEmpty())
+    //    {
+    //       QMessageBox::critical(this,"","Device address required.");
 
+     ////       return;
+    //    }
+
+        // Get selected description from deviceTable
+        QString selectedDescription;
+        int selectedRow = ui->deviceTable->currentRow();
+        if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
+            selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+        } else {
+            QMessageBox::critical(this, "", "No device selected in table");
             return;
         }
 
+        getRecord(selectedDescription);
 
+        // qDebug() << daddr;
+       // qDebug() << port;
+      //   return;
 
         QElapsedTimer rtimer;
         int nMilliseconds;
@@ -2774,7 +2967,9 @@
 
              logfile("disconnect: "+daddr);
 
-
+             if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 1)) {
+            ui->deviceTable->setItem(selectedRow, 1, new QTableWidgetItem("Disconnected"));
+             }
 
              on_refreshConnectedDevices_clicked();
              nMilliseconds = rtimer.elapsed();
@@ -3178,7 +3373,7 @@
 
     void MainWindow::on_editRecord_clicked()
     {
-             dataentry(0);
+             dataentry();
              loaddevicebox();
 
     }
@@ -3325,13 +3520,19 @@
               }
 
                if (isdevice.contains("unauthorized"))
-                   QMessageBox::critical(0,"","Device unauthorized\n\nPress 'Refresh ADB' or see help topic 'Device unauthorized' ");
+              {  QMessageBox::critical(0,"","Device unauthorized\n\nPress 'Refresh ADB' or see help topic 'Device unauthorized' ");
+                  logfile(descrip+" unauthorized");
+               }
 
               if (isdevice.contains("offline"))
-                  QMessageBox::critical(0,"","Device offline\n\nPress 'Refresh ADB' or see help topic 'Device Offline' ");
+               {  QMessageBox::critical(0,"","Device offline\n\nPress 'Refresh ADB' or see help topic 'Device Offline' ");
+                  logfile(descrip+" offline");
+              }
 
 
     }
+
+
 
 
 
@@ -3371,209 +3572,317 @@
       logfile("go to dataentry -- new record");
 
       blank_entry_form();
-      dataentry(1);
-      loaddevicebox();
+      newentry();
+   //    loaddevicebox();
 
     }
 
 
     //////////////////////////////////////////////////
-    void MainWindow::dataentry(int flag)
+
+
+    void MainWindow::dataentry()
     {
+      QString cstring;
+      QString command;
+      QString olddaddr;
+      QString olddescription;
+      QStringList mstringlist;
+      QStringList dstringlist;
 
-    // flag = 0 edit record
-    // flag = 1 new record
+      cstring = adb + " devices";
+      command = getadbOutput(cstring);
+      QThread::sleep(2);
 
-      ui->deviceBox->currentIndex();
+      mstringlist = command.split(QRegExp("[\t\n\r]"), QString::SkipEmptyParts);
 
-  //  logfile("opening preferences dialog");
-
-        QString cstring;
-        QString command;
- //       QString oldpass;
-        QString olddaddr;
-
-        QString olddescription;
- //       QString pkg;
-
-
-  //      QString device_name;
-        QStringList mstringlist;
-        QStringList dstringlist;
-
-
-
-
-
-        cstring = adb + " devices";
-        command=getadbOutput(cstring);
-        QThread::sleep(2);
-
-         mstringlist=command.split(QRegExp("[\t\n\r]"),QString::SkipEmptyParts);
-
-
-        if (command.contains("List of devices attached"))
-         {
-          mstringlist.removeFirst();
-
-                for( int a = 0; a < mstringlist.size(); a = a + 2 )
-                     {
-                        QStringList pieces = mstringlist.at(a).split( ":" ,QString::SkipEmptyParts);
-
-                         if (!mstringlist.at(a).contains("daemon"))
-                          dstringlist << pieces.at(0);
-                      }
-
-        }
-
-
-
-
-        olddaddr = daddr;
-
-
-        updatecheck = true;
-        olddescription=description;
-
-       // disableroot=false;
-
-        preferencesDialog dialog(this);
-        dialog.setWindowModality(Qt::WindowModal);
-
-
-
-        dialog.setPackagename(xbmcpackage);
-        dialog.setPulldir(pulldir);
-        dialog.setdevicelist(dstringlist);
-        dialog.setfilepath(filepath);
-        dialog.setdataroot(data_root);
-        dialog.setversionLabel(version);
-        dialog.setostype(ostype);
-        dialog.setdescription(description);
-        dialog.setadb_pref(getadb());
-        dialog.setdisableroot(disableroot);
-        dialog.setport(port);
-
-
-        if (isusb)
-            dialog.setport("");
-          else
-            dialog.setport(port);
-
-         dialog.setscope(scoped);
-         dialog.setwsa(wsa);
-
-        dialog.setdaddr(daddr);
-
-
-        dialog.setisusb(isusb);
-
-
-        dialog.setModal(true);
-
-
-        if(dialog.exec() == QDialog::Accepted)
-        {
-
-
-
-        int x = dialog.returnval1();
-
-
-        data_root = dialog.data_root();
-        xbmcpackage = dialog.xbmcpackageName();
-        pulldir = dialog.pulldir();
-        description = dialog.description();
-        data_root = dialog.data_root();
-        filepath = dialog.filepath();
-        port = dialog.port();
-        daddr = dialog.daddr();
-        isusb = dialog.isusb();
-        ostype = dialog.ostype();
-        scoped = dialog.scoped();
-        wsa = dialog.wsa();
-
-        disableroot = dialog.disableroot();
-
-      if(daddr.contains(validip))
+      if (command.contains("List of devices attached"))
       {
-          isusb=false;
+    mstringlist.removeFirst();
+
+    for (int a = 0; a < mstringlist.size(); a = a + 2)
+    {
+              QStringList pieces = mstringlist.at(a).split(":", QString::SkipEmptyParts);
+
+              if (!mstringlist.at(a).contains("daemon"))
+                  dstringlist << pieces.at(0);
+    }
       }
 
+      olddaddr = daddr;
+      updatecheck = true;
+      olddescription = description;
 
+      // Get selected description from deviceTable
+      QString selectedDescription;
+      int selectedRow = ui->deviceTable->currentRow();
+      if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
+    selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+      } else {
+    QMessageBox::critical(this, "", "No device selected in table");
+    return;
+      }
+      getRecord(selectedDescription);
+
+      preferencesDialog dialog(this);
+      dialog.setWindowModality(Qt::WindowModal);
+
+      dialog.setPackagename(xbmcpackage);
+      dialog.setPulldir(pulldir);
+      dialog.setdevicelist(dstringlist);
+      dialog.setfilepath(filepath);
+      dialog.setdataroot(data_root);
+      dialog.setversionLabel(version);
+      dialog.setostype(ostype);
+      dialog.setdescription(description);
+      dialog.setadb_pref(getadb());
+      dialog.setdisableroot(disableroot);
+      dialog.setport(port);
+
+      if (isusb)
+    dialog.setport("");
       else
+    dialog.setport(port);
 
+      dialog.setscope(scoped);
+      dialog.setwsa(wsa);
+      dialog.setdaddr(daddr);
+      dialog.setisusb(isusb);
 
+      dialog.setModal(true);
+
+      if (dialog.exec() == QDialog::Accepted)
       {
-          if (!isusb  && (ostype == "0" || ostype == "4"))
-            {  QMessageBox::StandardButton reply;
-               reply = QMessageBox::question(0, "", "USB connection?",
-                       QMessageBox::Yes|QMessageBox::No);
-                 if (reply == QMessageBox::No)
-                    isusb=false;
-                   else
-                     isusb=true;
-          }
+
+
+    data_root = dialog.data_root();
+    xbmcpackage = dialog.xbmcpackageName();
+    pulldir = dialog.pulldir();
+    description = dialog.description();
+    data_root = dialog.data_root();
+    filepath = dialog.filepath();
+    port = dialog.port();
+    daddr = dialog.daddr();
+    isusb = dialog.isusb();
+    ostype = dialog.ostype();
+    scoped = dialog.scoped();
+    wsa = dialog.wsa();
+    disableroot = dialog.disableroot();
+
+    // Update database record for selected Description
+    QSqlQuery query;
+    QString sqlstatement = "UPDATE device SET description = ?, daddr = ?, port = ?, isusb = ?, ostype = ?, "
+                           "data_root = ?, xbmcpackage = ?, pulldir = ?, filepath = ? WHERE description = ?";
+    query.prepare(sqlstatement);
+    query.addBindValue(description);
+    query.addBindValue(daddr);
+    query.addBindValue(port);
+    query.addBindValue(isusb);
+    query.addBindValue(ostype);
+    query.addBindValue(data_root);
+    query.addBindValue(xbmcpackage);
+    query.addBindValue(pulldir);
+    query.addBindValue(filepath);
+    query.addBindValue(selectedDescription); // Match original Description
+    qDebug() << "Executing query:" << sqlstatement;
+    qDebug() << "Bound values:" << description << daddr << port << isusb << ostype
+             << data_root << xbmcpackage << pulldir << filepath << selectedDescription;
+    if (!query.exec()) {
+              qDebug() << "Query error:" << query.lastError().text();
+              QMessageBox::critical(this, "", "Failed to update database: " + query.lastError().text());
+              return;
+    }
+
+    if (daddr.contains(validip))
+    {
+              isusb = false;
+    }
+    else
+    {
+              if (!isusb && (ostype == "0" || ostype == "4"))
+              {
+                  QMessageBox::StandardButton reply;
+                  reply = QMessageBox::question(0, "", "USB connection?",
+                                                QMessageBox::Yes | QMessageBox::No);
+                  if (reply == QMessageBox::No)
+                     isusb = false;
+                  else
+                     isusb = true;
+              }
+    }
+
+    loadDeviceTable();
+    on_refreshConnectedDevices_clicked();
+      }
+    }
+
+  ////////////////////////////////////////
+
+    void MainWindow::newentry()
+    {
+      QString cstring;
+      QString command;
+      QStringList mstringlist;
+      QStringList dstringlist;
+
+      cstring = adb + " devices";
+      command = getadbOutput(cstring);
+      QThread::sleep(2);
+
+      mstringlist = command.split(QRegExp("[\t\n\r]"), QString::SkipEmptyParts);
+
+      if (command.contains("List of devices attached"))
+      {
+    mstringlist.removeFirst();
+
+    for (int a = 0; a < mstringlist.size(); a = a + 2)
+    {
+              QStringList pieces = mstringlist.at(a).split(":", QString::SkipEmptyParts);
+
+              if (!mstringlist.at(a).contains("daemon"))
+                  dstringlist << pieces.at(0);
+    }
       }
 
+      // Open preferences dialog for new device entry
+      preferencesDialog dialog(this);
+      dialog.setWindowModality(Qt::WindowModal);
 
+      // Initialize dialog with default or empty values
+      dialog.setPackagename(xbmcpackage);
+      dialog.setPulldir(pulldir);
+      dialog.setdevicelist(dstringlist);
+      dialog.setfilepath(filepath);
+      dialog.setdataroot(data_root);
+      dialog.setversionLabel(version);
+      dialog.setostype(ostype);
+      dialog.setdescription(""); // Empty description for new entry
+      dialog.setadb_pref(getadb());
+      dialog.setdisableroot(disableroot);
+      dialog.setport(port);
 
+      if (isusb)
+    dialog.setport("");
+      else
+    dialog.setport(port);
 
-        if (x == 1 && flag == 1)
-        {logfile("go insert a record");
-          insertDevice();
-          on_refreshConnectedDevices_clicked();
-        }
+      dialog.setscope(scoped);
+      dialog.setwsa(wsa);
+      dialog.setdaddr(daddr);
+      dialog.setisusb(isusb);
 
-        if (x == 1 && flag == 0)
-               {
-                 logfile("Saving Device Record");
-                  updateDevice();
-                  on_refreshConnectedDevices_clicked();
+      dialog.setModal(true);
 
-               }  // end x1
+      if (dialog.exec() == QDialog::Accepted)
+      {
+    // Retrieve values from dialog
+    data_root = dialog.data_root();
+    xbmcpackage = dialog.xbmcpackageName();
+    pulldir = dialog.pulldir();
+    description = dialog.description();
+    data_root = dialog.data_root();
+    filepath = dialog.filepath();
+    port = dialog.port();
+    daddr = dialog.daddr();
+    isusb = dialog.isusb();
+    ostype = dialog.ostype();
+    scoped = dialog.scoped();
+    wsa = dialog.wsa();
+    disableroot = dialog.disableroot();
 
+    // Insert new record into device table
+    QSqlQuery query;
+    QString sqlstatement = "INSERT INTO device (description, daddr, port, isusb, ostype, "
+                           "data_root, xbmcpackage, pulldir, filepath) "
+                           "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    query.prepare(sqlstatement);
+    query.addBindValue(description);
+    query.addBindValue(daddr);
+    query.addBindValue(port);
+    query.addBindValue(isusb);
+    query.addBindValue(ostype);
+    query.addBindValue(data_root);
+    query.addBindValue(xbmcpackage);
+    query.addBindValue(pulldir);
+    query.addBindValue(filepath);
+    qDebug() << "Executing query:" << sqlstatement;
+    qDebug() << "Bound values:" << description << daddr << port << isusb << ostype
+             << data_root << xbmcpackage << pulldir << filepath;
+    if (!query.exec()) {
+              qDebug() << "Query error:" << query.lastError().text();
+              QMessageBox::critical(this, "", "Failed to insert new record: " + query.lastError().text());
+              return;
+    }
 
+    if (daddr.contains(validip))
+    {
+              isusb = false;
+    }
+    else
+    {
+              if (!isusb && (ostype == "0" || ostype == "4"))
+              {
+                  QMessageBox::StandardButton reply;
+                  reply = QMessageBox::question(0, "", "USB connection?",
+                                                QMessageBox::Yes | QMessageBox::No);
+                  if (reply == QMessageBox::No)
+                     isusb = false;
+                  else
+                     isusb = true;
+              }
+    }
 
+    // Add new row to deviceTable with Disconnected status
+    int newRow = ui->deviceTable->rowCount();
+    ui->deviceTable->insertRow(newRow);
+    ui->deviceTable->setItem(newRow, 0, new QTableWidgetItem(description)); // Description
+    ui->deviceTable->setItem(newRow, 1, new QTableWidgetItem("Disconnected")); // Status
+
+    loadDeviceTable(); // Refresh deviceTable to ensure consistency
+    on_refreshConnectedDevices_clicked();
       }
+    }
 
 
 
 
-     }
+
+
 
 
     ////////////////////////////////////////
     void MainWindow::on_delRecord_clicked()
     {
 
-        description = ui->deviceBox->currentText();
-
-        if (!description.isEmpty())
-         {
-
-        QString descrip = description;
-
-        QMessageBox::StandardButton reply;
-        reply = QMessageBox::question(this, "", " Delete " + descrip + "?",
-                                      QMessageBox::Yes | QMessageBox::No);
-
-
-
-         if (reply == QMessageBox::No)
-            {
-              return;
-             }
-
-           deleteRecord(descrip);
-           loaddevicebox();
-           on_refreshConnectedDevices_clicked();
-
-           logfile(descrip+ " is deleted");
+      QString descrip;
+      int selectedRow = ui->deviceTable->currentRow();
+      if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
+    descrip = ui->deviceTable->item(selectedRow, 0)->text();
+      } else {
+    QMessageBox::critical(this, "", "No device selected in table");
+    return;
       }
+
+      if (!descrip.isEmpty())
+      {
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "", "Delete " + descrip + "?",
+                                  QMessageBox::Yes | QMessageBox::No);
+
+    if (reply == QMessageBox::No)
+    {
+              return;
     }
 
 
+    deleteRecord(descrip);
+
+    ui->deviceTable->removeRow(selectedRow);
+    on_refreshConnectedDevices_clicked();
+    logfile(descrip + " is deleted");
+
+      }
+    }
 
 
     //////////////////////////////////////////////////////////////////////
@@ -4925,6 +5234,131 @@
 
 
     ///////////////////////////////////////////////////////
+    // zzz
+
+    void MainWindow::on_fmButton_clicked()
+    {
+         QJsonObject obj;
+         QJsonDocument doc(obj);
+         QFile file(databasedir + "adblink.json");
+         file.open(QIODevice::ReadOnly);
+         doc = QJsonDocument::fromJson(file.readAll());
+         obj = doc.object();
+         bool oldfm = doc.object()["oldfm"].toBool();
+         QString download = doc.object()["download"].toString();
+         QString cstring;
+         QString command;
+         QString mcpath;
+         QString fmpullpath;
+
+         QString ostypefm("");
+         QString fmdaddr("");
+
+         if (!check_devices())
+            return;
+
+         busybox_permissions();
+
+         // Get selected description from deviceTable
+         QString selectedDescription;
+         int selectedRow = ui->deviceTable->currentRow();
+         if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
+            selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+         } else {
+            QMessageBox::critical(this, "", "No device selected in table");
+            return;
+         }
+
+         // Check if the selected device is connected
+         if (ui->deviceTable->item(selectedRow, 1) &&
+             ui->deviceTable->item(selectedRow, 1)->text() != "Connected" &&
+             ui->deviceTable->item(selectedRow, 1)->text() != "USB") {
+            QMessageBox::critical(this, "", "Selected device is not connected");
+            return;
+         }
+
+         fmdaddr = getDevice(selectedDescription);
+         ostypefm = getOSType(selectedDescription);
+
+         if (fmdaddr.size() <= 0)
+            fmdaddr = selectedDescription;
+
+         fmdialog = new usbfileDialog(this);
+         fmdialog->setWindowModality(Qt::NonModal);
+
+         cstring = getadb() + " shell ls /sdcard/xbmc_env.properties";
+         if (getreturncode(cstring))
+         {
+            cstring = getadb() + " shell cat /sdcard/xbmc_env.properties";
+            command = getadbOutput(cstring);
+            command.replace(QRegExp("[\r\n]"), "");
+            mcpath = command.mid(command.indexOf("xbmc.data=") + 10);
+            mcpath = mcpath + "/.kodi";
+         }
+         else
+         {
+            if (isScoped())
+              mcpath = data_root + "kodi_data/" + xbmcpackage + "/files/.kodi";
+            else
+              mcpath = data_root + "Android/data/" + xbmcpackage + "/files/.kodi";
+         }
+
+         fmdialog->setkodiPath(mcpath);
+
+         if (!ui->adhocip->text().isEmpty())
+         {
+            fmdialog->setData(ui->adhocip->text());
+            fmdialog->setADB(adb);
+         }
+         else
+         {
+            fmdialog->setADB(adb + " -s " + fmdaddr);
+            fmdialog->setData(selectedDescription);
+         }
+
+         QString kp = data_root + filepath;
+
+         if (pulldir.isEmpty() || pulldir == download)
+            fmpullpath = download;
+         else
+            fmpullpath = pulldir;
+
+         QDir directory(fmpullpath);
+
+         if (!directory.exists()) {
+            logfile("Pull path: " + fmpullpath + " not found");
+            logfile("Defaulting to home directory: " + QDir::homePath());
+            fmpullpath = QDir::homePath();
+         }
+
+         fmdialog->setPath1("/sdcard/");
+         fmdialog->setPath2("/sdcard/");
+         fmdialog->setdisableroot(disableroot);
+         fmdialog->setuProgram(kp);
+         fmdialog->setoldfm(oldfm);
+         fmdialog->setPulldir(fmpullpath);
+         fmdialog->setAdbdir(apphome);
+
+         connect(fmdialog, &QDialog::finished, this, &MainWindow::handleFilemanagerFinished);
+
+         QSettings settings("jocala", "adblink");
+
+         QByteArray savedGeometry = settings.value("fmdialogGeometry").toByteArray();
+         if (!savedGeometry.isEmpty()) {
+            // qDebug() << "Restoring geometry";
+            fmdialog->restoreGeometry(savedGeometry);
+         } else {
+            // qDebug() << "No saved geometry found";
+         }
+
+         fmdialog->show();
+    }
+
+
+
+
+
+   /*
 
     void MainWindow::on_fmButton_clicked()
     {
@@ -4950,6 +5384,12 @@
             return;
 
          busybox_permissions();
+
+
+         if (ui->listDevices->count() > 0 && ui->listDevices->currentRow() < 0) {
+            ui->listDevices->setCurrentRow(0);
+         }
+
 
       fmdaddr = getDevice(ui->listDevices->currentItem()->text());
       ostypefm = getOSType(ui->listDevices->currentItem()->text());
@@ -5040,6 +5480,8 @@
 
     }
 
+
+    */
 
 /////////////////////////////////////////////////
  void MainWindow::handleFilemanagerFinished()
@@ -7157,213 +7599,193 @@
        }
 
    ////////////////////////////////////////////////
+
        void MainWindow::on_adbshellButton_clicked()
        {
+              if (!check_devices())
+                 return;
 
-           if (!check_devices() )
-               return;
-
-
-
-           QJsonObject obj;
-           QJsonDocument doc(obj);
-           QFile file(databasedir+"adblink.json");
-           file.open(QIODevice::ReadOnly);
-           doc = QJsonDocument::fromJson(file.readAll());
-           obj = doc.object();
-           QString dropdown = obj["dropdown"].toString();
-           int mcheck=dropdown.toInt();
+              QJsonObject obj;
+              QJsonDocument doc(obj);
+              QFile file(databasedir + "adblink.json");
+              file.open(QIODevice::ReadOnly);
+              doc = QJsonDocument::fromJson(file.readAll());
+              obj = doc.object();
+              QString dropdown = obj["dropdown"].toString();
+              int mcheck = dropdown.toInt();
 
 
-// adb-R9PT603R69N-hBwy0v._adb-tls-connect._tcp.
-
-           logfile("detaching console process");
-           logfile(daddr+":"+port);
-
-           QString cstring = "";
-
-
-
-
-          if (os == 1)
-
-                 {
-
-
-               dos_shell();
-
-          }
-
-
-
-
-
-
-            else
-
-              {
-
-               QString commstr = scriptdir+"console.sh";
-               QFile::remove(commstr);
-               QFile file(commstr);
-
-
-
-                        if(!file.open(QFile::WriteOnly))
-
-                    {
-                       logfile("error creating console.sh!");
-                        QMessageBox::critical(this,"","Error creating command file!");
-                        return;
-                    }
-
-
-
-              QTextStream out(&file);
-
-              out  << "#!/bin/sh" << endl;
-              out  <<  getadb()+ " shell " << endl;
-              cstring = getadb()+ " shell";
-              // logfile(cstring);
-
-                    file.flush();
-                    file.close();
-
-              cstring = "chmod 0755 " + commstr ;
-              QString command=getadbOutput(cstring);
-
-               QString shelldir = '"'+scriptdir+"console.sh"+'"';
-
-
-               if (os == 0)
-                    {
-
-
-                   switch (mcheck)
-                   {
-                   case 0:
-                     cstring = "/usr/bin/gnome-terminal --working-directory="+apphome+ " -x "+shelldir;
-                      break;
-                   case 1:
-                     cstring = "/usr/bin/xfce4-terminal --working-directory="+apphome+ " -x "+shelldir;
-                      break;
-                  case 2:
-                      cstring = "/usr/bin/konsole --workdir="+apphome+ " -e "+shelldir;
-                     break;
-                  default:
-                     cstring = "/usr/bin/gnome-terminal --working-directory="+apphome+ " -x "+shelldir;
-                  }
-
-
-                     }
-
-
-               if (os == 2)
-                    {
-
-
-
-              switch (mcheck)
-               {
-               case 0:
-                 cstring = cstring = "open -a Terminal.app "+shelldir;
-                  break;
-               case 1:
-                  cstring = "open -a iTerm.app "+shelldir;
-                  break;
-               default:
-                 cstring = cstring = "open -a Terminal.app "+shelldir;
+              QString selectedDescription;
+              int selectedRow = ui->deviceTable->currentRow();
+              if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
+                 selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+              } else {
+                 QMessageBox::critical(this, "", "No device selected in table");
+                 return;
               }
 
-            }
+              // Check if the selected device is connected
+              if (ui->deviceTable->item(selectedRow, 1) &&
+                  ui->deviceTable->item(selectedRow, 1)->text() != "Connected" &&
+                  ui->deviceTable->item(selectedRow, 1)->text() != "USB") {
+                 QMessageBox::critical(this, "", "Selected device is not connected");
+                 return;
+              }
 
+              // Get daddr from selected description
+              daddr = getDevice(selectedDescription);
+              if (daddr.isEmpty()) {
+                 daddr = selectedDescription; // Fallback to description if getDevice returns empty
+              }
 
+              logfile("detaching console process");
+              logfile(daddr + ":" + port);
 
-              QProcess::startDetached(cstring);
+              QString cstring = "";
 
-           }
+              if (os == 1)
+              {
+                 dos_shell();
+              }
+              else
+              {
+                 QString commstr = scriptdir + "console.sh";
+                 QFile::remove(commstr);
+                 QFile file(commstr);
 
+                 if (!file.open(QFile::WriteOnly))
+                 {
+                    logfile("error creating console.sh!");
+                    QMessageBox::critical(this, "", "Error creating command file!");
+                    return;
+                 }
 
+                 QTextStream out(&file);
+
+                 out << "#!/bin/sh" << endl;
+                 out << getadb() + " shell " << endl;
+                 cstring = getadb() + " shell ";
+                 // logfile(cstring);
+
+                 file.flush();
+                 file.close();
+
+                 cstring = "chmod 0755 " + commstr;
+                 QString command = getadbOutput(cstring);
+
+                 QString shelldir = '"' + scriptdir + "console.sh" + '"';
+
+                 if (os == 0)
+                 {
+                    switch (mcheck)
+                    {
+                    case 0:
+                    cstring = "/usr/bin/gnome-terminal --working-directory=" + apphome + " -x " + shelldir;
+                    break;
+                    case 1:
+                    cstring = "/usr/bin/xfce4-terminal --working-directory=" + apphome + " -x " + shelldir;
+                    break;
+                    case 2:
+                    cstring = "/usr/bin/konsole --workdir=" + apphome + " -e " + shelldir;
+                    break;
+                    default:
+                    cstring = "/usr/bin/gnome-terminal --working-directory=" + apphome + " -x " + shelldir;
+                    }
+                 }
+
+                 if (os == 2)
+                 {
+                    switch (mcheck)
+                    {
+                    case 0:
+                    cstring = "open -a Terminal.app " + shelldir;
+                    break;
+                    case 1:
+                    cstring = "open -a iTerm.app " + shelldir;
+                    break;
+                    default:
+                    cstring = "open -a Terminal.app " + shelldir;
+                    }
+                 }
+
+                 QProcess::startDetached(cstring);
+              }
        }
+
 
 
     //////////////////////////////////////////////////////////
 
        void MainWindow::on_scpyButton_clicked()
-
        {
+              if (!check_devices())
+                 return;
 
+              QJsonObject obj;
+              QJsonDocument doc(obj);
+              QFile file(databasedir + "adblink.json");
+              file.open(QIODevice::ReadOnly);
+              doc = QJsonDocument::fromJson(file.readAll());
+              obj = doc.object();
 
-       //    qDebug() << port;
-       //    return;
+              bool scrcpy = doc.object()["scrcpy"].toBool();
+              QString dropdown = obj["dropdown"].toString();
+              int mcheck = dropdown.toInt();
 
+              // Get selected description from deviceTable
+              QString selectedDescription;
+              int selectedRow = ui->deviceTable->currentRow();
+              if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
+                 selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+              } else {
+                 QMessageBox::critical(this, "", "No device selected in table");
+                 return;
+              }
 
-            if (!check_devices() )
-              return;
+              // Check if the selected device is connected
+              if (ui->deviceTable->item(selectedRow, 1) &&
+                  ui->deviceTable->item(selectedRow, 1)->text() != "Connected" &&
+                  ui->deviceTable->item(selectedRow, 1)->text() != "USB") {
+                 QMessageBox::critical(this, "", "Selected device is not connected");
+                 return;
+              }
 
+              // Get daddr from selected description
+              daddr = getDevice(selectedDescription);
+              if (daddr.isEmpty()) {
+                 daddr = selectedDescription; // Fallback to description if getDevice returns empty
+              }
 
+              QString scrcpybat = scriptdir + "scrcpy.bat";
+              QString scrcpytxt = scriptdir + "scrcpy.txt";
 
-            QJsonObject obj;
-            QJsonDocument doc(obj);
-            QFile file(databasedir+"adblink.json");
-            file.open(QIODevice::ReadOnly);
-            doc = QJsonDocument::fromJson(file.readAll());
-            obj = doc.object();
+              QString line = "";
 
+              if (QFileInfo(scrcpytxt).exists())
+              {
+                 QFile argfile(scrcpytxt);
+                 if (!argfile.open(QIODevice::ReadOnly)) {
+                    QMessageBox::information(0, "error", argfile.errorString());
+                 }
 
+                 QTextStream in(&argfile);
 
-            bool scrcpy = doc.object()["scrcpy"].toBool();
-            QString dropdown = obj["dropdown"].toString();
-            int mcheck=dropdown.toInt();
+                 while (!in.atEnd()) {
+                    line = in.readLine();
+                 }
 
+                 argfile.close();
+              }
 
-           // QString scrcpybat = scriptdir+"/"+"scrcpy.bat";
-            // QString scrcpytxt = scriptdir+"/"+"scrcpy.txt";
+              if (daddr == "127.0.0.1")
+                 port = "58526";
 
+              logfile("detaching scrcpy console process");
 
-             QString scrcpybat = scriptdir+"scrcpy.bat";
-              QString scrcpytxt = scriptdir+"scrcpy.txt";
-
-
-
-             QString line = "";
-
-
-
-       if(QFileInfo(scrcpytxt).exists()){
-
-           QFile argfile(scrcpytxt);
-           if(!argfile.open(QIODevice::ReadOnly)) {
-               QMessageBox::information(0, "error", argfile.errorString());
-           }
-
-           QTextStream in(&argfile);
-
-           while(!in.atEnd()) {
-               line = in.readLine();
-           }
-
-           argfile.close();
-       }
-
-
-
-
-
-       if (daddr=="127.0.0.1")
-           port= "58526";
-
-
-
-            logfile("detaching scrcpy console process");
-
-           if (isusb)
-                logfile(daddr);
-            else
-                logfile(daddr+":"+port);
-
-
-
+              if (isusb)
+                 logfile(daddr);
+              else
+                 logfile(daddr + ":" + port);
 
               QString cstring;
               QString command;
@@ -7371,218 +7793,146 @@
               QString editport = "";
               QString sernum = "";
 
-                if (!isusb)
-                editport=":"+port;
+              if (!isusb)
+                 editport = ":" + port;
 
-                sernum = " -s "+daddr+editport+" ";
+              sernum = " -s " + daddr + editport + " ";
 
-if (scrcpy)
-{
-
-
-                scpDialog dialog;
+              if (scrcpy)
+              {
+                 scpDialog dialog;
 
                  dialog.setArgs(line);
 
-                 if(dialog.exec() == QDialog::Accepted)
+                 if (dialog.exec() == QDialog::Accepted)
                  {
                     argval = dialog.scpArgs();
                  }
-                 else return;
+                 else
+                    return;
+              }
 
+              if (os == 1)
+              {
+                 QString commstr2 = scriptdir + "/scrcpy.txt";
+                 QFile file2(commstr2);
 
-}
-
-                    if (os == 1)
-
-                           {
-
-                        QString commstr2 = scriptdir+"/scrcpy.txt";
-                        QFile file2(commstr2);
-
-                            if(!file2.open(QFile::WriteOnly |
-                                          QFile::Text))
-                            {
-                                logfile("error creating scrcpy.txt!");
-                                QMessageBox::critical(this,"","Error saving arguments!");
-                                return;
-                            }
-
-
-
-                            QTextStream out2(&file2);
-
-                            out2  <<  argval << endl;
-
-                            file2.flush();
-                            file2.close();
-
-
-
-                           QString commstr = scriptdir+"/scrcpy.bat";
-                           QFile file(commstr);
-
-                               if(!file.open(QFile::WriteOnly |
-                                             QFile::Text))
-                               {
-                                   logfile("error creating scrcpy.bat!");
-                                   QMessageBox::critical(this,"","Error creating bat file!");
-                                   return;
-                               }
-
-
-                             // scrcpydir=QCoreApplication::applicationDirPath()+fileloc+"/scrcpy/";
-
-
-
-                               QTextStream out(&file);
-
-                               out  << "set PATH=%PATH%;"+adbfiles+";"+scrcpydir+";" << endl;
-
-                               out  <<  "scrcpy.exe "+ sernum + " " + argval << endl;
-
-
-
-                               file.flush();
-                               file.close();
-
-
-
-                          // if (mcheck == 0)
-                           //    QProcess::startDetached("cmd.exe", {"/k", commstr});
-                          //else
-                           //    QProcess::startDetached("wt -d c:\\ cmd /k "+ commstr);
-
-                               QProcess::startDetached("cmd.exe", QStringList() << "/c" << "start"  << "" << commstr);
-
-
-                    }
-
-
-
-                    QString pathdir = QCoreApplication::applicationDirPath() +"/adbfiles";
-
-                      if (os == 2 || os == 0)
-                        {
-
-                       //apphome=QDir::toNativeSeparators(apphome);
-
-                          apphome=QDir::fromNativeSeparators(apphome);
-
-                          QString commstr2 = scriptdir+"/scrcpy.txt";
-
-
-                          QFile file2(commstr2);
-
-                              if(!file2.open(QFile::WriteOnly |
-                                            QFile::Text))
-                              {
-                                  logfile("error saving arguments!");
-                                  QMessageBox::critical(this,"","Error saving arguments!");
-                                  return;
-                              }
-
-
-
-                              QTextStream out2(&file2);
-
-
-                               out2  <<  argval << endl;
-
-                              file2.flush();
-                              file2.close();
-
-
-
-
-
-
-                          QString commstr = scriptdir+"/scrcpy.sh";
-
-
-                          QFile file(commstr);
-
-                              if(!file.open(QFile::WriteOnly |
-                                            QFile::Text))
-                              {
-                                  logfile("error creating cpath!");
-                                  QMessageBox::critical(this,"","Error creating script!");
-                                  return;
-                              }
-
-
-
-                              QTextStream out(&file);
-                               out  << "#!/bin/sh" << endl;
-                               // out  << "scrcpy "+ sernum << endl;
-                               out  << "scrcpy "+ sernum + " " + argval << endl;
-
-
-                              file.flush();
-                              file.close();
-
-
-                              cstring = "chmod 0755 " + commstr ;
-                              QString command=getadbOutput(cstring);
-
-
-
-                      }
-
-
-
-                      if (os == 2)
-                           {
-
-
-                     switch (mcheck)
-                      {
-                      case 0:
-                        cstring = "open -a Terminal.app "+scriptdir+"/scrcpy.sh";
-                         break;
-                      case 1:
-                         cstring = "open -a iTerm.app "+scriptdir+"/scrcpy.sh";
-                         break;
-                      default:
-                        cstring = "open -a Terminal.app "+scriptdir+"/scrcpy.sh";
-                     }
-
-                  }
-
-                      if (os == 0)
-                           {
-
-                          switch (mcheck)
-                          {
-                          case 0:
-                            cstring = "gnome-terminal --working-directory="+apphome+ " -x "+scriptdir+"/scrcpy.sh";
-                             break;
-                          case 1:
-                             cstring = "xfce4-terminal --working-directory="+apphome+ " -x "+scriptdir+"/scrcpy.sh";
-                             break;
-                         case 2:
-                             cstring = "konsole --workdir="+apphome+ " -e "+scriptdir+"/scrcpy.sh";
-                            break;
-                         default:
-                            cstring = "gnome-terminal --working-directory="+apphome+ " -x "+scriptdir+"/scrcpy.sh";
-                         }
-
-                    }
-
-                     QProcess::startDetached(cstring);
-
-
-
-
-
+                 if (!file2.open(QFile::WriteOnly | QFile::Text))
+                 {
+                    logfile("error creating scrcpy.txt!");
+                    QMessageBox::critical(this, "", "Error saving arguments!");
+                    return;
+                 }
+
+                 QTextStream out2(&file2);
+
+                 out2 << argval << endl;
+
+                 file2.flush();
+                 file2.close();
+
+                 QString commstr = scriptdir + "/scrcpy.bat";
+                 QFile file(commstr);
+
+                 if (!file.open(QFile::WriteOnly | QFile::Text))
+                 {
+                    logfile("error creating scrcpy.bat!");
+                    QMessageBox::critical(this, "", "Error creating bat file!");
+                    return;
+                 }
+
+                 QTextStream out(&file);
+
+                 out << "set PATH=%PATH%;" + adbfiles + ";" + scrcpydir + ";" << endl;
+                 out << "scrcpy.exe " + sernum + " " + argval << endl;
+
+                 file.flush();
+                 file.close();
+
+                 QProcess::startDetached("cmd.exe", QStringList() << "/c" << "start" << "" << commstr);
+              }
+
+              QString pathdir = QCoreApplication::applicationDirPath() + "/adbfiles";
+
+              if (os == 2 || os == 0)
+              {
+                 apphome = QDir::fromNativeSeparators(apphome);
+
+                 QString commstr2 = scriptdir + "/scrcpy.txt";
+
+                 QFile file2(commstr2);
+
+                 if (!file2.open(QFile::WriteOnly | QFile::Text))
+                 {
+                    logfile("error saving arguments!");
+                    QMessageBox::critical(this, "", "Error saving arguments!");
+                    return;
+                 }
+
+                 QTextStream out2(&file2);
+
+                 out2 << argval << endl;
+
+                 file2.flush();
+                 file2.close();
+
+                 QString commstr = scriptdir + "/scrcpy.sh";
+
+                 QFile file(commstr);
+
+                 if (!file.open(QFile::WriteOnly | QFile::Text))
+                 {
+                    logfile("error creating cpath!");
+                    QMessageBox::critical(this, "", "Error creating script!");
+                    return;
+                 }
+
+                 QTextStream out(&file);
+                 out << "#!/bin/sh" << endl;
+                 out << "scrcpy " + sernum + " " + argval << endl;
+
+                 file.flush();
+                 file.close();
+
+                 cstring = "chmod 0755 " + commstr;
+                 QString command = getadbOutput(cstring);
+              }
+
+              if (os == 2)
+              {
+                 switch (mcheck)
+                 {
+                 case 0:
+                    cstring = "open -a Terminal.app " + scriptdir + "/scrcpy.sh";
+                    break;
+                 case 1:
+                    cstring = "open -a iTerm.app " + scriptdir + "/scrcpy.sh";
+                    break;
+                 default:
+                    cstring = "open -a Terminal.app " + scriptdir + "/scrcpy.sh";
+                 }
+              }
+
+              if (os == 0)
+              {
+                 switch (mcheck)
+                 {
+                 case 0:
+                    cstring = "gnome-terminal --working-directory=" + apphome + " -x " + scriptdir + "/scrcpy.sh";
+                    break;
+                 case 1:
+                    cstring = "xfce4-terminal --working-directory=" + apphome + " -x " + scriptdir + "/scrcpy.sh";
+                    break;
+                 case 2:
+                    cstring = "konsole --workdir=" + apphome + " -e " + scriptdir + "/scrcpy.sh";
+                    break;
+                 default:
+                    cstring = "gnome-terminal --working-directory=" + apphome + " -x " + scriptdir + "/scrcpy.sh";
+                 }
+              }
+
+              QProcess::startDetached(cstring);
        }
-
-
-
-
-
-
-
 
 
     void MainWindow::on_pushButton_clicked()
@@ -7874,198 +8224,209 @@ void MainWindow::on_backupButton_clicked()
 
 
 /////////////////////////////////////////////
+
 void MainWindow::backupAndroid()
 {
-
-    if (!check_devices() )
-        return;
-
-
-
-
-    is_package(xbmcpackage);
-
-   if (!is_packageInstalled)
-      {
-
-       QMessageBox::critical(this,"", xbmcpackage+" not installed");
-       return;
-       }
-
-
-
-
- QString backup = readBackup(databasedir);
-
- QString cstring;
- QString command;
- QString mcpath;
- QString kbase;
-
-
- QString n_data_root;
-
- /*
- QString destination;
- QString source;
- bool success;
-*/
-
-  cstring = getadb()+ " shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
-
-  QString s = getadbOutput(cstring);
-
-
-
-  QStringList list = s.split('\n');
-
-  for (int i = 0; i < list.size(); i++) {
-
-       list[i].remove('\r');
-       list[i].remove('\n');
-
-       if (list[i] == "Android" ||
-        list[i] == "Permission denied" ||
-        list[i] == "/storage/emulated" ||
-        list[i] == "/storage" ||
-        list[i] == "/storage/self" ||
-        list[i] == NULL)          {
-      list.removeAt(i);
-      i--;
-    }
-
-
-
-  }
-
-
-
-n_data_root = "/sdcard";
-
-list.insert(0, "/sdcard");
-
-if( list.count() > 1)
- {
-
-    restDialog dialog(this);
-    dialog.setWindowModality(Qt::WindowModal);
-    dialog.setWindowTitle("Backup");
-    dialog.setadb_restore(list);
-    if (dialog.exec() == QDialog::Accepted)
-       {
-          n_data_root = dialog.restore_data_root();
-       } else return;
-}
-
-
-
-   if(!n_data_root.startsWith("/"))
-         n_data_root.prepend("/");
-
-      if(!n_data_root.endsWith("/"))
-         n_data_root.append("/") ;
-
-
-if (isScoped()) {
-    mcpath=n_data_root + "kodi_data/" + xbmcpackage;
-    kbase = n_data_root + "kodi_data/";
-} else {
-    mcpath=n_data_root + "Android/data/" + xbmcpackage;
-    kbase = n_data_root + "Android/data/";
-}
-
-
-   QElapsedTimer rtimer;
-   int nMilliseconds;
-   rtimer.start();
-
-
- cstring = getadb() + " shell ls "+mcpath+"/files/.kodi";
-
- if (!getreturncode(cstring))
-  {
-    QMessageBox::critical(this,"","Kodi's files not found at "+mcpath);
-    logfile("Backup: kodi's files not found at "+mcpath);
-    return;
- }
-
-
-
- QDir backupDir(backup);
- QString dir = QFileDialog::getExistingDirectory(this, "Choose Backup Destination",
-                                                    backupDir.absolutePath(),
-                                                    QFileDialog::ShowDirsOnly
-    | QFileDialog::DontResolveSymlinks);
-
-if (!dir.isEmpty() )
- {
-  QMessageBox::StandardButton reply;
-   reply = QMessageBox::question(this, "Backup", "backup to "+dir,
-                                 QMessageBox::Yes|QMessageBox::No);
-   if (reply == QMessageBox::Yes)
-   {
-    logfile("backup function started");
-
-
-
-
-       mcpath=mcpath+"/";
-       dir = dir + "/";
-
-       if (os == 1)
-       {
-           dir.replace("/","\\");
-       }
-
-
-
-
-       cstring = getadb() + " pull "+mcpath+"files/.kodi/.  "+'"'+dir+'"';
-
-
-      logfile(cstring);
-
-
-
-       command=RunLongProcess(cstring,"Backup");
-       logfile("backup: "+cstring);
-
-
-
-
-        if  (QDir(dir+"userdata").exists())
-
+        if (!check_devices())
         {
-             writeBackup(dir);
-             QMessageBox::information(this,"","Backup complete");
+           QMessageBox::critical(this, "", "No devices connected");
+           return;
         }
 
+        // Check if any device is connected in deviceTable
+        bool hasConnectedDevice = false;
+        for (int i = 0; i < ui->deviceTable->rowCount(); ++i) {
+           if (ui->deviceTable->item(i, 1) &&
+               (ui->deviceTable->item(i, 1)->text() == "Connected" ||
+                ui->deviceTable->item(i, 1)->text() == "USB")) {
+                  hasConnectedDevice = true;
+                  break;
+           }
+        }
+        if (!hasConnectedDevice) {
+           QMessageBox::critical(this, "", "No devices connected");
+           return;
+        }
 
+        // Get selected description from deviceTable
+        QString selectedDescription;
+        int selectedRow = ui->deviceTable->currentRow();
+        if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
+           selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+        } else {
+           QMessageBox::critical(this, "", "No device selected in table");
+           return;
+        }
+
+        // Check if the selected device is connected
+        if (ui->deviceTable->item(selectedRow, 1) &&
+            ui->deviceTable->item(selectedRow, 1)->text() != "Connected" &&
+            ui->deviceTable->item(selectedRow, 1)->text() != "USB") {
+           QMessageBox::critical(this, "", "Selected device is not connected");
+           return;
+        }
+
+        // Get daddr from selected description
+        daddr = getDevice(selectedDescription);
+        if (daddr.isEmpty()) {
+           daddr = selectedDescription; // Fallback to description if getDevice returns empty
+        }
+
+        is_package(xbmcpackage);
+
+        if (!is_packageInstalled)
+        {
+           QMessageBox::critical(this, "", xbmcpackage + " not installed");
+           return;
+        }
+
+        QString backup = readBackup(databasedir);
+
+        QString cstring;
+        QString command;
+        QString mcpath;
+        QString kbase;
+
+        QString n_data_root;
+
+        cstring = getadb() + " shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
+
+        QString s = getadbOutput(cstring);
+
+        QStringList list = s.split('\n');
+
+        for (int i = 0; i < list.size(); i++) {
+           list[i].remove('\r');
+           list[i].remove('\n');
+
+           if (list[i] == "Android" ||
+               list[i] == "Permission denied" ||
+               list[i] == "/storage/emulated" ||
+               list[i] == "/storage" ||
+               list[i] == "/storage/self" ||
+               list[i] == NULL) {
+                  list.removeAt(i);
+                  i--;
+           }
+        }
+
+        n_data_root = "/sdcard";
+
+        list.insert(0, "/sdcard");
+
+        if (list.count() > 1)
+        {
+           restDialog dialog(this);
+           dialog.setWindowModality(Qt::WindowModal);
+           dialog.setWindowTitle("Backup");
+           dialog.setadb_restore(list);
+           if (dialog.exec() == QDialog::Accepted)
+           {
+                  n_data_root = dialog.restore_data_root();
+           } else {
+                  return;
+           }
+        }
+
+        if (!n_data_root.startsWith("/"))
+           n_data_root.prepend("/");
+
+        if (!n_data_root.endsWith("/"))
+           n_data_root.append("/");
+
+        if (isScoped()) {
+           mcpath = n_data_root + "kodi_data/" + xbmcpackage;
+           kbase = n_data_root + "kodi_data/";
+        } else {
+           mcpath = n_data_root + "Android/data/" + xbmcpackage;
+           kbase = n_data_root + "Android/data/";
+        }
+
+        QElapsedTimer rtimer;
+        int nMilliseconds;
+        rtimer.start();
+
+        cstring = getadb() + " shell ls " + mcpath + "/files/.kodi";
+
+        if (!getreturncode(cstring))
+        {
+           QMessageBox::critical(this, "", "Kodi's files not found at " + mcpath);
+           logfile("Backup: kodi's files not found at " + mcpath);
+           return;
+        }
+
+        QDir backupDir(backup);
+        QString dir = QFileDialog::getExistingDirectory(this, "Choose Backup Destination",
+                                                        backupDir.absolutePath(),
+                                                        QFileDialog::ShowDirsOnly
+                                                            | QFileDialog::DontResolveSymlinks);
+
+        if (!dir.isEmpty())
+        {
+           QMessageBox::StandardButton reply;
+           reply = QMessageBox::question(this, "Backup", "backup to " + dir,
+                                         QMessageBox::Yes | QMessageBox::No);
+           if (reply == QMessageBox::Yes)
+           {
+                  logfile("backup function started");
+
+                  mcpath = mcpath + "/";
+                  dir = dir + "/";
+
+                  if (os == 1)
+                  {
+                    dir.replace("/", "\\");
+                  }
+
+                  cstring = getadb() + " pull " + mcpath + "files/.kodi/. " + '"' + dir + '"';
+
+                  logfile(cstring);
+
+                  command = RunLongProcess(cstring, "Backup");
+                  logfile("backup: " + cstring);
+
+                  if (QDir(dir + "userdata").exists())
+                  {
+                    writeBackup(dir);
+                    QMessageBox::information(this, "", "Backup complete");
+                  }
+                  else
+                  {
+                    logfile("backup: " + command);
+                    QMessageBox::critical(this, "", "Backup Failed. See Log.");
+                    return;
+                  }
+           } // end of do backup
+        } // end of !dir
+
+        nMilliseconds = rtimer.elapsed();
+        logfile("process time duration: " + QString::number(nMilliseconds / 1000) + " seconds");
+
+        logfile("Backup complete");
+}
+
+
+
+/*
+
+////////////////////////////////////////////
+void MainWindow::on_backupButton_clicked()
+
+{
+
+    getRecord(ui->deviceBox->currentText());
+
+
+     if  (ostype != "0")
+           backupOther();
         else
-        {
-            logfile("backup: "+command);
-            QMessageBox::critical(this,"","Backup Failed. See Log.");
-            return;
-        }
-
-
-
-
-   } //end of do backup
- } // end of !dir
-
-
-
-nMilliseconds = rtimer.elapsed();
-logfile("process time duration: "+ QString::number(nMilliseconds/1000)+ " seconds" );
-
-logfile("Backup complete");
+           backupAndroid();
 
 
 
 }
 
-
+*/
 
 
 ///////////////////////////////////////////
@@ -10861,3 +11222,103 @@ void MainWindow::on_actionKeypad_triggered()
  on_keypadButton_clicked();
 }
 
+/*
+void MainWindow::on_ascend_clicked()
+{
+ // Store selected item's text (if any)
+ QString selectedText;
+ if (ui->listDevices->currentItem()) {
+           selectedText = ui->listDevices->currentItem()->text();
+ }
+
+ // Sort ascending
+ ui->listDevices->sortItems(Qt::AscendingOrder);
+
+ // Reselect the item if it was selected
+ if (!selectedText.isEmpty()) {
+           for (int i = 0; i < ui->listDevices->count(); ++i) {
+              if (ui->listDevices->item(i)->text() == selectedText) {
+               ui->listDevices->setCurrentRow(i);
+               break;
+              }
+           }
+ }
+}
+
+void MainWindow::on_descend_clicked()
+{
+ // Store selected item's text (if any)
+ QString selectedText;
+ if (ui->listDevices->currentItem()) {
+           selectedText = ui->listDevices->currentItem()->text();
+ }
+
+ // Sort descending
+ ui->listDevices->sortItems(Qt::DescendingOrder);
+
+ // Reselect the item if it was selected
+ if (!selectedText.isEmpty()) {
+           for (int i = 0; i < ui->listDevices->count(); ++i) {
+              if (ui->listDevices->item(i)->text() == selectedText) {
+               ui->listDevices->setCurrentRow(i);
+               break;
+              }
+           }
+ }
+}
+
+*/
+void MainWindow::on_ascend_clicked()
+{
+ QString selectedDevice;
+ if (ui->deviceTable->currentItem() && ui->deviceTable->currentRow() >= 0) {
+           selectedDevice = ui->deviceTable->item(ui->deviceTable->currentRow(), 0)->text();
+ }
+ ui->deviceTable->sortItems(0, Qt::AscendingOrder);
+ if (!selectedDevice.isEmpty()) {
+           for (int row = 0; row < ui->deviceTable->rowCount(); ++row) {
+              if (ui->deviceTable->item(row, 0)->text() == selectedDevice) {
+               ui->deviceTable->setCurrentCell(row, 0);
+               break;
+              }
+           }
+ }
+}
+
+void MainWindow::on_descend_clicked()
+{
+ QString selectedDevice;
+ if (ui->deviceTable->currentItem() && ui->deviceTable->currentRow() >= 0) {
+           selectedDevice = ui->deviceTable->item(ui->deviceTable->currentRow(), 0)->text();
+ }
+ ui->deviceTable->sortItems(0, Qt::DescendingOrder);
+ if (!selectedDevice.isEmpty()) {
+           for (int row = 0; row < ui->deviceTable->rowCount(); ++row) {
+              if (ui->deviceTable->item(row, 0)->text() == selectedDevice) {
+               ui->deviceTable->setCurrentCell(row, 0);
+               break;
+              }
+           }
+ }
+}
+
+void MainWindow::loadDeviceTable()
+{
+ QString sqlstatement;
+ QSqlQuery query;
+
+ ui->deviceTable->clear();
+ ui->deviceTable->setColumnCount(2);
+ ui->deviceTable->setHorizontalHeaderLabels(QStringList() << "Device" << "Status");
+
+ sqlstatement = "SELECT description FROM device";
+ query.exec(sqlstatement);
+ int row = 0;
+ ui->deviceTable->setRowCount(0);
+ while (query.next()) {
+           ui->deviceTable->insertRow(row);
+           ui->deviceTable->setItem(row, 0, new QTableWidgetItem(query.value(0).toString()));
+           ui->deviceTable->setItem(row, 1, new QTableWidgetItem("Disconnected"));
+           row++;
+ }
+}

@@ -28,6 +28,9 @@ public:
 
 private slots:
 
+
+    void loadDeviceTable();
+
     void handleFilemanagerFinished();
 
     void onReqCompleted();
@@ -206,8 +209,8 @@ private slots:
 
     void on_editRecord_clicked();
 
-    void dataentry(int flag);
-
+    void dataentry();
+    void newentry();
 
 
   //   void move_kodi_data(QString externallocation, int choice);
@@ -388,6 +391,10 @@ private slots:
   void on_actionScreen_Capture_triggered();
 
   void on_actionKeypad_triggered();
+
+  void on_ascend_clicked();
+
+  void on_descend_clicked();
 
   private:
     Ui::MainWindow *ui;

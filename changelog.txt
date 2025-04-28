@@ -5,6 +5,11 @@ Version 6.4
 App Start/Stop buttons now on main panel
 Edit XML function moved to utility menu
 Screen capture function  moved to utility menu
+Ascending/Descending sort added to device list
+
+
+/////////
+
 
 
 03/03/25
