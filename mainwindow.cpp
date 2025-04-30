@@ -742,6 +742,68 @@
 
     /////////////////////////////////////////////////
 
+    QString MainWindow::getPort(QString mdaddr)
+    {
+
+
+
+    QSqlQuery query;
+    QString sqlstatement;
+    QString quote = "\"";
+    QString fmport("");
+    mdaddr = quote+mdaddr+quote;
+
+    sqlstatement= "SELECT port FROM device WHERE description=" + mdaddr;
+
+
+    query.prepare( sqlstatement );
+
+    if (!query.exec()){
+            logfile(sqlstatement);
+            logfile("SqLite error:" + query.lastError().text());
+            logfile("SqLite error code:"+ QString::number( query.lastError().number() ));
+    }
+    else
+    {
+            if( query.next( ) )
+              fmport = query.value(0).toString();
+    }
+
+
+    return fmport;
+
+    }
+
+    ///////////////////////////////////////////
+
+
+    bool MainWindow::getIsUsb(QString mdaddr)
+    {
+    QSqlQuery query;
+    QString sqlstatement;
+    QString quote = "\"";
+    bool isusb = false; // Default value for boolean
+    mdaddr = quote + mdaddr + quote;
+
+    sqlstatement = "SELECT isusb FROM device WHERE description=" + mdaddr;
+
+    query.prepare(sqlstatement);
+
+    if (!query.exec()) {
+            logfile(sqlstatement);
+            logfile("SqLite error:" + query.lastError().text());
+            logfile("SqLite error code:" + QString::number(query.lastError().number()));
+    } else {
+            if (query.next()) {
+              isusb = query.value(0).toInt() != 0; // Convert integer to boolean (0 = false, non-zero = true)
+            }
+    }
+
+    return isusb;
+    }
+
+    /////////////////////////////////////////////////
+
     QString MainWindow::getOSType(QString mdaddr)
 
     {
@@ -976,23 +1038,6 @@
         QString device=getadbOutput(cstring);
 
         return device;
-    }
-
-
-    //////////////////////////////////////////////
-    QString MainWindow::getadb()
-
-    {
-        QString gadb="";
-        QString editport="";
-
-        if (!isusb)
-            editport=":"+port;
-
-        gadb=adb+" -s "+daddr;
-
-        return gadb;
-
     }
 
 
@@ -11668,4 +11713,43 @@ void MainWindow::loadDeviceTable()
            ui->deviceTable->setItem(row, 1, new QTableWidgetItem("Disconnected"));
            row++;
  }
+}
+
+
+//////////////////////////////////
+
+QString MainWindow::getadb()
+{
+ QString selectedDescription;
+ int selectedRow = ui->deviceTable->currentRow();
+
+ if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
+           selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+ } else {
+           QMessageBox::critical(this, "Error", "No device selected in table");
+           return "error";
+ }
+
+ QString port = getPort(selectedDescription);
+ if (port.isEmpty()) {
+           port = "5555";
+ }
+
+ QString daddr = getDevice(selectedDescription);
+ if (daddr.isEmpty()) {
+           QMessageBox::critical(this, "Error", "Invalid device address");
+           return "error";
+ }
+
+ QString gadb = "";
+ QString editport = "";
+
+
+ if (!getIsUsb(selectedDescription)) {
+           editport = ":" + port;
+ }
+
+ gadb = adb + " -s " + daddr + editport;
+
+ return gadb;
 }

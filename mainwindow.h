@@ -232,11 +232,13 @@ private slots:
 
     QString getDescription(QString mdaddr);
     QString getDevice(QString mdaddr);
+    QString getPort(QString mdaddr);
     QString getOSType(QString mdaddr);
     bool getflag1(QString mdaddr);
     QString getWSA(QString mdaddr);
+    bool getIsUsb(QString mdaddr);
 
-   void on_newRecord_clicked();
+    void on_newRecord_clicked();
 
   void androidRemote();
 
