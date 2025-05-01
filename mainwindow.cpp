@@ -11248,6 +11248,7 @@ void MainWindow::loadDeviceTable()
  ui->deviceTable->clear();
  ui->deviceTable->setColumnCount(3); // Set column count to 3
  ui->deviceTable->setHorizontalHeaderLabels(QStringList() << "Device" << "IP" << "Status"); // Label middle column as IP
+ ui->deviceTable->setSelectionBehavior(QAbstractItemView::SelectRows);
 
  sqlstatement = "SELECT description, daddr FROM device"; // Select description and daddr
  query.exec(sqlstatement);
