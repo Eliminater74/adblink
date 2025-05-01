@@ -7515,27 +7515,38 @@
 
 
               QString selectedDescription;
+              QString daddr;
               int selectedRow = ui->deviceTable->currentRow();
               if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
                  selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+
               } else {
                  QMessageBox::critical(this, "", "No device selected in table");
                  return;
               }
 
               // Check if the selected device is connected
-              if (ui->deviceTable->item(selectedRow, 1) &&
-                  ui->deviceTable->item(selectedRow, 1)->text() != "Connected" &&
-                  ui->deviceTable->item(selectedRow, 1)->text() != "USB") {
+              if (ui->deviceTable->item(selectedRow, 2) &&
+                  ui->deviceTable->item(selectedRow, 2)->text() != "Connected" &&
+                  ui->deviceTable->item(selectedRow, 2)->text() != "USB") {
                  QMessageBox::critical(this, "", "Selected device is not connected");
                  return;
               }
 
               // Get daddr from selected description
-              daddr = getDevice(selectedDescription);
-              if (daddr.isEmpty()) {
-                 daddr = selectedDescription; // Fallback to description if getDevice returns empty
+            //  daddr = getDevice(selectedDescription);
+           //   if (daddr.isEmpty()) {
+          //       daddr = selectedDescription; // Fallback to description if getDevice returns empty
+          //    }
+
+
+              QString port = getPort(selectedDescription);
+              if (port.isEmpty()) {
+                 port = "5555";
               }
+
+              daddr = ui->deviceTable->item(selectedRow, 1)->text();
+
 
               logfile("detaching console process");
               logfile(daddr + ":" + port);
