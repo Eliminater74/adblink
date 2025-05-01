@@ -623,6 +623,8 @@
         do_versioncheck();
 
 
+        ui->adhocip->setText("192.168.1.30");
+
 
 
      }
@@ -2737,10 +2739,18 @@
                       if (command.contains("connected to")) {
                             isConnected = true;
                             ui->deviceTable->setItem(selectedRow, 1, new QTableWidgetItem("Connected")); // Set Status to Connected
+
+
+                            ui->deviceTable->clearSelection();
+                            ui->deviceTable->setCurrentCell(selectedRow, 0);
+                            ui->deviceTable->selectRow(selectedRow);
+                            ui->deviceTable->setFocus();
+
+
                             on_refreshConnectedDevices_clicked();
                             logfile("Connected to " + udaddr);
                             logfile("Android version: " + s.setNum(getandroid()));
-                            // Removed redundant deviceExists check since selectedDescription is from deviceTable
+
                       } else {
                             isConnected = false;
                             ui->deviceTable->setItem(selectedRow, 1, new QTableWidgetItem("NA")); // Set Status to NA
@@ -2751,12 +2761,23 @@
                       if (isConnected) {
                             ui->server_running->setText(adbstr1);
                             serverRunning = true;
-                            // Removed redundant isConnected recheck since it’s already set correctly
+
                       }
 
                       // Scoped storage check with improved logging
                       if (checkscope && program == "adblink" && isScoped()) {
+
+                            if (ui->adhocip->text().isEmpty())
+                            {
                             cstring = getadb() + " shell ls /sdcard/xbmc_env.properties";
+                            }
+                              else {
+                            cstring = adb + " -s " + ui->adhocip->text() + " shell ls /sdcard/xbmc_env.properties";
+
+                              }
+
+
+
                             bool fileExists = getreturncode(cstring);
                             logfile("Checked xbmc_env.properties: " + QString(fileExists ? "Found" : "Not found"));
                             if (!fileExists) {
@@ -2764,519 +2785,18 @@
                               reply = QMessageBox::question(this, "Restore", "Scoped storage in effect\nCreate /sdcard/kodi_data?",
                                                             QMessageBox::Yes | QMessageBox::No);
                               if (reply == QMessageBox::Yes) {
-                  on_actionCreate_kodi_data_triggered();
+                                 on_actionCreate_kodi_data_triggered();
                               }
                             }
+
+
+
                       }
 
                       nMilliseconds = rtimer.elapsed();
                       logfile("process time duration: " + QString::number(nMilliseconds / 1000) + " seconds");
     }
 
- /*
-
-
-    void MainWindow::on_connButton_clicked()
-    {
-                      QString cstring;
-                      QString command;
-                      QString s;
-
-                      QJsonObject obj;
-                      QJsonDocument doc(obj);
-                      QFile file(databasedir + "adblink.json");
-                      file.open(QIODevice::ReadOnly);
-                      doc = QJsonDocument::fromJson(file.readAll());
-                      obj = doc.object();
-                      bool checkscope = doc.object()["checkscope"].toBool();
-
-                      if (!ui->adhocip->text().isEmpty())
-                      {
-                            QString adhocIPText = ui->adhocip->text();
-
-                            int colonIndex = adhocIPText.indexOf(':');
-                            if (colonIndex != -1) {
-                              daddr = adhocIPText.left(colonIndex);
-                              port = adhocIPText.mid(colonIndex + 1);
-                            } else {
-                              daddr = adhocIPText;
-                              port = "5555";
-                            }
-
-                            cstring = adb + " connect " + daddr + ":" + port;
-                            logfile(cstring);
-                            command = connectadb(cstring);
-
-                            if (command.contains("connected to"))
-                            {
-                              isConnected = true;
-                              // Add new row to deviceTable with daddr and Connected
-                              int newRow = ui->deviceTable->rowCount();
-                              ui->deviceTable->insertRow(newRow);
-                              ui->deviceTable->setItem(newRow, 0, new QTableWidgetItem(daddr)); // Description = daddr
-                              ui->deviceTable->setItem(newRow, 1, new QTableWidgetItem("Connected")); // Status = Connected
-                              default_device_values();
-                              on_refreshConnectedDevices_clicked();
-                              logfile("Connected to " + daddr);
-                              logfile("Android version: " + s.setNum(getandroid()));
-                            }
-                            else {
-                              isConnected = false;
-                              logfile("Unable to connect to: " + daddr + ":" + port);
-                              QMessageBox::critical(this, "", "Unable to connect to: " + daddr + ":" + port);
-                            }
-
-                            return;
-                      }
-
-                      // Get selected description from deviceTable
-                      QString selectedDescription;
-                      int selectedRow = ui->deviceTable->currentRow();
-                      if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
-                            selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
-                      } else {
-                            QMessageBox::critical(this, "", "No device selected in table");
-                            return;
-                      }
-                      getRecord(selectedDescription); // Use deviceTable's selected description
-
-                      if (isusb) {
-                            QMessageBox::critical(this, "", "Inactive for USB connections");
-                            return;
-                      }
-
-                      if (daddr.isEmpty()) {
-                            QMessageBox::critical(this, "", "Device address required");
-                            return;
-                      }
-
-                      if (port.isEmpty()) {
-                            port = "5555";
-                      }
-
-                      QElapsedTimer rtimer;
-                      int nMilliseconds;
-                      rtimer.start();
-
-                      QString udaddr = daddr + ":" + port;
-                      cstring = adb + " connect " + udaddr;
-                      command = connectadb(cstring);
-
-                      logfile(cstring);
-                      logfile(command);
-
-                      // Update Status column based on connection outcome
-                      if (command.contains("connected to")) {
-                            isConnected = true;
-                            ui->deviceTable->setItem(selectedRow, 1, new QTableWidgetItem("Connected")); // Set Status to Connected
-                            on_refreshConnectedDevices_clicked();
-                            logfile("Connected to " + udaddr);
-                            logfile("Android version: " + s.setNum(getandroid()));
-
-                            // Check if selectedDescription exists in deviceTable
-                            bool deviceExists = false;
-                            for (int i = 0; i < ui->deviceTable->rowCount(); ++i) {
-                              if (ui->deviceTable->item(i, 0) && ui->deviceTable->item(i, 0)->text() == selectedDescription) {
-                  deviceExists = true;
-                  break;
-                              }
-                            }
-                            if (!deviceExists) {
-                              // Optionally add the device to deviceTable if it doesn't exist
-                              int newRow = ui->deviceTable->rowCount();
-                              ui->deviceTable->insertRow(newRow);
-                              ui->deviceTable->setItem(newRow, 0, new QTableWidgetItem(selectedDescription));
-                              ui->deviceTable->setItem(newRow, 1, new QTableWidgetItem("Connected"));
-                            }
-                      } else {
-                            isConnected = false;
-                            ui->deviceTable->setItem(selectedRow, 1, new QTableWidgetItem("NA")); // Set Status to NA
-                            logfile("Unable to connect to: " + udaddr);
-                            QMessageBox::critical(this, "", "Unable to connect to: " + udaddr);
-                      }
-
-                      if (isConnected) {
-                            ui->server_running->setText(adbstr1);
-                            serverRunning = true;
-                            // Use deviceTable to confirm device existence instead of searchlistDevices
-                            isConnected = false;
-                            for (int i = 0; i < ui->deviceTable->rowCount(); ++i) {
-                              if (ui->deviceTable->item(i, 0) && ui->deviceTable->item(i, 0)->text() == selectedDescription) {
-                  isConnected = true;
-                  break;
-                              }
-                            }
-                      }
-
-                      if (checkscope && program == "adblink" && isScoped()) {
-                            cstring = getadb() + " shell ls /sdcard/xbmc_env.properties";
-                            if (!getreturncode(cstring)) {
-                              QMessageBox::StandardButton reply;
-                              reply = QMessageBox::question(this, "Restore", "Scoped storage in effect\nCreate /sdcard/kodi_data?",
-                                                            QMessageBox::Yes | QMessageBox::No);
-                              if (reply == QMessageBox::Yes) {
-                                  on_actionCreate_kodi_data_triggered();
-                              }
-                            }
-                      }
-
-                      nMilliseconds = rtimer.elapsed();
-                      logfile("process time duration: " + QString::number(nMilliseconds / 1000) + " seconds");
-    }
-
-
-
-
-    ////////////////////////////////////
-    void MainWindow::on_connButton_clicked()
-    {
-                      QString cstring;
-                      QString command;
-                      QString s;
-
-                      QJsonObject obj;
-                      QJsonDocument doc(obj);
-                      QFile file(databasedir + "adblink.json");
-                      file.open(QIODevice::ReadOnly);
-                      doc = QJsonDocument::fromJson(file.readAll());
-                      obj = doc.object();
-                      bool checkscope = doc.object()["checkscope"].toBool();
-
-                      if (!ui->adhocip->text().isEmpty())
-                      {
-                            QString adhocIPText = ui->adhocip->text();
-
-                            int colonIndex = adhocIPText.indexOf(':');
-                            if (colonIndex != -1) {
-                              daddr = adhocIPText.left(colonIndex);
-                              port = adhocIPText.mid(colonIndex + 1);
-                            } else {
-                              daddr = adhocIPText;
-                              port = "5555";
-                            }
-
-                            cstring = adb + " connect " + daddr + ":" + port;
-                            logfile(cstring);
-                            command = connectadb(cstring);
-
-                            if (command.contains("connected to"))
-                            {
-                              isConnected = true;
-                              // Add new row to deviceTable with daddr and Connected
-                              int newRow = ui->deviceTable->rowCount();
-                              ui->deviceTable->insertRow(newRow);
-                              ui->deviceTable->setItem(newRow, 0, new QTableWidgetItem(daddr)); // Description = daddr
-                              ui->deviceTable->setItem(newRow, 1, new QTableWidgetItem("Connected")); // Status = Connected
-                              default_device_values();
-                              on_refreshConnectedDevices_clicked();
-                              logfile("Connected to " + daddr);
-                              logfile("Android version: " + s.setNum(getandroid()));
-                            }
-                            else {
-                              isConnected = false;
-                              logfile("Unable to connect to: " + daddr + ":" + port);
-                              QMessageBox::critical(this, "", "Unable to connect to: " + daddr + ":" + port);
-                            }
-
-                            return;
-                      }
-
-                      // Get selected description from deviceTable
-                      QString selectedDescription;
-                      int selectedRow = ui->deviceTable->currentRow();
-                      if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
-                            selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
-                      } else {
-                            QMessageBox::critical(this, "", "No device selected in table");
-                            return;
-                      }
-                      getRecord(selectedDescription); // Use deviceTable's selected description
-
-                      if (isusb) {
-                            QMessageBox::critical(this, "", "Inactive for USB connections");
-                            return;
-                      }
-
-                      if (daddr.isEmpty()) {
-                            QMessageBox::critical(this, "", "Device address required");
-                            return;
-                      }
-
-                      if (port.isEmpty()) {
-                            port = "5555";
-                      }
-
-                      QElapsedTimer rtimer;
-                      int nMilliseconds;
-                      rtimer.start();
-
-                      QString udaddr = daddr + ":" + port;
-                      cstring = adb + " connect " + udaddr;
-                      command = connectadb(cstring);
-
-                      logfile(cstring);
-                      logfile(command);
-
-                      // Update Status column based on connection outcome
-                      if (command.contains("connected to")) {
-                            isConnected = true;
-                            ui->deviceTable->setItem(selectedRow, 1, new QTableWidgetItem("Connected")); // Set Status to Connected
-                            on_refreshConnectedDevices_clicked();
-                            logfile("Connected to " + udaddr);
-                            logfile("Android version: " + s.setNum(getandroid()));
-
-                            if (searchlistDevices(selectedDescription)) {
-                              QString mstring = selectedDescription;
-                              for (int i = 0; i < ui->listDevices->count(); ++i) {
-                  QString str = ui->listDevices->item(i)->text();
-                  if (str == mstring) {
-                        ui->listDevices->item(i)->setSelected(true);
-                  }
-                              }
-                            }
-                      } else {
-                            isConnected = false;
-                            ui->deviceTable->setItem(selectedRow, 1, new QTableWidgetItem("NA")); // Set Status to NA
-                            logfile("Unable to connect to: " + udaddr);
-                            QMessageBox::critical(this, "", "Unable to connect to: " + udaddr);
-                      }
-
-                      if (isConnected) {
-                            ui->server_running->setText(adbstr1);
-                            serverRunning = true;
-                            isConnected = searchlistDevices(selectedDescription);
-                      }
-
-                      if (checkscope && program == "adblink" && isScoped()) {
-                            cstring = getadb() + " shell ls /sdcard/xbmc_env.properties";
-                            if (!getreturncode(cstring)) {
-                              QMessageBox::StandardButton reply;
-                              reply = QMessageBox::question(this, "Restore", "Scoped storage in effect\nCreate /sdcard/kodi_data?",
-                                                            QMessageBox::Yes | QMessageBox::No);
-                              if (reply == QMessageBox::Yes) {
-                  on_actionCreate_kodi_data_triggered();
-                              }
-                            }
-                      }
-
-                      nMilliseconds = rtimer.elapsed();
-                      logfile("process time duration: " + QString::number(nMilliseconds / 1000) + " seconds");
-    }
-
-
-
-
-
-    /////////////////////////////////////////////////////////////////////////
-    void MainWindow::on_connButton_clicked()
-    {
-
-
-
-        QString cstring;
-        QString command;
-        QString s;
-     cstring = adb + " devices";
-        command=connectadb(cstring);
-
-        QString adbCommand = "/Users/jeff/qtbuild/adblink.app/Contents/MacOS/adbfiles/adb connect 192.168.1.30:5555";
-        QString result = executeCommand(adbCommand);  // Assuming executeCommand runs adb command and returns the output
-
-        if (result.contains("No route to host")) {
-                            qDebug() << "First connection failed. Retrying...";
-                            QThread::sleep(2);  // Wait 2 seconds before retrying
-                            result = executeCommand(adbCommand);  // Retry the connection
-        }
-
-        qDebug() << "ADB Result:" << result;
-
-
-
-
-         cstring.clear();
-         command.clear();
-
-        QJsonObject obj;
-        QJsonDocument doc(obj);
-        QFile file(databasedir+"adblink.json");
-        file.open(QIODevice::ReadOnly);
-        doc = QJsonDocument::fromJson(file.readAll());
-        obj = doc.object();
-        bool checkscope = doc.object()["checkscope"].toBool();
-
-
-
-
-        if (!ui->adhocip->text().isEmpty())
-         {
-
-           QString adhocIPText = ui->adhocip->text();
-
-            int colonIndex = adhocIPText.indexOf(':');
-                 if (colonIndex != -1) {
-                    daddr = adhocIPText.left(colonIndex);
-                    port = adhocIPText.mid(colonIndex + 1);
-                  } else {
-                    daddr = adhocIPText;
-                     port = "5555";
-                  }
-
-               qDebug() << "daddr:" << daddr;
-               qDebug() << "port:" << port;
-
-
-               cstring = adb + " connect "+daddr+":"+port;
-               logfile(cstring);
-               command=connectadb(cstring);
-
-              if (command.contains("connected to"))
-                 {
-                     isConnected=true;
-                     default_device_values();
-                     on_refreshConnectedDevices_clicked();
-                     logfile("Connected to "+daddr);
-                     logfile ("Android version: "+ s.setNum(getandroid()));
-                  }
-
-              else {
-                  isConnected=false;
-                  logfile("Unable to connect to: "+daddr+":"+port);
-                  QMessageBox::critical(this,"","Unable to connect to: "+daddr+":"+port);
-              }
-
-           return;
-
-
-        }
-
-
-        getRecord(ui->deviceBox->currentText());
-
-
-        if (isusb )
-          {
-
-               QMessageBox::critical(this,"","Inactive for USB connections");
-               return;
-          }
-
-        if (daddr.isEmpty())
-        {
-
-            QMessageBox::critical(this,"","Device address required");
-            return;
-        }
-
-
-
-
-        if (port.isEmpty())
-        {
-           port="5555";
-
-        }
-
-
-        QElapsedTimer rtimer;
-        int nMilliseconds;
-        rtimer.start();
-
-
-
-        QString udaddr=daddr+":"+port;
-
-        cstring = adb + " connect "+udaddr;
-
-        //   command=getadbOutput(cstring);
-
-          command=connectadb(cstring);
-
-        logfile(cstring);
-        logfile(command);
-
-        if (command.contains("connected to"))
-        {   isConnected=true;
-
-
-
-
-
-
-
-
-
-
-            on_refreshConnectedDevices_clicked();
-
-
-               logfile("Connected to "+udaddr);
-                logfile ("Android version: "+ s.setNum(getandroid()));
-
-               if (searchlistDevices(ui->deviceBox->currentText()))
-               {
-
-                    QString mstring =  ui->deviceBox->currentText();
-
-                   for(int i = 0; i < ui->listDevices->count(); ++i)
-                   {
-                       QString str = ui->listDevices->item(i)->text();
-                      if (str==mstring)
-                          ui->listDevices->item(i)->setSelected(true);
-                   }
-
-               }
-
-        }
-           else
-           {
-            isConnected=false;
-            logfile("Unable to connect to: "+udaddr);
-            QMessageBox::critical(this,"","Unable to connect to: "+udaddr);
-
-           }
-
-
-
-
-        if(isConnected)
-           {
-
-
-
-             ui->server_running->setText(adbstr1);
-             serverRunning = true;
-
-
-           isConnected=searchlistDevices(ui->deviceBox->currentText());
-
-          }
-
-
-
-          if (checkscope && program == "adblink" && isScoped())
-          {
-           cstring = getadb() + " shell ls /sdcard/xbmc_env.properties";
-              if (!getreturncode(cstring))
-              {
-                   QMessageBox::StandardButton reply;
-                   reply = QMessageBox::question(this, "Restore", "Scoped storage in effect\nCreate /sdcard/kodi_data?",                                                 QMessageBox::Yes | QMessageBox::No);
-                   if (reply == QMessageBox::Yes) {
-                      on_actionCreate_kodi_data_triggered(); }
-              }
-
-
-           }
-
-
-
-         nMilliseconds = rtimer.elapsed();
-         logfile("process time duration: "+ QString::number(nMilliseconds/1000)+ " seconds" );
-
-    }
-
-
-
-    */
 
     ////////////////////////////////////////////////////////////////
 
@@ -7997,66 +7517,7 @@
               if (!check_devices())
               return;
 
-/*
 
-                      if (!ui->adhocip->text().isEmpty())
-                      {
-                            QString adhocIPText = ui->adhocip->text();
-                            int colonIndex = adhocIPText.indexOf(':');
-                            QString daddr, port;
-
-                            if (colonIndex != -1) {
-                              daddr = adhocIPText.left(colonIndex);
-                              port = adhocIPText.mid(colonIndex + 1);
-                            } else {
-                              daddr = adhocIPText;
-                              port = "5555";
-                            }
-
-                            // Validate IP address using isNull (avoids isValid error)
-                            QHostAddress address(daddr);
-                            if (daddr.isEmpty() || address.isNull()) {
-                              logfile("Invalid IP address: " + daddr);
-                              QMessageBox::critical(this, "", "Invalid IP address: " + daddr);
-                              return;
-                            }
-
-                            // Validate port
-                            bool ok;
-                            int portNum = port.toInt(&ok);
-                            if (!ok || portNum < 1 || portNum > 65535) {
-                              logfile("Invalid port: " + port);
-                              QMessageBox::critical(this, "", "Invalid port: " + port);
-                              return;
-                            }
-
-                            cstring = adb + " connect " + daddr + ":" + port;
-                            logfile(cstring);
-                            command = connectadb(cstring);
-
-                            if (command.contains("connected to"))
-                            {
-                              isConnected = true;
-                              // Add new row to deviceTable with daddr and Connected
-                              int newRow = ui->deviceTable->rowCount();
-                              ui->deviceTable->insertRow(newRow);
-                              ui->deviceTable->setItem(newRow, 0, new QTableWidgetItem(daddr)); // Description = daddr
-                              ui->deviceTable->setItem(newRow, 1, new QTableWidgetItem("Connected")); // Status = Connected
-                              default_device_values();
-                              on_refreshConnectedDevices_clicked();
-                              logfile("Connected to " + daddr);
-                              logfile("Android version: " + s.setNum(getandroid()));
-                            }
-                            else {
-                              isConnected = false;
-                              logfile("Unable to connect to: " + daddr + ":" + port);
-                              QMessageBox::critical(this, "", "Unable to connect to: " + daddr + ":" + port);
-                            }
-
-                            return;
-                      }
-
-*/
               QJsonObject obj;
               QJsonDocument doc(obj);
               QFile file(databasedir + "adblink.json");
@@ -8067,9 +7528,6 @@
               int mcheck = dropdown.toInt();
 
 
-
-        if (ui->adhocip->text().isEmpty())
-              {
 
 
               QString selectedDescription;
@@ -8092,29 +7550,8 @@
               // Get daddr from selected description
               daddr = getDevice(selectedDescription);
               if (daddr.isEmpty()) {
-                QMessageBox::critical(this, "Error", "Invalid address");
+                 daddr = selectedDescription; // Fallback to description if getDevice returns empty
               }
-
-        }
-
-        else
-
-        {
-              QString adhocIPText = ui->adhocip->text();
-              int colonIndex = adhocIPText.indexOf(':');
-
-
-              if (colonIndex != -1) {
-                daddr = adhocIPText.left(colonIndex);
-                port = adhocIPText.mid(colonIndex + 1);
-              } else {
-                daddr = adhocIPText;
-                port = "5555";
-              }
-
-        }
-
-   //     qDebug() << daddr << " " << port; return;
 
               logfile("detaching console process");
               logfile(daddr + ":" + port);
@@ -8714,11 +8151,6 @@ void MainWindow::on_backupButton_clicked()
 
 void MainWindow::backupAndroid()
 {
-        if (!check_devices())
-        {
-           QMessageBox::critical(this, "", "No devices connected");
-           return;
-        }
 
         // Check if any device is connected in deviceTable
         bool hasConnectedDevice = false;
@@ -11815,34 +11247,47 @@ void MainWindow::loadDeviceTable()
 
 QString MainWindow::getadb()
 {
- QString selectedDescription;
- int selectedRow = ui->deviceTable->currentRow();
 
- if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
-           selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
- } else {
-           QMessageBox::critical(this, "Error", "No device selected in table");
-           return "error";
- }
-
- QString port = getPort(selectedDescription);
- if (port.isEmpty()) {
-           port = "5555";
- }
-
- QString daddr = getDevice(selectedDescription);
- if (daddr.isEmpty()) {
-           QMessageBox::critical(this, "Error", "Invalid device address");
-           return "error";
- }
 
  QString gadb = "";
  QString editport = "";
+ QString selectedDescription;
+ int selectedRow = ui->deviceTable->currentRow();
+
+ if (ui->adhocip->text().isEmpty())
+ {
+
+           if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
+              selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+           } else {
+              QMessageBox::critical(this, "Error", "No device selected in table");
+              return "error";
+           }
+
+           QString port = getPort(selectedDescription);
+           if (port.isEmpty()) {
+              port = "5555";
+           }
+
+           QString daddr = getDevice(selectedDescription);
+           if (daddr.isEmpty()) {
+              QMessageBox::critical(this, "Error", "Invalid device address");
+              return "error";
+
+             if (!getIsUsb(selectedDescription)) {
+               editport = ":" + port;
+              }
+
+           }
+
+          }
+
+     else
+        {
+          daddr= ui->adhocip->text();
+        }
 
 
- if (!getIsUsb(selectedDescription)) {
-           editport = ":" + port;
- }
 
  gadb = adb + " -s " + daddr + editport;
 
