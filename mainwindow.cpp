@@ -7995,8 +7995,68 @@
        void MainWindow::on_adbshellButton_clicked()
        {
               if (!check_devices())
-                 return;
+              return;
 
+/*
+
+                      if (!ui->adhocip->text().isEmpty())
+                      {
+                            QString adhocIPText = ui->adhocip->text();
+                            int colonIndex = adhocIPText.indexOf(':');
+                            QString daddr, port;
+
+                            if (colonIndex != -1) {
+                              daddr = adhocIPText.left(colonIndex);
+                              port = adhocIPText.mid(colonIndex + 1);
+                            } else {
+                              daddr = adhocIPText;
+                              port = "5555";
+                            }
+
+                            // Validate IP address using isNull (avoids isValid error)
+                            QHostAddress address(daddr);
+                            if (daddr.isEmpty() || address.isNull()) {
+                              logfile("Invalid IP address: " + daddr);
+                              QMessageBox::critical(this, "", "Invalid IP address: " + daddr);
+                              return;
+                            }
+
+                            // Validate port
+                            bool ok;
+                            int portNum = port.toInt(&ok);
+                            if (!ok || portNum < 1 || portNum > 65535) {
+                              logfile("Invalid port: " + port);
+                              QMessageBox::critical(this, "", "Invalid port: " + port);
+                              return;
+                            }
+
+                            cstring = adb + " connect " + daddr + ":" + port;
+                            logfile(cstring);
+                            command = connectadb(cstring);
+
+                            if (command.contains("connected to"))
+                            {
+                              isConnected = true;
+                              // Add new row to deviceTable with daddr and Connected
+                              int newRow = ui->deviceTable->rowCount();
+                              ui->deviceTable->insertRow(newRow);
+                              ui->deviceTable->setItem(newRow, 0, new QTableWidgetItem(daddr)); // Description = daddr
+                              ui->deviceTable->setItem(newRow, 1, new QTableWidgetItem("Connected")); // Status = Connected
+                              default_device_values();
+                              on_refreshConnectedDevices_clicked();
+                              logfile("Connected to " + daddr);
+                              logfile("Android version: " + s.setNum(getandroid()));
+                            }
+                            else {
+                              isConnected = false;
+                              logfile("Unable to connect to: " + daddr + ":" + port);
+                              QMessageBox::critical(this, "", "Unable to connect to: " + daddr + ":" + port);
+                            }
+
+                            return;
+                      }
+
+*/
               QJsonObject obj;
               QJsonDocument doc(obj);
               QFile file(databasedir + "adblink.json");
@@ -8005,6 +8065,11 @@
               obj = doc.object();
               QString dropdown = obj["dropdown"].toString();
               int mcheck = dropdown.toInt();
+
+
+
+        if (ui->adhocip->text().isEmpty())
+              {
 
 
               QString selectedDescription;
@@ -8027,8 +8092,29 @@
               // Get daddr from selected description
               daddr = getDevice(selectedDescription);
               if (daddr.isEmpty()) {
-                 daddr = selectedDescription; // Fallback to description if getDevice returns empty
+                QMessageBox::critical(this, "Error", "Invalid address");
               }
+
+        }
+
+        else
+
+        {
+              QString adhocIPText = ui->adhocip->text();
+              int colonIndex = adhocIPText.indexOf(':');
+
+
+              if (colonIndex != -1) {
+                daddr = adhocIPText.left(colonIndex);
+                port = adhocIPText.mid(colonIndex + 1);
+              } else {
+                daddr = adhocIPText;
+                port = "5555";
+              }
+
+        }
+
+   //     qDebug() << daddr << " " << port; return;
 
               logfile("detaching console process");
               logfile(daddr + ":" + port);
@@ -8055,9 +8141,18 @@
                  QTextStream out(&file);
 
                  out << "#!/bin/sh" << endl;
+
+
+
+                 if (ui->adhocip->text().isEmpty())
+                 {
                  out << getadb() + " shell " << endl;
-                 cstring = getadb() + " shell ";
-                 // logfile(cstring);
+                 }
+                 else
+                 {
+                  out << adb + " -s " + ui->adhocip->text() + " shell " << endl;
+                 }
+
 
                  file.flush();
                  file.close();
