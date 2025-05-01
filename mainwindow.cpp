@@ -198,10 +198,10 @@
 
 
 
-        //ro.product.product.device
-        //ro.product.manufacturer
+//ro.product.product.device
+//ro.product.manufacturer
 // ro.product.brand
-  //  get android # adb shell getprop ro.build.version.release
+//  adb shell getprop ro.build.version.release
 
 
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -296,20 +296,6 @@
       logfile(QDir::home().path());
 
 
-/*
-      QList<QHostAddress> list = QNetworkInterface::allAddresses();
-        for(int nIter=0; nIter<list.count(); nIter++)
-
-         {
-             if(!list[nIter].isLoopback())
-                 if (list[nIter].protocol() == QAbstractSocket::IPv4Protocol )
-               logfile("IP: "+list[nIter].toString());
-
-         }
-
-  */
-
-  //====================
 
          QList<QHostAddress> list = QNetworkInterface::allAddresses();
          QHostAddress primaryIP;
@@ -608,8 +594,8 @@
 
 
 
-        ui->deviceTable->setColumnCount(2);
-        ui->deviceTable->setHorizontalHeaderLabels(QStringList() << "Device" << "Status");
+        ui->deviceTable->setColumnCount(3);
+        ui->deviceTable->setHorizontalHeaderLabels(QStringList() << "Device" << "IP" << "Status");
         ui->deviceTable->verticalHeader()->setVisible(false);
         ui->deviceTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
@@ -2658,10 +2644,9 @@
                               // Add new row to deviceTable with daddr and Connected
                               int newRow = ui->deviceTable->rowCount();
                               ui->deviceTable->insertRow(newRow);
-                              ui->deviceTable->setItem(newRow, 0, new QTableWidgetItem(daddr)); // Description = daddr
-                              ui->deviceTable->setItem(newRow, 1, new QTableWidgetItem("Connected")); // Status = Connected
-
-                              // Make the newly added row selected and highlighted
+                              ui->deviceTable->setItem(newRow, 0, new QTableWidgetItem("Ad hoc IP")); // Description = daddr
+                              ui->deviceTable->setItem(newRow, 1, new QTableWidgetItem(daddr)); // Status = Connected
+                              ui->deviceTable->setItem(newRow, 2, new QTableWidgetItem("Connected"));
                               ui->deviceTable->clearSelection(); // Clear previous selections
                               ui->deviceTable->setCurrentCell(newRow, 0); // Set active cell
                               ui->deviceTable->selectRow(newRow); // Highlight the row
@@ -2715,11 +2700,11 @@
                       }
 
                       // Improved error handling for empty daddr
+                      daddr = getDevice(selectedDescription);
                       if (daddr.isEmpty()) {
-                            logfile("No device address found for description: " + selectedDescription);
-                            QMessageBox::critical(this, "", "Device address required for " + selectedDescription);
-                            return;
+                            daddr = selectedDescription;
                       }
+
 
                       if (port.isEmpty()) {
                             port = "5555";
@@ -8154,9 +8139,9 @@ void MainWindow::backupAndroid()
         // Check if any device is connected in deviceTable
         bool hasConnectedDevice = false;
         for (int i = 0; i < ui->deviceTable->rowCount(); ++i) {
-           if (ui->deviceTable->item(i, 1) &&
-               (ui->deviceTable->item(i, 1)->text() == "Connected" ||
-                ui->deviceTable->item(i, 1)->text() == "USB")) {
+           if (ui->deviceTable->item(i, 2) &&
+               (ui->deviceTable->item(i, 2)->text() == "Connected" ||
+                ui->deviceTable->item(i, 2)->text() == "USB")) {
                   hasConnectedDevice = true;
                   break;
            }
@@ -8177,9 +8162,9 @@ void MainWindow::backupAndroid()
         }
 
         // Check if the selected device is connected
-        if (ui->deviceTable->item(selectedRow, 1) &&
-            ui->deviceTable->item(selectedRow, 1)->text() != "Connected" &&
-            ui->deviceTable->item(selectedRow, 1)->text() != "USB") {
+        if (ui->deviceTable->item(selectedRow, 2) &&
+            ui->deviceTable->item(selectedRow, 2)->text() != "Connected" &&
+            ui->deviceTable->item(selectedRow, 2)->text() != "USB") {
            QMessageBox::critical(this, "", "Selected device is not connected");
            return;
         }
@@ -11220,6 +11205,7 @@ void MainWindow::on_descend_clicked()
  }
 }
 
+/*
 void MainWindow::loadDeviceTable()
 {
  QString sqlstatement;
@@ -11227,7 +11213,7 @@ void MainWindow::loadDeviceTable()
 
  ui->deviceTable->clear();
  ui->deviceTable->setColumnCount(2);
- ui->deviceTable->setHorizontalHeaderLabels(QStringList() << "Device" << "Status");
+ ui->deviceTable->setHorizontalHeaderLabels(QStringList() << "Device" << "IP" << "Status");
 
  sqlstatement = "SELECT description FROM device";
  query.exec(sqlstatement);
@@ -11237,6 +11223,30 @@ void MainWindow::loadDeviceTable()
            ui->deviceTable->insertRow(row);
            ui->deviceTable->setItem(row, 0, new QTableWidgetItem(query.value(0).toString()));
            ui->deviceTable->setItem(row, 1, new QTableWidgetItem("Disconnected"));
+           row++;
+ }
+}
+
+*/
+
+void MainWindow::loadDeviceTable()
+{
+ QString sqlstatement;
+ QSqlQuery query;
+
+ ui->deviceTable->clear();
+ ui->deviceTable->setColumnCount(3); // Set column count to 3
+ ui->deviceTable->setHorizontalHeaderLabels(QStringList() << "Device" << "IP" << "Status"); // Label middle column as IP
+
+ sqlstatement = "SELECT description, daddr FROM device"; // Select description and daddr
+ query.exec(sqlstatement);
+ int row = 0;
+ ui->deviceTable->setRowCount(0);
+ while (query.next()) {
+           ui->deviceTable->insertRow(row);
+           ui->deviceTable->setItem(row, 0, new QTableWidgetItem(query.value(0).toString())); // Device (description)
+           ui->deviceTable->setItem(row, 1, new QTableWidgetItem(query.value(1).toString())); // IP (daddr)
+           ui->deviceTable->setItem(row, 2, new QTableWidgetItem("Disconnected")); // Status
            row++;
  }
 }
@@ -11253,8 +11263,6 @@ QString MainWindow::getadb()
  QString selectedDescription;
  int selectedRow = ui->deviceTable->currentRow();
 
- if (ui->adhocip->text().isEmpty())
- {
 
            if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
               selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
@@ -11270,21 +11278,14 @@ QString MainWindow::getadb()
 
            QString daddr = getDevice(selectedDescription);
            if (daddr.isEmpty()) {
-              QMessageBox::critical(this, "Error", "Invalid device address");
-              return "error";
+              daddr = selectedDescription;
+           }
 
-             if (!getIsUsb(selectedDescription)) {
+
+              if (!getIsUsb(selectedDescription)) {
                editport = ":" + port;
               }
 
-           }
-
-          }
-
-     else
-        {
-          daddr= ui->adhocip->text();
-        }
 
 
 
