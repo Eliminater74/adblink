@@ -2733,7 +2733,7 @@
                       // Update Status column based on connection outcome
                       if (command.contains("connected to")) {
                             isConnected = true;
-                            ui->deviceTable->setItem(selectedRow, 1, new QTableWidgetItem("Connected")); // Set Status to Connected
+                            ui->deviceTable->setItem(selectedRow, 2, new QTableWidgetItem("Connected")); // Set Status to Connected
 
 
                             ui->deviceTable->clearSelection();
@@ -2748,7 +2748,7 @@
 
                       } else {
                             isConnected = false;
-                            ui->deviceTable->setItem(selectedRow, 1, new QTableWidgetItem("NA")); // Set Status to NA
+                            ui->deviceTable->setItem(selectedRow, 2, new QTableWidgetItem("NA")); // Set Status to NA
                             logfile("Unable to connect to: " + udaddr);
                             QMessageBox::critical(this, "", "Unable to connect to: " + udaddr);
                       }
@@ -2867,12 +2867,13 @@
              logfile (command);
              logfile("disconnect: "+daddr);
 
-             if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 1)) {
+             if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 2)) {
             ui->deviceTable->setItem(selectedRow, 1, new QTableWidgetItem("Disconnected"));
              }
 
-             on_refreshConnectedDevices_clicked();
+         //    on_refreshConnectedDevices_clicked();
 
+             loadDeviceTable();
 
     }
 
@@ -11136,52 +11137,9 @@ void MainWindow::on_actionKeypad_triggered()
  on_keypadButton_clicked();
 }
 
+
 /*
-void MainWindow::on_ascend_clicked()
-{
- // Store selected item's text (if any)
- QString selectedText;
- if (ui->listDevices->currentItem()) {
-           selectedText = ui->listDevices->currentItem()->text();
- }
 
- // Sort ascending
- ui->listDevices->sortItems(Qt::AscendingOrder);
-
- // Reselect the item if it was selected
- if (!selectedText.isEmpty()) {
-           for (int i = 0; i < ui->listDevices->count(); ++i) {
-              if (ui->listDevices->item(i)->text() == selectedText) {
-               ui->listDevices->setCurrentRow(i);
-               break;
-              }
-           }
- }
-}
-
-void MainWindow::on_descend_clicked()
-{
- // Store selected item's text (if any)
- QString selectedText;
- if (ui->listDevices->currentItem()) {
-           selectedText = ui->listDevices->currentItem()->text();
- }
-
- // Sort descending
- ui->listDevices->sortItems(Qt::DescendingOrder);
-
- // Reselect the item if it was selected
- if (!selectedText.isEmpty()) {
-           for (int i = 0; i < ui->listDevices->count(); ++i) {
-              if (ui->listDevices->item(i)->text() == selectedText) {
-               ui->listDevices->setCurrentRow(i);
-               break;
-              }
-           }
- }
-}
-
-*/
 void MainWindow::on_ascend_clicked()
 {
  QString selectedDevice;
@@ -11198,6 +11156,8 @@ void MainWindow::on_ascend_clicked()
            }
  }
 }
+
+
 
 void MainWindow::on_descend_clicked()
 {
@@ -11216,29 +11176,59 @@ void MainWindow::on_descend_clicked()
  }
 }
 
-/*
-void MainWindow::loadDeviceTable()
+*/
+
+void MainWindow::on_ascend_clicked()
 {
- QString sqlstatement;
- QSqlQuery query;
+ QString selectedDevice;
+ if (ui->deviceTable->currentItem() && ui->deviceTable->currentRow() >= 0) {
+           selectedDevice = ui->deviceTable->item(ui->deviceTable->currentRow(), 0)->text();
+ }
 
- ui->deviceTable->clear();
- ui->deviceTable->setColumnCount(2);
- ui->deviceTable->setHorizontalHeaderLabels(QStringList() << "Device" << "IP" << "Status");
+ // Sort by Device (description) or Status based on radio button
+ int sortColumn = ui->dsort->isChecked() ? 0 : (ui->csort->isChecked() ? 2 : 0); // Default to Device if neither is checked
+ ui->deviceTable->sortItems(sortColumn, Qt::AscendingOrder);
 
- sqlstatement = "SELECT description FROM device";
- query.exec(sqlstatement);
- int row = 0;
- ui->deviceTable->setRowCount(0);
- while (query.next()) {
-           ui->deviceTable->insertRow(row);
-           ui->deviceTable->setItem(row, 0, new QTableWidgetItem(query.value(0).toString()));
-           ui->deviceTable->setItem(row, 1, new QTableWidgetItem("Disconnected"));
-           row++;
+ // Reselect the previously selected row
+ if (!selectedDevice.isEmpty()) {
+           for (int row = 0; row < ui->deviceTable->rowCount(); ++row) {
+              if (ui->deviceTable->item(row, 0)->text() == selectedDevice) {
+               ui->deviceTable->clearSelection(); // Clear previous selection
+               ui->deviceTable->setCurrentCell(row, 0); // Set active cell
+               ui->deviceTable->selectRow(row); // Highlight entire row
+               ui->deviceTable->setFocus(); // Ensure table has focus
+               break;
+              }
+           }
  }
 }
 
-*/
+void MainWindow::on_descend_clicked()
+{
+ QString selectedDevice;
+ if (ui->deviceTable->currentItem() && ui->deviceTable->currentRow() >= 0) {
+           selectedDevice = ui->deviceTable->item(ui->deviceTable->currentRow(), 0)->text();
+ }
+
+ // Sort by Device (description) or Status based on radio button
+ int sortColumn = ui->dsort->isChecked() ? 0 : (ui->csort->isChecked() ? 2 : 0); // Default to Device if neither is checked
+ ui->deviceTable->sortItems(sortColumn, Qt::DescendingOrder);
+
+ // Reselect the previously selected row
+ if (!selectedDevice.isEmpty()) {
+           for (int row = 0; row < ui->deviceTable->rowCount(); ++row) {
+              if (ui->deviceTable->item(row, 0)->text() == selectedDevice) {
+               ui->deviceTable->clearSelection(); // Clear previous selection
+               ui->deviceTable->setCurrentCell(row, 0); // Set active cell
+               ui->deviceTable->selectRow(row); // Highlight entire row
+               ui->deviceTable->setFocus(); // Ensure table has focus
+               break;
+              }
+           }
+ }
+}
+
+
 
 void MainWindow::loadDeviceTable()
 {
@@ -11261,6 +11251,11 @@ void MainWindow::loadDeviceTable()
            ui->deviceTable->setItem(row, 2, new QTableWidgetItem("Disconnected")); // Status
            row++;
  }
+
+ ui->dsort->setChecked(true);
+ ui->deviceTable->sortItems(0, Qt::AscendingOrder);
+
+
 }
 
 
