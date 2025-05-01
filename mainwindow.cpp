@@ -623,7 +623,7 @@
         do_versioncheck();
 
 
-        ui->adhocip->setText("192.168.1.30");
+//        ui->adhocip->setText("192.168.1.30");
 
 
 
@@ -2660,6 +2660,16 @@
                               ui->deviceTable->insertRow(newRow);
                               ui->deviceTable->setItem(newRow, 0, new QTableWidgetItem(daddr)); // Description = daddr
                               ui->deviceTable->setItem(newRow, 1, new QTableWidgetItem("Connected")); // Status = Connected
+
+                              // Make the newly added row selected and highlighted
+                              ui->deviceTable->clearSelection(); // Clear previous selections
+                              ui->deviceTable->setCurrentCell(newRow, 0); // Set active cell
+                              ui->deviceTable->selectRow(newRow); // Highlight the row
+                              ui->deviceTable->setFocus(); // Ensure table has focus
+
+
+
+
                               default_device_values();
                               on_refreshConnectedDevices_clicked();
                               logfile("Connected to " + daddr);
@@ -2805,10 +2815,11 @@
     {
 
 
-  //      getRecord(ui->deviceBox->currentText());
+//   getRecord(ui->deviceBox->currentText());
+//   daddr = getDevice(selectedDescription);
 
 
-    QMessageBox::StandardButton reply;
+   QMessageBox::StandardButton reply;
    reply = QMessageBox::question(this, "Disconnect", "Disconnect device?",
        QMessageBox::Yes | QMessageBox::No);
    if (reply == QMessageBox::No) {
@@ -2845,14 +2856,7 @@
           }
 
 
-   //     if (daddr.isEmpty())
-    //    {
-    //       QMessageBox::critical(this,"","Device address required.");
 
-     ////       return;
-    //    }
-
-        // Get selected description from deviceTable
         QString selectedDescription;
         int selectedRow = ui->deviceTable->currentRow();
         if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
@@ -2862,21 +2866,20 @@
             return;
         }
 
-        getRecord(selectedDescription);
+        daddr = getDevice(selectedDescription);
+        if (daddr.isEmpty()) {
+            daddr = selectedDescription;
+        }
 
-        // qDebug() << daddr;
-       // qDebug() << port;
-      //   return;
-
-        QElapsedTimer rtimer;
-        int nMilliseconds;
-        rtimer.start();
-
+        QString port = getPort(selectedDescription);
+        if (port.isEmpty()) {
+            port = "5555";
+        }
 
 
              QString cstring = adb + " disconnect "+daddr+":"+port ;
              QString command=getadbOutput(cstring);
-
+             logfile (command);
              logfile("disconnect: "+daddr);
 
              if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 1)) {
@@ -2884,8 +2887,6 @@
              }
 
              on_refreshConnectedDevices_clicked();
-             nMilliseconds = rtimer.elapsed();
-             logfile("process time duration: "+ QString::number(nMilliseconds/1000)+ " seconds" );
 
 
     }
@@ -7514,8 +7515,6 @@
 
        void MainWindow::on_adbshellButton_clicked()
        {
-              if (!check_devices())
-              return;
 
 
               QJsonObject obj;
