@@ -2719,9 +2719,6 @@
                             return;
                       }
 
-                      QElapsedTimer rtimer;
-                      int nMilliseconds;
-                      rtimer.start();
 
                       QString udaddr = daddr + ":" + port;
                       cstring = adb + " connect " + udaddr;
@@ -2788,8 +2785,6 @@
 
                       }
 
-                      nMilliseconds = rtimer.elapsed();
-                      logfile("process time duration: " + QString::number(nMilliseconds / 1000) + " seconds");
     }
 
 
@@ -5133,7 +5128,7 @@
 
 
     ///////////////////////////////////////////////////////
-    // zzz
+
 
     void MainWindow::on_fmButton_clicked()
     {
@@ -5169,18 +5164,22 @@
          }
 
          // Check if the selected device is connected
-         if (ui->deviceTable->item(selectedRow, 1) &&
-             ui->deviceTable->item(selectedRow, 1)->text() != "Connected" &&
-             ui->deviceTable->item(selectedRow, 1)->text() != "USB") {
+         if (ui->deviceTable->item(selectedRow, 2) &&
+             ui->deviceTable->item(selectedRow, 2)->text() != "Connected" &&
+             ui->deviceTable->item(selectedRow, 2)->text() != "USB") {
             QMessageBox::critical(this, "", "Selected device is not connected");
             return;
          }
 
-         fmdaddr = getDevice(selectedDescription);
+         //fmdaddr = getDevice(selectedDescription);
+
+         fmdaddr = ui->deviceTable->item(selectedRow, 1)->text();
          ostypefm = getOSType(selectedDescription);
 
-         if (fmdaddr.size() <= 0)
-            fmdaddr = selectedDescription;
+         if (ostypefm != "0") {
+            QMessageBox::critical(nullptr, "Error", "Android devices only");
+            return;
+         }
 
          fmdialog = new usbfileDialog(this);
          fmdialog->setWindowModality(Qt::NonModal);
@@ -11278,15 +11277,18 @@ QString MainWindow::getadb()
               return "error";
            }
 
+            QString daddr = ui->deviceTable->item(selectedRow, 1)->text();
+
            QString port = getPort(selectedDescription);
            if (port.isEmpty()) {
               port = "5555";
            }
 
-           QString daddr = getDevice(selectedDescription);
-           if (daddr.isEmpty()) {
-              daddr = selectedDescription;
-           }
+           // QString daddr = getDevice(selectedDescription);
+          //     if (daddr.isEmpty()) {
+         //        daddr = selectedDescription;
+        //      }
+
 
 
               if (!getIsUsb(selectedDescription)) {
