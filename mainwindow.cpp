@@ -7501,6 +7501,17 @@
        {
 
 
+
+              QString selectedDescription;
+              if (!validateDeviceSelection(selectedDescription)) {
+                 return;
+              }
+
+
+              // Query entire device record
+              DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+
               QJsonObject obj;
               QJsonDocument doc(obj);
               QFile file(databasedir + "adblink.json");
@@ -7513,42 +7524,20 @@
 
 
 
-              QString selectedDescription;
-              QString daddr;
-              int selectedRow = ui->deviceTable->currentRow();
-              if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
-                 selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
-
-              } else {
-                 QMessageBox::critical(this, "", "No device selected in table");
-                 return;
-              }
-
-              // Check if the selected device is connected
-              if (ui->deviceTable->item(selectedRow, 2) &&
-                  ui->deviceTable->item(selectedRow, 2)->text() != "Connected" &&
-                  ui->deviceTable->item(selectedRow, 2)->text() != "USB") {
-                 QMessageBox::critical(this, "", "Selected device is not connected");
-                 return;
-              }
-
-              // Get daddr from selected description
-            //  daddr = getDevice(selectedDescription);
-           //   if (daddr.isEmpty()) {
-          //       daddr = selectedDescription; // Fallback to description if getDevice returns empty
-          //    }
 
 
+
+/*
               QString port = getPort(selectedDescription);
               if (port.isEmpty()) {
                  port = "5555";
               }
 
-              daddr = ui->deviceTable->item(selectedRow, 1)->text();
-
+             QString daddr = ui->deviceTable->item(selectedRow, 1)->text();
+*/
 
               logfile("detaching console process");
-              logfile(daddr + ":" + port);
+              logfile(device.daddr + ":" + device.port);
 
               QString cstring = "";
 
@@ -8140,38 +8129,12 @@ void MainWindow::on_backupButton_clicked()
 ////////////////////////////////////////////////
 
 void MainWindow::backupAndroid() {
-        // Check if any device is connected in deviceTable
-        bool hasConnectedDevice = false;
-        for (int i = 0; i < ui->deviceTable->rowCount(); ++i) {
-           if (ui->deviceTable->item(i, 2) &&
-               (ui->deviceTable->item(i, 2)->text() == "Connected" ||
-                ui->deviceTable->item(i, 2)->text() == "USB")) {
-                  hasConnectedDevice = true;
-                  break;
-           }
-        }
-        if (!hasConnectedDevice) {
-           QMessageBox::critical(this, "", "No devices connected");
-           return;
-        }
 
-        // Get selected description from deviceTable
         QString selectedDescription;
-        int selectedRow = ui->deviceTable->currentRow();
-        if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
-           selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
-        } else {
-           QMessageBox::critical(this, "", "No device selected in table");
+        if (!validateDeviceSelection(selectedDescription)) {
            return;
         }
 
-        // Check if the selected device is connected
-        if (ui->deviceTable->item(selectedRow, 2) &&
-            ui->deviceTable->item(selectedRow, 2)->text() != "Connected" &&
-            ui->deviceTable->item(selectedRow, 2)->text() == "USB") {
-           QMessageBox::critical(this, "", "Selected device is not connected");
-           return;
-        }
 
         // Query entire device record
         DeviceRecord device = queryDeviceRecord(selectedDescription);
@@ -8737,6 +8700,242 @@ timer->start(tsvalue);
 
 
 /////////////////////////////////////////////
+
+void MainWindow::on_restoreButton_clicked() {
+
+
+   QString selectedDescription;
+   if (!validateDeviceSelection(selectedDescription)) {
+      return;
+   }
+
+
+
+
+   // Query entire device record
+   DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+   // Check if device is Android
+   if (device.ostype != "0") {
+      QMessageBox::critical(this, "", "Restore is for Android devices only.");
+      return;
+   }
+
+
+
+   // Check package installation
+   is_package(device.xbmcpackage);
+   if (!is_packageInstalled) {
+      QMessageBox::critical(this, "", device.xbmcpackage + " not installed");
+      return;
+   }
+
+   QString cstring;
+   QString command;
+   QString n_data_root;
+   QString mcpath;
+   QString xbmcpath;
+   QString kbase;
+   bool xbmc_env = false;
+
+   // Check for xbmc_env.properties
+   cstring = getadb() + " shell ls /sdcard/xbmc_env.properties";
+   if (getreturncode(cstring)) {
+      cstring = getadb() + " shell cat /sdcard/xbmc_env.properties";
+      command = getadbOutput(cstring);
+      command.replace(QRegExp("[\r\n]"), "");
+
+      int startIndex = command.indexOf("=") + 1;
+      int endIndex = command.indexOf(".kodi") + 5;
+      xbmcpath = command.mid(startIndex, endIndex - startIndex);
+
+      QMessageBox::StandardButton reply;
+      reply = QMessageBox::question(this, "xbmc properties", "xbmc_env.properties file found.\nUse its values?",
+                                    QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+      if (reply == QMessageBox::Yes) {
+          xbmc_env = true;
+          mcpath = xbmcpath;
+      } else if (reply == QMessageBox::No) {
+          xbmc_env = false;
+      } else if (reply == QMessageBox::Cancel) {
+          return;
+      }
+   }
+
+   // Check if Kodi is running
+   cstring = getadb() + " shell ps | grep " + device.xbmcpackage;
+   command = getadbOutput(cstring);
+   if (command.contains(device.xbmcpackage)) {
+      QMessageBox::StandardButton reply;
+      reply = QMessageBox::question(this, "Stop Kodi", "Cannot restore while Kodi is running.\n Stop " + device.xbmcpackage + " on device?",
+                                    QMessageBox::Yes | QMessageBox::No);
+      if (reply == QMessageBox::Yes) {
+          cstring = getadb() + " shell am force-stop " + device.xbmcpackage;
+          command = getadbOutput(cstring);
+          logfile(command);
+      } else {
+          logfile(device.xbmcpackage + " running. Restore failed");
+          return;
+      }
+   }
+
+   // Determine storage root and path if no xbmc_env.properties
+   if (!xbmc_env) {
+      cstring = getadb() + " shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
+      QString s = getadbOutput(cstring);
+      QStringList list = s.split('\n');
+
+      for (int i = 0; i < list.size(); i++) {
+          list[i].remove('\r');
+          list[i].remove('\n');
+          if (list[i] == "Android" ||
+              list[i] == "Permission denied" ||
+              list[i] == "/storage/emulated" ||
+              list[i] == "/storage" ||
+              list[i] == "/storage/self" ||
+              list[i] == NULL) {
+                    list.removeAt(i);
+                    i--;
+          }
+      }
+
+      list.insert(0, "/sdcard");
+
+      if (list.count() > 1) {
+          restDialog dialog(this);
+          dialog.setWindowModality(Qt::WindowModal);
+          dialog.setWindowTitle("Restore");
+          dialog.setadb_restore(list);
+          if (dialog.exec() == QDialog::Accepted) {
+                    n_data_root = dialog.restore_data_root();
+          } else {
+                    return;
+          }
+      }
+
+      if (n_data_root.isEmpty()) {
+          n_data_root = "/sdcard";
+      }
+
+      if (!n_data_root.startsWith("/")) {
+          n_data_root.prepend("/");
+      }
+      if (!n_data_root.endsWith("/")) {
+          n_data_root.append("/");
+      }
+
+      // Path logic with wsa and scoped
+      if (device.wsa) {
+          mcpath = n_data_root + "wsa_data/" + device.xbmcpackage;
+          kbase = n_data_root + "wsa_data/";
+      } else if (device.scoped) {
+          mcpath = n_data_root + "kodi_data/" + device.xbmcpackage;
+          kbase = n_data_root + "kodi_data/";
+          cstring = getadb() + " shell appops set --uid " + device.xbmcpackage + " MANAGE_EXTERNAL_STORAGE allow";
+          if (!getreturncode(cstring)) {
+                    QMessageBox::critical(this, "", "Error setting Kodi permissions");
+                    return;
+          }
+      } else {
+          mcpath = n_data_root + "Android/data/" + device.xbmcpackage;
+          kbase = n_data_root + "Android/data/";
+      }
+   }
+
+   // Select backup directory
+   QString backup = readBackup(databasedir);
+   QDir backupDir(backup);
+   QString dir = QFileDialog::getExistingDirectory(this, tr("Choose Backup Folder"),
+                                                   backupDir.absolutePath(),
+                                                   QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+   if (dir.isEmpty()) {
+      return;
+   }
+
+   // Validate backup
+   if (!QDir(dir + "/userdata").exists()) {
+      QMessageBox::critical(this, "", "Invalid backup. No userdata folder.");
+      return;
+   }
+   if (!QDir(dir + "/addons").exists()) {
+      QMessageBox::critical(this, "", "Invalid backup. addons folder not found.");
+      return;
+   }
+
+   // Confirm restore
+   QMessageBox::StandardButton reply;
+   reply = QMessageBox::question(this, "Restore", "Restore this backup? This will overwrite existing Kodi data.",
+                                 QMessageBox::Yes | QMessageBox::No);
+   if (reply == QMessageBox::No) {
+      return;
+   }
+
+   logfile("Restoring Android Kodi");
+
+   // Prepare target directory
+   cstring = getadb() + " shell rm -r " + mcpath;
+   command = RunLongProcess(cstring, "Preparing target");
+   logfile(command);
+
+   cstring = getadb() + " shell ls " + mcpath;
+   command = getadbOutput(cstring);
+
+   if (command.contains("No such file or directory")) {
+      cstring = getadb() + " shell mkdir -p " + mcpath + "/files/.kodi";
+      command = getadbOutput(cstring);
+      logfile(command);
+      QString errorp = command;
+      cstring = getadb() + " shell ls " + mcpath + "/files/.kodi";
+      command = getadbOutput(cstring);
+
+      if (command.contains("No such file or directory")) {
+          QMessageBox::critical(this, "", "Error creating restore point");
+          logfile("Restore error: " + errorp);
+          return;
+      }
+   }
+
+   // Perform restore
+   dir = dir + "/.";
+   cstring = getadb() + " push \"" + dir + "\" " + mcpath + "/files/.kodi/";
+   command = RunLongProcess(cstring, "Restore");
+   logfile("Restore: " + cstring);
+
+   // Check restore success
+   if (command.contains("bytes")) {
+      cstring = getadb() + " shell rm /sdcard/xbmc_env.properties";
+      command = getadbOutput(cstring);
+
+      if (device.scoped) {
+          cstring = getadb() + " shell echo xbmc.data=" + mcpath + "/files > /sdcard/xbmc_env.properties";
+          command = getadbOutput(cstring);
+          logfile("create /sdcard/xbmc_env.properties");
+          logfile(command);
+      } else {
+          if (n_data_root != "/sdcard/") {
+                    cstring = getadb() + " shell echo xbmc.data=" + mcpath + "/files > /sdcard/xbmc_env.properties";
+                    command = getadbOutput(cstring);
+                    logfile("create /sdcard/xbmc_env.properties");
+                    logfile(command);
+          }
+      }
+
+      writeBackup(dir);
+      QMessageBox::information(this, "", "Restore complete");
+   } else {
+      QMessageBox::critical(this, "", "Restore Failed. See log.");
+      logfile(cstring);
+      logfile(command);
+   }
+
+   logfile("Restore complete");
+}
+
+
+/*
+
+
+
 void MainWindow::on_restoreButton_clicked()
 
 {
@@ -9109,7 +9308,7 @@ void MainWindow::on_restoreButton_clicked()
 }
 
 
-
+*/
 //////////////////////////////////
 void MainWindow::restoreAndroid()
 //////////////////////////////////
@@ -11707,4 +11906,41 @@ DeviceRecord MainWindow::queryDeviceRecord(const QString& description) {
  }
 
  return record;
+}
+
+
+bool MainWindow::validateDeviceSelection(QString& selectedDescription) {
+ // Check if any device is connected in deviceTable
+ bool hasConnectedDevice = false;
+ for (int i = 0; i < ui->deviceTable->rowCount(); ++i) {
+               if (ui->deviceTable->item(i, 2) &&
+                   (ui->deviceTable->item(i, 2)->text() == "Connected" ||
+                    ui->deviceTable->item(i, 2)->text() == "USB")) {
+              hasConnectedDevice = true;
+              break;
+               }
+ }
+ if (!hasConnectedDevice) {
+               QMessageBox::critical(this, "", "No devices connected");
+               return false;
+ }
+
+ // Get selected description from deviceTable
+ int selectedRow = ui->deviceTable->currentRow();
+ if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
+               selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+ } else {
+               QMessageBox::critical(this, "", "No device selected in table");
+               return false;
+ }
+
+ // Check if the selected device is connected
+ if (ui->deviceTable->item(selectedRow, 2) &&
+     ui->deviceTable->item(selectedRow, 2)->text() != "Connected" &&
+     ui->deviceTable->item(selectedRow, 2)->text() != "USB") {
+               QMessageBox::critical(this, "", "Selected device is not connected");
+               return false;
+ }
+
+ return true;
 }

@@ -29,6 +29,7 @@ DeviceRecord queryDeviceRecord(const QString& description);
 
 private slots:
 
+    bool validateDeviceSelection(QString& selectedDescription);
 
     void loadDeviceTable();
 
