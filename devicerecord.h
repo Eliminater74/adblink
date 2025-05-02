@@ -1,0 +1,21 @@
+#pragma once
+#include <QString>
+
+struct DeviceRecord {
+    int id = 0;
+    QString daddr;
+    QString pulldir;
+    QString xbmcpackage = "org.xbmc.kodi";
+    QString data_root;
+    int buffermode = 1;
+    QString buffersize;
+    QString bufferfactor;
+    QString description;
+    QString filepath;
+    QString port;
+    bool isusb = false;
+    bool disableroot = false;
+    bool scoped = false; // flag1
+    bool wsa = false;    // flag2
+    QString ostype = "0"; // Default after validation
+};

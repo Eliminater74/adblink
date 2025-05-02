@@ -7,6 +7,7 @@
 #include "usbfiledialog.h"
 #include <QTextEdit>
 
+#include "devicerecord.h"
 
 namespace Ui {
 class MainWindow;
@@ -24,7 +25,7 @@ public:
     ~MainWindow();
 
 
-
+DeviceRecord queryDeviceRecord(const QString& description);
 
 private slots:
 

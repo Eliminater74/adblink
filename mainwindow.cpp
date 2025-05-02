@@ -527,8 +527,7 @@
 
        connect(&watcher1, SIGNAL(finished()), SLOT(finishedCopy1()));
        connect(&watcher2, SIGNAL(finished()), SLOT(finishedCopy2()));
-
-
+       connect(ui->deviceTable, &QTableWidget::doubleClicked, this, &MainWindow::on_fmButton_clicked);
 
 
 
@@ -8138,13 +8137,356 @@ void MainWindow::on_backupButton_clicked()
 
 }
 
+////////////////////////////////////////////////
+
+void MainWindow::backupAndroid() {
+        // Check if any device is connected in deviceTable
+        bool hasConnectedDevice = false;
+        for (int i = 0; i < ui->deviceTable->rowCount(); ++i) {
+           if (ui->deviceTable->item(i, 2) &&
+               (ui->deviceTable->item(i, 2)->text() == "Connected" ||
+                ui->deviceTable->item(i, 2)->text() == "USB")) {
+                  hasConnectedDevice = true;
+                  break;
+           }
+        }
+        if (!hasConnectedDevice) {
+           QMessageBox::critical(this, "", "No devices connected");
+           return;
+        }
+
+        // Get selected description from deviceTable
+        QString selectedDescription;
+        int selectedRow = ui->deviceTable->currentRow();
+        if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
+           selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+        } else {
+           QMessageBox::critical(this, "", "No device selected in table");
+           return;
+        }
+
+        // Check if the selected device is connected
+        if (ui->deviceTable->item(selectedRow, 2) &&
+            ui->deviceTable->item(selectedRow, 2)->text() != "Connected" &&
+            ui->deviceTable->item(selectedRow, 2)->text() == "USB") {
+           QMessageBox::critical(this, "", "Selected device is not connected");
+           return;
+        }
+
+        // Query entire device record
+        DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+        // Check package installation
+        is_package(device.xbmcpackage);
+        if (!is_packageInstalled) {
+           QMessageBox::critical(this, "", device.xbmcpackage + " not installed");
+           return;
+        }
+
+        // Use databasedir (unchanged from original)
+        QString backup = readBackup(databasedir);
+
+        QString cstring;
+        QString command;
+        QString mcpath;
+        QString kbase;
+        QString n_data_root;
+
+        cstring = getadb() + " shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
+        QString s = getadbOutput(cstring);
+        QStringList list = s.split('\n');
+
+        for (int i = 0; i < list.size(); i++) {
+           list[i].remove('\r');
+           list[i].remove('\n');
+           if (list[i] == "Android" ||
+               list[i] == "Permission denied" ||
+               list[i] == "/storage/emulated" ||
+               list[i] == "/storage" ||
+               list[i] == "/storage/self" ||
+               list[i] == NULL) {
+                  list.removeAt(i);
+                  i--;
+           }
+        }
+
+        n_data_root = "/sdcard";
+        list.insert(0, "/sdcard");
+
+        if (list.count() > 1) {
+           restDialog dialog(this);
+           dialog.setWindowModality(Qt::WindowModal);
+           dialog.setWindowTitle("Backup");
+           dialog.setadb_restore(list);
+           if (dialog.exec() == QDialog::Accepted) {
+                  n_data_root = dialog.restore_data_root();
+           } else {
+                  return;
+           }
+        }
+
+        if (!n_data_root.startsWith("/")) {
+           n_data_root.prepend("/");
+        }
+        if (!n_data_root.endsWith("/")) {
+           n_data_root.append("/");
+        }
+
+        if (device.scoped) {
+           mcpath = n_data_root + "kodi_data/" + device.xbmcpackage;
+           kbase = n_data_root + "kodi_data/";
+        } else {
+           mcpath = n_data_root + "Android/data/" + device.xbmcpackage;
+           kbase = n_data_root + "Android/data/";
+        }
+
+        cstring = getadb() + " shell ls " + mcpath + "/files/.kodi";
+        if (!getreturncode(cstring)) {
+           QMessageBox::critical(this, "", "Kodi's files not found at " + mcpath);
+           logfile("Backup: kodi's files not found at " + mcpath);
+           return;
+        }
+
+        QDir backupDir(backup);
+        QString dir = QFileDialog::getExistingDirectory(this, "Choose Backup Destination",
+                                                        backupDir.absolutePath(),
+                                                        QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+
+        if (!dir.isEmpty()) {
+           QMessageBox::StandardButton reply;
+           reply = QMessageBox::question(this, "Backup", "backup to " + dir,
+                                         QMessageBox::Yes | QMessageBox::No);
+           if (reply == QMessageBox::Yes) {
+                  logfile("backup function started");
+                  mcpath = mcpath + "/";
+                  dir = dir + "/";
+                  if (os == 1) {
+                    dir.replace("/", "\\");
+                  }
+
+                  cstring = getadb() + " pull " + mcpath + "files/.kodi/. " + '"' + dir + '"';
+                  logfile(cstring);
+
+                  command = RunLongProcess(cstring, "Backup");
+                  logfile("backup: " + cstring);
+
+                  if (QDir(dir + "userdata").exists()) {
+                    writeBackup(dir);
+                    QMessageBox::information(this, "", "Backup complete");
+                  } else {
+                    logfile("backup: " + command);
+                    QMessageBox::critical(this, "", "Backup Failed. See Log.");
+                    return;
+                  }
+           }
+        }
+
+        logfile("Backup complete");
+}
 
 
 
+/*
 
+//////////////////////////////////////////////
+
+void MainWindow::backupAndroid() {
+        // Check if any device is connected in deviceTable
+        bool hasConnectedDevice = false;
+        for (int i = 0; i < ui->deviceTable->rowCount(); ++i) {
+           if (ui->deviceTable->item(i, 2) &&
+               (ui->deviceTable->item(i, 2)->text() == "Connected" ||
+                ui->deviceTable->item(i, 2)->text() == "USB")) {
+                  hasConnectedDevice = true;
+                  break;
+           }
+        }
+        if (!hasConnectedDevice) {
+           QMessageBox::critical(this, "", "No devices connected");
+           return;
+        }
+
+        // Get selected description from deviceTable
+        QString selectedDescription;
+        int selectedRow = ui->deviceTable->currentRow();
+        if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
+           selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+        } else {
+           QMessageBox::critical(this, "", "No device selected in table");
+           return;
+        }
+
+        // Check if the selected device is connected
+        if (ui->deviceTable->item(selectedRow, 2) &&
+            ui->deviceTable->item(selectedRow, 2)->text() != "Connected" &&
+            ui->deviceTable->item(selectedRow, 2)->text() != "USB") {
+           QMessageBox::critical(this, "", "Selected device is not connected");
+           return;
+        }
+
+        // Query database for daddr, xbmcpackage, and scoped
+        QString daddr;
+        QString xbmcpackage;
+        bool scoped = false;
+        QString quotedDescription = "\"" + selectedDescription + "\"";
+        QSqlQuery query;
+
+        // Query daddr
+        QString sqlstatement = "SELECT daddr FROM device WHERE description=" + quotedDescription;
+        query.exec(sqlstatement);
+        while (query.next()) {
+           daddr = query.value(0).toString();
+        }
+        if (query.lastError().isValid()) {
+           logfile(sqlstatement);
+           logfile("SqLite error:" + query.lastError().text());
+           logfile("SqLite error code:" + QString::number(query.lastError().number()));
+        }
+        if (daddr.isEmpty()) {
+           daddr = selectedDescription; // Fallback
+        }
+
+        // Query xbmcpackage
+        sqlstatement = "SELECT xbmcpackage FROM device WHERE description=" + quotedDescription;
+        query.exec(sqlstatement);
+        while (query.next()) {
+           xbmcpackage = query.value(0).toString();
+        }
+        if (query.lastError().isValid()) {
+           logfile(sqlstatement);
+           logfile("SqLite error:" + query.lastError().text());
+           logfile("SqLite error code:" + QString::number(query.lastError().number()));
+        }
+        if (xbmcpackage.isEmpty()) {
+           xbmcpackage = "org.xbmc.kodi"; // Default
+        }
+
+        // Query scoped (flag1)
+        sqlstatement = "SELECT flag1 FROM device WHERE description=" + quotedDescription;
+        query.exec(sqlstatement);
+        while (query.next()) {
+           scoped = query.value(0).toInt();
+        }
+        if (query.lastError().isValid()) {
+           logfile(sqlstatement);
+           logfile("SqLite error:" + query.lastError().text());
+           logfile("SqLite error code:" + QString::number(query.lastError().number()));
+        }
+
+        // Check package installation
+        is_package(xbmcpackage);
+        if (!is_packageInstalled) {
+           QMessageBox::critical(this, "", xbmcpackage + " not installed");
+           return;
+        }
+
+        // Compute backup directory
+        QString backupDirPath = (os == 1) ? QDir::homePath() + "/AppData/Roaming/.jocala/"
+                                          : QDir::homePath() + "/.jocala/";
+        QString backup = readBackup(backupDirPath);
+
+        QString cstring;
+        QString command;
+        QString mcpath;
+        QString kbase;
+        QString n_data_root;
+
+        cstring = getadb() + " shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
+        QString s = getadbOutput(cstring);
+        QStringList list = s.split('\n');
+
+        for (int i = 0; i < list.size(); i++) {
+           list[i].remove('\r');
+           list[i].remove('\n');
+           if (list[i] == "Android" ||
+               list[i] == "Permission denied" ||
+               list[i] == "/storage/emulated" ||
+               list[i] == "/storage" ||
+               list[i] == "/storage/self" ||
+               list[i] == NULL) {
+                  list.removeAt(i);
+                  i--;
+           }
+        }
+
+        n_data_root = "/sdcard";
+        list.insert(0, "/sdcard");
+
+        if (list.count() > 1) {
+           restDialog dialog(this);
+           dialog.setWindowModality(Qt::WindowModal);
+           dialog.setWindowTitle("Backup");
+           dialog.setadb_restore(list);
+           if (dialog.exec() == QDialog::Accepted) {
+                  n_data_root = dialog.restore_data_root();
+           } else {
+                  return;
+           }
+        }
+
+        if (!n_data_root.startsWith("/")) {
+           n_data_root.prepend("/");
+        }
+        if (!n_data_root.endsWith("/")) {
+           n_data_root.append("/");
+        }
+
+        if (scoped) {
+           mcpath = n_data_root + "kodi_data/" + xbmcpackage;
+           kbase = n_data_root + "kodi_data/";
+        } else {
+           mcpath = n_data_root + "Android/data/" + xbmcpackage;
+           kbase = n_data_root + "Android/data/";
+        }
+
+        cstring = getadb() + " shell ls " + mcpath + "/files/.kodi";
+        if (!getreturncode(cstring)) {
+           QMessageBox::critical(this, "", "Kodi's files not found at " + mcpath);
+           logfile("Backup: kodi's files not found at " + mcpath);
+           return;
+        }
+
+        QDir backupDir(backup);
+        QString dir = QFileDialog::getExistingDirectory(this, "Choose Backup Destination",
+                                                        backupDir.absolutePath(),
+                                                        QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+
+        if (!dir.isEmpty()) {
+           QMessageBox::StandardButton reply;
+           reply = QMessageBox::question(this, "Backup", "backup to " + dir,
+                                         QMessageBox::Yes | QMessageBox::No);
+           if (reply == QMessageBox::Yes) {
+                  logfile("backup function started");
+                  mcpath = mcpath + "/";
+                  dir = dir + "/";
+                  if (os == 1) {
+                    dir.replace("/", "\\");
+                  }
+
+                  cstring = getadb() + " pull " + mcpath + "files/.kodi/. " + '"' + dir + '"';
+                  logfile(cstring);
+
+                  command = RunLongProcess(cstring, "Backup");
+                  logfile("backup: " + cstring);
+
+                  if (QDir(dir + "userdata").exists()) {
+                    writeBackup(dir);
+                    QMessageBox::information(this, "", "Backup complete");
+                  } else {
+                    logfile("backup: " + command);
+                    QMessageBox::critical(this, "", "Backup Failed. See Log.");
+                    return;
+                  }
+           }
+        }
+
+        logfile("Backup complete");
+}
 /////////////////////////////////////////////
 
-void MainWindow::backupAndroid()
+
+
+void MainWindow::backupAndroidx()
 {
 
         // Check if any device is connected in deviceTable
@@ -8319,7 +8661,7 @@ void MainWindow::backupAndroid()
         logfile("Backup complete");
 }
 
-
+*/
 
 /*
 
@@ -11301,4 +11643,68 @@ QString MainWindow::getadb()
  gadb = adb + " -s " + daddr + editport;
 
  return gadb;
+}
+
+///////////////////////////////////////////////////
+DeviceRecord MainWindow::queryDeviceRecord(const QString& description) {
+ DeviceRecord record;
+ QString quotedDescription = "\"" + description + "\"";
+ QSqlQuery query;
+
+ QString sqlstatement = "SELECT Id, daddr, pulldir, xbmcpackage, data_root, buffermode, buffersize, "
+                        "bufferfactor, description, filepath, port, isusb, disableroot, flag1, flag2, ostype "
+                        "FROM device WHERE description=" + quotedDescription;
+ query.exec(sqlstatement);
+ while (query.next()) {
+               record.id = query.value("Id").toInt();
+               record.daddr = query.value("daddr").toString();
+               record.pulldir = query.value("pulldir").toString();
+               record.xbmcpackage = query.value("xbmcpackage").toString();
+               record.data_root = query.value("data_root").toString();
+               record.buffermode = query.value("buffermode").toInt();
+               record.buffersize = query.value("buffersize").toString();
+               record.bufferfactor = query.value("bufferfactor").toString();
+               record.description = query.value("description").toString();
+               record.filepath = query.value("filepath").toString();
+               record.port = query.value("port").toString();
+               record.isusb = query.value("isusb").toBool();
+               record.disableroot = query.value("disableroot").toBool();
+               record.scoped = query.value("flag1").toBool();
+               record.wsa = query.value("flag2").toBool();
+               record.ostype = query.value("ostype").toString();
+ }
+ if (query.lastError().isValid()) {
+               logfile(sqlstatement);
+               logfile("SqLite error:" + query.lastError().text());
+               logfile("SqLite error code:" + QString::number(query.lastError().number()));
+ }
+
+ // Apply fallbacks from getRecord
+ if (record.daddr.isEmpty()) {
+               record.daddr = description;
+ }
+ if (record.xbmcpackage.isEmpty()) {
+               record.xbmcpackage = "org.xbmc.kodi";
+ }
+ if (record.pulldir.isEmpty()) {
+               record.pulldir = hdir;
+ }
+ bool ok;
+ int ostypeInt = record.ostype.toInt(&ok);
+ if (!ok || ostypeInt > 3) {
+               record.ostype = "0";
+ }
+ if (sldir.isEmpty()) {
+               sldir = hdir;
+ }
+ if (pushdir.isEmpty()) {
+               pushdir = hdir;
+ }
+ if (checkversion == 0) {
+               versioncheck = false;
+ } else {
+               versioncheck = true;
+ }
+
+ return record;
 }

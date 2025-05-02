@@ -57,6 +57,7 @@ HEADERS  += mainwindow.h \
     about.h \
     connectadb.h \
     deviceinfodialog.h \
+    devicerecord.h \
     dragdialog.h \
     getadbdata.h \
     getreturncode.h \
