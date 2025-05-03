@@ -3267,7 +3267,7 @@
     void MainWindow::on_editRecord_clicked()
     {
              dataentry();
-             loaddevicebox();
+         //    loaddevicebox();
 
     }
 
@@ -3473,7 +3473,140 @@
 
     //////////////////////////////////////////////////
 
+    void MainWindow::dataentry()
+    {
+      QString cstring;
+      QString command;
+      QString olddaddr;
+      QString olddescription;
+      QStringList mstringlist;
+      QStringList dstringlist;
 
+      cstring = adb + " devices";
+      command = getadbOutput(cstring);
+      QThread::sleep(2);
+
+      mstringlist = command.split(QRegExp("[\t\n\r]"), QString::SkipEmptyParts);
+
+      if (command.contains("List of devices attached"))
+      {
+    mstringlist.removeFirst();
+
+    for (int a = 0; a < mstringlist.size(); a = a + 2)
+    {
+              QStringList pieces = mstringlist.at(a).split(":", QString::SkipEmptyParts);
+
+              if (!mstringlist.at(a).contains("daemon"))
+                  dstringlist << pieces.at(0);
+    }
+      }
+
+      // Get selected description from deviceTable
+      QString selectedDescription;
+      int selectedRow = ui->deviceTable->currentRow();
+      if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
+    selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+      } else {
+    QMessageBox::critical(this, "", "No device selected in table");
+    return;
+      }
+
+      // Query the DeviceRecord using queryDeviceRecord
+      DeviceRecord record = queryDeviceRecord(selectedDescription);
+
+      // Store old values for reference
+      olddaddr = record.daddr;
+      olddescription = record.description;
+      updatecheck = true;
+
+      preferencesDialog dialog(this);
+      dialog.setWindowModality(Qt::WindowModal);
+
+      // Set dialog fields using DeviceRecord
+      dialog.setPackagename(record.xbmcpackage);
+      dialog.setPulldir(record.pulldir);
+      dialog.setdevicelist(dstringlist);
+      dialog.setfilepath(record.filepath);
+      dialog.setdataroot(record.data_root);
+      dialog.setversionLabel(version); // Assuming version is still a member variable
+      dialog.setostype(record.ostype);
+      dialog.setdescription(record.description);
+      dialog.setadb_pref(getadb());
+      dialog.setdisableroot(record.disableroot);
+      dialog.setport(record.isusb ? "" : record.port);
+      dialog.setscope(record.scoped);
+      dialog.setwsa(record.wsa);
+      dialog.setdaddr(record.daddr);
+      dialog.setisusb(record.isusb);
+
+      dialog.setModal(true);
+
+      if (dialog.exec() == QDialog::Accepted)
+      {
+    // Update DeviceRecord with dialog values
+    record.data_root = dialog.data_root();
+    record.xbmcpackage = dialog.xbmcpackageName();
+    record.pulldir = dialog.pulldir();
+    record.description = dialog.description();
+    record.filepath = dialog.filepath();
+    record.port = dialog.port();
+    record.daddr = dialog.daddr();
+    record.isusb = dialog.isusb();
+    record.ostype = dialog.ostype();
+    record.scoped = dialog.scoped();
+    record.wsa = dialog.wsa();
+    record.disableroot = dialog.disableroot();
+
+    // Update database record for selected Description
+    QSqlQuery query;
+    QString sqlstatement = "UPDATE device SET description = ?, daddr = ?, port = ?, isusb = ?, ostype = ?, "
+                           "data_root = ?, xbmcpackage = ?, pulldir = ?, filepath = ? WHERE description = ?";
+    query.prepare(sqlstatement);
+    query.addBindValue(record.description);
+    query.addBindValue(record.daddr);
+    query.addBindValue(record.port);
+    query.addBindValue(record.isusb);
+    query.addBindValue(record.ostype);
+    query.addBindValue(record.data_root);
+    query.addBindValue(record.xbmcpackage);
+    query.addBindValue(record.pulldir);
+    query.addBindValue(record.filepath);
+    query.addBindValue(selectedDescription); // Match original Description
+    qDebug() << "Executing query:" << sqlstatement;
+    qDebug() << "Bound values:" << record.description << record.daddr << record.port << record.isusb << record.ostype
+             << record.data_root << record.xbmcpackage << record.pulldir << record.filepath << selectedDescription;
+    if (!query.exec()) {
+              qDebug() << "Query error:" << query.lastError().text();
+              QMessageBox::critical(this, "", "Failed to update database: " + query.lastError().text());
+              return;
+    }
+
+    if (record.daddr.contains(validip))
+    {
+              record.isusb = false;
+    }
+    else
+    {
+              if (!record.isusb && (record.ostype == "0" || record.ostype == "4"))
+              {
+                  QMessageBox::StandardButton reply;
+                  reply = QMessageBox::question(0, "", "USB connection?",
+                                                QMessageBox::Yes | QMessageBox::No);
+                  if (reply == QMessageBox::No)
+                     record.isusb = false;
+                  else
+                     record.isusb = true;
+              }
+    }
+
+    loadDeviceTable();
+    on_refreshConnectedDevices_clicked();
+      }
+    }
+
+/*
+
+///////////////////////////
     void MainWindow::dataentry()
     {
       QString cstring;
@@ -3608,6 +3741,8 @@
     on_refreshConnectedDevices_clicked();
       }
     }
+
+*/
 
   ////////////////////////////////////////
 
