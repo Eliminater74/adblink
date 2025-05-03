@@ -1,4 +1,4 @@
 #include <QtCore>
 
-  QString version="6.3";
+  QString version="6.4";
 

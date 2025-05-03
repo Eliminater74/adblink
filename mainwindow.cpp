@@ -6976,6 +6976,14 @@
     void MainWindow::on_actionSleep_adjust_triggered()
     {
 
+        QString selectedDescription;
+        if (!validateDeviceSelection(selectedDescription)) {
+         return;
+        }
+
+
+
+        DeviceRecord device = queryDeviceRecord(selectedDescription);
 
       // sleep
       //  adb shell settings put secure sleep_timeout 123456789
@@ -6992,9 +7000,6 @@
        //  settings put global ambient_experience_enabled 0
 
        // android 11  put system screen_off_timeout  2147483647
-
-       if (!check_devices() )
-            return;
 
            QString cstring;
            QString command;
@@ -12014,6 +12019,7 @@ QString MainWindow::getadb()
 
 
  QString gadb = "";
+ QString port;
  QString editport = "";
  QString selectedDescription;
  int selectedRow = ui->deviceTable->currentRow();
@@ -12028,21 +12034,19 @@ QString MainWindow::getadb()
 
             QString daddr = ui->deviceTable->item(selectedRow, 1)->text();
 
-           QString port = getPort(selectedDescription);
-           if (port.isEmpty()) {
-              port = "5555";
-           }
-
-           // QString daddr = getDevice(selectedDescription);
-          //     if (daddr.isEmpty()) {
-         //        daddr = selectedDescription;
-        //      }
+            DeviceRecord device = queryDeviceRecord(selectedDescription);
 
 
 
-              if (!getIsUsb(selectedDescription)) {
-               editport = ":" + port;
-              }
+
+            if (!device.isusb) {
+
+              if (device.port.isEmpty())
+                 port = "5555";
+
+              editport = ":" + port;
+
+            }
 
 
 
