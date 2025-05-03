@@ -20,7 +20,7 @@ public:
      void setversioncheck(const bool &versioncheck);
       void setscopecheck(const bool &scopecheck);
      void setscrcpyargs(const bool &scrcpyargs);
-     void setoldfm(const bool &oldfm);
+     void setsortpref(const bool &sortpref);
 
     void setmacterm(int macterm);
     void setlinterm(int linterm);
@@ -38,7 +38,7 @@ void setbackupdir(const QString &bdir);
 bool versioncheck();
 bool scopecheck();
 bool scrcpyargs();
-bool oldfm();
+bool sortpref();
 QString downloaddir();
 QString installdir();
 QString backupdir();

@@ -486,7 +486,7 @@
     <string>Ask for Scrcpy arguments</string>
    </property>
   </widget>
-  <widget class="QCheckBox" name="oldfm">
+  <widget class="QCheckBox" name="sortpref">
    <property name="geometry">
     <rect>
      <x>20</x>

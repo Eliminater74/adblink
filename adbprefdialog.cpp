@@ -211,9 +211,9 @@ void adbprefDialog::setscrcpyargs(const bool &scrcpyargs)
 
 
 
-void adbprefDialog::setoldfm(const bool &oldfm)
+void adbprefDialog::setsortpref(const bool &sortpref)
 {
-    ui->oldfm->setChecked(oldfm);
+    ui->sortpref->setChecked(sortpref);
 }
 
 
@@ -255,8 +255,8 @@ bool adbprefDialog::scrcpyargs() {
 
 
 
-bool adbprefDialog::oldfm() {
-   return ui->oldfm->isChecked();
+bool adbprefDialog::sortpref() {
+   return ui->sortpref->isChecked();
 }
 
 
