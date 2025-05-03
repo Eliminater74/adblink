@@ -55,6 +55,7 @@ RESOURCES = adbLink.qrc
 
 HEADERS  += mainwindow.h \
     about.h \
+    config.h \
     connectadb.h \
     deviceinfodialog.h \
     devicerecord.h \

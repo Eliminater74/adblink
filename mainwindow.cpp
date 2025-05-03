@@ -30,6 +30,7 @@
     #include "getadbdata.h"
     #include "logfile.h"
     #include "setpdialog.h"
+    #include "config.h"
 
     #ifdef __WIN32__
       #include "windows.h"
@@ -116,7 +117,7 @@
     QString filename = "";
     QString apphome =  "";
     QString scriptdir = "";
-    QString adb = "";
+//    QString adb = "";
     QString aapt = "";
     QString fastboot = "";
     QString xmldir = "";
@@ -207,9 +208,9 @@
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
        adbfiles=QCoreApplication::applicationDirPath()+"/adbfiles/";
-       adb=QCoreApplication::applicationDirPath()+"/adbfiles/"+"adb";
+ //      adb=QCoreApplication::applicationDirPath()+"/adbfiles/"+"adb";
        aapt=QCoreApplication::applicationDirPath()+"/adbfiles/"+"aapt";
-       adb = '"'+adb+'"';
+//       adb = '"'+adb+'"';
         aapt = '"'+aapt+'"';
        busybox = QCoreApplication::applicationDirPath()+"/adbfiles/busybox";
        busybox = '"'+busybox+'"';
@@ -2377,27 +2378,49 @@
     bool MainWindow::installAPK(QString filename)
     {
 
-        QString cstring;
+
         QString command;
+        QString cstring;
+        QString port;
+        QString daddr;
+        QString selectedDescription = ui->deviceTable->item(ui->deviceTable->currentRow(), 0)->text();
 
 
-        QElapsedTimer rtimer;
-        int nMilliseconds;
-        rtimer.start();
+
+
+        DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+        if (device.port.isEmpty()) {
+               port = "5555";
+        }
+
+        daddr = device.daddr+":"+port;
 
 
 
+        if (device.ostype != "0") {
+               QMessageBox::critical(this, "", "Android devices only.");
+               return "";
+        }
+
+
+
+        if (device.port.isEmpty()) {
+               port = "5555";
+        } else port=device.port;
+
+        daddr = device.daddr+":"+port;
 
 
         logfile("Installing "+filename);
-        cstring = getadb() + " install -r " + '"'+ filename+'"';
+
+        cstring = adb + " -s " + daddr + " install -r " + '"'+ filename+'"';
+
+
         command=RunLongProcess(cstring,"Install APK");
+        logfile(cstring);
         logfile(command);
 
-
-
-        nMilliseconds = rtimer.elapsed();
-        logfile("process time duration: "+ QString::number(nMilliseconds/1000)+ " seconds" );
 
 
         if (!command.contains("uccess") || command.contains("Failure"))
@@ -2416,8 +2439,18 @@
     void MainWindow::on_sideload_Button_clicked()
     {
 
-        if (!check_devices() )
+
+
+
+
+        QString selectedDescription;
+        if (!validateDeviceSelection(selectedDescription)) {
             return;
+        }
+
+
+
+
 
 
 
@@ -2472,30 +2505,40 @@
     {
 
 
-        if (!check_devices() )
-            return;
+        QString port;
+        QString daddr;
+        QString package = "";
+        QString cstring;
+        QString command;
+        bool keepbox = false;
+
+        QString selectedDescription;
+        if (!validateDeviceSelection(selectedDescription)) {
+              return;
+        }
+
+
+        DeviceRecord device = queryDeviceRecord(selectedDescription);
 
 
 
-    QString package = "";
-    QString cstring;
-    bool keepbox = false;
+        if (device.ostype != "0") {
+              QMessageBox::critical(this, "", "Android devices only.");
+              return;
+        }
 
 
 
+        if (device.port.isEmpty()) {
+              port = "5555";
+        } else port=device.port;
 
-        QElapsedTimer rtimer;
-        int nMilliseconds;
-        rtimer.start();
-
-
-
+        daddr = device.daddr;
 
         logfile("open uninstall dialog");
 
 
-         if(isusb)
-             port="";
+
 
         uninstallDialog dialog(daddr,port,this);
         dialog.setWindowModality(Qt::WindowModal);
@@ -2541,19 +2584,18 @@
 
 
 
+                         daddr=daddr+":"+port;
+
                           if (!keepbox)
-                          cstring = getadb()+" shell pm uninstall " + package;
+                  cstring = getadb() + " shell pm uninstall " + package;
                           else
-                          cstring = getadb()+" shell pm uninstall -k " + package;
+                  cstring = getadb() + " shell pm uninstall -k " + package;
+
 
                           logfile("uninstall: "+cstring);
 
                           QString command=RunLongProcess(cstring,"Uninstall APK");
 
-    ;
-
-                          nMilliseconds = rtimer.elapsed();
-                          logfile("process time duration: "+ QString::number(nMilliseconds/1000)+ " seconds" );
 
 
                           if (!command.contains("Success"))
@@ -5330,10 +5372,35 @@
     void MainWindow::on_keypadButton_clicked()
     {
 
-        if (!check_devices() )
-            return;
 
-         QString cstring = getadb() + " shell input keyevent ";
+
+        QString port;
+        QString daddr;
+
+        QString selectedDescription;
+        if (!validateDeviceSelection(selectedDescription)) {
+            return;
+        }
+
+
+        DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+
+        if (device.ostype != "0") {
+            QMessageBox::critical(this, "", "Android devices only.");
+            return;
+        }
+
+
+
+        if (device.port.isEmpty()) {
+            port = "5555";
+        }
+
+        daddr = device.daddr+":"+port;
+
+
+         QString cstring = daddr + " shell input keyevent ";
          keyboardDialog dialog(this);
          dialog.setWindowModality(Qt::WindowModal);
          dialog.setdaddressLabel(cstring);
@@ -12084,12 +12151,11 @@ QString MainWindow::getadb()
 
               if (device.port.isEmpty())
                  port = "5555";
+              else port=device.port;
 
               editport = ":" + port;
 
             }
-
-
 
 
  gadb = adb + " -s " + daddr + editport;

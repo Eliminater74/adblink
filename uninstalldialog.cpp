@@ -6,6 +6,7 @@
 #include <QStringList>
 #include <QTextStream>
 #include <QDebug>
+#include "config.h"
 
 #ifdef Q_OS_LINUX
  int ost=0;
@@ -18,7 +19,6 @@ int ost=2;
 QString commstr;
 QString cstr;
 QString argument;
-QString adb2;
 QProcess packages;
 
 QString uninstallDialog::packageName() {
@@ -37,8 +37,8 @@ uninstallDialog::uninstallDialog(const QString &daddr, const QString &port, QWid
    ui->setupUi(this);
    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-   adb2 = QCoreApplication::applicationDirPath() + "/adbfiles/" + "adb";
-   adb2 = '"' + adb2 + '"';
+ //  adb2 = QCoreApplication::applicationDirPath() + "/adbfiles/" + "adb";
+ //  adb2 = '"' + adb2 + '"';
 
    ui->setupUi(this);
    this->setWindowTitle(daddr);
@@ -64,7 +64,7 @@ void uninstallDialog::on_applyButton_clicked() {
         else
             argument = " -s " + m_daddr + ":" + m_port + " shell pm list packages | grep " + ui->lineEdit->text();
 
-        cstr = adb2 + argument;
+        cstr = adb + argument;
     } else {
         loadList();
     }
@@ -79,7 +79,7 @@ void uninstallDialog::loadList() {
     else
         argument = " -s " + m_daddr + ":" + m_port + " shell pm list packages";
 
-    cstr = adb2 + argument;
+    cstr = adb + argument;
 }
 
 void uninstallDialog::makeFile() {

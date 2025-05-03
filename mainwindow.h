@@ -426,7 +426,7 @@ extern bool disableroot;
 extern QString port;
 extern QString filename;
 extern QString adbdir;
-extern QString adb;
+// extern QString adb;
 extern QString aapt;
 extern QString fastboot;
 extern QString xmldir;
