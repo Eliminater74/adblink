@@ -2270,12 +2270,12 @@
         obj = doc.object();
         bool checkversion = doc.object()["checkversion"].toBool();
 
-        bool oldfm = doc.object()["oldfm"].toBool();
+        bool sortpref = doc.object()["sortpref"].toBool();
 
 
 
 
-        if (oldfm)
+        if (sortpref)
                   ui->csort->setChecked(true);
         else
                   ui->dsort->setChecked(true);
