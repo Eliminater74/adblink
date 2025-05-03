@@ -3,9 +3,17 @@ XX/XX/25
 Version 6.4
 
 App Start/Stop buttons now on main panel
+
 Edit XML function moved to utility menu
+
 Screen capture function  moved to utility menu
-Ascending/Descending sort added to device list
+
+Device list moved to scrollable table which
+also displays IP and connection status.
+
+Devices sortable by device or connection.
+
+Sort preference saved on exit.
 
 
 /////////
