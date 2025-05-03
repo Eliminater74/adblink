@@ -7718,6 +7718,7 @@
 
    ////////////////////////////////////////////////
 
+
        void MainWindow::on_adbshellButton_clicked()
        {
 
@@ -7741,11 +7742,10 @@
 
 
               if (device.port.isEmpty()) {
-                 port = ":5555";
-                 return;
-              }
+                 port = "5555";
+              } else port=device.port;
 
-              daddr = device.daddr+port;
+              daddr = device.daddr+":"+port;
 
 
 
@@ -7801,7 +7801,7 @@
                  }
                  else
                  {
-                  out << adb + " -s " + ui->adhocip->text() + " shell " << endl;
+                    out << adb + " -s " + ui->adhocip->text() + " shell " << endl;
                  }
 
 
@@ -7851,13 +7851,43 @@
        }
 
 
-
     //////////////////////////////////////////////////////////
 
        void MainWindow::on_scpyButton_clicked()
        {
-              if (!check_devices())
+              QString port;
+              QString daddr;
+              QString cstring;
+              QString command;
+              QString argval;
+              QString sernum = "";
+
+
+              QString selectedDescription;
+              if (!validateDeviceSelection(selectedDescription)) {
                  return;
+              }
+
+
+
+              DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+
+              if (device.ostype != "0") {
+                 QMessageBox::critical(this, "", "Scrcpy is for Android devices only.");
+                 return;
+              }
+
+
+
+              if (device.port.isEmpty()) {
+                 port = "5555";
+              } else port=device.port;
+
+              daddr = device.daddr+":"+port;
+
+
+
 
               QJsonObject obj;
               QJsonDocument doc(obj);
@@ -7870,29 +7900,6 @@
               QString dropdown = obj["dropdown"].toString();
               int mcheck = dropdown.toInt();
 
-              // Get selected description from deviceTable
-              QString selectedDescription;
-              int selectedRow = ui->deviceTable->currentRow();
-              if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
-                 selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
-              } else {
-                 QMessageBox::critical(this, "", "No device selected in table");
-                 return;
-              }
-
-              // Check if the selected device is connected
-              if (ui->deviceTable->item(selectedRow, 1) &&
-                  ui->deviceTable->item(selectedRow, 1)->text() != "Connected" &&
-                  ui->deviceTable->item(selectedRow, 1)->text() != "USB") {
-                 QMessageBox::critical(this, "", "Selected device is not connected");
-                 return;
-              }
-
-              // Get daddr from selected description
-              daddr = getDevice(selectedDescription);
-              if (daddr.isEmpty()) {
-                 daddr = selectedDescription; // Fallback to description if getDevice returns empty
-              }
 
               QString scrcpybat = scriptdir + "scrcpy.bat";
               QString scrcpytxt = scriptdir + "scrcpy.txt";
@@ -7915,26 +7922,17 @@
                  argfile.close();
               }
 
-              if (daddr == "127.0.0.1")
-                 port = "58526";
+
 
               logfile("detaching scrcpy console process");
 
-              if (isusb)
-                 logfile(daddr);
-              else
-                 logfile(daddr + ":" + port);
 
-              QString cstring;
-              QString command;
-              QString argval;
-              QString editport = "";
-              QString sernum = "";
 
-              if (!isusb)
-                 editport = ":" + port;
 
-              sernum = " -s " + daddr + editport + " ";
+
+
+
+              sernum = " -s " + daddr +  " ";
 
               if (scrcpy)
               {
@@ -7982,7 +7980,7 @@
                  QTextStream out(&file);
 
                  out << "set PATH=%PATH%;" + adbfiles + ";" + scrcpydir + ";" << endl;
-                 out << "scrcpy.exe " + sernum + " " + argval << endl;
+                 out << "scrcpy.exe -s " + daddr + " " + argval << endl;
 
                  file.flush();
                  file.close();
@@ -8025,9 +8023,13 @@
                     return;
                  }
 
+
+
+
+
                  QTextStream out(&file);
                  out << "#!/bin/sh" << endl;
-                 out << "scrcpy " + sernum + " " + argval << endl;
+                 out << "scrcpy -s " + daddr + " " + argval << endl;
 
                  file.flush();
                  file.close();
