@@ -211,7 +211,7 @@ private slots:
 
     void on_editRecord_clicked();
 
-    void dataentry();
+    void dataentry(bool isUpdate);
     void newentry();
 
 

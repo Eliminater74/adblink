@@ -6,12 +6,12 @@ struct DeviceRecord {
     QString daddr;
     QString pulldir;
     QString xbmcpackage = "org.xbmc.kodi";
-    QString data_root;
+    QString data_root = "/sdcard/";
     int buffermode = 1;
     QString buffersize;
     QString bufferfactor;
     QString description;
-    QString filepath;
+    QString filepath = "files/.kodi";
     QString port;
     bool isusb = false;
     bool disableroot = false;
