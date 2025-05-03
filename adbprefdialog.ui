@@ -460,45 +460,57 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QCheckBox" name="versioncheck">
    <property name="geometry">
     <rect>
      <x>20</x>
      <y>50</y>
      <width>235</width>
-     <height>83</height>
+     <height>20</height>
     </rect>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="QCheckBox" name="versioncheck">
-      <property name="text">
-       <string>Check for updates at program start</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QCheckBox" name="scrcpyargs">
-      <property name="text">
-       <string>Ask for Scrcpy arguments</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QCheckBox" name="oldfm">
-      <property name="text">
-       <string>Use old file manager</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QCheckBox" name="scopecheck">
-      <property name="text">
-       <string>Check scope on connection</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
+   <property name="text">
+    <string>Check for updates at program start</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="scrcpyargs">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>71</y>
+     <width>179</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Ask for Scrcpy arguments</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="oldfm">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>92</y>
+     <width>148</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Sort by connection</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="scopecheck">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>113</y>
+     <width>192</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Check scope on connection</string>
+   </property>
   </widget>
  </widget>
  <resources/>

@@ -115,8 +115,6 @@ private slots:
 
 
 
-    void newPush();
-    void oldPush();
     void on_pullButton_clicked();
     void on_copyButton_clicked();
     void on_delButton_clicked();

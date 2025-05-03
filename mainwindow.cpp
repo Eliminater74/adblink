@@ -2270,6 +2270,16 @@
         obj = doc.object();
         bool checkversion = doc.object()["checkversion"].toBool();
 
+        bool oldfm = doc.object()["oldfm"].toBool();
+
+
+
+
+        if (oldfm)
+                  ui->csort->setChecked(true);
+        else
+                  ui->dsort->setChecked(true);
+
     if (checkversion)
        {
         QNetworkRequest request;
@@ -5420,7 +5430,7 @@
          file.open(QIODevice::ReadOnly);
          doc = QJsonDocument::fromJson(file.readAll());
          obj = doc.object();
-         bool oldfm = doc.object()["oldfm"].toBool();
+        // bool oldfm = doc.object()["oldfm"].toBool();
          QString download = doc.object()["download"].toString();
          QString cstring;
          QString command;
@@ -5515,7 +5525,7 @@
          fmdialog->setPath2("/sdcard/");
          fmdialog->setdisableroot(disableroot);
          fmdialog->setuProgram(kp);
-         fmdialog->setoldfm(oldfm);
+      //   fmdialog->setoldfm(oldfm);
          fmdialog->setPulldir(fmpullpath);
          fmdialog->setAdbdir(apphome);
 
@@ -6392,116 +6402,92 @@
 
     void MainWindow::on_actionPreferences_triggered()
     {
+         adbprefDialog dialog(this);
+         dialog.setWindowModality(Qt::WindowModal);
+         QJsonObject obj;
+         QJsonDocument doc(obj);
+         QFile file(databasedir + "adblink.json");
+         file.open(QIODevice::ReadOnly);
+         doc = QJsonDocument::fromJson(file.readAll());
+         obj = doc.object();
 
+         QString dropdown = obj["dropdown"].toString();
+         QString download = obj["download"].toString();
+         QString install = obj["install"].toString();
+         QString backup = obj["backup"].toString();
 
+         bool checkversion = doc.object()["checkversion"].toBool();
+         bool checkscope = doc.object()["checkscope"].toBool();
+         bool scrcpy = doc.object()["scrcpy"].toBool();
+         bool oldfm = doc.object()["oldfm"].toBool();
 
+         file.close();
 
+         if (checkversion)
+             dialog.setversioncheck(true);
+         else
+             dialog.setversioncheck(false);
 
-        adbprefDialog dialog(this);
-        dialog.setWindowModality(Qt::WindowModal);
-        QJsonObject obj;
-        QJsonDocument doc(obj);
-        QFile file(databasedir+"adblink.json");
-        file.open(QIODevice::ReadOnly);
-        doc = QJsonDocument::fromJson(file.readAll());
-        obj = doc.object();
+         if (checkscope)
+             dialog.setscopecheck(true);
+         else
+             dialog.setscopecheck(false);
 
+         if (scrcpy)
+             dialog.setscrcpyargs(true);
+         else
+             dialog.setscrcpyargs(false);
 
+         if (oldfm)
+             dialog.setoldfm(true);
+         else
+             dialog.setoldfm(false);
 
+         dialog.setlinterm(dropdown.toInt());
+         dialog.setmacterm(dropdown.toInt());
+         dialog.setwinterm(dropdown.toInt());
 
+         dialog.setdownloaddir(download);
+         dialog.setinstalldir(install);
+         dialog.setbackupdir(backup);
 
-        QString dropdown = obj["dropdown"].toString();
-        QString download = obj["download"].toString();
-        QString install = obj["install"].toString();
-        QString backup = obj["backup"].toString();
+         dialog.setversionLabel(version);
 
+         dialog.setModal(true);
 
-        bool checkversion = doc.object()["checkversion"].toBool();
-        bool checkscope = doc.object()["checkscope"].toBool();
-        bool scrcpy = doc.object()["scrcpy"].toBool();
-        bool oldfm = doc.object()["oldfm"].toBool();
-
-       file.close();
-
-
-
-    if (checkversion)
-     dialog.setversioncheck(true);
-     else
-    dialog.setversioncheck(false);
-
-     if (checkscope)
-     dialog.setscopecheck(true);
-     else
-     dialog.setscopecheck(false);
-
-    if (scrcpy)
-     dialog.setscrcpyargs(true);
-     else
-    dialog.setscrcpyargs(false);
-
-    if (oldfm)
-     dialog.setoldfm(true);
-     else
-    dialog.setoldfm(false);
-
-
-        dialog.setlinterm(dropdown.toInt());
-
-        dialog.setmacterm(dropdown.toInt());
-
-        dialog.setwinterm(dropdown.toInt());
-
-
-        dialog.setdownloaddir(download);
-        dialog.setinstalldir(install);
-        dialog.setbackupdir(backup);
-
-
-        dialog.setversionLabel(version);
-
-        dialog.setModal(true);
-
-
-        if(dialog.exec() == QDialog::Accepted)
-        {
-
-           if (os == 1)
-              obj["dropdown"] = dialog.winterm();
-
-           if (os == 0)
-              obj["dropdown"] = dialog.linterm();
-
-           if (os == 2)
-              obj["dropdown"] = dialog.macterm();
-
+         if (dialog.exec() == QDialog::Accepted)
+         {
+             if (os == 1)
+                obj["dropdown"] = dialog.winterm();
+             if (os == 0)
+                obj["dropdown"] = dialog.linterm();
+             if (os == 2)
+                obj["dropdown"] = dialog.macterm();
 
              obj["checkversion"] = dialog.versioncheck();
              obj["checkscope"] = dialog.scopecheck();
              obj["scrcpy"] = dialog.scrcpyargs();
              obj["oldfm"] = dialog.oldfm();
 
+             obj["download"] = dialog.downloaddir();
+             obj["install"] = dialog.installdir();
+             obj["backup"] = dialog.backupdir();
 
-            obj["download"] = dialog.downloaddir();
-            obj["install"] = dialog.installdir();
-            obj["backup"] = dialog.backupdir();
+             QJsonDocument doc(obj);
 
-            QJsonDocument doc(obj);
+             QFile file(databasedir + "adblink.json");
+             file.open(QIODevice::WriteOnly);
+             file.write(doc.toJson());
+             file.close();
 
-           QFile file(databasedir+"adblink.json");
-           file.open(QIODevice::WriteOnly);
-           file.write(doc.toJson());
-           file.close();
-
-
-
-
-        }
-
-
+             // Update radio buttons based on the new oldfm value
+             bool newOldfm = dialog.oldfm();
+             if (newOldfm)
+                ui->csort->setChecked(true);
+             else
+                ui->dsort->setChecked(true);
+         }
     }
-
-
 
     ////////////////////////////////
 

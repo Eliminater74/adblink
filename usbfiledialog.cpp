@@ -173,10 +173,10 @@ void usbfileDialog::setAdbdir(const QString &adbstr) {
 
 ////////////////////////////////////////////////////////
 
-void usbfileDialog::setoldfm(const bool &oldfm) {
- do_oldfm=oldfm;
+//void usbfileDialog::setoldfm(const bool &oldfm) {
+// do_oldfm=oldfm;
 
-}
+//}
 
 
 
@@ -216,49 +216,37 @@ void usbfileDialog::on_pushfilesButton_clicked()
 {
 
 
-    if (do_oldfm)
-    oldPush();
-    else
-    newPush();
-}
+    QStringList filePaths;
 
 
-/////////////////////////////////////////////
-
-void usbfileDialog::newPush()
-{
-
-QStringList filePaths;
-
-
-bool doroot=false;
-QString xpath;
+    bool doroot=false;
+    QString xpath;
 
 
 
     if (hasfocus)
-         xpath=current_directory1;
+    xpath=current_directory1;
     else
-         xpath=current_directory2;
+    xpath=current_directory2;
 
 
- dragDialog dialog;
+    dragDialog dialog;
 
- dialog.setWindowTitle(xpath);
+    dialog.setWindowTitle(xpath);
 
 
-if (dialog.exec() == QDialog::Accepted)
-     filePaths   = dialog.getFilePaths();
+    if (dialog.exec() == QDialog::Accepted)
+    filePaths   = dialog.getFilePaths();
 
 
 
 
 
     if (filePaths.count()<=0)
-        return;
+    return;
 
 
-/*
+    /*
 
     cstring =  adb21 + " shell ls "+xpath;
     QString command=getadbOutput(cstring);
@@ -276,59 +264,18 @@ if (dialog.exec() == QDialog::Accepted)
         userpush(filePaths);
 */
 
- if (checkRoot())
-        rootpush(filePaths);
-       else
-        userpush(filePaths);
+    if (checkRoot())
+    rootpush(filePaths);
+    else
+    userpush(filePaths);
 
 
 }
+
+
 
 
 /////////////////////////////////////////////
-
-void usbfileDialog::oldPush()
-{
-
-
-    QStringList mstringlist;
-    bool doroot=false;
-    QString xpath;
-
-    pushfileDialog dialog;
-    dialog.setModal(true);
-
-    if(dialog.exec() == QDialog::Accepted)
-        mstringlist = dialog.rstringlist();
-
-  if (mstringlist.count()<=0)
-      return;
-
-
-
-    if (hasfocus)
-     xpath=current_directory1;
-    else
-     xpath=current_directory2;
-
-    cstring =  adb21 + " shell ls "+xpath;
-    QString command=getadbOutput(cstring);
-
-    if (command.contains("Permission denied"))
-             doroot=true;
-
-     if (xpath.contains("/system/"))
-         doroot=true;
-
-
-     if(doroot)
-         rootpush(mstringlist);
-       else
-        userpush(mstringlist);
-
-
-
-}
 
 
 /////////////////////////////////////////
