@@ -121,7 +121,7 @@
     QString fastboot = "";
     QString xmldir = "";
     QString splashdir = "";
-
+    QString tempdir="";
 
 
     QString hdir = "";
@@ -159,12 +159,12 @@
     //QString devstr3 = "  USB Mode";
    //    wsa port= "58526";
 
-    QString tempdir = "/data/local/tmp/";
     QString adbfiles;
     QString logfiledir;
     QString databasedir;
     QString downloaddir;
     QString scrcpydir;
+
     int usbcheck;
     int rootpath;
     int ftvupdate;
@@ -218,7 +218,8 @@
         scrcpydir=QCoreApplication::applicationDirPath()+"/adbfiles/"+"scrcpy/";
 
         xmldir = adbfiles+"remotes/";
-        splashdir = adbfiles+"splash/";
+        splashdir = adbfiles+"splash/";    
+        tempdir = "/data/local/tmp/";
 
        if (!QFile::exists(adbfiles + "adb") && !QFile::exists(adbfiles + "adb.exe")) {
          QMessageBox::critical(0, "", "adb binary missing!\n", QMessageBox::Cancel);
@@ -4364,7 +4365,14 @@
     void MainWindow::on_cacheButton_clicked()
 
     {
-        getRecord(ui->deviceBox->currentText());
+
+
+
+
+
+
+
+      getRecord(ui->deviceBox->currentText());
 
         if (  (ostype == "1") ||  (ostype == "2")  || (ostype == "3") )
          {
@@ -7713,7 +7721,8 @@
        void MainWindow::on_adbshellButton_clicked()
        {
 
-
+              QString port;
+              QString daddr;
 
               QString selectedDescription;
               if (!validateDeviceSelection(selectedDescription)) {
@@ -7723,6 +7732,21 @@
 
               // Query entire device record
               DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+
+              if (device.ostype != "0") {
+                 QMessageBox::critical(this, "", "ADB shell is for Android devices only.");
+                 return;
+              }
+
+
+              if (device.port.isEmpty()) {
+                 port = ":5555";
+                 return;
+              }
+
+              daddr = device.daddr+port;
+
 
 
               QJsonObject obj;
@@ -7739,15 +7763,6 @@
 
 
 
-
-/*
-              QString port = getPort(selectedDescription);
-              if (port.isEmpty()) {
-                 port = "5555";
-              }
-
-             QString daddr = ui->deviceTable->item(selectedRow, 1)->text();
-*/
 
               logfile("detaching console process");
               logfile(device.daddr + ":" + device.port);
@@ -7779,7 +7794,10 @@
 
                  if (ui->adhocip->text().isEmpty())
                  {
-                 out << getadb() + " shell " << endl;
+
+                    cstring = adb + " -s " + daddr + " shell ";
+                    out << cstring << endl;
+
                  }
                  else
                  {
@@ -8327,10 +8345,16 @@ void MainWindow::on_backupButton_clicked()
 
 {
 
-    getRecord(ui->deviceBox->currentText());
+    QString selectedDescription;
+    if (!validateDeviceSelection(selectedDescription)) {
+         return;
+    }
 
 
-     if  (ostype != "0")
+      DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+
+     if  (device.ostype != "0")
            backupOther();
         else
            backupAndroid();
@@ -8343,16 +8367,23 @@ void MainWindow::on_backupButton_clicked()
 
 void MainWindow::backupAndroid() {
 
+        QString cstring;
+        QString command;
+        QString mcpath;
+        QString kbase;
+        QString n_data_root;
+        QString editport;
+        QString port;
+
+
         QString selectedDescription;
         if (!validateDeviceSelection(selectedDescription)) {
            return;
         }
 
-
-        // Query entire device record
         DeviceRecord device = queryDeviceRecord(selectedDescription);
 
-        // Check package installation
+
         is_package(device.xbmcpackage);
         if (!is_packageInstalled) {
            QMessageBox::critical(this, "", device.xbmcpackage + " not installed");
@@ -8362,13 +8393,21 @@ void MainWindow::backupAndroid() {
         // Use databasedir (unchanged from original)
         QString backup = readBackup(databasedir);
 
-        QString cstring;
-        QString command;
-        QString mcpath;
-        QString kbase;
-        QString n_data_root;
+
+
+        if (!device.isusb) {
+
+           if (device.port.isEmpty())
+                  port = "5555";
+
+           editport = ":" + port;
+
+        }
 
         cstring = getadb() + " shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
+
+        // cstring = adb + device.daddr + editport + " shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
+
         QString s = getadbOutput(cstring);
         QStringList list = s.split('\n');
 
