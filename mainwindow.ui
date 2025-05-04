@@ -1292,7 +1292,6 @@
     <addaction name="actionReiinstall_Busybox"/>
     <addaction name="actionPaste_path"/>
     <addaction name="actionEdit_XML"/>
-    <addaction name="actionScreen_Capture"/>
     <addaction name="actionArchitecture"/>
     <addaction name="actionOculus_VR"/>
     <addaction name="actionSend_text"/>

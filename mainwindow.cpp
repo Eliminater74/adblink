@@ -83,7 +83,6 @@
     #include <QDebug>
     #include <QRegularExpression>
 
-
     #ifdef Q_OS_LINUX
      int os=0;
     #elif defined(Q_OS_WIN)
@@ -152,8 +151,8 @@
     QString busybox;
 
 
-    QString adbstr1 = "ADB running. ";
-    QString adbstr2 = "ADB stopped. ";
+    QString adbstr1 = "ADB server on  ";
+    QString adbstr2 = "ADB server off ";
     QString devstr1 = "  Current device connected";
     QString devstr2 = "Selected device not connected.";
   
@@ -501,6 +500,7 @@
                      obj["checkversion"] = true;
                      obj["scrcpy"] = true;
                      obj["checkscope"] = true;
+                     obj["startview"] = true;
                      obj["dropdown"] = "0";
                      obj["download"] = QDir::homePath();
                      obj["install"] = QDir::homePath();
@@ -603,12 +603,30 @@
 
         }
 
+            ui->deviceTable->setColumnCount(3);
+            ui->deviceTable->setHorizontalHeaderLabels(QStringList() << "Device" << "IP" << "Status");
+            ui->deviceTable->verticalHeader()->setVisible(false);
+            ui->deviceTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+            ui->deviceTable->setShowGrid(true);
 
 
-        ui->deviceTable->setColumnCount(3);
-        ui->deviceTable->setHorizontalHeaderLabels(QStringList() << "Device" << "IP" << "Status");
-        ui->deviceTable->verticalHeader()->setVisible(false);
-        ui->deviceTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+/*
+            ui->deviceTable->setStyleSheet(
+                "QTableWidget#deviceTable {"
+                "    border: 1px solid black;"
+                "}"
+                );
+
+
+            // Stretch columns to fit the table width
+            ui->deviceTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+            // Disable horizontal scrollbar
+            ui->deviceTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+            // Disable text wrapping
+            ui->deviceTable->setWordWrap(false);
+*/
 
 
         ui->listRunningJobs->setStyleSheet("QListWidget { background: transparent;} QListWidget::item { color: black; }");
@@ -616,11 +634,7 @@
         ui->listRunningJobs->setFocusPolicy(Qt::NoFocus);
 
         loadDeviceTable();
-
         do_versioncheck();
-
-
-//        ui->adhocip->setText("192.168.1.30");
 
 
 
@@ -2279,16 +2293,27 @@
         doc = QJsonDocument::fromJson(file.readAll());
         obj = doc.object();
         bool checkversion = doc.object()["checkversion"].toBool();
-
         bool sortpref = doc.object()["sortpref"].toBool();
-
-
-
+        bool startview = doc.object()["startview"].toBool();
+        file.close();
 
         if (sortpref)
                   ui->csort->setChecked(true);
         else
                   ui->dsort->setChecked(true);
+
+
+
+
+
+        if (startview) {
+                  ui->stackedWidget->setCurrentIndex(1);
+        } else {
+                  ui->stackedWidget->setCurrentIndex(0);
+        }
+
+
+
 
     if (checkversion)
        {
@@ -2301,6 +2326,10 @@
        connect(reply, SIGNAL(finished()),
                this, SLOT(onReqCompleted()));
     }
+
+
+
+
 
     }
 
@@ -6259,6 +6288,8 @@
          adbprefDialog dialog(this);
          dialog.setWindowModality(Qt::WindowModal);
          QJsonObject obj;
+
+
          QJsonDocument doc(obj);
          QFile file(databasedir + "adblink.json");
          file.open(QIODevice::ReadOnly);
@@ -6274,6 +6305,8 @@
          bool checkscope = doc.object()["checkscope"].toBool();
          bool scrcpy = doc.object()["scrcpy"].toBool();
          bool sortpref = doc.object()["sortpref"].toBool();
+         bool startview = doc.object()["startview"].toBool();
+
 
          file.close();
 
@@ -6296,6 +6329,12 @@
              dialog.setsortpref(true);
          else
              dialog.setsortpref(false);
+
+         if (startview)
+             dialog.setstartview(true);
+         else
+             dialog.setstartview(false);
+
 
          dialog.setlinterm(dropdown.toInt());
          dialog.setmacterm(dropdown.toInt());
@@ -6322,6 +6361,9 @@
              obj["checkscope"] = dialog.scopecheck();
              obj["scrcpy"] = dialog.scrcpyargs();
              obj["sortpref"] = dialog.sortpref();
+             obj["startview"] = dialog.startview();
+
+
 
              obj["download"] = dialog.downloaddir();
              obj["install"] = dialog.installdir();
@@ -8391,7 +8433,7 @@ void MainWindow::backupAndroid() {
                   cstring = getadb() + " pull " + mcpath + "files/.kodi/. " + '"' + dir + '"';
                   logfile(cstring);
 
-                  command = RunLongProcess(cstring, "Backup");
+                  command = RunLongProcess(cstring, "backup running");
                   logfile("backup: " + cstring);
 
                   if (QDir(dir + "userdata").exists()) {
@@ -9035,7 +9077,7 @@ void MainWindow::on_restoreButton_clicked() {
 
    // Prepare target directory
    cstring = getadb() + " shell rm -r " + mcpath;
-   command = RunLongProcess(cstring, "Preparing target");
+   command = RunLongProcess(cstring, "preparing target");
    logfile(command);
 
    cstring = getadb() + " shell ls " + mcpath;
@@ -9059,7 +9101,7 @@ void MainWindow::on_restoreButton_clicked() {
    // Perform restore
    dir = dir + "/.";
    cstring = getadb() + " push \"" + dir + "\" " + mcpath + "/files/.kodi/";
-   command = RunLongProcess(cstring, "Restore");
+   command = RunLongProcess(cstring, "restore running");
    logfile("Restore: " + cstring);
 
    // Check restore success

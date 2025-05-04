@@ -218,6 +218,11 @@ void adbprefDialog::setsortpref(const bool &sortpref)
 
 
 
+void adbprefDialog::setstartview(const bool &startview)
+{
+    ui->startview->setChecked(startview);
+}
+
 
 
 void adbprefDialog::setscopecheck(const bool &scopecheck)
@@ -257,6 +262,12 @@ bool adbprefDialog::scrcpyargs() {
 
 bool adbprefDialog::sortpref() {
    return ui->sortpref->isChecked();
+}
+
+
+
+bool adbprefDialog::startview() {
+   return ui->startview->isChecked();
 }
 
 

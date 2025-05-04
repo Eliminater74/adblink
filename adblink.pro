@@ -123,9 +123,6 @@ FORMS    += mainwindow.ui \
     pushfiledialog.ui \
     adbprefdialog.ui \
     downloaddialog.ui \
-    mainwindow1.ui \
-    mainwindow2.ui \
-    mainwindow3.ui \
     setpdialog.ui \
     sleepdialog.ui\
     oculusdialog.ui
