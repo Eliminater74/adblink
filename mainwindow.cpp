@@ -525,6 +525,8 @@
        connect(&watcher1, SIGNAL(finished()), SLOT(finishedCopy1()));
        connect(&watcher2, SIGNAL(finished()), SLOT(finishedCopy2()));
        connect(ui->deviceTable, &QTableWidget::doubleClicked, this, &MainWindow::on_fmButton_clicked);
+       connect(ui->textButton, &QPushButton::clicked, this, &MainWindow::on_actionSend_text_triggered);
+       connect(ui->infoButton, &QPushButton::clicked, this, &MainWindow::systeminfo);
 
 
 
@@ -533,17 +535,30 @@
      ui->delRecord->setShortcut(QKeySequence("Ctrl+D"));
      ui->connButton->setShortcut(QKeySequence("Ctrl+E"));
      ui->disButton->setShortcut(QKeySequence("Ctrl+F"));
-    ui->fmButton->setShortcut(QKeySequence("Ctrl+G"));
+     ui->fmButton->setShortcut(QKeySequence("Ctrl+G"));
     ui->adbshellButton->setShortcut(QKeySequence("Ctrl+I"));
     ui->sideload_Button->setShortcut(QKeySequence("Ctrl+L"));
     ui->uninstall_Button->setShortcut(QKeySequence("Ctrl+M"));
-    ui->refreshConnectedDevices->setShortcut(QKeySequence("Ctrl+P")); 
     ui->scpyButton->setShortcut(QKeySequence("Ctrl+R"));
     ui->doConsole->setShortcut(QKeySequence("Ctrl+T"));
     ui->stopapp->setShortcut(QKeySequence("Ctrl+U"));
     ui->startapp->setShortcut(QKeySequence("Ctrl+W"));
     ui->clearButton->setShortcut(QKeySequence("Ctrl+Y"));
-    ui->killServer->setShortcut(QKeySequence("Ctrl+Z"));
+    ui->stopADB->setShortcut(QKeySequence("Ctrl+Z"));
+
+
+    connect(ui->fmButton_2, &QPushButton::clicked, this, &MainWindow::on_fmButton_clicked);
+    connect(ui->adbshellButton_2, &QPushButton::clicked, this, &MainWindow::on_adbshellButton_clicked);
+    connect(ui->sideload_Button_2, &QPushButton::clicked, this, &MainWindow::on_sideload_Button_clicked);
+    connect(ui->uninstall_Button_2, &QPushButton::clicked, this, &MainWindow::on_uninstall_Button_clicked);
+    connect(ui->stopADB2, &QPushButton::clicked, this, &MainWindow::on_killServer_clicked);
+    connect(ui->scpyButton_2, &QPushButton::clicked, this, &MainWindow::on_scpyButton_clicked);
+    connect(ui->doConsole_2, &QPushButton::clicked, this, &MainWindow::on_doConsole_clicked);
+    connect(ui->startapp_2, &QPushButton::clicked, this, &MainWindow::on_startapp_clicked);
+    connect(ui->stopapp_2, &QPushButton::clicked, this, &MainWindow::on_stopapp_clicked);
+    connect(ui->stopADB, &QPushButton::clicked, this, &MainWindow::on_killServer_clicked);
+    connect(ui->screencap1, &QPushButton::clicked, this, &MainWindow::on_actionScreen_Capture_triggered);
+    connect(ui->screencap2, &QPushButton::clicked, this, &MainWindow::on_actionScreen_Capture_triggered);
 
     new QShortcut (QKeySequence("Ctrl+O"), this, SLOT(on_actionSend_text_triggered()));
 
@@ -567,11 +582,11 @@
 
     if (program=="adblink")
     {
-                    ui->startapp->setShortcut(QKeySequence("Ctrl+V"));
+      ui->startapp->setShortcut(QKeySequence("Ctrl+V"));
       ui->mvdataButton->setShortcut(QKeySequence("Ctrl+N"));
       ui->backupButton->setShortcut(QKeySequence("Ctrl+J"));
       ui->restoreButton->setShortcut(QKeySequence("Ctrl+K"));
-      // ui->cacheButton->setShortcut(QKeySequence("Ctrl+S"));
+
     }
 
     new QShortcut(QKeySequence("Ctrl+S"), this, SLOT(on_actionSend_text_triggered()));
@@ -601,7 +616,7 @@
         ui->listRunningJobs->setFocusPolicy(Qt::NoFocus);
 
         loadDeviceTable();
-        on_refreshConnectedDevices_clicked();
+
         do_versioncheck();
 
 
@@ -2703,7 +2718,7 @@
 
 
                               default_device_values();
-                              on_refreshConnectedDevices_clicked();
+
                               logfile("Connected to " + daddr);
                               logfile("Android version: " + s.setNum(getandroid()));
                             }
@@ -2786,7 +2801,7 @@
                             ui->deviceTable->setFocus();
 
 
-                            on_refreshConnectedDevices_clicked();
+
                             logfile("Connected to " + udaddr);
                             logfile("Android version: " + s.setNum(getandroid()));
 
@@ -2870,7 +2885,7 @@
            }
 
            ui->adhocip->setText("");
-           on_refreshConnectedDevices_clicked();
+
            return;
      }
 
@@ -2913,7 +2928,7 @@
             ui->deviceTable->setItem(selectedRow, 1, new QTableWidgetItem("Disconnected"));
              }
 
-         //    on_refreshConnectedDevices_clicked();
+
 
              loadDeviceTable();
 
@@ -3322,185 +3337,29 @@
 
 
     ////////////////////////////////////////
-
     void MainWindow::on_killServer_clicked()
     {
-        QElapsedTimer rtimer;
-        int nMilliseconds;
-        rtimer.start();
 
 
-        QString cstring = adb + "  disconnect "+daddr+":"+port ;
-        QString command=getadbOutput(cstring);
+     if (QMessageBox::question(this, "Disconnect", "Disconnect all devices?", QMessageBox::Cancel | QMessageBox::Ok) == QMessageBox::Cancel)
+             {   return;
 
-        isConnected=false;
+     }
 
 
-        kill_server();
+             QString cstring = adb + " kill-server";
+             QString command=getadbOutput(cstring);
+             ui->server_running->setText(adbstr2);
+             loadDeviceTable();
+             return;
 
-        if (serverRunning)
-          ui->server_running->setText(adbstr1);
-        else
-         ui->server_running->setText(adbstr2);
 
-      ui->listDevices->clear();
-      ui->listDevicesStatus->clear();
 
-        nMilliseconds = rtimer.elapsed();
-        logfile("process time duration: "+ QString::number(nMilliseconds/1000)+ " seconds" );
 
 
-    }
-
-
-
-
-    ///////////////////////////////////////////////////
-    void MainWindow::on_refreshConnectedDevices_clicked()
-    {
-
-
-        QString isdevice;
-        QString cstring = "";
-        QString command = "";
-
-        QString descrip;
-        QString mdaddr;
-        QStringList mstringlist;
-        bool isusb;
-
-
-
-
-        ui->listDevices->clear();
-        ui->listDevicesStatus->clear();
-        ui->listDevices->setSelectionMode(QAbstractItemView::SingleSelection);
-
-
-
-
-         cstring = adb + " devices";
-
-
-         for( int z = 0; z < 10; z = z + 1 )
-           {     command="";
-                 command=getadbOutput(cstring);
-            }
-
-         // QThread::sleep(2);
-
-          mstringlist=command.split(QRegExp("[\t\n\r]"),QString::SkipEmptyParts);
-
-    if (mstringlist.count() >0)
-     {
-
-
-         mstringlist.removeFirst();
-
-
-        //  if (!mstringlist.contains("*"))
-         //     if(!mstringlist.contains("daemon"))
-
-    for( int a = 0; a < mstringlist.size(); a = a + 2 )
-     {
-
-
-        if (mstringlist.at(a).contains("tls-connect._tcp.") || mstringlist.at(a).contains(":"))
-                  {
-                      QStringList pieces = mstringlist.at(a).split( ":" ,QString::SkipEmptyParts);
-                       mdaddr=pieces.at(0);
-                       isusb=false;
-                     }
-
-
-
-
-              else
-
-                  {
-                     isusb=true;
-                     mdaddr=mstringlist.at(a);
-                  }
-
-
-              if (!mdaddr.isEmpty())
-                 descrip=getDescription(mdaddr);
-
-              if (descrip.isEmpty())
-                  descrip=mstringlist.at(a);
 
 
-              isdevice=mstringlist.at(a+1);
-
-              if (isdevice.contains("device"))
-                 {
-                       if (isusb)
-                           isdevice="USB connection";
-                       else
-                           isdevice="IP connection";
-                }
-
-
-
-
-              if (!descrip.contains("*") || !descrip.contains("daemon"))
-               {
-
-
-                 for(int i = 0; i < ui->listDevices->count(); ++i)
-                 {
-                     QListWidgetItem* item = ui->listDevices->item(i);
-                     if (item->text().contains(descrip))
-                     return;  // bail if exists
-                 }
-
-
-                  ui->listDevices->addItem(descrip);
-                  ui->listDevicesStatus->addItem(isdevice);
-
-              }
-
-               if (isdevice.contains("unauthorized"))
-              {  QMessageBox::critical(0,"","Device unauthorized\n\nPress 'Refresh ADB' or see help topic 'Device unauthorized' ");
-                  logfile(descrip+" unauthorized");
-               }
-
-              if (isdevice.contains("offline"))
-               {  QMessageBox::critical(0,"","Device offline\n\nPress 'Refresh ADB' or see help topic 'Device Offline' ");
-                  logfile(descrip+" offline");
-              }
-
-
-    }
-
-
-
-
-
-    QList<QListWidgetItem *> foundItems = ui->listDevices->findItems(descrip, Qt::MatchExactly);
-
-    if (!foundItems.isEmpty()) {
-              int index = ui->listDevices->row(foundItems.first());
-
-              if (index != -1)
-                  ui->listDevices->setCurrentRow(index);
-
-    }
-
-
-
-
-    ui->listDevices->setFocus();
-
-
-
-
-    }
-
-     return;
-
     }
-
 
 
 
@@ -3711,7 +3570,7 @@
     }
 
     loadDeviceTable();
-    on_refreshConnectedDevices_clicked();
+
      }
     }
 
@@ -3859,7 +3718,7 @@
     }
 
     loadDeviceTable();
-    on_refreshConnectedDevices_clicked();
+
       }
     }
 
@@ -3988,7 +3847,7 @@
     ui->deviceTable->setItem(newRow, 1, new QTableWidgetItem("Disconnected")); // Status
 
     loadDeviceTable(); // Refresh deviceTable to ensure consistency
-    on_refreshConnectedDevices_clicked();
+
       }
     }
 
@@ -4027,7 +3886,7 @@
     deleteRecord(descrip);
 
     ui->deviceTable->removeRow(selectedRow);
-    on_refreshConnectedDevices_clicked();
+
     logfile(descrip + " is deleted");
 
       }
@@ -8185,7 +8044,7 @@
                          {
                             isConnected=true;
                             default_device_values();
-                            on_refreshConnectedDevices_clicked();
+
                             logfile("Connected to "+daddr);
                             logfile ("Android version: "+ s.setNum(getandroid()));
                          }
@@ -8211,7 +8070,7 @@
 
         if (command.contains("connected to"))
         {   isConnected=true;
-            on_refreshConnectedDevices_clicked();
+
             logfile("Connected to "+daddr+":"+port);
         }
 
@@ -11895,130 +11754,61 @@ void MainWindow::on_actionEdit_XML_triggered()
 
 }
 
+//////////////////////////////////////////////
 
 void MainWindow::on_actionScreen_Capture_triggered()
 {
-
- if (!check_devices() )
+ QString selectedDescription;
+ if (!validateDeviceSelection(selectedDescription)) {
            return;
+ }
 
- QElapsedTimer rtimer;
- int nMilliseconds;
- rtimer.start();
+ DeviceRecord device = queryDeviceRecord(selectedDescription);
+ QString port = device.port.isEmpty() ? "5555" : device.port;
+ QString daddr = device.daddr + ":" + port;
 
  QDateTime dateTime = QDateTime::currentDateTime();
- QString dtstr = dateTime.toString("MMddyyhhmmss");
+ QString dtstr = dateTime.toString("yyyyMMdd_HHmmss");
+ dtstr = dtstr + ".png";
 
- QString cstring = getadb() + " shell screencap -p " +tempdir+dtstr+".png";
+ QString cstring = adb + " -s " + daddr + " shell screencap -p " + "/data/local/tmp/"+dtstr;
+ logfile(cstring);
 
-
- QString command=getadbOutput(cstring);
-
- if (!command.isEmpty())
-
- {
-           // logfile(cstring);
+ QString command = getadbOutput(cstring);
+ if (!command.isEmpty()) {
            logfile(command);
-
-           QMessageBox::critical(
-               this,
-               "",
-               "Screenshot failed");
+           QMessageBox::critical(this, "", "Screenshot failed: " + command);
+           return;
  }
 
- else
- {
+ cstring = getadb() + " pull "+ "/data/local/tmp/"+dtstr + " " + pulldir;
+ command = getadbOutput(cstring);
+ logfile(cstring);
+ logfile(command);
 
-           // logfile(cstring);
-           logfile(command);
-
-           QString cstring = getadb() + " pull "+tempdir+dtstr+".png "  +'"'+pulldir+'"';
-
-           command=getadbOutput(cstring);
-
-
-           logfile(command);
-
-
-           if (!command.contains("bytes"))
-           {
-
-              logfile(command);
-              QMessageBox::critical(
-                  this,
-                  "",
-                  "Screenshot failed");
-           }
-           else
-           {
-              // logfile(cstring);
-              logfile(command);
-
-              QMessageBox::information(
-                  this,
-                  "",
-                  "Screenshot "+dtstr+ " copied to "+pulldir);
-           }
-
-           cstring = getadb() + " shell rm "+tempdir+dtstr+".png " ;
-           command=getadbOutput(cstring);
-           // logfile(cstring);
-
-
+ // Check if the pulled file exists
+ QString localFilePath = pulldir + "/" + dtstr;
+ QFileInfo fileInfo(localFilePath);
+ if (!fileInfo.exists()) {
+           logfile("Error: Pulled file does not exist at " + localFilePath);
+           QMessageBox::critical(this, "", "Failed to pull screenshot: File not found at " + localFilePath);
+           return;
  }
 
- nMilliseconds = rtimer.elapsed();
- logfile("process time duration: "+ QString::number(nMilliseconds/1000)+ " seconds" );
+ cstring = getadb() + " shell rm " + "/data/local/tmp/"+dtstr;
+ command = getadbOutput(cstring);
+ logfile(cstring);
+ logfile(command);
 
-
+ QMessageBox::information(this, "", "Screenshot " + dtstr + " copied to " + pulldir);
 }
 
+//////////////////////////
 
 void MainWindow::on_actionKeypad_triggered()
 {
  on_keypadButton_clicked();
 }
-
-
-/*
-
-void MainWindow::on_ascend_clicked()
-{
- QString selectedDevice;
- if (ui->deviceTable->currentItem() && ui->deviceTable->currentRow() >= 0) {
-           selectedDevice = ui->deviceTable->item(ui->deviceTable->currentRow(), 0)->text();
- }
- ui->deviceTable->sortItems(0, Qt::AscendingOrder);
- if (!selectedDevice.isEmpty()) {
-           for (int row = 0; row < ui->deviceTable->rowCount(); ++row) {
-              if (ui->deviceTable->item(row, 0)->text() == selectedDevice) {
-               ui->deviceTable->setCurrentCell(row, 0);
-               break;
-              }
-           }
- }
-}
-
-
-
-void MainWindow::on_descend_clicked()
-{
- QString selectedDevice;
- if (ui->deviceTable->currentItem() && ui->deviceTable->currentRow() >= 0) {
-           selectedDevice = ui->deviceTable->item(ui->deviceTable->currentRow(), 0)->text();
- }
- ui->deviceTable->sortItems(0, Qt::DescendingOrder);
- if (!selectedDevice.isEmpty()) {
-           for (int row = 0; row < ui->deviceTable->rowCount(); ++row) {
-              if (ui->deviceTable->item(row, 0)->text() == selectedDevice) {
-               ui->deviceTable->setCurrentCell(row, 0);
-               break;
-              }
-           }
- }
-}
-
-*/
 
 void MainWindow::on_ascend_clicked()
 {
@@ -12045,6 +11835,8 @@ void MainWindow::on_ascend_clicked()
  }
 }
 
+/////////////////////////////////
+
 void MainWindow::on_descend_clicked()
 {
  QString selectedDevice;
@@ -12070,7 +11862,7 @@ void MainWindow::on_descend_clicked()
  }
 }
 
-
+////////////////////////////////
 
 void MainWindow::loadDeviceTable()
 {
@@ -12244,5 +12036,19 @@ bool MainWindow::validateDeviceSelection(QString& selectedDescription) {
 
  return true;
 }
+
+
+
+void MainWindow::on_actionSwitch_View_triggered()
+{
+
+ if (ui->stackedWidget->currentIndex() == 0) {
+               ui->stackedWidget->setCurrentIndex(1);
+ } else {
+               ui->stackedWidget->setCurrentIndex(0);
+ }
+
+}
+
 
 

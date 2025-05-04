@@ -227,7 +227,6 @@ private slots:
 
     void on_killServer_clicked();
 
-    void on_refreshConnectedDevices_clicked();
 
 
     bool record_exists(QString descrip);
@@ -400,6 +399,9 @@ private slots:
 
   void on_descend_clicked();
 
+
+
+  void on_actionSwitch_View_triggered();
 
 
   private:
