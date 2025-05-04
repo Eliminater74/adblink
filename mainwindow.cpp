@@ -194,11 +194,6 @@
         ui(new Ui::MainWindow)
     {
 
-
-
-
-
-
 //ro.product.product.device
 //ro.product.manufacturer
 // ro.product.brand
@@ -12249,3 +12244,5 @@ bool MainWindow::validateDeviceSelection(QString& selectedDescription) {
 
  return true;
 }
+
+
