@@ -191,7 +191,6 @@ private slots:
 
     bool isConnectedToNetwork();
 
-    bool searchlistDevices(QString mstring);
 
 
     void addcolumn1();
@@ -211,8 +210,8 @@ private slots:
 
     void on_editRecord_clicked();
 
-    void dataentry(bool isUpdate);
-    void newentry();
+    void dataentry(bool isNewRecord);
+    //void newentry(bool isNewRecord);
 
 
   //   void move_kodi_data(QString externallocation, int choice);
@@ -296,9 +295,6 @@ private slots:
 
   void on_deviceBox_currentIndexChanged(const QString &arg1);
 
-  void on_listDevices_clicked(const QModelIndex &index);
-
- void on_listDevices_doubleClicked(const QModelIndex &index);
 
   void on_clearButton_clicked();
 
