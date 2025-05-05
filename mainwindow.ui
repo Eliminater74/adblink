@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>626</width>
-    <height>405</height>
+    <width>649</width>
+    <height>376</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -222,7 +222,7 @@
         <height>151</height>
        </rect>
       </property>
-      <layout class="QGridLayout" name="gridLayout">
+      <layout class="QGridLayout" name="adblink1">
        <item row="0" column="0">
         <widget class="QPushButton" name="fmButton">
          <property name="minimumSize">
@@ -619,16 +619,6 @@
        </item>
       </layout>
      </widget>
-     <widget class="QListWidget" name="listRunningJobs">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>170</y>
-        <width>271</width>
-        <height>21</height>
-       </rect>
-      </property>
-     </widget>
     </widget>
     <widget class="QWidget" name="page_2">
      <widget class="QWidget" name="layoutWidget_3">
@@ -640,7 +630,7 @@
         <height>121</height>
        </rect>
       </property>
-      <layout class="QGridLayout" name="gridLayout_3">
+      <layout class="QGridLayout" name="adblink2">
        <item row="0" column="0">
         <widget class="QPushButton" name="fmButton_2">
          <property name="minimumSize">
@@ -1108,6 +1098,16 @@
      </item>
     </layout>
    </widget>
+   <widget class="QListWidget" name="listRunningJobs">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>620</y>
+      <width>271</width>
+      <height>21</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QMenuBar" name="menuBar">
@@ -1115,7 +1115,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>626</width>
+     <width>649</width>
      <height>24</height>
     </rect>
    </property>

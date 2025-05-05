@@ -265,6 +265,7 @@
          ui->statusBar->addPermanentWidget(ui->server_running);
          ui->statusBar->addPermanentWidget(ui->progressBar);
          ui->progressBar->setHidden(true);
+         ui->listRunningJobs->setHidden(true);
 
 
          QPixmap pix(":/assets/donatel.png");
@@ -603,11 +604,14 @@
 
         }
 
+
             ui->deviceTable->setColumnCount(3);
             ui->deviceTable->setHorizontalHeaderLabels(QStringList() << "Device" << "IP" << "Status");
             ui->deviceTable->verticalHeader()->setVisible(false);
             ui->deviceTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
             ui->deviceTable->setShowGrid(true);
+
+
 
 
 /*
@@ -629,9 +633,9 @@
 */
 
 
-        ui->listRunningJobs->setStyleSheet("QListWidget { background: transparent;} QListWidget::item { color: black; }");
-        ui->listRunningJobs->setSelectionMode(QAbstractItemView::NoSelection);
-        ui->listRunningJobs->setFocusPolicy(Qt::NoFocus);
+       // ui->listRunningJobs->setStyleSheet("QListWidget { background: transparent;} QListWidget::item { color: black; }");
+      //  ui->listRunningJobs->setSelectionMode(QAbstractItemView::NoSelection);
+      //  ui->listRunningJobs->setFocusPolicy(Qt::NoFocus);
 
         loadDeviceTable();
         do_versioncheck();
@@ -5635,7 +5639,8 @@
     QString s = description+" "+jobname;
     RunProcessList << s;
     ui->listRunningJobs->addItem(s);
-    ui->listRunningJobs->setFocus();
+    ui->server_running->setText(s);
+
 
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(TimerEvent()));
@@ -5665,7 +5670,8 @@
         {  //activityIcon(false);
            ui->progressBar->setHidden(true);
            ui->progressBar->setValue(0);
-      }
+           ui->server_running->setText("");
+         }
 
      return command;
     }
