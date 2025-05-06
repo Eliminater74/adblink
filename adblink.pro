@@ -101,8 +101,6 @@ FORMS    += mainwindow.ui \
     helpdialog.ui \
     scpdialog.ui \
     uninstalldialog.ui \
-    preferencesdialog1.ui \
-    preferencesdialog2.ui \
     preferencesdialog.ui \
     usbfiledialog.ui \
     adblogdialog.ui \
