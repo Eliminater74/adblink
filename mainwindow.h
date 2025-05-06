@@ -197,7 +197,7 @@ private slots:
 
     void on_actionRecovery_triggered();
 
-    void device_clicked(QString item);
+
 
     void on_donate_clicked();
 
@@ -215,9 +215,6 @@ private slots:
 
 
   //   void move_kodi_data(QString externallocation, int choice);
-
-
-    void loaddevicebox();
 
 
 

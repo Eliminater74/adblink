@@ -520,9 +520,6 @@
 
            }
 
-
-       loaddevicebox();
-
        connect(&watcher1, SIGNAL(finished()), SLOT(finishedCopy1()));
        connect(&watcher2, SIGNAL(finished()), SLOT(finishedCopy2()));
        connect(ui->deviceTable, &QTableWidget::doubleClicked, this, &MainWindow::on_fmButton_clicked);
@@ -2258,24 +2255,6 @@
 
 
 
-    //////////////////////////////////////////////////////////////////////
-    void MainWindow::loaddevicebox() {
-
-        QString sqlstatement;
-        QStringList mstringlist;
-        QSqlQuery query;
-
-           ui->deviceBox->clear();
-           sqlstatement= "SELECT description FROM device";
-           query.exec(sqlstatement);
-               while (query.next()) {
-                  ui->deviceBox->addItem(query.value(0).toString());
-               }
-
-
-
-    }
-
 
 
     //////////////////////////////////////////////////////////////////////
@@ -3205,18 +3184,26 @@
     void MainWindow::on_actionPush_remote_triggered()
     {
 
+        QString selectedDescription;
+        if (!validateDeviceSelection(selectedDescription)) {
+                   return;
+        }
+
+        DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+        if (device.ostype != "0") {
+                   QMessageBox::critical(this, "Unavailable", "Android devices only.");
+                   return;
+        }
 
 
-        getRecord(ui->deviceBox->currentText());
-
-        if (  (ostype != "0")  )
+        if (  (device.ostype != "0")  )
          {
               otherRemote();
            }
 
            else
 
-      if (check_devices() )
           {
            androidRemote();
           }
@@ -3653,7 +3640,16 @@
              }
              }
 
-             preferencesDialog dialog(this);
+             bool iskodi;
+
+             if (ui->stackedWidget->currentIndex() == 0)
+               iskodi=true;
+             else
+               iskodi=false;
+
+
+         preferencesDialog dialog(this,iskodi);
+
              dialog.setWindowModality(Qt::WindowModal);
 
              dialog.setversionLabel(version);
@@ -4207,21 +4203,22 @@
     {
 
 
+      QString selectedDescription;
+      if (!validateDeviceSelection(selectedDescription)) {
+               return;
+      }
+
+      DeviceRecord device = queryDeviceRecord(selectedDescription);
 
 
 
-
-
-      getRecord(ui->deviceBox->currentText());
-
-        if (  (ostype == "1") ||  (ostype == "2")  || (ostype == "3") )
+        if (  (device.ostype != "0") )
          {
                cacheButton_other();
            }
 
            else
 
-      if (check_devices() )
           {
             cacheButton_android();
           }
@@ -4494,16 +4491,23 @@
     void MainWindow::on_actionView_Kodi_Log_triggered()
     {
 
-        getRecord(ui->deviceBox->currentText());
+    QString selectedDescription;
+    if (!validateDeviceSelection(selectedDescription)) {
+               return;
+    }
 
-           if (ostype != "0")
+    DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+
+
+           if (device.ostype != "0")
             {
                 otherLog();
            }
 
            else
 
-      if (check_devices() )
+
           {
             androidLog();
           }
@@ -5717,7 +5721,7 @@
          //tempstring.replace(QString("'"), QString("''"));
 
 
-          sqlstatement = "UPDATE device SET data_root='"+tempstring+"'  WHERE description="+'"'+ui->deviceBox->currentText()+'"';
+       //   sqlstatement = "UPDATE device SET data_root='"+tempstring+"'  WHERE description="+'"'+ui->deviceXox->currentText()+'"';
 
 
          logfile(sqlstatement);
@@ -5985,43 +5989,7 @@
 
 
 
-    //////////////////////////////////////////////////
 
-    void MainWindow::device_clicked(QString item)
-    {
-
-         int hasrecord=ui->deviceBox->findText(item,Qt::MatchExactly );
-
-
-         if (hasrecord>=0)
-         {  ui->deviceBox->setCurrentText(item);
-            getRecord(item);
-         }
-        else
-         {
-
-           default_device_values();
-           description=item;
-
-        if (item.contains(":"))
-           {
-            isusb=false;
-            QStringList pieces = item.split( ":" ,QString::SkipEmptyParts);
-            daddr=pieces.at(0);
-           // port = "5555";
-             }
-        else
-             {
-                daddr=item;
-                isusb=true;
-                port="";
-             }
-
-
-         }
-
-
-    }
 
     void MainWindow::on_actionPreferences_triggered()
     {
@@ -7992,7 +7960,8 @@ void MainWindow::on_Erase_adbLink_database_triggered()
                                    }
 
                                    createTables();
-                                   ui->deviceBox->clear();
+                                   loadDeviceTable();
+
     }
 }
 
@@ -10221,13 +10190,18 @@ void MainWindow::on_startapp_clicked()
 
 void MainWindow::on_actionSplash_Screen_triggered()
 {
-            getRecord(ui->deviceBox->currentText());
 
 
-            if  (ostype != "0")
+    QString selectedDescription;
+    if (!validateDeviceSelection(selectedDescription)) {
+     return;
+    }
+
+    DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+            if  (device.ostype != "0")
             splashButton_other();
             else
-            if (check_devices() )
             {
             splashButton_android();
             }
@@ -11491,10 +11465,15 @@ void MainWindow::on_test_clicked()
 void MainWindow::on_actionEdit_XML_triggered()
 {
 
+ QString selectedDescription;
+ if (!validateDeviceSelection(selectedDescription)) {
+           return;
+ }
 
- getRecord(ui->deviceBox->currentText());
+ DeviceRecord device = queryDeviceRecord(selectedDescription);
 
- if  (ostype == "0")
+
+ if  (device.ostype == "0")
            editAndroid();
 
 
@@ -11792,9 +11771,33 @@ bool MainWindow::validateDeviceSelection(QString& selectedDescription) {
 void MainWindow::on_actionSwitch_View_triggered()
 {
 
+
+
+
+
+
  if (ui->stackedWidget->currentIndex() == 0) {
+
+               QMessageBox::StandardButton reply;
+               reply = QMessageBox::question(this, "Kodi", "Disable Kodi features?",
+                                             QMessageBox::Yes | QMessageBox::No);
+               if (reply == QMessageBox::No) {
+              return;
+               }
+
                ui->stackedWidget->setCurrentIndex(1);
- } else {
+ }
+
+
+ else {
+
+               QMessageBox::StandardButton reply;
+               reply = QMessageBox::question(this, "Kodi", "Enable Kodi features?",
+                                             QMessageBox::Yes | QMessageBox::No);
+               if (reply == QMessageBox::No) {
+              return;
+               }
+
                ui->stackedWidget->setCurrentIndex(0);
  }
 
