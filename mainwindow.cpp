@@ -31,6 +31,7 @@
     #include "logfile.h"
     #include "setpdialog.h"
     #include "config.h"
+    #include "adbutils.h"
 
     #ifdef __WIN32__
       #include "windows.h"
@@ -11354,7 +11355,10 @@ QString MainWindow::getadb()
             }
 
 
- gadb = adb + " -s " + daddr + editport;
+ // gadb = adb + " -s " + daddr + editport;
+
+ gadb = getadbpath() + " -s " + daddr + editport;
+
 
  return gadb;
 }

@@ -57,7 +57,6 @@ extern QString tmpstr;
 extern QString commstr;
 extern QString cstr;
 extern QString argument;
-extern QString adb2;
 extern QString fline;
 
 

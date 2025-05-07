@@ -6,7 +6,7 @@
 #include <QStringList>
 #include <QTextStream>
 #include <QDebug>
-#include "config.h"
+#include "adbutils.h"
 
 #ifdef Q_OS_LINUX
  int ost=0;
@@ -64,7 +64,7 @@ void uninstallDialog::on_applyButton_clicked() {
         else
             argument = " -s " + m_daddr + ":" + m_port + " shell pm list packages | grep " + ui->lineEdit->text();
 
-        cstr = adb + argument;
+        cstr = getadbpath() + argument;
     } else {
         loadList();
     }
@@ -79,7 +79,7 @@ void uninstallDialog::loadList() {
     else
         argument = " -s " + m_daddr + ":" + m_port + " shell pm list packages";
 
-    cstr = adb + argument;
+    cstr = getadbpath() + argument;
 }
 
 void uninstallDialog::makeFile() {

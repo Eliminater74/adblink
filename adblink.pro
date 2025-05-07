@@ -14,6 +14,7 @@ TARGET = adblink
 TEMPLATE = app
 
 SOURCES += main.cpp\
+    adbutils.cpp \
     connectadb.cpp \
     deviceinfodialog.cpp \
     dragdialog.cpp \
@@ -55,7 +56,7 @@ RESOURCES = adbLink.qrc
 
 HEADERS  += mainwindow.h \
     about.h \
-    config.h \
+    adbutils.h \
     connectadb.h \
     deviceinfodialog.h \
     devicerecord.h \
