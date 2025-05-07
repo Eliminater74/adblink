@@ -54,7 +54,6 @@ public:
 
 private slots:
     void on_pfolderButton_clicked();
-    void on_pushButton_clicked();
     void on_kodiButton_clicked();
     void on_spmcButton_clicked();
     void on_otherButton_clicked();

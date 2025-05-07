@@ -28,10 +28,6 @@ QString getadbOutput(const QString &cstring)
 
  bool success = (run_command.exitCode() == 0);
 
- //if (!success)
- //   { logfile("ERROR: "+cstring);
- //     logfile("ERROR: "+command); }
-
   return command;
 
 }

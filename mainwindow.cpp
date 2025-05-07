@@ -2332,7 +2332,7 @@
 
            s1 = strip(s1);
 
-           int err = reply->error();
+
 
 
            if (version != s1)
@@ -2980,28 +2980,28 @@
         QString mcpath="";
 
 
-
-        //qDebug() << data_root;
-
-
-        if (!check_devices() )
+        QString selectedDescription;
+        if (!validateDeviceSelection(selectedDescription)) {
             return;
+        }
 
-        is_package(xbmcpackage);
+        DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+        if (device.ostype != "0") {
+            QMessageBox::critical(this, "Unavailable", "Android devices only.");
+            return;
+        }
+
+        is_package(device.xbmcpackage);
 
        if (!is_packageInstalled)
           { QMessageBox::critical(
                 this,
                 "",
-                xbmcpackage+" not installed");
+                device.xbmcpackage+" not installed");
              return;
        }
 
- //      if (!isScoped())
-
-  //         mcpath=data_root+ "Android/data/"+xbmcpackage+filepath;
-   //       else
-    //       mcpath="/sdcard/kodi_data/org.xbmc.kodi/files/.kodi";
 
 
 
@@ -3021,12 +3021,6 @@
           }
 
 
-
-
-
-    QElapsedTimer rtimer;
-    int nMilliseconds;
-    rtimer.start();
 
 
 
@@ -3079,11 +3073,8 @@
 
 
 
-               // logfile(cstring);
-               logfile("push remote:"+command);
 
-               nMilliseconds = rtimer.elapsed();
-               logfile("process time duration: "+ QString::number(nMilliseconds/1000)+ " seconds" );
+               logfile("push remote:"+command);
 
 
 
@@ -3972,9 +3963,17 @@
 
     {
 
-        if (!check_devices() )
-            return;
+      QString selectedDescription;
+      if (!validateDeviceSelection(selectedDescription)) {
+           return;
+      }
 
+      DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+      if (device.ostype != "0") {
+           QMessageBox::critical(this, "Unavailable", "Android devices only.");
+           return;
+      }
 
         bool oldxml = false;
 
@@ -4527,10 +4526,17 @@
     //////////////////////////////////////////////////
     void MainWindow::androidLog()
     {
-
-        if (!check_devices() )
+          QString selectedDescription;
+          if (!validateDeviceSelection(selectedDescription)) {
             return;
+          }
 
+          DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+          if (device.ostype != "0") {
+            QMessageBox::critical(this, "Unavailable", "Android devices only.");
+            return;
+          }
 
           QString xpath = "";
           QString cstring;
@@ -4551,9 +4557,9 @@
 
           {
             if (isScoped())
-                  mcpath=data_root + "kodi_data/" + xbmcpackage+"/files/.kodi";
+                  mcpath=device.data_root + "kodi_data/" + xbmcpackage+"/files/.kodi";
             else
-                  mcpath=data_root + "Android/data/" + xbmcpackage+"/files/.kodi";
+                  mcpath=device.data_root + "Android/data/" + xbmcpackage+"/files/.kodi";
 
           }
 
@@ -4584,11 +4590,11 @@
 
 
 
-        filepath=xpath;
+        device.filepath=xpath;
 
         logfile("opening kodi log");
         klogDialog klogdialog;
-        klogdialog.passdata(getadb(),data_root,filepath,xbmcpackage);
+        klogdialog.passdata(getadb(),device.data_root,device.filepath,device.xbmcpackage);
         klogdialog.setModal(true);
         klogdialog.exec();
 
@@ -4599,6 +4605,12 @@
     void MainWindow::otherLog()
     {
 
+        QString selectedDescription;
+        if (!validateDeviceSelection(selectedDescription)) {
+            return;
+        }
+
+        DeviceRecord device = queryDeviceRecord(selectedDescription);
 
        // iOS/ATV2	/private/var/mobile/Library/Preferences/kodi.log
        // Linux	$HOME/.kodi/temp/kodi.log
@@ -4608,7 +4620,7 @@
 
         logfile("opening kodi log");
         oslogDialog oslogdialog;
-        oslogdialog.ospassdata(ostype);
+        oslogdialog.ospassdata(device.ostype);
         oslogdialog.setModal(true);
         oslogdialog.exec();
 
@@ -5463,8 +5475,17 @@
     {
 
 
-        if (!check_devices() )
-            return;
+       QString selectedDescription;
+       if (!validateDeviceSelection(selectedDescription)) {
+                  return;
+       }
+
+       DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+       if (device.ostype != "0") {
+                  QMessageBox::critical(this, "Unavailable", "Android devices only.");
+                  return;
+       }
 
         QString tempfile1;
         QString tempfile2;
@@ -5488,9 +5509,9 @@
 
        {
             if (isScoped())
-              mcpath=data_root + "kodi_data/" + xbmcpackage+"/files/.kodi";
+              mcpath=device.data_root + "kodi_data/" + xbmcpackage+"/files/.kodi";
             else
-              mcpath=data_root + "Android/data/" + xbmcpackage+"/files/.kodi";
+              mcpath=device.data_root + "Android/data/" + xbmcpackage+"/files/.kodi";
 
        }
 
@@ -6405,7 +6426,7 @@
 
     ///////////////////////////////////////////////////////
 
-    bool MainWindow::check_devices()
+    bool MainWindow::xcheck_devices()
     {
 
 
@@ -6554,14 +6575,22 @@
     ///////////////////////////////////////////////////////
     void MainWindow::systeminfo()
     {
-       if (!check_devices() )
-         return;
+    QString selectedDescription;
+    if (!validateDeviceSelection(selectedDescription)) {
+                   return;
+    }
 
+    DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+    if (device.ostype != "0") {
+                   QMessageBox::critical(this, "Unavailable", "Android devices only.");
+                   return;
+    }
        QString android = QString::number(getandroid());
        QString cstring;
        QString archi;
 
-       QString device=devicename();
+       QString adevice=devicename();
        QString manufact=manufacturer();
 
        QString scoped;
@@ -6580,7 +6609,7 @@
        list.append(archi);
        list.append(android);
        list.append(scoped);
-       list.append(device);
+       list.append(adevice);
        list.append(manufact);
 
 
@@ -6588,7 +6617,7 @@
        dialog.setWindowModality(Qt::WindowModal);
        dialog.setWindowFlags(dialog.windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-       dialog.setWindowTitle(description);
+       dialog.setWindowTitle(device.description);
 
        dialog.devinfo(list);
 
@@ -6765,19 +6794,23 @@
 
     void MainWindow::on_actiondelthumb_triggered()
     {
-        if (!check_devices() )
-            return;
+            QString selectedDescription;
+            if (!validateDeviceSelection(selectedDescription)) {
+                return;
+            }
+
+            DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+            if (device.ostype != "0") {
+                QMessageBox::critical(this, "Unavailable", "Android devices only.");
+                return;
+            }
 
         QString cstring;
         QString command;
         QString mcpath;
 
-        //xbmcpackage = "org.xbmc.kodi";
-        //data_root="/sdcard/";
-       // Textures13.db
 
-
-     // return;
 
 
         cstring = getadb() + " shell ls /sdcard/xbmc_env.properties";
@@ -6791,7 +6824,7 @@
         else
 
         {
-            mcpath="/sdcard/Android/data/" + xbmcpackage+"/files/.kodi";
+            mcpath="/sdcard/Android/data/" + device.xbmcpackage+"/files/.kodi";
 
         }
 
@@ -6805,17 +6838,7 @@
         cstring = getadb() +" shell ls "+thumb;
         command=getadbOutput(cstring);
 
-/*
-        if (command.contains("No such file or directory"))
-          {
-           thumb = data_root+"kodi_data/.kodi/userdata/Thumbnails";
-           textures = data_root+"kodi_data/.kodi/userdata/Database/Textures*.db";
 
-           cstring = getadb() +" shell ls "+thumb;
-           command=getadbOutput(cstring);
-        }
-
-*/
 
        if (command.contains("No such file or directory"))
         {
@@ -6859,8 +6882,17 @@
     void MainWindow::on_actionTest_adb_connection_triggered()
     {
 
-        if (!check_devices() )
-            return;
+            QString selectedDescription;
+            if (!validateDeviceSelection(selectedDescription)) {
+              return;
+            }
+
+            DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+            if (device.ostype != "0") {
+              QMessageBox::critical(this, "Unavailable", "Android devices only.");
+              return;
+            }
 
 
         QJsonObject obj;
@@ -6877,10 +6909,10 @@
         logfile("detaching console process");
 
 
-        if (isusb)
-             logfile(daddr);
+        if (device.isusb)
+             logfile(device.daddr);
          else
-             logfile(daddr+":"+port);
+             logfile(device.daddr+":"+device.port);
 
 
 
@@ -6914,7 +6946,7 @@
 
              out  << "set PATH=%PATH%;"+adbfiles+";" << endl;
 
-             out  <<  "adb -s "+ daddr + " logcat" << endl;
+             out  <<  "adb -s "+ device.daddr + " logcat" << endl;
 
 
 
@@ -6997,13 +7029,6 @@
 
 
 
-    void MainWindow::on_actionAndroid_11_triggered()
-    {
-
-        return;
-
-    }
-
 
     ///////////////////////////////////
     void MainWindow::on_actionCreate_kodi_data_triggered()
@@ -7011,9 +7036,17 @@
 
 
     {
-        if (!check_devices() )
+        QString selectedDescription;
+        if (!validateDeviceSelection(selectedDescription)) {
            return;
+        }
 
+        DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+        if (device.ostype != "0") {
+           QMessageBox::critical(this, "Unavailable", "Android devices only.");
+           return;
+        }
 
 
 
@@ -7023,14 +7056,14 @@
         QString mcpath;
         QString kbase;
 
-        mcpath ="/sdcard/kodi_data/" + xbmcpackage;
+        mcpath ="/sdcard/kodi_data/" + device.xbmcpackage;
         kbase = "/sdcard/kodi_data/";
 
-        cstring = cstring = getadb() +  " shell ps | grep "+xbmcpackage;
+        cstring = cstring = getadb() +  " shell ps | grep "+device.xbmcpackage;
 
         command=getadbOutput(cstring);
 
-        if (command.contains(xbmcpackage))
+        if (command.contains(device.xbmcpackage))
         {
 
 
@@ -7041,7 +7074,7 @@
            {
 
 
-                    QString cstring = getadb() + " shell am force-stop "+xbmcpackage;
+                    QString cstring = getadb() + " shell am force-stop "+device.xbmcpackage;
                     QString command=getadbOutput(cstring);
                     logfile(command);
            }
@@ -7050,7 +7083,7 @@
            else {
 
 
-                    logfile(xbmcpackage+" running. Path creation failed");
+                    logfile(device.xbmcpackage+" running. Path creation failed");
                     return;
            }
 
@@ -7076,10 +7109,10 @@
 
         }
 
-        is_package(xbmcpackage);
+        is_package(device.xbmcpackage);
         if (is_packageInstalled)
         {
-        cstring = getadb()+ " shell appops set --uid "+  xbmcpackage +" MANAGE_EXTERNAL_STORAGE allow";
+        cstring = getadb()+ " shell appops set --uid "+  device.xbmcpackage +" MANAGE_EXTERNAL_STORAGE allow";
         if (!getreturncode(cstring))
           { QMessageBox::critical(this, "", "Error setting Kodi permissions");
            // return;
@@ -7140,64 +7173,6 @@
 
 
 
-
-
-
- /*
-
-    {
-
-     QString rtpath="/sdcard/";
-
-
-       QString            envpath=rtpath+"kodi_data";
-       QString            mcpath=envpath+"/.kodi/";
-
-     QString cstring;
-     QString command;
-
-
-             cstring = getadb() + " shell ls "+mcpath;
-             command=getadbOutput(cstring);
-
-
-
-           if (command.contains("No such file or directory"))
-            {
-               cstring = getadb() + " shell mkdir -p "+mcpath;
-               command=getadbOutput(cstring);
-               logfile(command);
-               QString errorp = command;
-               cstring = getadb() + " shell ls "+mcpath;
-               command=getadbOutput(cstring);
-
-               if (command.contains("No such file or directory"))
-                {
-                   QMessageBox::critical(this,"","Error creating kodi_data. See log");
-                   logfile("Data error:"+ errorp);
-                   return;
-                 }
-
-                cstring = getadb() + " shell echo xbmc.data="+envpath+" > /sdcard/xbmc_env.properties";
-                command=getadbOutput(cstring);
-                logfile("create /sdcard/xbmc_env.properties");
-                logfile(command);
-                QMessageBox::information(this,"","Created kodi_data");
-
-           }
-
-        else
-
-       {
-                   QMessageBox::critical(this,"","Android 11 Kodi data area already exists");
-                   return;
-
-        }
-
-    }
-
-
-*/
 
 
     ////////////////////////////////////////
@@ -9205,18 +9180,25 @@ void MainWindow::restoreAndroid()
 //////////////////////////////////
 
 {
-    if (!check_devices() )
-    return;
+   QString selectedDescription;
+   if (!validateDeviceSelection(selectedDescription)) {
+      return;
+   }
+
+   DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+   if (device.ostype != "0") {
+      QMessageBox::critical(this, "Unavailable", "Android devices only.");
+      return;
+   }
 
 
-
-
-is_package(xbmcpackage);
+is_package(device.xbmcpackage);
 
 if (!is_packageInstalled)
    {
 
-    QMessageBox::critical(this,"",xbmcpackage+" not installed");
+    QMessageBox::critical(this,"",device.xbmcpackage+" not installed");
     return;
     }
 
@@ -9266,11 +9248,11 @@ if(getreturncode(cstring))
 QString backup = readBackup(databasedir);
 
 
-cstring = cstring = getadb() +  " shell ps | grep "+xbmcpackage;
+cstring = cstring = getadb() +  " shell ps | grep "+device.xbmcpackage;
 
  command=getadbOutput(cstring);
 
-if (command.contains(xbmcpackage))
+if (command.contains(device.xbmcpackage))
   {
 
 
@@ -9281,7 +9263,7 @@ if (command.contains(xbmcpackage))
       {
 
 
-      QString cstring = getadb() + " shell am force-stop "+xbmcpackage;
+      QString cstring = getadb() + " shell am force-stop "+device.xbmcpackage;
       QString command=getadbOutput(cstring);
       logfile(command);
    }
@@ -9290,7 +9272,7 @@ if (command.contains(xbmcpackage))
       else {
 
 
-    logfile(xbmcpackage+" running. Restore failed");
+    logfile(device.xbmcpackage+" running. Restore failed");
     return;
 }
 
@@ -9372,10 +9354,10 @@ if(!n_data_root.startsWith("/"))
 
 
 if (isScoped()) {
-    mcpath=n_data_root + "kodi_data/" + xbmcpackage;
+    mcpath=n_data_root + "kodi_data/" + device.xbmcpackage;
     kbase = n_data_root + "kodi_data/";
 
-    cstring = getadb()+ " shell appops set --uid "+  xbmcpackage +" MANAGE_EXTERNAL_STORAGE allow";
+    cstring = getadb()+ " shell appops set --uid "+  device.xbmcpackage +" MANAGE_EXTERNAL_STORAGE allow";
     if (!getreturncode(cstring))
     { QMessageBox::critical(this, "", "Error setting Kodi permissions");
     return;
@@ -9384,16 +9366,13 @@ if (isScoped()) {
 
 
 } else {
-    mcpath=n_data_root + "Android/data/" + xbmcpackage;
+    mcpath=n_data_root + "Android/data/" + device.xbmcpackage;
     kbase = n_data_root + "Android/data/";
 }
 
 
 } // end_xbmc_env
 
-QElapsedTimer rtimer;
-int nMilliseconds;
-rtimer.start();
 
 
 
@@ -9493,10 +9472,7 @@ return;
 
 
    command=RunLongProcess(cstring,"Restore");
-    nMilliseconds = rtimer.elapsed();
-    logfile("process time duration: "+ QString::number(nMilliseconds/1000)+ " seconds" );
 
-//qDebug() << command;
 
 if (command.contains("bytes"))
 
@@ -9569,16 +9545,23 @@ void MainWindow::restoreOther()
 void MainWindow::on_mvdataButton_clicked()
 {
 
-
-    if (!check_devices() )
+    QString selectedDescription;
+    if (!validateDeviceSelection(selectedDescription)) {
            return;
+    }
+
+    DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+    if (device.ostype != "0") {
+           QMessageBox::critical(this, "Unavailable", "Android devices only.");
+           return;
+    }
 
 
 
 
 
-
-    QString cstring = getadb() + " shell ps | grep "+xbmcpackage;
+    QString cstring = getadb() + " shell ps | grep "+device.xbmcpackage;
     QString command=getadbOutput(cstring);
 
     QString destination;
@@ -9587,7 +9570,7 @@ void MainWindow::on_mvdataButton_clicked()
     QString n_data_root;
     int choice;
 
-    if (command.contains(xbmcpackage))
+    if (command.contains(device.xbmcpackage))
     {
            QMessageBox::StandardButton reply;
            reply = QMessageBox::question(this, "Stop Kodi", "Cannot move data while Kodi is running.\n Stop "+xbmcpackage+" on device?"  ,
@@ -9596,7 +9579,7 @@ void MainWindow::on_mvdataButton_clicked()
            {
 
 
-            QString cstring = getadb() + " shell am force-stop "+xbmcpackage;
+            QString cstring = getadb() + " shell am force-stop "+device.xbmcpackage;
             QString command=getadbOutput(cstring);
             logfile(command);
            }
@@ -9604,7 +9587,7 @@ void MainWindow::on_mvdataButton_clicked()
 
            else {
 
-            logfile(xbmcpackage+" running. Move data failed");
+            logfile(device.xbmcpackage+" running. Move data failed");
             return;
            }
 
@@ -9684,12 +9667,12 @@ void MainWindow::on_mvdataButton_clicked()
            if (isScoped())
            {
             kbase="/sdcard/kodi_data/";
-            source=kbase + xbmcpackage;
-            destination = n_data_root + "kodi_data/" + xbmcpackage;
+            source=kbase + device.xbmcpackage;
+            destination = n_data_root + "kodi_data/" + device.xbmcpackage;
            }
            else {
-            source="/sdcard/Android/data/" + xbmcpackage;
-            destination = n_data_root + "Android/data/" + xbmcpackage;
+            source="/sdcard/Android/data/" + device.xbmcpackage;
+            destination = n_data_root + "Android/data/" + device.xbmcpackage;
             kbase=source;
            }
     }
@@ -9698,13 +9681,13 @@ void MainWindow::on_mvdataButton_clicked()
     if (choice == 2  ) // external to sdcard
     {
            if (isScoped())
-           {  destination="/sdcard/kodi_data/" + xbmcpackage;
-            source = n_data_root + "kodi_data/" + xbmcpackage;
+           {  destination="/sdcard/kodi_data/" + device.xbmcpackage;
+            source = n_data_root + "kodi_data/" + device.xbmcpackage;
             kbase=n_data_root+"kodi_data/";
            }
            else {
-            destination="/sdcard/Android/data/" + xbmcpackage;
-            source = n_data_root + "Android/data/" + xbmcpackage;
+            destination="/sdcard/Android/data/" + device.xbmcpackage;
+            source = n_data_root + "Android/data/" + device.xbmcpackage;
             kbase=source;
            }
     }
@@ -9815,265 +9798,6 @@ void MainWindow::on_mvdataButton_clicked()
 
 }
 
-
-
-/*
-//////////////////////////////////////////////
-void MainWindow::on_mvdataButton_clicked()
-{
-
-
-    if (!check_devices() )
-        return;
-
-
-
-
-
-
-    QString cstring = getadb() + " shell ps | grep "+xbmcpackage;
-    QString command=getadbOutput(cstring);
-
-
-
-    if (command.contains(xbmcpackage))
-       {
-        QMessageBox::StandardButton reply;
-           reply = QMessageBox::question(this, "Stop Kodi", "Cannot move data while Kodi is running.\n Stop "+xbmcpackage+" on device?"  ,
-                                         QMessageBox::Yes|QMessageBox::No);
-           if (reply == QMessageBox::Yes)
-           {
-
-
-           QString cstring = getadb() + " shell am force-stop "+xbmcpackage;
-           QString command=getadbOutput(cstring);
-           logfile(command);
-        }
-
-
-           else {
-
-         logfile(xbmcpackage+" running. Move data failed");
-         return;
-     }
-
-
-        }
-
-
-
-   cstring = getadb()+ " shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
-
-    QString s = getadbOutput(cstring);
-
-
-
-    QStringList list = s.split('\n');
-
-    for (int i = 0; i < list.size(); i++) {
-
-     list[i].remove('\r');
-     list[i].remove('\n');
-
-     if (list[i] == "Android" ||
-          list[i] == "Permission denied" ||
-          list[i] == "/storage/emulated" ||
-          list[i] == "/storage" ||
-          list[i] == "/storage/self" ||
-          list[i] == NULL)          {
-        list.removeAt(i);
-        i--;
-      }
-    }
-
-
-     dataDialog dialog;
-
-    dialog.setadb_data(list);
-
-     dialog.setModal(true);
-
-    if(dialog.exec() == QDialog::Accepted)
-    {
-
-        external_location = dialog.externalLocation();
-
-
-        int x = dialog.returnval2();
-
-
-
-
-        move_kodi_data(dialog.externalLocation(), x);
-    }
-
-
-
-}
-
-
-
-
-///////////////////////////////////////////////////////////////////////
-void MainWindow::move_kodi_data(QString n_data_root, int choice)
-{
-
-
-
-    QString cstring;
-    QString command;
-    QString destination;
-    QString source;
-    QString kbase;
-
-
-
-
-    if(!n_data_root.startsWith("/"))
-          n_data_root.prepend("/");
-
-       if(!n_data_root.endsWith("/"))
-          n_data_root.append("/") ;
-
-
-
-
-
-
-if (choice ==1  )  // sdcard to external
-{  
-    if (isScoped())
-    {
-      kbase="/sdcard/kodi_data/";
-      source=kbase + xbmcpackage;
-      destination = n_data_root + "kodi_data/" + xbmcpackage;
-    }
-    else {
-        source="/sdcard/Android/data/" + xbmcpackage;
-        destination = n_data_root + "Android/data/" + xbmcpackage;
-        kbase=source;
-    }
-}
-
-
-if (choice == 2  ) // external to sdcard
-{
-    if (isScoped())
-    {  destination="/sdcard/kodi_data/" + xbmcpackage;
-       source = n_data_root + "kodi_data/" + xbmcpackage;
-       kbase=n_data_root+"kodi_data/";
-    }
-    else {
-        destination="/sdcard/Android/data/" + xbmcpackage;
-        source = n_data_root + "Android/data/" + xbmcpackage;
-        kbase=source;
-    }
-}
-
-
-
-
-    cstring = getadb() +" shell ls "+source+"/files/.kodi";
-
-    if (!getreturncode(cstring))
-     {
-       QMessageBox::critical(this,"","Kodi's files not found at "+source);
-       return;
-    }
-
-
-  cstring = getadb() +" shell ls "+destination+"/files/.kodi";
-
-
-  if (getreturncode(cstring))
-   {
-
-      QMessageBox::StandardButton reply;
-       reply = QMessageBox::question(this, "", "Kodi data already exists. Overwrite?",
-                                     QMessageBox::Yes|QMessageBox::No);
-       if (reply  == QMessageBox::No)
-       {
-           return;
-       }
-
-    else {
-
-           cstring=getadb() +" shell rm -r "+destination;
-           command=getreturncode(cstring);
-          logfile("Erasing: "+cstring);
-
-
-       }
-
-  }
-
-
-  cstring = getadb()+ " shell mkdir -p "+destination+"/files";
-  command=getreturncode(cstring);
-
-
-
-  cstring = getadb() +" shell cp -r "+source+"/files/.kodi " + destination +"/files";
-  logfile("Kodi file move:"+cstring);
-  command=RunLongProcess(cstring,"Copying data to "+destination);
-
-     cstring = getadb() +" shell test -e "+destination+"/files/.kodi";
-
-     if (!getreturncode(cstring)) {
-       QMessageBox::critical(this, "", "File copy failed. See log.");
-       return;
-     }
-
-
-     cstring = getadb() +" shell test -e /sdcard/xbmc_env.properties";
-     if (getreturncode(cstring)) {
-         getreturncode(getadb()+" shell rm /sdcard/xbmc_env.properties");
-     }
-
-
-
-
-
-
-    cstring = getadb() + " shell echo xbmc.data="+destination+"/files"+ " > /sdcard/xbmc_env.properties";
-
-     if (!cstring.contains("/sdcard/Android/data/org.xbmc.kodi"))
-     {
-         if(!getreturncode(cstring))
-            logfile("ERROR: "+command);
-
-
-     }
-
-
-
-
-
-
-     QMessageBox::StandardButton reply2;
-      reply2 = QMessageBox::question(this, "", "Erase "+kbase+"?",
-                                    QMessageBox::Yes|QMessageBox::No);
-      if (reply2  == QMessageBox::No)
-      {
-         QMessageBox::information(this,"","Data copy complete");
-         return;
-      }
-
-
-
- //qDebug() << "deleting " << kbase;
- cstring = getadb() +" shell rm -r "+kbase;
-
- command=RunLongProcess(cstring,"Erasing "+kbase);
- logfile(
-     "Erasing: " + cstring);
-
-
-QMessageBox::information(this,"","Data move complete");
-
-
-}
-*/
 
 //////////////////////////////////////////
 
@@ -10236,21 +9960,29 @@ void MainWindow::on_actionConnect_WSA_triggered()
 void MainWindow::on_actionSet_Kodi_permissions_triggered()
 {
 
+ QString selectedDescription;
+ if (!validateDeviceSelection(selectedDescription)) {
+            return;
+ }
+
+ DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+ if (device.ostype != "0") {
+            QMessageBox::critical(this, "Unavailable", "Android devices only.");
+            return;
+ }
+
+
 
  QString flag;
 
  QString cstring;
 
- if (!check_devices() )
-            return;
-
-
-
 
  setpDialog dialog(this);
  dialog.setWindowModality(Qt::WindowModal);
 
- dialog.setpname(xbmcpackage);
+ dialog.setpname(device.xbmcpackage);
 
 
 
@@ -10337,11 +10069,17 @@ void MainWindow::on_actionGet_UID_from_APK_file_triggered()
 void MainWindow::on_actionSend_text_triggered()
 {
 
-
- if (!check_devices() )
+ QString selectedDescription;
+ if (!validateDeviceSelection(selectedDescription)) {
             return;
+ }
 
+ DeviceRecord device = queryDeviceRecord(selectedDescription);
 
+ if (device.ostype != "0") {
+            QMessageBox::critical(this, "Unavailable", "Android devices only.");
+            return;
+ }
  QString command;
  QString cstring;
 
@@ -10467,8 +10205,17 @@ adb shell am force-stop com.oculus.xrstreamingclient
 
 */
 
- if (!check_devices() )
+ QString selectedDescription;
+ if (!validateDeviceSelection(selectedDescription)) {
             return;
+ }
+
+ DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+ if (device.ostype != "0") {
+            QMessageBox::critical(this, "Unavailable", "Android devices only.");
+            return;
+ }
 
  QString cstring;
  QString command;
@@ -10510,18 +10257,9 @@ adb shell am force-stop com.oculus.xrstreamingclient
 
 
 
- //  dialog.setdownloaddir(getdownloadpath());
-
- //    dialog.setversionLabel(version);
-
- //   qDebug() << android;
-
  oculusDialog dialog(this);
  dialog.setWindowModality(Qt::WindowModal);
-// dialog.setFixedSize(450,300);
 
-
- //enteredText=dialog.getEnteredText();
 
  cstring = getadb() + " shell dumpsys CompanionService | grep Battery";
  QString temp=getadbOutput(cstring);
@@ -11432,11 +11170,17 @@ void MainWindow::on_test_clicked()
  QString command;
  QString mcpath;
 
-
-
- if (!check_devices() )
+ QString selectedDescription;
+ if (!validateDeviceSelection(selectedDescription)) {
            return;
+ }
 
+ DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+ if (device.ostype != "0") {
+           QMessageBox::critical(this, "Unavailable", "Android devices only.");
+           return;
+ }
  cstring = getadb() + " shell ls /sdcard/xbmc_env.properties";
  if(getreturncode(cstring))
  {  cstring = getadb() + " shell cat /sdcard/xbmc_env.properties";

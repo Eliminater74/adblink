@@ -313,7 +313,7 @@ private slots:
 
    int getmsgboxtype();
 
-   bool check_devices();
+   bool xcheck_devices();
 
   QString getdownloadpath();
 
@@ -335,10 +335,6 @@ private slots:
   void on_actionTest_adb_connection_triggered();
 
   void on_actionPush_remote_triggered();
-
-
-  void on_actionAndroid_11_triggered();
-
 
 
   void on_actionCreate_kodi_data_triggered();
