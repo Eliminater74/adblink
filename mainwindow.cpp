@@ -2441,7 +2441,7 @@
         cstring = adb + " -s " + daddr + " install -r " + '"'+ filename+'"';
 
 
-        command=RunLongProcess(cstring,"Install APK");
+        command=RunLongProcess(cstring,"installing apk(s)");
         logfile(cstring);
         logfile(command);
 
@@ -2474,6 +2474,13 @@
 
 
 
+        DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+
+        if (device.ostype != "0") {
+            QMessageBox::critical(this, "Unavailable", "Android devices only.");
+            return;
+        }
 
 
 
@@ -4623,11 +4630,15 @@
 
     {
 
-        isConnected=check_Connection();
+        QString selectedDescription;
+        if (!validateDeviceSelection(selectedDescription)) {
+            return;
+        }
 
-        if (!isConnected)
-        {
-            QMessageBox::critical(this,"",devstr2);
+        DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+        if (device.ostype != "0") {
+            QMessageBox::critical(this, "Unavailable", "Android devices only.");
             return;
         }
 
@@ -10092,41 +10103,22 @@ QString MainWindow::checkslash(QString qpath)
     return qpath;
 }
 
-/*
-void MainWindow::on_actionChangeSplash_triggered()
-{
 
-
-     getRecord(ui->deviceBox->currentText());
-
-
-     if  (ostype != "0")
-            splashButton_other();
-     else
-            if (check_devices() )
-            {
-            splashButton_android();
-            }
-
-
-
-
-}
-*/
-
-// void MainWindow::on_editXML_clicked()
 void MainWindow::on_startapp_clicked()
 
 {
 
-    isConnected=check_Connection();
-
-    if (!isConnected)
-    {
-     QMessageBox::critical(this,"",devstr2);
+    QString selectedDescription;
+    if (!validateDeviceSelection(selectedDescription)) {
      return;
     }
 
+    DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+    if (device.ostype != "0") {
+     QMessageBox::critical(this, "Unavailable", "Android devices only.");
+     return;
+    }
 
 
     bool startstop;
@@ -10503,7 +10495,7 @@ adb shell am force-stop com.oculus.xrstreamingclient
  int ratecap;
  int chromatic;
  int exper;
- int link;
+ // int link;
 
  QString customCaptureWidth;
  QString customCaptureHeight;
@@ -11487,49 +11479,7 @@ void MainWindow::on_actionEdit_XML_triggered()
 
 void MainWindow::on_actionScreen_Capture_triggered()
 {
- QString selectedDescription;
- if (!validateDeviceSelection(selectedDescription)) {
-           return;
- }
 
- DeviceRecord device = queryDeviceRecord(selectedDescription);
- QString port = device.port.isEmpty() ? "5555" : device.port;
- QString daddr = device.daddr + ":" + port;
-
- QDateTime dateTime = QDateTime::currentDateTime();
- QString dtstr = dateTime.toString("yyyyMMdd_HHmmss");
- dtstr = dtstr + ".png";
-
- QString cstring = adb + " -s " + daddr + " shell screencap -p " + "/data/local/tmp/"+dtstr;
- logfile(cstring);
-
- QString command = getadbOutput(cstring);
- if (!command.isEmpty()) {
-           logfile(command);
-           QMessageBox::critical(this, "", "Screenshot failed: " + command);
-           return;
- }
-
- cstring = getadb() + " pull "+ "/data/local/tmp/"+dtstr + " " + pulldir;
- command = getadbOutput(cstring);
- logfile(cstring);
- logfile(command);
-
- // Check if the pulled file exists
- QString localFilePath = pulldir + "/" + dtstr;
- QFileInfo fileInfo(localFilePath);
- if (!fileInfo.exists()) {
-           logfile("Error: Pulled file does not exist at " + localFilePath);
-           QMessageBox::critical(this, "", "Failed to pull screenshot: File not found at " + localFilePath);
-           return;
- }
-
- cstring = getadb() + " shell rm " + "/data/local/tmp/"+dtstr;
- command = getadbOutput(cstring);
- logfile(cstring);
- logfile(command);
-
- QMessageBox::information(this, "", "Screenshot " + dtstr + " copied to " + pulldir);
 }
 
 //////////////////////////
@@ -11819,6 +11769,71 @@ void MainWindow::on_newRecord_clicked()
 void MainWindow::on_editRecord_clicked()
 {
       dataentry(false);
+
+
+}
+
+void MainWindow::on_screencap2_clicked()
+{
+
+      screenCap();
+}
+
+void MainWindow::on_screencap1_clicked()
+{
+
+      screenCap();
+
+}
+
+
+void MainWindow::screenCap()
+{
+
+
+      QString selectedDescription;
+      if (!validateDeviceSelection(selectedDescription)) {
+               return;
+      }
+
+      DeviceRecord device = queryDeviceRecord(selectedDescription);
+      QString port = device.port.isEmpty() ? "5555" : device.port;
+      QString daddr = device.daddr + ":" + port;
+
+      QDateTime dateTime = QDateTime::currentDateTime();
+      QString dtstr = dateTime.toString("yyyyMMdd_HHmmss");
+      dtstr = dtstr + ".png";
+
+      QString cstring = adb + " -s " + daddr + " shell screencap -p " + "/data/local/tmp/"+dtstr;
+      logfile(cstring);
+
+      QString command = getadbOutput(cstring);
+      if (!command.isEmpty()) {
+               logfile(command);
+               QMessageBox::critical(this, "", "Screenshot failed: " + command);
+               return;
+      }
+
+      cstring = getadb() + " pull "+ "/data/local/tmp/"+dtstr + " " + pulldir;
+      command = getadbOutput(cstring);
+      logfile(cstring);
+      logfile(command);
+
+      // Check if the pulled file exists
+      QString localFilePath = pulldir + "/" + dtstr;
+      QFileInfo fileInfo(localFilePath);
+      if (!fileInfo.exists()) {
+               logfile("Error: Pulled file does not exist at " + localFilePath);
+               QMessageBox::critical(this, "", "Failed to pull screenshot: File not found at " + localFilePath);
+               return;
+      }
+
+      cstring = getadb() + " shell rm " + "/data/local/tmp/"+dtstr;
+      command = getadbOutput(cstring);
+      logfile(cstring);
+      logfile(command);
+
+      // QMessageBox::information(this, "", "Xcreenshot " + dtstr + " copied to " + pulldir);
 
 
 }

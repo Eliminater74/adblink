@@ -69,6 +69,8 @@ private slots:
     void on_wsa_clicked(bool checked);
     void on_scoped_clicked(bool checked);
 
+    void on_ostypeBox_activated(int index);
+
 private:
     Ui::preferencesDialog *ui;
 };

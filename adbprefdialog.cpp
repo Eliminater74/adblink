@@ -26,6 +26,11 @@ adbprefDialog::adbprefDialog(QWidget *parent) :
     ui(new Ui::adbprefDialog)
 {
     ui->setupUi(this);
+
+    this->setFixedHeight(360);
+    this->setFixedWidth(550);
+
+
 }
 
 adbprefDialog::~adbprefDialog()

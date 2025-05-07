@@ -1381,14 +1381,12 @@
     <string>Edit XML</string>
    </property>
   </action>
-  <action name="actionScreen_Capture">
-   <property name="text">
-    <string>Screen Capture</string>
-   </property>
-  </action>
   <action name="actionSwitch_View">
    <property name="text">
     <string>Switch View</string>
+   </property>
+   <property name="toolTip">
+    <string>Enable/Disable Kodi features</string>
    </property>
   </action>
  </widget>

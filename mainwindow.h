@@ -241,6 +241,9 @@ private slots:
 
   void  otherRemote();
 
+   void  screenCap();
+
+
    void on_delRecord_clicked();
 
 
@@ -396,6 +399,10 @@ private slots:
 
   void on_actionSwitch_View_triggered();
 
+
+  void on_screencap1_clicked();
+
+  void on_screencap2_clicked();
 
   private:
     Ui::MainWindow *ui;

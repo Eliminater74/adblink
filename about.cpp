@@ -18,6 +18,8 @@ Dialog2::Dialog2(QWidget *parent) :
 
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
+    this->setFixedHeight(365);
+    this->setFixedWidth(275);
 
     ui->betaLabel->setVisible(false);
 

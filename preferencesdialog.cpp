@@ -49,7 +49,15 @@ preferencesDialog::preferencesDialog(QWidget *parent, bool showkodi) :
     ui->setupUi(this);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-    // Set visibility of Kodi-related UI elements based on showkodi
+       this->setFixedHeight(425);
+       this->setFixedWidth(540);
+
+    if(!showkodi)
+    this->setFixedWidth(350);
+
+
+
+
     ui->ostypeBox->setVisible(showkodi);
     ui->filepath->setVisible(showkodi);
     ui->filepathButton->setVisible(showkodi);
@@ -558,3 +566,9 @@ void preferencesDialog::on_scoped_clicked(bool checked)
         ui->data_root->setText("/sdcard/");
     }
 }
+
+void preferencesDialog::on_ostypeBox_activated(int index)
+{
+
+}
+
