@@ -631,9 +631,6 @@
 */
 
 
-       // ui->listRunningJobs->setStyleSheet("QListWidget { background: transparent;} QListWidget::item { color: black; }");
-      //  ui->listRunningJobs->setSelectionMode(QAbstractItemView::NoSelection);
-      //  ui->listRunningJobs->setFocusPolicy(Qt::NoFocus);
 
         loadDeviceTable();
         do_versioncheck();
