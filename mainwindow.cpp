@@ -30,7 +30,7 @@
     #include "getadbdata.h"
     #include "logfile.h"
     #include "setpdialog.h"
-    #include "config.h"
+//    #include "config.h"
     #include "adbutils.h"
 
     #ifdef __WIN32__
@@ -1280,7 +1280,7 @@
      void MainWindow::kill_server()
     {
 
-     QString cstring = adb + " kill-server";
+     QString cstring = getadbpath() + " kill-server";
      QString command=getadbOutput(cstring);
      logfile("server stopped");
      serverRunning = false;
@@ -1294,14 +1294,14 @@
 
 
 
-        QString cstring = adb + " kill-server";
+        QString cstring = getadbpath() + " kill-server";
         QString command=getadbOutput(cstring);
 
       //   logfile("server test");
       //   logfile(command);
       //   logfile(cstring);
 
-           cstring = adb + " start-server";
+           cstring = getadbpath() + " start-server";
           command=getadbOutput(cstring);
 
        //   logfile("server test");
@@ -2439,7 +2439,7 @@
 
         logfile("Installing "+filename);
 
-        cstring = adb + " -s " + daddr + " install -r " + '"'+ filename+'"';
+        cstring = getadbpath() + " -s " + daddr + " install -r " + '"'+ filename+'"';
 
 
         command=RunLongProcess(cstring,"installing apk(s)");
@@ -2510,7 +2510,7 @@
 
 
 
-          //    adb install --bypass-low-target-sdk-block someapp.apk
+          //    getadbpath() install --bypass-low-target-sdk-block someapp.apk
 
               if (installer)
               {
@@ -2708,7 +2708,7 @@
                               return;
                             }
 
-                            cstring = adb + " connect " + daddr + ":" + port;
+                            cstring = getadbpath() + " connect " + daddr + ":" + port;
                             logfile(cstring);
                             command = connectadb(cstring);
 
@@ -2795,7 +2795,7 @@
 
 
                       QString udaddr = daddr + ":" + port;
-                      cstring = adb + " connect " + udaddr;
+                      cstring = getadbpath() + " connect " + udaddr;
                       command = connectadb(cstring);
 
                       logfile(cstring);
@@ -2838,7 +2838,7 @@
                             cstring = getadb() + " shell ls /sdcard/xbmc_env.properties";
                             }
                               else {
-                            cstring = adb + " -s " + ui->adhocip->text() + " shell ls /sdcard/xbmc_env.properties";
+                            cstring = getadbpath() + " -s " + ui->adhocip->text() + " shell ls /sdcard/xbmc_env.properties";
 
                               }
 
@@ -2885,7 +2885,7 @@
      if (!ui->adhocip->text().isEmpty())
      {
            daddr = ui->adhocip->text();
-           QString cstring = adb + " disconnect " + daddr;
+           QString cstring = getadbpath() + " disconnect " + daddr;
            QString command = getadbOutput(cstring);
            logfile("disconnect: " + daddr);
            logfile(command);
@@ -2931,7 +2931,7 @@
         }
 
 
-             QString cstring = adb + " disconnect "+daddr+":"+port ;
+             QString cstring = getadbpath() + " disconnect "+daddr+":"+port ;
              QString command=getadbOutput(cstring);
              logfile (command);
              logfile("disconnect: "+daddr);
@@ -3336,7 +3336,7 @@
      }
 
 
-             QString cstring = adb + " kill-server";
+             QString cstring = getadbpath() + " kill-server";
              QString command=getadbOutput(cstring);
              ui->server_running->setText(adbstr2);
              loadDeviceTable();
@@ -3374,7 +3374,7 @@
       QStringList mstringlist;
       QStringList dstringlist;
 
-      cstring = adb + " devices";
+      cstring = getadbpath() + " devices";
       command = getadbOutput(cstring);
       QThread::sleep(2);
 
@@ -3504,8 +3504,8 @@
       QStringList mstringlist;
       QStringList dstringlist;
 
-      // Fetch connected devices using adb
-      cstring = adb + " devices";
+      // Fetch connected devices using getadbpath()
+      cstring = getadbpath() + " devices";
       command = getadbOutput(cstring);
       QThread::sleep(2);
 
@@ -3603,7 +3603,7 @@
              QString olddescription;
 
              // Fetch connected devices using adb
-             cstring = adb + " devices";
+             cstring = getadbpath() + " devices";
              command = getadbOutput(cstring);
              QThread::sleep(2);
 
@@ -5259,28 +5259,7 @@
 
          busybox_permissions();
 
-/*
-         // Get selected description from deviceTable
-         QString selectedDescription;
-         int selectedRow = ui->deviceTable->currentRow();
-         if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
-            selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
-         } else {
-            QMessageBox::critical(this, "", "No device selected in table");
-            return;
-         }
 
-         // Check if the selected device is connected
-         if (ui->deviceTable->item(selectedRow, 2) &&
-             ui->deviceTable->item(selectedRow, 2)->text() != "Connected" &&
-             ui->deviceTable->item(selectedRow, 2)->text() != "USB") {
-            QMessageBox::critical(this, "", "Selected device is not connected");
-            return;
-         }
-
-
-         qDebug() << "ccccccccccc";
-*/
         QString selectedDescription;
         int selectedRow = ui->deviceTable->currentRow();
 
@@ -5293,11 +5272,8 @@
 
 
 
-
-         //fmdaddr = getDevice(selectedDescription);
-
          fmdaddr = ui->deviceTable->item(selectedRow, 1)->text();
-         ostypefm = getOSType(selectedDescription);
+ //        ostypefm = getOSType(selectedDescription);
 
          if (device.ostype != "0") {
             QMessageBox::critical(nullptr, "Error", "Android devices only");
@@ -5329,11 +5305,11 @@
          if (!ui->adhocip->text().isEmpty())
          {
             fmdialog->setData(ui->adhocip->text());
-            fmdialog->setADB(adb);
+            fmdialog->setADB(getadbpath());
          }
          else
          {
-            fmdialog->setADB(adb + " -s " + fmdaddr);
+            fmdialog->setADB(getadbpath() + " -s " + fmdaddr);
             fmdialog->setData(selectedDescription);
          }
 
@@ -5374,8 +5350,6 @@
 
          fmdialog->show();
     }
-
-
 
 
 
@@ -6660,12 +6634,12 @@
         DeviceRecord device = queryDeviceRecord(selectedDescription);
 
       // sleep
-      //  adb shell settings put secure sleep_timeout 123456789
+      //  getadbpath() shell settings put secure sleep_timeout 123456789
       // screensaver
       //  adb shell settings put system screen_off_timeout 123456789
 
 
-        // adb shell settings get secure sleep_timeout
+        // getadbpath() shell settings get secure sleep_timeout
        //   adb shell settings get system screen_off_timeout
 
 
@@ -6947,7 +6921,7 @@
 
              out  << "set PATH=%PATH%;"+adbfiles+";" << endl;
 
-             out  <<  "adb -s "+ device.daddr + " logcat" << endl;
+             out  <<  "getadbpath() -s "+ device.daddr + " logcat" << endl;
 
 
 
@@ -7407,13 +7381,14 @@
                  if (ui->adhocip->text().isEmpty())
                  {
 
-                    cstring = adb + " -s " + daddr + " shell ";
+                    cstring = getadbpath() + " -s " + daddr + " shell ";
                     out << cstring << endl;
 
                  }
                  else
                  {
-                    out << adb + " -s " + ui->adhocip->text() + " shell " << endl;
+                    out << getadbpath() + " -s " + ui->adhocip->text() + " shell " << endl;
+
                  }
 
 
@@ -7741,7 +7716,7 @@
                          qDebug() << "port:" << port;
 
 
-                         cstring = adb + " connect "+daddr+":"+port;
+                         cstring = getadbpath() + " connect "+daddr+":"+port;
                          logfile(cstring);
                          command=connectadb(cstring);
 
@@ -7769,7 +7744,7 @@
         daddr="127.0.0.1";
         port= "58526";
 
-        cstring = adb + " connect "+daddr+":"+port;
+        cstring = getadbpath() + " connect "+daddr+":"+port;
         command=getadbOutput(cstring);
 
 
@@ -8021,7 +7996,7 @@ void MainWindow::backupAndroid() {
 
         cstring = getadb() + " shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
 
-        // cstring = adb + device.daddr + editport + " shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
+        // cstring = getadbpath() + device.daddr + editport + " shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
 
         QString s = getadbOutput(cstring);
         QStringList list = s.split('\n');
@@ -10112,16 +10087,16 @@ void MainWindow::on_actionOculus_VR_triggered()
  /*
 
 
-adb shell 'dumpsys OVRRemoteService | grep Battery' // controllers
+getadbpath() shell 'dumpsys OVRRemoteService | grep Battery' // controllers
 adb shell 'dumpsys CompanionService | grep Battery' // headset
 
 
-adb shell setprop debug.oculus.guardian_pause 0  // disable
-adb shell setprop debug.oculus.guardian_pause 1 //  enable
+getadbpath() shell setprop debug.oculus.guardian_pause 0  // disable
+getadbpath() shell setprop debug.oculus.guardian_pause 1 //  enable
 
-adb shell settings put system screen_off_timeout 7200000
+getadbpath() shell settings put system screen_off_timeout 7200000
 // default 86400000
-adb shell svc power stayon true
+getadbpath() shell svc power stayon true
 
  // svc power stayon [true|false|usb|ac|wireless]
 
@@ -10133,12 +10108,12 @@ shell
 am broadcast -a com.oculus.vrpowermanager.automation_disable
 
 
-adb shell setprop debug.oculus.refreshrate NNN
+getadbpath() shell setprop debug.oculus.refreshrate NNN
 
 Quest 2 supports 60, 72, 80, 90 and 120)
 
-adb shell setprop debug.oculus.gpuLevel 2
-adb shell setprop debug.oculus.cpuLevel 2
+getadbpath() shell setprop debug.oculus.gpuLevel 2
+getadbpath() shell setprop debug.oculus.cpuLevel 2
 
 
 
@@ -10147,16 +10122,16 @@ adb shell setprop debug.oculus.cpuLevel 2
 
 command to turn on full rate capture for Quest 2:
 
-adb shell setprop debug.oculus.fullRateCapture 1
+getadbpath() shell setprop debug.oculus.fullRateCapture 1
 
 
 
 
 // Disable dynamic FFR
-adb shell setprop debug.oculus.foveation.dynamic 0
+getadbpath() shell setprop debug.oculus.foveation.dynamic 0
 
 // Set FFR Level between 0 - 4 (Higher = Better Performance)
-adb shell setprop debug.oculus.foveation.level 4
+getadbpath() shell setprop debug.oculus.foveation.level 4
 
 
 
@@ -10164,8 +10139,8 @@ adb shell setprop debug.oculus.foveation.level 4
 720 (1280×720 pixels
 1080 (1920×1080 pixels)
 
-adb shell setprop debug.oculus.capture.width [value]
-adb shell setprop debug.oculus.capture.height [value]
+getadbpath() shell setprop debug.oculus.capture.width [value]
+getadbpath() shell setprop debug.oculus.capture.height [value]
 
 
 
@@ -10173,34 +10148,34 @@ adb shell setprop debug.oculus.capture.height [value]
 command to disable chromatic aberration (correction):
 
 //0 for disabling, 1 for enabling (default)
-adb shell setprop debug.oculus.forceChroma 0
+getadbpath() shell setprop debug.oculus.forceChroma 0
 
-adb shell setprop debug.oculus.fullRateCapture 1
+getadbpath() shell setprop debug.oculus.fullRateCapture 1
 
-adb shell setprop debug.oculus.eyeFovDown 49
-adb shell setprop debug.oculus.eyeFovUp 48
-adb shell setprop debug.oculus.eyeFovOutward 50
-adb shell setprop debug.oculus.eyeFovInward 50
+getadbpath() shell setprop debug.oculus.eyeFovDown 49
+getadbpath() shell setprop debug.oculus.eyeFovUp 48
+getadbpath() shell setprop debug.oculus.eyeFovOutward 50
+getadbpath() shell setprop debug.oculus.eyeFovInward 50
 
 
-How to enable Link through ADB
+How to enable Link through getadbpath()
 
-adb shell am start "xrstreamingclient://?launch_location=ODH&alink=true&adaptiveSrcLatencyMs=100&maxAdaptiveSrcLatencyMs=400&posePerSecond=500&sessionId=ODH"
+getadbpath() shell am start "xrstreamingclient://?launch_location=ODH&alink=true&adaptiveSrcLatencyMs=100&maxAdaptiveSrcLatencyMs=400&posePerSecond=500&sessionId=ODH"
 How to disable Link through ADB
 
-adb shell am force-stop com.oculus.xrstreamingclient
+getadbpath() shell am force-stop com.oculus.xrstreamingclient
 How to enable Air Link through ADB
 
-adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enable_airlink 1
+getadbpath() shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enable_airlink 1
 How to disable Air Link through ADB
 
-adb shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enable_airlink 0
+getadbpath() shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enable_airlink 0
 
 Start Link (button 1):
-adb shell am start -S com.oculus.xrstreamingclient/.MainActivity
+getadbpath() shell am start -S com.oculus.xrstreamingclient/.MainActivity
 
 Stop Link (button 2):
-adb shell am force-stop com.oculus.xrstreamingclient
+getadbpath() shell am force-stop com.oculus.xrstreamingclient
 
 
 
@@ -11552,7 +11527,7 @@ void MainWindow::screenCap()
       QString dtstr = dateTime.toString("yyyyMMdd_HHmmss");
       dtstr = dtstr + ".png";
 
-      QString cstring = adb + " -s " + daddr + " shell screencap -p " + "/data/local/tmp/"+dtstr;
+      QString cstring = getadbpath() + " -s " + daddr + " shell screencap -p " + "/data/local/tmp/"+dtstr;
       logfile(cstring);
 
       QString command = getadbOutput(cstring);
