@@ -178,6 +178,8 @@
         ui(new Ui::MainWindow)
     {
 
+       connect(qApp, &QCoreApplication::aboutToQuit, this, &MainWindow::onApplicationQuit);
+
 //ro.product.product.device
 //ro.product.manufacturer
 // ro.product.brand
@@ -10759,37 +10761,6 @@ void MainWindow::on_descend_clicked()
  }
 }
 
-////////////////////////////////
-
-void MainWindow::loadDeviceTable()
-{
- QString sqlstatement;
- QSqlQuery query;
-
- ui->deviceTable->clear();
- ui->deviceTable->setColumnCount(3); // Set column count to 3
- ui->deviceTable->setHorizontalHeaderLabels(QStringList() << "Device" << "IP" << "Status"); // Label middle column as IP
- ui->deviceTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-
- sqlstatement = "SELECT description, daddr FROM device"; // Select description and daddr
- query.exec(sqlstatement);
- int row = 0;
- ui->deviceTable->setRowCount(0);
- while (query.next()) {
-           ui->deviceTable->insertRow(row);
-           ui->deviceTable->setItem(row, 0, new QTableWidgetItem(query.value(0).toString())); // Device (description)
-           ui->deviceTable->setItem(row, 1, new QTableWidgetItem(query.value(1).toString())); // IP (daddr)
-           ui->deviceTable->setItem(row, 2, new QTableWidgetItem("Disconnected")); // Status
-           row++;
- }
-
- ui->dsort->setChecked(true);
- ui->deviceTable->sortItems(0, Qt::AscendingOrder);
-
-
-}
-
-
 //////////////////////////////////
 
 QString MainWindow::getadb()
@@ -11068,10 +11039,66 @@ void MainWindow::screenCap()
 
       cstring = getadb() + " shell rm " + "/data/local/tmp/"+dtstr;
       command = getadbOutput(cstring);
+
       logfile(cstring);
       logfile(command);
 
       QMessageBox::information(this, "", "Screenshot " + dtstr + " copied to " + pulldir);
 
 
+}
+
+
+void MainWindow::loadDeviceTable()
+{
+      QString sqlstatement;
+      QSqlQuery query;
+
+      ui->deviceTable->clear();
+      ui->deviceTable->setColumnCount(3); // Set column count to 3
+      ui->deviceTable->setHorizontalHeaderLabels(QStringList() << "Device" << "IP" << "Status"); // Label middle column as IP
+      ui->deviceTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+      sqlstatement = "SELECT description, daddr, ostype FROM device";
+      query.exec(sqlstatement);
+      int row = 0;
+      ui->deviceTable->setRowCount(0);
+      while (query.next()) {
+               ui->deviceTable->insertRow(row);
+               ui->deviceTable->setItem(row, 0, new QTableWidgetItem(query.value(0).toString())); // Device (description)
+               // Set IP to "N/A" if daddr is empty
+               QString ip = query.value(1).toString().isEmpty() ? "N/A" : query.value(1).toString();
+               ui->deviceTable->setItem(row, 1, new QTableWidgetItem(ip)); // IP (daddr)
+               // Set Status based on ostype
+               QString status = (query.value(2).toString() != "0") ? "Local" : "Disconnected";
+               ui->deviceTable->setItem(row, 2, new QTableWidgetItem(status)); // Status
+               row++;
+      }
+
+      ui->dsort->setChecked(true);
+      ui->deviceTable->sortItems(0, Qt::AscendingOrder);
+}
+void MainWindow::onApplicationQuit() {
+      QJsonObject obj;
+      QJsonDocument doc(obj);
+      QFile file(databasedir + "adblink.json");
+      if (!file.open(QIODevice::ReadOnly)) {
+               qWarning() << "Cannot open file for reading:" << file.fileName();
+               return;
+      }
+      doc = QJsonDocument::fromJson(file.readAll());
+      file.close();
+      if (doc.isNull()) {
+               qWarning() << "Invalid JSON format in" << file.fileName();
+               return;
+      }
+      obj = doc.object();
+      obj["sortpref"] = ui->dsort->isChecked() ? false : true; // Set false if dsort is checked, true otherwise
+      doc.setObject(obj);
+      if (!file.open(QIODevice::WriteOnly)) {
+               qWarning() << "Cannot open file for writing:" << file.fileName();
+               return;
+      }
+      file.write(doc.toJson());
+      file.close();
 }
