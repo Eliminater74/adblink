@@ -1,11 +1,11 @@
 #include "usbfiledialog.h"
-#include "pushfiledialog.h"
+// #include "pushfiledialog.h"
 #include "ui_usbfiledialog.h"
 #include "editordialog.h"
 #include "dragdialog.h"
 #include "logfile.h"
 #include "getadbdata.h"
-
+#include "adbutils.h"
 #include <QProcess>
 #include <QFile>
 #include <QString>

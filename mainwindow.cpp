@@ -5033,7 +5033,6 @@
          fmdialog->setPath2("/sdcard/");
          fmdialog->setdisableroot(disableroot);
          fmdialog->setuProgram(kp);
-      //   fmdialog->setoldfm(oldfm);
          fmdialog->setPulldir(fmpullpath);
          fmdialog->setAdbdir(apphome);
 
