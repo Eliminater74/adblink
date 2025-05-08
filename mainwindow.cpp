@@ -9,9 +9,7 @@
     #include "editordialog.h"
     #include "keyboarddialog.h"
     #include "usbfiledialog.h"
- //   #include "downloaddialog.h"
     #include "listfiledialog.h"
-  //  #include "kodidialog.h"
     #include "deviceinfodialog.h"
     #include "cachedialog.h"
     #include "datadialog.h"
@@ -30,7 +28,6 @@
     #include "getadbdata.h"
     #include "logfile.h"
     #include "setpdialog.h"
-//    #include "config.h"
     #include "adbutils.h"
 
     #ifdef __WIN32__
@@ -117,7 +114,6 @@
     QString filename = "";
     QString apphome =  "";
     QString scriptdir = "";
-//    QString adb = "";
     QString aapt = "";
     QString fastboot = "";
     QString xmldir = "";
@@ -136,6 +132,8 @@
     QString data_root = "";
     QString buffersize = "";
     QString bufferfactor = "";
+    int buffermode = 1;
+
     QString dbstring = "";
     QString jsonstring = "";
     QString description = "";
@@ -145,20 +143,11 @@
     QStringList bufferlist;
 
 
-    QString ddir;
-    QString idir;
-    QString bdir;
-    QString rdir;
     QString busybox;
 
 
     QString adbstr1 = "ADB server on  ";
     QString adbstr2 = "ADB server off ";
-    QString devstr1 = "  Current device connected";
-    QString devstr2 = "Selected device not connected.";
-  
-    //QString devstr3 = "  USB Mode";
-   //    wsa port= "58526";
 
     QString adbfiles;
     QString logfiledir;
@@ -166,16 +155,11 @@
     QString downloaddir;
     QString scrcpydir;
 
-    int usbcheck;
-    int rootpath;
-    int ftvupdate;
+
     int checkversion;
-    int extdata;
-    int buffermode = 1;
-    int tsvalue = 4000;
-    int ct = 1;
-    int Id = 0;
-    int deviceboxindex = 0;
+
+
+
 
 
     QSqlDatabase db;
@@ -407,11 +391,6 @@
              }
 
 
-
-
-
-                          idir = QDir::homePath();
-                          bdir = QDir::homePath();
 
 
                              QJsonObject obj;
@@ -1480,7 +1459,9 @@
     ////////////////////////////////
     void MainWindow::updateRoot()
     {
-   // logfile("updateRoot()");
+
+   /*
+            // logfile("updateRoot()");
 
 
        // logfile("updating database adblink.db");
@@ -1509,305 +1490,7 @@
             }
 
 
-
-
-    }
-
-
-
-
-    //////////////////////////////////////////////
-
-    void MainWindow::updateDevice()
-    {
-   // logfile("updateDevice()");
-
-
-    //    logfile("updating database adblink.db");
-
-        QString str1;
-        QString str2;
-        QString str3;
-        QString str4;
-        QString str5;
-
-        QString rootflag;
-        QString scopeflag;
-        QString wsaflag;
-        QString tempstring;
-        QString sqlstatement;
-
-        str1.setNum(usbcheck);
-        str2.setNum(ftvupdate);
-        str3.setNum(checkversion);
-
-        str4.setNum(buffermode);
-        str5.setNum(isusb);
-        rootflag.setNum(disableroot);
-        wsaflag.setNum(wsa);
-        scopeflag.setNum(scoped);
-
-
-
-
-
-        QString idstring;
-        idstring.setNum(Id);
-        //logfile(idstring);
-        QSqlQuery query;
-
-
-
-
-       tempstring = description;
-       tempstring.replace(QString("'"), QString("''"));
-
-       sqlstatement = "UPDATE device SET description='"+tempstring+"'  WHERE Id="+ idstring;
-       query.exec(sqlstatement);
-
-       if (query.lastError().isValid())
-        {
-          logfile(sqlstatement);
-          logfile("SqLite error:" + query.lastError().text());
-          logfile("SqLite error code:"+ QString::number( query.lastError().number() ));
-         }
-
-//////
-        tempstring = daddr;
-        tempstring.replace(QString("'"), QString("''"));
-
-        sqlstatement = "UPDATE device SET daddr='"+tempstring+"'  WHERE Id="+ idstring;
-    //    logfile(sqlstatement);
-        query.exec(sqlstatement);
-
-         if (query.lastError().isValid())
-          {
-            logfile(sqlstatement);
-            logfile("SqLite error:" + query.lastError().text());
-            logfile("SqLite error code:"+ QString::number( query.lastError().number() ));
-           }
-
-
-//////////
-
-         tempstring = pulldir;
-         tempstring.replace(QString("'"), QString("''"));
-
-         sqlstatement = "UPDATE device SET pulldir='"+tempstring+"'  WHERE Id="+ idstring;
-         query.exec(sqlstatement);
-
-
-         if (query.lastError().isValid())
-          {
-            logfile(sqlstatement);
-            logfile("SqLite error:" + query.lastError().text());
-            logfile("SqLite error code:"+ QString::number( query.lastError().number() ));
-           }
-
-    ///////////
-
-         tempstring = xbmcpackage;
-         tempstring.replace(QString("'"), QString("''"));
-
-         sqlstatement = "UPDATE device SET xbmcpackage='"+tempstring+"'  WHERE Id="+ idstring;
-         query.exec(sqlstatement);
-
-         if (query.lastError().isValid())
-          {
-            logfile(sqlstatement);
-            logfile("SqLite error:" + query.lastError().text());
-            logfile("SqLite error code:"+ QString::number( query.lastError().number() ));
-           }
-
-
-    /////////////
-
-          tempstring = data_root;
-          tempstring.replace(QString("'"), QString("''"));
-
-          sqlstatement = "UPDATE device SET data_root='"+tempstring+"'  WHERE Id="+ idstring;
-          query.exec(sqlstatement);
-
-
-          if (query.lastError().isValid())
-          {
-             logfile(sqlstatement);
-             logfile("SqLite error:" + query.lastError().text());
-             logfile("SqLite error code:"+ QString::number( query.lastError().number() ));
-            }
-
-
-    /////////
-
-          tempstring = str4;
-          tempstring.replace(QString("'"), QString("''"));
-
-
-           sqlstatement = "UPDATE device SET buffermode='"+tempstring+"'  WHERE Id="+ idstring;
-           query.exec(sqlstatement);
-
-           if (query.lastError().isValid())
-            {
-              logfile(sqlstatement);
-              logfile("SqLite error:" + query.lastError().text());
-              logfile("SqLite error code:"+ QString::number( query.lastError().number() ));
-             }
-
-    ///////////////////////
-
-           tempstring = buffersize;
-           tempstring.replace(QString("'"), QString("''"));
-
-           sqlstatement = "UPDATE device SET buffersize='"+tempstring+"'  WHERE Id="+ idstring;
-            query.exec(sqlstatement);
-
-            if (query.lastError().isValid())
-             {
-               logfile(sqlstatement);
-               logfile("SqLite error:" + query.lastError().text());
-               logfile("SqLite error code:"+ QString::number( query.lastError().number() ));
-              }
-
-    ///////////
-
-            tempstring = bufferfactor;
-            tempstring.replace(QString("'"), QString("''"));
-
-             sqlstatement = "UPDATE device SET bufferfactor='"+tempstring+"'  WHERE Id="+ idstring;
-             query.exec(sqlstatement);
-
-             if (query.lastError().isValid())
-              {
-                logfile(sqlstatement);
-                logfile("SqLite error:" + query.lastError().text());
-                logfile("SqLite error code:"+ QString::number( query.lastError().number() ));
-               }
-
-     //////////////////
-
-              tempstring = filepath;
-              tempstring.replace(QString("'"), QString("''"));
-
-               sqlstatement = "UPDATE device SET filepath='"+tempstring+"'  WHERE Id="+ idstring;
-               query.exec(sqlstatement);
-
-               if (query.lastError().isValid())
-                {
-                  logfile(sqlstatement);
-                  logfile("SqLite error:" + query.lastError().text());
-                  logfile("SqLite error code:"+ QString::number( query.lastError().number() ));
-                 }
-
-
-      /////////////////
-
-               tempstring = port;
-               tempstring.replace(QString("'"), QString("''"));
-
-               sqlstatement = "UPDATE device SET port='"+tempstring+"'  WHERE Id="+ idstring;
-               query.exec(sqlstatement);
-
-               if (query.lastError().isValid())
-                {
-                  logfile(sqlstatement);
-                  logfile("SqLite error:" + query.lastError().text());
-                  logfile("SqLite error code:"+ QString::number( query.lastError().number() ));
-                 }
-
-
-    ///////////////
-
-
-               tempstring = str5;
-               tempstring.replace(QString("'"), QString("''"));
-
-               sqlstatement = "UPDATE device SET isusb='"+tempstring+"'  WHERE Id="+ idstring;
-               query.exec(sqlstatement);
-
-               if (query.lastError().isValid())
-                {
-                  logfile(sqlstatement);
-                  logfile("SqLite error:" + query.lastError().text());
-                  logfile("SqLite error code:"+ QString::number( query.lastError().number() ));
-                 }
-
-
-     //////////////
-
-
-
-               tempstring = rootflag;
-               tempstring.replace(QString("'"), QString("''"));
-
-               sqlstatement = "UPDATE device SET disableroot='"+tempstring+"'  WHERE Id="+ idstring;
-               query.exec(sqlstatement);
-
-               if (query.lastError().isValid())
-                {
-                  logfile(sqlstatement);
-                  logfile("SqLite error:" + query.lastError().text());
-                  logfile("SqLite error code:"+ QString::number( query.lastError().number() ));
-                 }
-
-
-     //////////////
-
-
-
-               tempstring = scopeflag;
-               tempstring.replace(QString("'"), QString("''"));
-
-               sqlstatement = "UPDATE device SET flag1='"+tempstring+"'  WHERE Id="+ idstring;
-               query.exec(sqlstatement);
-
-               if (query.lastError().isValid())
-                {
-                  logfile(sqlstatement);
-                  logfile("SqLite error:" + query.lastError().text());
-                  logfile("SqLite error code:"+ QString::number( query.lastError().number() ));
-                 }
-
-
-
-               tempstring = wsaflag;
-               tempstring.replace(QString("'"), QString("''"));
-
-               sqlstatement = "UPDATE device SET flag2='"+tempstring+"'  WHERE Id="+ idstring;
-               query.exec(sqlstatement);
-
-               if (query.lastError().isValid())
-                {
-                  logfile(sqlstatement);
-                  logfile("SqLite error:" + query.lastError().text());
-                  logfile("SqLite error code:"+ QString::number( query.lastError().number() ));
-                 }
-
-
-
-
-
-
-               tempstring = ostype;
-               tempstring.replace(QString("'"), QString("''"));
-
-               sqlstatement = "UPDATE device SET ostype='"+tempstring+"'  WHERE Id="+ idstring;
-               query.exec(sqlstatement);
-
-               if (query.lastError().isValid())
-                {
-                  logfile(sqlstatement);
-                  logfile("SqLite error:" + query.lastError().text());
-                  logfile("SqLite error code:"+ QString::number( query.lastError().number() ));
-                 }
-
-    /////////////
-
-
-
-
-
-
-
+*/
 
     }
 
@@ -1821,7 +1504,7 @@
 
     {
 
-
+/*
         QString sqlstatement;
 
         QString quote = "\"";
@@ -2138,7 +1821,7 @@
          else
              versioncheck=true;
 
-
+*/
 
     }
 
@@ -3218,16 +2901,17 @@
     {
 
 
+          QString selectedDescription;
+          if (!validateDeviceSelection(selectedDescription)) {
+           return;
+          }
 
-        isConnected=check_Connection();
+          DeviceRecord device = queryDeviceRecord(selectedDescription);
 
-          if (!isConnected)
-                {
-
-                   QMessageBox::critical(this,"",devstr2);
-                  return;
-                }
-
+          if (device.ostype != "0") {
+           QMessageBox::critical(this, "Unavailable", "Android devices only.");
+           return;
+          }
 
 
 
@@ -3250,14 +2934,17 @@
     {
 
 
-         isConnected=check_Connection();
+         QString selectedDescription;
+         if (!validateDeviceSelection(selectedDescription)) {
+            return;
+         }
 
-         if (!isConnected)
-               {
+         DeviceRecord device = queryDeviceRecord(selectedDescription);
 
-                QMessageBox::critical(this,"",devstr2);
-                return;
-               }
+         if (device.ostype != "0") {
+            QMessageBox::critical(this, "Unavailable", "Android devices only.");
+            return;
+         }
 
 
 
@@ -3282,13 +2969,18 @@
     {
 
 
-         isConnected=check_Connection();
+            QString selectedDescription;
+            if (!validateDeviceSelection(selectedDescription)) {
+             return;
+            }
 
-         if (!isConnected)
-               {
-                QMessageBox::critical(this,"",devstr2);
-                return;
-               }
+            DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+            if (device.ostype != "0") {
+             QMessageBox::critical(this, "Unavailable", "Android devices only.");
+             return;
+            }
+
 
 
 
@@ -4235,15 +3927,18 @@
     void MainWindow::splashButton_android()
     {
 
-        isConnected=check_Connection();
+          QString selectedDescription;
+          if (!validateDeviceSelection(selectedDescription)) {
+            return;
+          }
 
+          DeviceRecord device = queryDeviceRecord(selectedDescription);
 
-         if (!isConnected)
-               {
-                  QMessageBox::critical(this,"",devstr2);
+          if (device.ostype != "0") {
+            QMessageBox::critical(this, "Unavailable", "Android devices only.");
+            return;
+          }
 
-                  return;
-               }
 
          if(!is_busybox())
          {
@@ -5047,13 +4742,18 @@
 
     void MainWindow::on_actionStop_Application_triggered()
     {
-       isConnected=check_Connection();
+                  QString selectedDescription;
+                  if (!validateDeviceSelection(selectedDescription)) {
+                    return;
+                  }
 
-          if (!isConnected)
-                {
-                   QMessageBox::critical(this,"",devstr2);
-                 return;
-                }
+                  DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+                  if (device.ostype != "0") {
+                    QMessageBox::critical(this, "Unavailable", "Android devices only.");
+                    return;
+                  }
+
 
           bool startstop;
 
@@ -5122,13 +4822,17 @@
     void MainWindow::on_actionStart_Application_triggered()
     {
 
-        isConnected=check_Connection();
+        QString selectedDescription;
+        if (!validateDeviceSelection(selectedDescription)) {
+        return;
+        }
 
-          if (!isConnected)
-                {
-                   QMessageBox::critical(this,"",devstr2);
-                  return;
-                }
+        DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+        if (device.ostype != "0") {
+        QMessageBox::critical(this, "Unavailable", "Android devices only.");
+        return;
+        }
 
 
 
@@ -5649,6 +5353,7 @@
     ui->listRunningJobs->addItem(s);
     ui->server_running->setText(s);
 
+    int tsvalue = 4000;
 
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(TimerEvent()));
@@ -5749,13 +5454,18 @@
     {
 
 
-       isConnected=check_Connection();
+            QString selectedDescription;
+            if (!validateDeviceSelection(selectedDescription)) {
+             return;
+            }
 
-        if (!isConnected)
-              {
-                 QMessageBox::critical(this,"",devstr2);
-                return;
-              }
+            DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+            if (device.ostype != "0") {
+             QMessageBox::critical(this, "Unavailable", "Android devices only.");
+             return;
+            }
+
 
         if (!is_su())
            {
@@ -5788,13 +5498,18 @@
     void MainWindow::on_actionMount_system_RW_triggered()
     {
 
-        isConnected=check_Connection();
+        QString selectedDescription;
+        if (!validateDeviceSelection(selectedDescription)) {
+             return;
+        }
 
-        if (!isConnected)
-              {
-                QMessageBox::critical(this,"",devstr2);
-                return;
-              }
+        DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+        if (device.ostype != "0") {
+             QMessageBox::critical(this, "Unavailable", "Android devices only.");
+             return;
+        }
+
 
 
         if (!is_su())
@@ -5828,13 +5543,18 @@
 
     void MainWindow::on_actionWireless_ADBD_triggered()
     {
-        isConnected=check_Connection();
+        QString selectedDescription;
+        if (!validateDeviceSelection(selectedDescription)) {
+                return;
+        }
 
-        if (!isConnected)
-              {
-                  QMessageBox::critical(this,"",devstr2);
-            return;
-              }
+        DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+        if (device.ostype != "0") {
+                QMessageBox::critical(this, "Unavailable", "Android devices only.");
+                return;
+        }
+
 
 
      //   if (!isusb)
@@ -8490,6 +8210,8 @@ void MainWindow::on_backupButton_clicked()
 ///////////////////////////////////////////
 void MainWindow::backupOther()
 {
+
+        int tsvalue = 4000;
 
 
     QString filecheck = filepath+"/userdata";

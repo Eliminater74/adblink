@@ -175,7 +175,7 @@ private slots:
 
     void androidLog();
 
-    void updateDevice();
+
 
    void copyFolder(QString sourceFolder, QString destFolder);
 
