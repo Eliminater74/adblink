@@ -138,7 +138,7 @@
     QString jsonstring = "";
     QString description = "";
     QString filepath = "";
-    QString busypath = "";
+    QString busypath="/data/local/tmp/adblink/";
     QString adblog;
     QStringList bufferlist;
 
@@ -187,19 +187,15 @@
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
        adbfiles=QCoreApplication::applicationDirPath()+"/adbfiles/";
- //      adb=QCoreApplication::applicationDirPath()+"/adbfiles/"+"adb";
        aapt=QCoreApplication::applicationDirPath()+"/adbfiles/"+"aapt";
-//       adb = '"'+adb+'"';
-        aapt = '"'+aapt+'"';
+       aapt = '"'+aapt+'"';
        busybox = QCoreApplication::applicationDirPath()+"/adbfiles/busybox";
        busybox = '"'+busybox+'"';
-
-        apphome = QCoreApplication::applicationDirPath();
-        scrcpydir=QCoreApplication::applicationDirPath()+"/adbfiles/"+"scrcpy/";
-
-        xmldir = adbfiles+"remotes/";
-        splashdir = adbfiles+"splash/";    
-        tempdir = "/data/local/tmp/";
+       apphome = QCoreApplication::applicationDirPath();
+       scrcpydir=QCoreApplication::applicationDirPath()+"/adbfiles/"+"scrcpy/";
+       xmldir = adbfiles+"remotes/";
+       splashdir = adbfiles+"splash/";
+       tempdir = "/data/local/tmp/";
 
        if (!QFile::exists(adbfiles + "adb") && !QFile::exists(adbfiles + "adb.exe")) {
          QMessageBox::critical(0, "", "adb binary missing!\n", QMessageBox::Cancel);
@@ -4415,7 +4411,6 @@
 
     QString cstring;
     QString command;
-    busypath="/data/local/tmp/adblink/";
 
 /*
     cstring = getadb() + " shell ls /data/local/tmp/adbfire";
@@ -4456,7 +4451,7 @@
             {
                logfile("busybox install failed ");
                logfile(command);
-               busypath="";
+               
                QMessageBox::critical(0,"","busybox install failed. See log.");
                return false;
               }
@@ -5189,7 +5184,6 @@
               mcpath=device.data_root + "Android/data/" + xbmcpackage+"/files/.kodi";
 
        }
-
 
 
 
@@ -6184,11 +6178,11 @@
 //          busybox = apphome+"/adbfiles/busybox";
     //      busybox = QCoreApplication::applicationDirPath()+"/adbfiles/busybox";
 
-    //     busybox= '"'+busybox+'"';
+    //  
 
       //  qDebug() << busybox;
 
-        busypath="/data/local/tmp/adblink/";
+        
         cstring = getadb() + " shell rm -r /data/local/tmp/adblink";
         command=getadbOutput(cstring);
 
@@ -6206,7 +6200,7 @@
                 {
                    logfile("busybox install failed ");
                    logfile(command);
-                   busypath="";
+                   
                    QMessageBox::critical(0,"","busybox install failed. See log.");
                    return;
                   }
@@ -10900,6 +10894,10 @@ void MainWindow::on_actionEdit_XML_triggered()
            return;
  }
 
+
+
+
+
  DeviceRecord device = queryDeviceRecord(selectedDescription);
 
 
@@ -10909,6 +10907,7 @@ void MainWindow::on_actionEdit_XML_triggered()
 
  else
            editOther();
+
 
 
 }
