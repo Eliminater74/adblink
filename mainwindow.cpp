@@ -5260,10 +5260,24 @@
     void MainWindow::editOther()
     {
 
+        QString selectedDescription;
+        int selectedRow = ui->deviceTable->currentRow();
+        if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
+           selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+        } else {
+           QMessageBox::critical(this, "", "No device selected in table");
+           return;
+        }
 
-        QString mcpath=filepath;
+        DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+
+        QString mcpath=device.filepath;
 
          mcpath=mcpath+"/userdata/";
+
+        qDebug() << mcpath;
+
 
 
         if (!QFileInfo::exists(mcpath))
@@ -11085,13 +11099,21 @@ void MainWindow::on_test_clicked()
 void MainWindow::on_actionEdit_XML_triggered()
 {
 
+ qDebug() << "entered";
+
  QString selectedDescription;
- if (!validateDeviceSelection(selectedDescription)) {
+// if (!validateDeviceSelection(selectedDescription)) {
+      //     return;
+ //}
+
+
+ int selectedRow = ui->deviceTable->currentRow();
+ if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
+           selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+ } else {
+           QMessageBox::critical(this, "", "No device selected in table");
            return;
  }
-
-
-
 
 
  DeviceRecord device = queryDeviceRecord(selectedDescription);
@@ -11103,7 +11125,6 @@ void MainWindow::on_actionEdit_XML_triggered()
 
  else
            editOther();
-
 
 
 }
