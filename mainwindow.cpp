@@ -5276,8 +5276,6 @@
 
          mcpath=mcpath+"/userdata/";
 
-        qDebug() << mcpath;
-
 
 
         if (!QFileInfo::exists(mcpath))
