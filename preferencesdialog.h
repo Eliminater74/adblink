@@ -70,6 +70,8 @@ private slots:
 
     void on_ostypeBox_activated(int index);
 
+
+
 private:
     Ui::preferencesDialog *ui;
 };

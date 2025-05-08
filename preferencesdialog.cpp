@@ -47,6 +47,10 @@ preferencesDialog::preferencesDialog(QWidget *parent, bool showkodi) :
     ui(new Ui::preferencesDialog)
 {
     ui->setupUi(this);
+
+    connect(ui->saveButton, &QPushButton::clicked, this, &QDialog::accept);
+    connect(ui->cancelButton, &QPushButton::clicked, this, &QDialog::reject);
+
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
        this->setFixedHeight(425);
@@ -502,4 +506,6 @@ void preferencesDialog::on_ostypeBox_activated(int index)
 {
 
 }
+
+
 

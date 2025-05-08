@@ -3179,7 +3179,7 @@
       }
     }
 
-
+/*
   ////////////////////////////////////////
 
     void MainWindow::newentry()
@@ -3275,6 +3275,8 @@
 
 
 */
+
+    /*
 
     void MainWindow::dataentry(bool isNewRecord)
     {
@@ -3471,6 +3473,200 @@
              }
     }
 
+  */
+
+//////////////////
+
+    void MainWindow::dataentry(bool isNewRecord)
+    {
+             QString cstring;
+             QString command;
+             QStringList mstringlist;
+             QStringList dstringlist;
+             QString selectedDescription;
+             DeviceRecord device;
+             QString olddaddr;
+             QString olddescription;
+
+             // Fetch connected devices using adb
+             cstring = getadbpath() + " devices";
+             command = getadbOutput(cstring);
+             QThread::sleep(2);
+
+             mstringlist = command.split(QRegExp("[\t\n\r]"), QString::SkipEmptyParts);
+
+             if (command.contains("List of devices attached"))
+             {
+             mstringlist.removeFirst();
+             for (int a = 0; a < mstringlist.size(); a = a + 2)
+             {
+                   QStringList pieces = mstringlist.at(a).split(":", QString::SkipEmptyParts);
+                   if (!mstringlist.at(a).contains("daemon"))
+                   dstringlist << pieces.at(0);
+             }
+             }
+
+             // For update, get selected description from deviceTable
+             if (!isNewRecord)
+             {
+             int selectedRow = ui->deviceTable->currentRow();
+             if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0))
+             {
+                   selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+                   device = queryDeviceRecord(selectedDescription);
+                   olddaddr = device.daddr;
+                   olddescription = device.description;
+                   updatecheck = true;
+             }
+             else
+             {
+                   QMessageBox::critical(this, "", "No device selected in table");
+                   return;
+             }
+             }
+
+             bool iskodi;
+
+             if (ui->stackedWidget->currentIndex() == 0)
+             iskodi = true;
+             else
+             iskodi = false;
+
+             preferencesDialog dialog(this, iskodi);
+
+             dialog.setWindowModality(Qt::WindowModal);
+
+             dialog.setversionLabel(version);
+             dialog.setdevicelist(dstringlist);
+
+             // Initialize dialog fields based on insert or update
+             if (isNewRecord)
+             {
+             // Default values for new record (insert)
+             dialog.setPackagename("org.xbmc.kodi");
+             dialog.setPulldir("");
+             dialog.setfilepath("/files/.kodi");
+             dialog.setdataroot("/sdcard/");
+             dialog.setostype("0");
+             dialog.setdescription("");
+             dialog.setdisableroot(0);
+             dialog.setport("5555");
+             dialog.setscope(false);
+             dialog.setwsa(false);
+             dialog.setdaddr("");
+             dialog.setisusb(false);
+             }
+             else
+             {
+             // Populate with database values for update
+             dialog.setPackagename(device.xbmcpackage);
+             dialog.setPulldir(device.pulldir);
+             dialog.setfilepath(device.filepath);
+             dialog.setdataroot(device.data_root);
+             dialog.setostype(device.ostype);
+             dialog.setdescription(device.description);
+             dialog.setdisableroot(device.disableroot);
+             if (device.isusb)
+                   dialog.setport("");
+             else
+                   dialog.setport(device.port);
+             dialog.setscope(device.scoped);
+             dialog.setwsa(device.wsa);
+             dialog.setdaddr(device.daddr);
+             dialog.setisusb(device.isusb);
+             }
+
+             dialog.setModal(true);
+
+             int result = dialog.exec();
+             if (result == QDialog::Accepted)
+             {
+             // Retrieve values from dialog
+             QString data_root = dialog.data_root();
+             QString xbmcpackage = dialog.xbmcpackageName();
+             QString pulldir = dialog.pulldir();
+             QString description = dialog.description();
+             QString filepath = dialog.filepath();
+             QString port = dialog.port();
+             QString daddr = dialog.daddr();
+             bool isusb = dialog.isusb();
+             QString ostype = dialog.ostype();
+             bool scoped = dialog.scoped();
+             bool wsa = dialog.wsa();
+             int disableroot = dialog.disableroot();
+
+             // Validate description (non-empty)
+             if (description.isEmpty())
+             {
+                   QMessageBox::critical(this, "", "Description cannot be empty.");
+                   return;
+             }
+
+             // Check for duplicate description during insert
+             if (isNewRecord)
+             {
+                   QSqlQuery checkQuery;
+                   checkQuery.prepare("SELECT COUNT(*) FROM device WHERE description = ?");
+                   checkQuery.addBindValue(description);
+                   if (checkQuery.exec() && checkQuery.first() && checkQuery.value(0).toInt() > 0)
+                   {
+                   QMessageBox::critical(this, "", "A device with this description already exists.");
+                   return;
+                   }
+             }
+
+             QSqlQuery query;
+             QString sqlstatement;
+
+             if (isNewRecord)
+             {
+                   // Insert new record
+                   sqlstatement = "INSERT INTO device (description, daddr, port, isusb, ostype, "
+                                  "data_root, xbmcpackage, pulldir, disableroot, filepath) "
+                                  "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                   query.prepare(sqlstatement);
+                   query.addBindValue(description);
+                   query.addBindValue(daddr);
+                   query.addBindValue(port);
+                   query.addBindValue(isusb);
+                   query.addBindValue(ostype);
+                   query.addBindValue(data_root);
+                   query.addBindValue(xbmcpackage);
+                   query.addBindValue(pulldir);
+                   query.addBindValue(disableroot);
+                   query.addBindValue(filepath);
+             }
+             else
+             {
+                   // Update existing record
+                   sqlstatement = "UPDATE device SET description = ?, daddr = ?, port = ?, isusb = ?, ostype = ?, "
+                                  "data_root = ?, xbmcpackage = ?, pulldir = ?, disableroot = ?, filepath = ? "
+                                  "WHERE description = ?";
+                   query.prepare(sqlstatement);
+                   query.addBindValue(description);
+                   query.addBindValue(daddr);
+                   query.addBindValue(port);
+                   query.addBindValue(isusb);
+                   query.addBindValue(ostype);
+                   query.addBindValue(data_root);
+                   query.addBindValue(xbmcpackage);
+                   query.addBindValue(pulldir);
+                   query.addBindValue(disableroot);
+                   query.addBindValue(filepath);
+                   query.addBindValue(selectedDescription);
+             }
+
+             if (!query.exec())
+             {
+                   logfile("Query error: " + query.lastError().text());
+                   QMessageBox::critical(this, "", (isNewRecord ? "Failed to insert into database: " : "Failed to update database: ") + query.lastError().text());
+                   return;
+             }
+
+             loadDeviceTable();
+             }
+    }
+//////////////////
 
     ////////////////////////////////////////
     void MainWindow::on_delRecord_clicked()
