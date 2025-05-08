@@ -11469,13 +11469,13 @@ void MainWindow::screenCap()
                return;
       }
 
-      cstring = getadb() + " pull "+ "/data/local/tmp/"+dtstr + " " + pulldir;
+      cstring = getadb() + " pull "+ "/data/local/tmp/"+dtstr + " " + device.pulldir;
       command = getadbOutput(cstring);
       logfile(cstring);
       logfile(command);
 
       // Check if the pulled file exists
-      QString localFilePath = pulldir + "/" + dtstr;
+      QString localFilePath = device.pulldir + "/" + dtstr;
       QFileInfo fileInfo(localFilePath);
       if (!fileInfo.exists()) {
                logfile("Error: Pulled file does not exist at " + localFilePath);
@@ -11488,7 +11488,7 @@ void MainWindow::screenCap()
       logfile(cstring);
       logfile(command);
 
-      // QMessageBox::information(this, "", "Xcreenshot " + dtstr + " copied to " + pulldir);
+      QMessageBox::information(this, "", "Screenshot " + dtstr + " copied to " + device.pulldir);
 
 
 }
