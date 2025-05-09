@@ -6,9 +6,8 @@ Merge of adblink & adblink2 complete. Choose
 which view is active at startup, switch at will
 
 Device list moved to scrollable table which
-also displays IP and connection status.
-
-Devices sortable by device or connection.
+also displays IP and connection status. This
+table is sortable by device or connection.
 
 
 /////////
