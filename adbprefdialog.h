@@ -20,7 +20,7 @@ public:
      void setversioncheck(const bool &versioncheck);
      void setscopecheck(const bool &scopecheck);
      void setscrcpyargs(const bool &scrcpyargs);
-     void setsortpref(const bool &sortpref);
+
      void setstartview(const bool &startview);
 
 
@@ -40,7 +40,7 @@ void setbackupdir(const QString &bdir);
 bool versioncheck();
 bool scopecheck();
 bool scrcpyargs();
-bool sortpref();
+
 bool startview();
 
 QString downloaddir();

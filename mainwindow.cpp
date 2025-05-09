@@ -5505,7 +5505,6 @@
          bool checkversion = doc.object()["checkversion"].toBool();
          bool checkscope = doc.object()["checkscope"].toBool();
          bool scrcpy = doc.object()["scrcpy"].toBool();
-         bool sortpref = doc.object()["sortpref"].toBool();
          bool startview = doc.object()["startview"].toBool();
 
 
@@ -5526,10 +5525,8 @@
          else
              dialog.setscrcpyargs(false);
 
-         if (sortpref)
-             dialog.setsortpref(true);
-         else
-             dialog.setsortpref(false);
+
+
 
          if (startview)
              dialog.setstartview(true);
@@ -5561,7 +5558,7 @@
              obj["checkversion"] = dialog.versioncheck();
              obj["checkscope"] = dialog.scopecheck();
              obj["scrcpy"] = dialog.scrcpyargs();
-             obj["sortpref"] = dialog.sortpref();
+
              obj["startview"] = dialog.startview();
 
 
@@ -5578,11 +5575,6 @@
              file.close();
 
 
-             bool newsort = dialog.sortpref();
-             if (newsort)
-                ui->csort->setChecked(true);
-             else
-                ui->dsort->setChecked(true);
          }
     }
 
