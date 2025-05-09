@@ -6944,11 +6944,14 @@
 
 
 
-              if (device.port.isEmpty()) {
-                 port = "5555";
-              } else port=device.port;
+              if (device.isusb) {
+                 port = "";
+                 daddr = device.daddr;
+              } else {
+                 port = device.port.isEmpty() ? "5555" : device.port;
+                 daddr = device.daddr + ":" + port;
+              }
 
-              daddr = device.daddr+":"+port;
 
 
 
