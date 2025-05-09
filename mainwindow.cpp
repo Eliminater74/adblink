@@ -4691,7 +4691,8 @@
          QString command;
          QString mcpath;
          QString fmpullpath;
-
+         QString port;
+         QString daddr;
          QString ostypefm("");
          QString fmdaddr("");
 
@@ -4711,8 +4712,20 @@
 
 
 
-         fmdaddr = ui->deviceTable->item(selectedRow, 1)->text();
- //        ostypefm = getOSType(selectedDescription);
+         //fmdaddr = ui->deviceTable->item(selectedRow, 1)->text();
+         fmdaddr = device.daddr;
+
+
+
+         if (device.isusb) {
+          port = "";
+          daddr = device.daddr;
+         } else {
+          port = device.port.isEmpty() ? "5555" : device.port;
+          daddr = device.daddr + ":" + port;
+         }
+
+
 
          if (device.ostype != "0") {
             QMessageBox::critical(nullptr, "Error", "Android devices only");
@@ -4748,7 +4761,10 @@
          }
          else
          {
-            fmdialog->setADB(getadbpath() + " -s " + fmdaddr);
+
+
+
+            fmdialog->setADB(getadbpath() + " -s " + daddr);
             fmdialog->setData(selectedDescription);
          }
 
