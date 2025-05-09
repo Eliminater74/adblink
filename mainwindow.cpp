@@ -10928,6 +10928,7 @@ void MainWindow::on_actionSwitch_View_triggered()
                }
 
                ui->stackedWidget->setCurrentIndex(1);
+               ui->menuKodi->menuAction()->setVisible(false);
  }
 
 
@@ -10941,6 +10942,7 @@ void MainWindow::on_actionSwitch_View_triggered()
                }
 
                ui->stackedWidget->setCurrentIndex(0);
+               ui->menuKodi->menuAction()->setVisible(true);
  }
 
 }

@@ -1093,7 +1093,7 @@
      <string>File</string>
     </property>
     <addaction name="actionPreferences"/>
-    <addaction name="actionDownload_Kodi"/>
+    <addaction name="actionView_adbLink_Log"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -1109,13 +1109,6 @@
     </property>
     <addaction name="actionHelp"/>
    </widget>
-   <widget class="QMenu" name="menuLogs">
-    <property name="title">
-     <string>Logs</string>
-    </property>
-    <addaction name="actionView_adbLink_Log"/>
-    <addaction name="actionView_Kodi_Log"/>
-   </widget>
    <widget class="QMenu" name="menuReboot">
     <property name="title">
      <string>Reboot</string>
@@ -1124,13 +1117,6 @@
     <addaction name="actionRecovery"/>
     <addaction name="actionReboot_bootloader"/>
    </widget>
-   <widget class="QMenu" name="menuRoot">
-    <property name="title">
-     <string>Root</string>
-    </property>
-    <addaction name="actionMount_system_RO"/>
-    <addaction name="actionMount_system_RW"/>
-   </widget>
    <widget class="QMenu" name="menuUtility">
     <property name="title">
      <string>Utility</string>
@@ -1138,25 +1124,32 @@
     <addaction name="actionSwitch_View"/>
     <addaction name="actionReiinstall_Busybox"/>
     <addaction name="actionPaste_path"/>
-    <addaction name="actionEdit_XML"/>
     <addaction name="actionArchitecture"/>
     <addaction name="actionOculus_VR"/>
     <addaction name="actionSend_text"/>
     <addaction name="actionSet_Kodi_permissions"/>
-    <addaction name="actionCreate_kodi_data"/>
     <addaction name="actionGet_UID_from_APK_file"/>
     <addaction name="View_Changelog"/>
     <addaction name="Erase_adbLink_database"/>
     <addaction name="actionWireless_ADBD"/>
-    <addaction name="actionSplash_Screen"/>
-    <addaction name="actionPush_remote"/>
     <addaction name="actionTest_adb_connection"/>
+   </widget>
+   <widget class="QMenu" name="menuKodi">
+    <property name="title">
+     <string>Kodi</string>
+    </property>
+    <addaction name="actionEdit_XML"/>
+    <addaction name="actionDownload_Kodi"/>
+    <addaction name="actionPush_remote"/>
+    <addaction name="actionView_Kodi_Log"/>
     <addaction name="actiondelthumb"/>
+    <addaction name="actionCreate_kodi_data"/>
+    <addaction name="actionKodi_data_usage"/>
+    <addaction name="actionSplash_Screen"/>
    </widget>
    <addaction name="menuFile"/>
-   <addaction name="menuLogs"/>
    <addaction name="menuReboot"/>
-   <addaction name="menuRoot"/>
+   <addaction name="menuKodi"/>
    <addaction name="menuUtility"/>
    <addaction name="menuAbout"/>
    <addaction name="menuHelp"/>
