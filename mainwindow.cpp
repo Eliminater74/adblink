@@ -7412,19 +7412,35 @@ void MainWindow::on_backupButton_clicked()
 
 {
 
+
+
+
     QString selectedDescription;
-    if (!validateDeviceSelection(selectedDescription)) {
+    int selectedRow = ui->deviceTable->currentRow();
+    if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
+         selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+    } else {
+         QMessageBox::critical(this, "", "No device selected in table");
          return;
     }
+
+
 
 
       DeviceRecord device = queryDeviceRecord(selectedDescription);
 
 
-     if  (device.ostype != "0")
-           backupOther();
-        else
-           backupAndroid();
+      if (device.ostype != "0") {
+         QMessageBox::critical(this, "Unavailable", "Android devices only.");
+         return;
+      }
+
+      else {
+         backupAndroid();
+         }
+
+
+
 
 
 
@@ -7971,10 +7987,25 @@ void MainWindow::on_backupButton_clicked()
 void MainWindow::backupOther()
 {
 
+        QString selectedDescription;
+        int selectedRow = ui->deviceTable->currentRow();
+        if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
+           selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+        } else {
+           QMessageBox::critical(this, "", "No device selected in table");
+           return;
+        }
+        DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+
+
+
         int tsvalue = 4000;
 
 
-    QString filecheck = filepath+"/userdata";
+    QString filecheck = device.filepath+"/userdata";
+
+
 
 
    if(!QDir(filecheck).exists())
@@ -8038,7 +8069,7 @@ void MainWindow::on_restoreButton_clicked() {
 
    // Check if device is Android
    if (device.ostype != "0") {
-      QMessageBox::critical(this, "", "Restore is for Android devices only.");
+      QMessageBox::critical(this, "Unavailable", "Android devices only.");
       return;
    }
 
@@ -8218,7 +8249,14 @@ void MainWindow::on_restoreButton_clicked() {
 
    // Perform restore
    dir = dir + "/.";
-   cstring = getadb() + " push \"" + dir + "\" " + mcpath + "/files/.kodi/";
+
+   //  cstring = getadb() + " push \"" + dir + "\" " + mcpath + "/files/.kodi/";
+
+
+   command = getadbOutput(cstring);
+
+  cstring = getadb() + " push \"" + dir + "\" " + mcpath + "/files/.kodi/";
+
    command = RunLongProcess(cstring, "restore running");
    logfile("Restore: " + cstring);
 
