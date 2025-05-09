@@ -58,6 +58,8 @@ uninstallDialog::~uninstallDialog() {
 void uninstallDialog::on_applyButton_clicked() {
     ui->unlistWidget->clear();
 
+
+
     if (ui->lineEdit->text() != "") {
         if (m_port.isEmpty())
             argument = " -s " + m_daddr + " shell pm list packages | grep " + ui->lineEdit->text();
@@ -65,6 +67,9 @@ void uninstallDialog::on_applyButton_clicked() {
             argument = " -s " + m_daddr + ":" + m_port + " shell pm list packages | grep " + ui->lineEdit->text();
 
         cstr = getadbpath() + argument;
+
+
+
     } else {
         loadList();
     }

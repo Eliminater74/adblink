@@ -1315,30 +1315,24 @@
     bool MainWindow::is_package(QString package)
     {
 
-        QString editport = ":"+port;
-
-        if (isusb)
-        editport = "";
 
 
 
 
-        QString cstring = getadb() + " -s "+daddr+editport+" shell pm list packages ";
+        QString cstring = getadb() + " shell pm list packages ";
+
+
         QString command=getadbOutput(cstring);
         logfile ("package: "+cstring);
 
             if (command.contains(package))
                 {
                 logfile(package+ " is installed");
-                // logfile(cstring);
-                // logfile(command);
                 is_packageInstalled = true;
                 }
                 else
                 {
                 logfile(package+ " not found");
-                // logfile(cstring);
-                // logfile(command);
                 is_packageInstalled = false;}
 
             return  is_packageInstalled;
@@ -2093,13 +2087,6 @@
 
         DeviceRecord device = queryDeviceRecord(selectedDescription);
 
-        if (device.port.isEmpty()) {
-               port = "5555";
-        }
-
-        daddr = device.daddr+":"+port;
-
-
 
         if (device.ostype != "0") {
                QMessageBox::critical(this, "", "Android devices only.");
@@ -2108,17 +2095,11 @@
 
 
 
-        if (device.port.isEmpty()) {
-               port = "5555";
-        } else port=device.port;
-
-        daddr = device.daddr+":"+port;
-
 
         logfile("Installing "+filename);
 
-        cstring = getadbpath() + " -s " + daddr + " install -r " + '"'+ filename+'"';
 
+         cstring = getadb() + " install -r " + '"'+ filename+'"';
 
         command=RunLongProcess(cstring,"installing apk(s)");
         logfile(cstring);
@@ -2239,18 +2220,15 @@
 
 
 
-        if (device.port.isEmpty()) {
-              port = "5555";
-        } else port=device.port;
 
-        daddr = device.daddr;
+
 
         logfile("open uninstall dialog");
 
 
 
 
-        uninstallDialog dialog(daddr,port,this);
+        uninstallDialog dialog(device.daddr,port,this);
         dialog.setWindowModality(Qt::WindowModal);
 
         // dialog.setModal(true);
@@ -2264,6 +2242,7 @@
 
         else return;
 
+        qDebug() << package;
 
         if (package.isEmpty())
            {
@@ -6805,11 +6784,14 @@
               }
 
 
-              if (device.port.isEmpty()) {
-                 port = "5555";
-              } else port=device.port;
+              if (device.isusb) {
+                 port = "";
+                 daddr = device.daddr;
+              } else {
+                 port = device.port.isEmpty() ? "5555" : device.port;
+                 daddr = device.daddr + ":" + port;
+              }
 
-              daddr = device.daddr+":"+port;
 
 
 
@@ -6859,6 +6841,7 @@
                  if (ui->adhocip->text().isEmpty())
                  {
 
+                    qDebug() << daddr;
                     cstring = getadbpath() + " -s " + daddr + " shell ";
                     out << cstring << endl;
 
@@ -10778,8 +10761,15 @@ QString MainWindow::getadb()
             DeviceRecord device = queryDeviceRecord(selectedDescription);
 
 
+            if (device.isusb) {
+              port = "";
+              daddr = device.daddr;
+            } else {
+              port = device.port.isEmpty() ? "5555" : device.port;
+              daddr = device.daddr + ":" + port;
+            }
 
-
+/*
             if (!device.isusb) {
 
               if (device.port.isEmpty())
@@ -10789,12 +10779,14 @@ QString MainWindow::getadb()
               editport = ":" + port;
 
             }
+*/
 
 
  // gadb = adb + " -s " + daddr + editport;
 
- gadb = getadbpath() + " -s " + daddr + editport;
+ // gadb = getadbpath() + " -s " + daddr + editport;
 
+        gadb = getadbpath() + " -s " + daddr;
 
  return gadb;
 }
@@ -11041,35 +11033,7 @@ void MainWindow::screenCap()
 }
 
 
-void MainWindow::loadDeviceTable()
-{
-      QString sqlstatement;
-      QSqlQuery query;
 
-      ui->deviceTable->clear();
-      ui->deviceTable->setColumnCount(3); // Set column count to 3
-      ui->deviceTable->setHorizontalHeaderLabels(QStringList() << "Device" << "IP" << "Status"); // Label middle column as IP
-      ui->deviceTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-
-      sqlstatement = "SELECT description, daddr, ostype FROM device";
-      query.exec(sqlstatement);
-      int row = 0;
-      ui->deviceTable->setRowCount(0);
-      while (query.next()) {
-               ui->deviceTable->insertRow(row);
-               ui->deviceTable->setItem(row, 0, new QTableWidgetItem(query.value(0).toString())); // Device (description)
-               // Set IP to "N/A" if daddr is empty
-               QString ip = query.value(1).toString().isEmpty() ? "N/A" : query.value(1).toString();
-               ui->deviceTable->setItem(row, 1, new QTableWidgetItem(ip)); // IP (daddr)
-               // Set Status based on ostype
-               QString status = (query.value(2).toString() != "0") ? "Local" : "Disconnected";
-               ui->deviceTable->setItem(row, 2, new QTableWidgetItem(status)); // Status
-               row++;
-      }
-
-      ui->dsort->setChecked(true);
-      ui->deviceTable->sortItems(0, Qt::AscendingOrder);
-}
 void MainWindow::onApplicationQuit() {
       QJsonObject obj;
       QJsonDocument doc(obj);
@@ -11093,4 +11057,36 @@ void MainWindow::onApplicationQuit() {
       }
       file.write(doc.toJson());
       file.close();
+}
+void MainWindow::loadDeviceTable()
+{
+      QString sqlstatement;
+      QSqlQuery query;
+
+      ui->deviceTable->clear();
+      ui->deviceTable->setColumnCount(3); // Set column count to 3
+      ui->deviceTable->setHorizontalHeaderLabels(QStringList() << "Device" << "IP" << "Status"); // Label middle column as IP
+      ui->deviceTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+      sqlstatement = "SELECT description, daddr, ostype, isusb FROM device";
+      query.exec(sqlstatement);
+      int row = 0;
+      ui->deviceTable->setRowCount(0);
+      while (query.next()) {
+               ui->deviceTable->insertRow(row);
+               // Set Device (description)
+               ui->deviceTable->setItem(row, 0, new QTableWidgetItem(query.value(0).toString())); // Device
+               // Check if isusb is true
+               bool isUsb = query.value(3).toBool();
+               // Set IP to "N/A" if isusb is true, otherwise use daddr or "N/A" if empty
+               QString ip = isUsb ? "N/A" : (query.value(1).toString().isEmpty() ? "N/A" : query.value(1).toString());
+               ui->deviceTable->setItem(row, 1, new QTableWidgetItem(ip)); // IP
+               // Set Status to "USB" if isusb is true, otherwise based on ostype
+               QString status = isUsb ? "USB" : (query.value(2).toString() != "0" ? "Local" : "Disconnected");
+               ui->deviceTable->setItem(row, 2, new QTableWidgetItem(status)); // Status
+               row++;
+      }
+
+      ui->dsort->setChecked(true);
+      ui->deviceTable->sortItems(0, Qt::AscendingOrder);
 }
