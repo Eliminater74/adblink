@@ -1139,14 +1139,14 @@
     <property name="title">
      <string>Kodi</string>
     </property>
-    <addaction name="actionEdit_XML"/>
-    <addaction name="actionDownload_Kodi"/>
-    <addaction name="actionPush_remote"/>
     <addaction name="actionView_Kodi_Log"/>
-    <addaction name="actiondelthumb"/>
-    <addaction name="actionCreate_kodi_data"/>
-    <addaction name="actionKodi_data_usage"/>
+    <addaction name="actionEdit_XML"/>
     <addaction name="actionSplash_Screen"/>
+    <addaction name="actiondelthumb"/>
+    <addaction name="actionPush_remote"/>
+    <addaction name="actionDownload_Kodi"/>
+    <addaction name="actionKodi_data_usage"/>
+    <addaction name="actionCreate_kodi_data"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuKodi"/>

@@ -2853,16 +2853,8 @@
         }
 
 
-        if (  (device.ostype != "0")  )
-         {
-              otherRemote();
-           }
 
-           else
-
-          {
            androidRemote();
-          }
 
 
     }
