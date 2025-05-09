@@ -1109,18 +1109,18 @@
     </property>
     <addaction name="actionHelp"/>
    </widget>
-   <widget class="QMenu" name="menuReboot">
-    <property name="title">
-     <string>Reboot</string>
-    </property>
-    <addaction name="actionReboot"/>
-    <addaction name="actionRecovery"/>
-    <addaction name="actionReboot_bootloader"/>
-   </widget>
    <widget class="QMenu" name="menuUtility">
     <property name="title">
      <string>Utility</string>
     </property>
+    <widget class="QMenu" name="menuReboot_2">
+     <property name="title">
+      <string>Reboot</string>
+     </property>
+     <addaction name="actionReboot"/>
+     <addaction name="actionRecovery"/>
+     <addaction name="actionReboot_bootloader"/>
+    </widget>
     <addaction name="actionSwitch_View"/>
     <addaction name="actionReiinstall_Busybox"/>
     <addaction name="actionPaste_path"/>
@@ -1133,6 +1133,7 @@
     <addaction name="Erase_adbLink_database"/>
     <addaction name="actionWireless_ADBD"/>
     <addaction name="actionTest_adb_connection"/>
+    <addaction name="menuReboot_2"/>
    </widget>
    <widget class="QMenu" name="menuKodi">
     <property name="title">
@@ -1148,7 +1149,6 @@
     <addaction name="actionSplash_Screen"/>
    </widget>
    <addaction name="menuFile"/>
-   <addaction name="menuReboot"/>
    <addaction name="menuKodi"/>
    <addaction name="menuUtility"/>
    <addaction name="menuAbout"/>
