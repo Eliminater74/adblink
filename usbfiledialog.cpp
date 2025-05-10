@@ -39,7 +39,7 @@ QString quote2="'\"";
 bool do_oldfm=false;
 
 ///////////////////////////////////////////////////////
-usbfileDialog::usbfileDialog(QWidget *parent) :
+usbfileDialog::usbfileDialog(bool iskodi, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::usbfileDialog)
 {
@@ -70,7 +70,7 @@ QString programName = QCoreApplication::applicationName();
   ui->kodiDirs->addItem("storage");
   ui->kodiDirs->addItem("data/local/tmp");
 
-  if (programName=="adblink"  ||   programName=="adbLink"   )
+  if (iskodi )
   {
     ui->kodiDirs->addItem("kodi");
     ui->kodiDirs->addItem("userdata");

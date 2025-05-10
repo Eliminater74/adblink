@@ -4336,7 +4336,6 @@
          file.open(QIODevice::ReadOnly);
          doc = QJsonDocument::fromJson(file.readAll());
          obj = doc.object();
-        // bool oldfm = doc.object()["oldfm"].toBool();
          QString download = doc.object()["download"].toString();
          QString cstring;
          QString command;
@@ -4346,20 +4345,25 @@
          QString daddr;
          QString ostypefm("");
          QString fmdaddr("");
-
+         bool iskodi;
 
          busybox_permissions();
 
 
         QString selectedDescription;
-       // int selectedRow = ui->deviceTable->currentRow();
-
         if (!validateDeviceSelection(selectedDescription)) {
           return;
        }
 
 
-         DeviceRecord device = queryDeviceRecord(selectedDescription);
+       int selectedRow = ui->deviceTable->currentRow();
+       if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
+          selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+       } else {
+          QMessageBox::critical(this, "", "No device selected in table");
+          return;
+       }
+       DeviceRecord device = queryDeviceRecord(selectedDescription);
 
 
 
@@ -4383,7 +4387,14 @@
             return;
          }
 
-         fmdialog = new usbfileDialog(this);
+
+         if (ui->stackedWidget->currentIndex() == 0)
+            iskodi=true;
+         else
+            iskodi=false;
+
+         fmdialog = new usbfileDialog(iskodi,this);
+
          fmdialog->setWindowModality(Qt::NonModal);
 
          cstring = getadb() + " shell ls /sdcard/xbmc_env.properties";
@@ -4398,10 +4409,15 @@
          else
          {
             if (isScoped())
-              mcpath = data_root + "kodi_data/" + xbmcpackage + "/files/.kodi";
+              mcpath = device.data_root + "kodi_data/" + device.xbmcpackage + "/files/.kodi";
             else
-              mcpath = data_root + "Android/data/" + xbmcpackage + "/files/.kodi";
+              mcpath = device.data_root + "Android/data/" + device.xbmcpackage + "/files/.kodi";
          }
+
+
+
+
+
 
          fmdialog->setkodiPath(mcpath);
 
@@ -4436,7 +4452,7 @@
 
          fmdialog->setPath1("/sdcard/");
          fmdialog->setPath2("/sdcard/");
-         fmdialog->setdisableroot(disableroot);
+         fmdialog->setdisableroot(device.disableroot);
          fmdialog->setuProgram(kp);
          fmdialog->setPulldir(fmpullpath);
          fmdialog->setAdbdir(apphome);

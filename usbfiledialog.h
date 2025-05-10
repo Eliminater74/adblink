@@ -14,7 +14,7 @@ class usbfileDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit usbfileDialog(QWidget *parent = 0);
+    explicit usbfileDialog(bool iskodi, QWidget *parent = nullptr);
     ~usbfileDialog();
 
 public:
