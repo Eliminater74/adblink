@@ -2309,6 +2309,10 @@
                       QString cstring;
                       QString command;
                       QString s;
+                      QString selectedDescription;
+                      int selectedRow;
+                      QString daddr;
+                      QString port;
 
 
                      // Improved JSON file handling with error checking
@@ -2419,69 +2423,50 @@
                             return;
                       }
 
-                      // Check if deviceTable is empty
-                      if (ui->deviceTable->rowCount() == 0) {
-                            logfile("Device table is empty");
-                            QMessageBox::critical(this, "", "Device table is empty");
+
+
+
+
+
+                      selectedRow = ui->deviceTable->currentRow();
+                      if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
+                            selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+                      } else {
+                            QMessageBox::critical(this, "", "No device selected in table");
                             return;
                       }
+                      DeviceRecord device = queryDeviceRecord(selectedDescription);
 
-                      // Get selected description from deviceTable with improved error handling
-                      QString selectedDescription;
-                      int selectedRow = ui->deviceTable->currentRow();
-                      if (selectedRow < 0) {
-                            logfile("No row selected in device table");
-                            QMessageBox::critical(this, "", "No row selected in device table");
-                            return;
-                      }
-                      if (!ui->deviceTable->item(selectedRow, 0)) {
-                            logfile("Selected device has no description at row " + QString::number(selectedRow));
-                            QMessageBox::critical(this, "", "Selected device has no description");
-                            return;
-                      }
-                      selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
 
-                      getRecord(selectedDescription); // Use deviceTable's selected description
-
-                      if (isusb) {
+                      if (device.isusb) {
                             logfile("USB connection attempted, not supported");
                             QMessageBox::critical(this, "", "Inactive for USB connections");
                             return;
                       }
 
-                      // Improved error handling for empty daddr
-                      daddr = getDevice(selectedDescription);
-                      if (daddr.isEmpty()) {
-                            daddr = selectedDescription;
-                      }
 
 
-                      if (port.isEmpty()) {
-                            port = "5555";
-                      }
-
-                      // Validate port
-                      bool ok;
-                      int portNum = port.toInt(&ok);
-                      if (!ok || portNum < 1 || portNum > 65535) {
-                            logfile("Invalid port: " + port);
-                            QMessageBox::critical(this, "", "Invalid port: " + port);
-                            return;
+                      if (device.isusb) {
+                            port = "";
+                            daddr = device.daddr;
+                      } else {
+                            port = device.port.isEmpty() ? "5555" : device.port;
+                            daddr = device.daddr + ":" + port;
                       }
 
 
 
 
 
-                      QString udaddr = daddr + ":" + port;
-                      cstring = getadbpath() + " connect " + udaddr;
+
+                      cstring = getadbpath() + " connect " + daddr;
                       command = connectadb(cstring);
 
                  if (command.contains("failed to authenticate"))
                         {
                             isConnected = false;
                             ui->deviceTable->setItem(selectedRow, 2, new QTableWidgetItem("Unauthorized"));
-                            cstring = getadbpath() + " disconnect " + udaddr;
+                            cstring = getadbpath() + " disconnect " + daddr;
                             command = connectadb(cstring);
                             return;
                       }
@@ -2492,7 +2477,7 @@
                       {
                             isConnected = false;
                             ui->deviceTable->setItem(selectedRow, 2, new QTableWidgetItem("Offline"));
-                            cstring = getadbpath() + " disconnect " + udaddr;
+                            cstring = getadbpath() + " disconnect " + daddr;
                             command = connectadb(cstring);
                             return;
                       }
@@ -2503,10 +2488,10 @@
                       logfile(cstring);
                       logfile(command);
 
-                      // Update Status column based on connection outcome
+
                       if (command.contains("connected to")) {
                             isConnected = true;
-                            ui->deviceTable->setItem(selectedRow, 2, new QTableWidgetItem("Connected")); // Set Status to Connected
+                            ui->deviceTable->setItem(selectedRow, 2, new QTableWidgetItem("Connected"));
 
 
                             ui->deviceTable->clearSelection();
@@ -2516,14 +2501,14 @@
 
 
 
-                            logfile("Connected to " + udaddr);
+                            logfile("Connected to " + daddr);
                             logfile("Android version: " + s.setNum(getandroid()));
 
                       } else {
                             isConnected = false;
                             ui->deviceTable->setItem(selectedRow, 2, new QTableWidgetItem("NA")); // Set Status to NA
-                            logfile("Unable to connect to: " + udaddr);
-                            QMessageBox::critical(this, "", "Unable to connect to: " + udaddr);
+                            logfile("Unable to connect to: " + daddr);
+                            QMessageBox::critical(this, "", "Unable to connect to: " + daddr);
                       }
 
                       if (isConnected) {
@@ -6103,7 +6088,7 @@
        }
 
 
-
+// adb shell dumpsys battery
 
     }
 
