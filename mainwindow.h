@@ -166,7 +166,7 @@ private slots:
    int getRows();
 
 
-    void updateRoot();
+
 
     void androidLog();
 
@@ -260,7 +260,7 @@ private slots:
 
 
 
-   void backupOther();
+
    void restoreOther();
 
   // void on_actionEdit_XML_files_triggered();
