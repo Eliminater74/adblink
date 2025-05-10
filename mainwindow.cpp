@@ -5448,21 +5448,17 @@
     ///////////////////////////////////
     void MainWindow::on_actionCreate_kodi_data_triggered()
 
+     {
 
-
-    {
         QString selectedDescription;
-        if (!validateDeviceSelection(selectedDescription)) {
+        int selectedRow = ui->deviceTable->currentRow();
+        if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
+           selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+        } else {
+           QMessageBox::critical(this, "", "No device selected in table");
            return;
         }
-
         DeviceRecord device = queryDeviceRecord(selectedDescription);
-
-        if (device.ostype != "0") {
-           QMessageBox::critical(this, "Unavailable", "Android devices only.");
-           return;
-        }
-
 
 
 
@@ -5511,9 +5507,6 @@
          cstring = getadb() + " shell ls "+mcpath;
          command=getadbOutput(cstring);
 
-
-     //    qDebug() << command;
-
       if (!command.contains("No such file or directory"))
         {
         QMessageBox::StandardButton reply;
@@ -5524,16 +5517,19 @@
 
         }
 
+      if ( getandroid() >= 11 )
+        {
 
         if ( is_package(device.xbmcpackage) )
         {
         cstring = getadb()+ " shell appops set --uid "+  device.xbmcpackage +" MANAGE_EXTERNAL_STORAGE allow";
         if (!getreturncode(cstring))
-          { QMessageBox::critical(this, "", "Error setting Kodi permissions");
+          {
+             QMessageBox::critical(this, "", "Error setting Kodi permissions");
            // return;
           }
         }
-
+      }
 
 
         cstring = getadb() + " shell rm -r "+mcpath;
@@ -5554,7 +5550,7 @@
            cstring = getadb() + " shell ls "+mcpath+"/files/.kodi";
            command=getadbOutput(cstring);
 
-           //qDebug() << command;
+
 
            if (command.contains("No such file or directory"))
            {
