@@ -2340,19 +2340,6 @@
 
 
 
-/*
-                      int xr = ui->deviceTable->currentRow();
-                      QString xs = ui->deviceTable->item(xr, 2)->text();
-                      if (xs.contains("Unauthorized"))
-                      {
-                            cstring=getadbpath() + " devices";
-                            command=RunLongProcess(cstring,"");
-                            qDebug() << command;
-                           return;
-                      }
-
-*/
-
 
                       // Handle ad-hoc IP input with validation
                       if (!ui->adhocip->text().isEmpty())
@@ -2405,19 +2392,22 @@
                               ui->deviceTable->setCurrentCell(newRow, 0); // Set active cell
                               ui->deviceTable->selectRow(newRow); // Highlight the row
                               ui->deviceTable->setFocus(); // Ensure table has focus
-
-
-
-
-                           //   default_device_values();
-
                               logfile("Connected to " + daddr);
                               logfile("Android version: " + s.setNum(getandroid()));
                             }
                             else {
+
+
+                              if (command.contains("failed to authenticate") || command.contains("ffline")) {
+                                   logfile(command);
+                                   cstring = getadbpath() + " disconnect " + daddr;
+                                   command = connectadb(cstring);
+                              }
+
+
                               isConnected = false;
                               logfile("Unable to connect to: " + daddr + ":" + port);
-                              QMessageBox::critical(this, "", "Unable to connect to: " + daddr + ":" + port);
+                              QMessageBox::critical(this, "", "Unable to connect to: " + daddr + ":" + port+"\nSee log.");
                             }
 
                             return;
@@ -2462,27 +2452,15 @@
                       cstring = getadbpath() + " connect " + daddr;
                       command = connectadb(cstring);
 
-                 if (command.contains("failed to authenticate"))
-                        {
+
+                      if (command.contains("failed to authenticate") || command.contains("ffline")) {
                             isConnected = false;
-                            ui->deviceTable->setItem(selectedRow, 2, new QTableWidgetItem("Unauthorized"));
-                            cstring = getadbpath() + " disconnect " + daddr;
+                            ui->deviceTable->setItem(selectedRow, 2, new QTableWidgetItem(
+                                                                         command.contains("failed to authenticate") ? "Unauthorized" : "Offline"));
+                            QString cstring = getadbpath() + " disconnect " + daddr;
                             command = connectadb(cstring);
                             return;
                       }
-
-
-
-                      if (command.contains("ffline"))
-                      {
-                            isConnected = false;
-                            ui->deviceTable->setItem(selectedRow, 2, new QTableWidgetItem("Offline"));
-                            cstring = getadbpath() + " disconnect " + daddr;
-                            command = connectadb(cstring);
-                            return;
-                      }
-
-
 
 
                       logfile(cstring);
@@ -10964,15 +10942,10 @@ bool MainWindow::validateDeviceSelection(QString& selectedDescription) {
 void MainWindow::on_actionSwitch_View_triggered()
 {
 
-
-
-
-
-
  if (ui->stackedWidget->currentIndex() == 0) {
 
                QMessageBox::StandardButton reply;
-               reply = QMessageBox::question(this, "Kodi", "Disable Kodi features?",
+               reply = QMessageBox::question(this, "Kodi", "Disable Kodi functions?",
                                              QMessageBox::Yes | QMessageBox::No);
                if (reply == QMessageBox::No) {
               return;
@@ -10986,7 +10959,7 @@ void MainWindow::on_actionSwitch_View_triggered()
  else {
 
                QMessageBox::StandardButton reply;
-               reply = QMessageBox::question(this, "Kodi", "Enable Kodi features?",
+               reply = QMessageBox::question(this, "Kodi", "Enable Kodi functions?",
                                              QMessageBox::Yes | QMessageBox::No);
                if (reply == QMessageBox::No) {
               return;
