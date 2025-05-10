@@ -94,11 +94,6 @@ private slots:
 
 
 
-    void editAndroid();
-
-
-
-    void editOther();
 
 
    QString getadb();
