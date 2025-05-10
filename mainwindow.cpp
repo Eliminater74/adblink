@@ -7451,8 +7451,9 @@ void MainWindow::on_restoreButton_clicked() {
 
 
    // Check package installation
-   is_package(device.xbmcpackage);
-   if (!is_packageInstalled) {
+ //  is_package(device.xbmcpackage);
+
+   if (!is_package(device.xbmcpackage)) {
       QMessageBox::critical(this, "", device.xbmcpackage + " not installed");
       return;
    }
