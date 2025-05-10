@@ -108,7 +108,7 @@
     bool wsa = false;
     bool scoped = false;
 
-    QString port = ""; 
+    QString port = "";
     QString filename = "";
     QString apphome =  "";
     QString scriptdir = "";
@@ -120,14 +120,14 @@
 
 
     QString hdir = "";
-    QString daddr="";
+   QString daddr="";
     QString sldir = "";
-    QString pushdir = "";
-    QString pulldir = "";
+      QString pushdir = "";
+   QString pulldir = "";
     QString xbmcpackage ="";
     QString ostype = "";
 
-    QString data_root = "";
+   QString data_root = "";
     QString buffersize = "";
     QString bufferfactor = "";
     int buffermode = 1;
@@ -1204,7 +1204,7 @@
 
      void MainWindow::blank_entry_form()
      {
-
+/*
          daddr="";
          ostype="0";
          description="";
@@ -1221,7 +1221,7 @@
         disableroot = false;
         scoped=false;
         wsa=false;
-
+*/
      }
 
 
@@ -2131,6 +2131,22 @@
     void MainWindow::on_disButton_clicked()
     {
 
+              QString daddr;
+
+
+                      int selectedRow = ui->deviceTable->currentRow();
+                      if (selectedRow < 0 || !ui->deviceTable->item(selectedRow, 2) || !ui->deviceTable->item(selectedRow, 1)) {
+                            QMessageBox::critical(this, "", "No valid device selected");
+                            return ;
+                      }
+                      if (ui->deviceTable->item(selectedRow, 2)->text() != "Connected") {
+                            QMessageBox::critical(this, "", "Selected device is not connected");
+                            return;
+                      }
+                      daddr = ui->deviceTable->item(selectedRow, 1)->text();
+
+
+
 
 
    QMessageBox::StandardButton reply;
@@ -2144,15 +2160,14 @@
 
      if (!ui->adhocip->text().isEmpty())
      {
-           daddr = ui->adhocip->text();
+
            QString cstring = getadbpath() + " disconnect " + daddr;
            QString command = getadbOutput(cstring);
            logfile("disconnect: " + daddr);
            logfile(command);
 
-           int selectedRow = ui->deviceTable->currentRow();
-           if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0) &&
-               ui->deviceTable->item(selectedRow, 0)->text() == daddr) {
+           selectedRow = ui->deviceTable->currentRow();
+           if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
                               ui->deviceTable->removeRow(selectedRow);
            }
 
@@ -2162,36 +2177,16 @@
      }
 
 
-        if (isusb )
-          {
-
-             QMessageBox::critical(this,"","Inactive for USB connections");
-              return;
-          }
 
 
 
-        QString selectedDescription;
-        int selectedRow = ui->deviceTable->currentRow();
-        if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
-            selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
-        } else {
-            QMessageBox::critical(this, "", "No device selected in table");
-            return;
-        }
-
-        daddr = getDevice(selectedDescription);
-        if (daddr.isEmpty()) {
-            daddr = selectedDescription;
-        }
-
-        QString port = getPort(selectedDescription);
-        if (port.isEmpty()) {
-            port = "5555";
-        }
+        //  QString selectedDescription;
 
 
-             QString cstring = getadbpath() + " disconnect "+daddr+":"+port ;
+
+
+
+             QString cstring = getadbpath() + " disconnect "+daddr;
              QString command=getadbOutput(cstring);
              logfile (command);
              logfile("disconnect: "+daddr);
@@ -5210,16 +5205,16 @@
     void MainWindow::on_actiondelthumb_triggered()
     {
             QString selectedDescription;
-            if (!validateDeviceSelection(selectedDescription)) {
+            int selectedRow = ui->deviceTable->currentRow();
+            if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
+                selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+            } else {
+                QMessageBox::critical(this, "", "No device selected in table");
                 return;
             }
 
-            DeviceRecord device = queryDeviceRecord(selectedDescription);
+         DeviceRecord device = queryDeviceRecord(selectedDescription);
 
-            if (device.ostype != "0") {
-                QMessageBox::critical(this, "Unavailable", "Android devices only.");
-                return;
-            }
 
         QString cstring;
         QString command;
