@@ -140,7 +140,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Choose partitionzz</string>
+    <string>Choose partition</string>
    </property>
   </widget>
  </widget>

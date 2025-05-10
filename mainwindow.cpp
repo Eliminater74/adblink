@@ -4367,15 +4367,26 @@
 
     void MainWindow::on_actionKodi_data_usage_triggered()
     {
+              QString kodidata;
 
-     isConnected=check_Connection();
 
+
+              QString selectedDescription;
+              int selectedRow = ui->deviceTable->currentRow();
+              if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
+                selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+              } else {
+                QMessageBox::critical(this, "", "No device selected in table");
+                return;
+              }
+
+              DeviceRecord device = queryDeviceRecord(selectedDescription);
 
               backupDialog dialog;
 
              QString n_data_root;
 
-              dialog.setadb_backup(getadb(),data_root);
+              dialog.setadb_backup(getadb(),device.data_root);
 
                dialog.setModal(true);
 
@@ -4395,10 +4406,19 @@
                    n_data_root.append("/") ;
 
 
-                QString cstring = getadb() + " shell du -sh " + n_data_root +"Android/data/"+xbmcpackage;
-                QString command=RunLongProcess(cstring,"Data size");
+                QString cstring = getadb() + " shell du -sh " + n_data_root +"Android/data/"+device.xbmcpackage;
+                QString command=RunLongProcess(cstring,"calculating data size");
 
-                 QString kodidata;
+
+                if (command.contains("No such file"))
+                {
+                    kodidata = "No data found";
+                }
+
+                else
+                {
+
+
 
                 int z = command.indexOf("G");
 
@@ -4411,22 +4431,15 @@
 
                 if (z != -1)
                  kodidata = command.mid(0,z+1);
-                else
-                kodidata = "No Kodi data found";
 
-
-                cstring = getadb() + " shell df " + n_data_root;
-                QString mystring=getadbOutput(cstring);
-                QStringList list=mystring.split(QRegExp("\\s"),QString::SkipEmptyParts);
+                }
 
 
 
-                QMessageBox::information(0,"","Partition:  " + list[5]+"\n"+
-                                              "Partition size:  " + list[6]+"\n"+
-                                              "Kodi data size:  " + kodidata+"\n"+
-                                              "Total space used:  " + list[7]+"\n"+
-                                              "Free space:  " + list[8]
-                        );
+                QMessageBox::information(0,"Kodi Data","Kodi data size:  " + kodidata);
+
+
+
 
 
               }
@@ -4444,17 +4457,6 @@
 
 
     }
-
-    //////////////////////////////////////////////////////
-
-    bool MainWindow::check_Connection()
-    {
-
-    return false;
-
-    }
-
-
 
 
 

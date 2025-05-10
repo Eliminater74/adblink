@@ -157,7 +157,6 @@ private slots:
 
    void start_server();
 
-   bool check_Connection();
 
 
    bool is_package(QString package);
