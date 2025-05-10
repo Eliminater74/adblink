@@ -171,8 +171,6 @@ private slots:
    int getRows();
 
 
-    bool find_daddr(QString);
-
     void updateRoot();
 
     void androidLog();
@@ -183,7 +181,7 @@ private slots:
 
      void kodiFolder(QString sourceFolder, QString destFolder);
 
-    void getRecord(QString descrip);
+ //   void getRecord(QString descrip);
 
     void on_actionReboot_triggered();
 
@@ -294,8 +292,6 @@ private slots:
    void on_actionWireless_ADBD_triggered();
 
    void on_actionKodi_data_usage_triggered();
-
-  void on_deviceBox_currentIndexChanged(const QString &arg1);
 
 
   void on_clearButton_clicked();

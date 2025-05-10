@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Find/Replace</string>
   </property>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="searchdialog_layoutWidget">
    <property name="geometry">
     <rect>
      <x>50</x>

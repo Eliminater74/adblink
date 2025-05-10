@@ -219,7 +219,7 @@ void usbfileDialog::on_pushfilesButton_clicked()
     QStringList filePaths;
 
 
-    bool doroot=false;
+   // bool doroot=false;
     QString xpath;
 
 

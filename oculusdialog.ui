@@ -54,7 +54,7 @@
     <string>battery1</string>
    </property>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="oculusdialog_layoutWidget">
    <property name="geometry">
     <rect>
      <x>140</x>

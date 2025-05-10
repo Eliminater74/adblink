@@ -51,7 +51,7 @@
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="tcpipdialog_layoutWidget">
    <property name="geometry">
     <rect>
      <x>100</x>

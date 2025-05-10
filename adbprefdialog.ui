@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Preferences</string>
   </property>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="adbprefdialog_layoutWidget">
    <property name="geometry">
     <rect>
      <x>320</x>
@@ -142,7 +142,7 @@
     </property>
    </item>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="adbprefdialog_layoutWidget_2">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -182,7 +182,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="adbprefdialog_layoutWidget_3">
    <property name="geometry">
     <rect>
      <x>280</x>
@@ -296,7 +296,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="adbprefdialog_layoutWidget_4">
    <property name="geometry">
     <rect>
      <x>21</x>

@@ -16,7 +16,7 @@
   <property name="windowTitle">
    <string/>
   </property>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="dragdialog_layoutWidget">
    <property name="geometry">
     <rect>
      <x>21</x>

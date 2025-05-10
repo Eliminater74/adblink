@@ -66,7 +66,7 @@
    <property name="title">
     <string>Sleep</string>
    </property>
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QWidget" name="sleepdialog_layoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -131,7 +131,7 @@
    <property name="title">
     <string>Screensaver</string>
    </property>
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QWidget" name="sleepdialog_layoutWidget_2">
     <property name="geometry">
      <rect>
       <x>10</x>

@@ -28,7 +28,7 @@
   <property name="sizeGripEnabled">
    <bool>true</bool>
   </property>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="uninstalldialog_layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>

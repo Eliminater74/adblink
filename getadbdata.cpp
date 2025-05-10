@@ -1,5 +1,5 @@
 #include "getadbdata.h"
-#include "logfile.h"
+// #include "logfile.h"
 #include <QDebug>
 #include <QProcess>
 #include <QCoreApplication>
@@ -26,7 +26,7 @@ QString getadbOutput(const QString &cstring)
   QString command=run_command.readAll();
 
 
- bool success = (run_command.exitCode() == 0);
+ // bool success = (run_command.exitCode() == 0);
 
   return command;
 

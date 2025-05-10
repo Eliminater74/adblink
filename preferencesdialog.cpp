@@ -502,10 +502,11 @@ void preferencesDialog::on_scoped_clicked(bool checked)
     }
 }
 
+/*
 void preferencesDialog::on_ostypeBox_activated(int index)
 {
 
 }
-
+*/
 
 

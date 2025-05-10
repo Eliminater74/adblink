@@ -42,7 +42,7 @@
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set the MANAGE_EXTERNAL_STORAGE&lt;br/&gt;permission for the package name entered below. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="setpdialog_layoutWidget">
    <property name="geometry">
     <rect>
      <x>30</x>

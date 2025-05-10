@@ -96,7 +96,7 @@
     <column/>
     <column/>
    </widget>
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QWidget" name="mainwindow_layoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -182,7 +182,7 @@
      <number>0</number>
     </property>
     <widget class="QWidget" name="page">
-     <widget class="QWidget" name="layoutWidget_2">
+     <widget class="QWidget" name="mainwindow_layoutWidget_2">
       <property name="geometry">
        <rect>
         <x>20</x>
@@ -590,7 +590,7 @@
      </widget>
     </widget>
     <widget class="QWidget" name="page_2">
-     <widget class="QWidget" name="layoutWidget_3">
+     <widget class="QWidget" name="mainwindow_layoutWidget_3">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -905,7 +905,7 @@
      <string>IP address:port</string>
     </property>
    </widget>
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QWidget" name="mainwindow_layoutWidget_4">
     <property name="geometry">
      <rect>
       <x>400</x>

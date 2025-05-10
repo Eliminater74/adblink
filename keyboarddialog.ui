@@ -170,7 +170,7 @@ QMessageBox {
     <string>Exit</string>
    </property>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="keyboarddialog_layoutWidget">
    <property name="geometry">
     <rect>
      <x>30</x>

@@ -147,7 +147,7 @@
     <string>WSA</string>
    </property>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="preferencesdialog_layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -179,7 +179,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="preferencesdialog_layoutWidget_2">
    <property name="geometry">
     <rect>
      <x>12</x>
@@ -254,7 +254,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="preferencesdialog_layoutWidget_3">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -307,7 +307,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="preferencesdialog_layoutWidget_4">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -345,7 +345,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="preferencesdialog_layoutWidget_5">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -495,7 +495,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="preferencesdialog_layoutWidget_6">
    <property name="geometry">
     <rect>
      <x>270</x>

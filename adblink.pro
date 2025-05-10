@@ -129,7 +129,6 @@ FORMS    += mainwindow.ui \
 
 QMAKE_CXXFLAGS += -Wno-deprecated
 
-
 ICON = adblink.icns
 RC_FILE = adblink.rc
 

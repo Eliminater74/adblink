@@ -25,7 +25,7 @@
   <property name="windowTitle">
    <string>Move Kodi Data</string>
   </property>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="datadialog_layoutWidget">
    <property name="geometry">
     <rect>
      <x>70</x>
