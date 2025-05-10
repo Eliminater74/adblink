@@ -6842,8 +6842,8 @@ void MainWindow::backupAndroid() {
         DeviceRecord device = queryDeviceRecord(selectedDescription);
 
 
-        is_package(device.xbmcpackage);
-        if (!is_packageInstalled) {
+
+        if (!is_package(device.xbmcpackage)) {
            QMessageBox::critical(this, "", device.xbmcpackage + " not installed");
            return;
         }
@@ -7450,8 +7450,6 @@ void MainWindow::on_restoreButton_clicked() {
 
 
 
-   // Check package installation
- //  is_package(device.xbmcpackage);
 
    if (!is_package(device.xbmcpackage)) {
       QMessageBox::critical(this, "", device.xbmcpackage + " not installed");
