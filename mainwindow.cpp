@@ -2310,6 +2310,7 @@
                       QString command;
                       QString s;
 
+
                      // Improved JSON file handling with error checking
                       QJsonObject obj;
                       QFile file(databasedir + "adblink.json");
@@ -2332,6 +2333,22 @@
                             logfile("checkscope key missing in adblink.json, using default false");
                       }
                       file.close();
+
+
+
+/*
+                      int xr = ui->deviceTable->currentRow();
+                      QString xs = ui->deviceTable->item(xr, 2)->text();
+                      if (xs.contains("Unauthorized"))
+                      {
+                            cstring=getadbpath() + " devices";
+                            command=RunLongProcess(cstring,"");
+                            qDebug() << command;
+                           return;
+                      }
+
+*/
+
 
                       // Handle ad-hoc IP input with validation
                       if (!ui->adhocip->text().isEmpty())
@@ -2369,14 +2386,16 @@
                             logfile(cstring);
                             command = connectadb(cstring);
 
+
+
                             if (command.contains("connected to"))
                             {
                               isConnected = true;
                               // Add new row to deviceTable with daddr and Connected
                               int newRow = ui->deviceTable->rowCount();
                               ui->deviceTable->insertRow(newRow);
-                              ui->deviceTable->setItem(newRow, 0, new QTableWidgetItem("Ad hoc IP")); // Description = daddr
-                              ui->deviceTable->setItem(newRow, 1, new QTableWidgetItem(daddr)); // Status = Connected
+                              ui->deviceTable->setItem(newRow, 0, new QTableWidgetItem("Ad hoc IP"));
+                              ui->deviceTable->setItem(newRow, 1, new QTableWidgetItem(daddr));
                               ui->deviceTable->setItem(newRow, 2, new QTableWidgetItem("Connected"));
                               ui->deviceTable->clearSelection(); // Clear previous selections
                               ui->deviceTable->setCurrentCell(newRow, 0); // Set active cell
@@ -2386,7 +2405,7 @@
 
 
 
-                              default_device_values();
+                           //   default_device_values();
 
                               logfile("Connected to " + daddr);
                               logfile("Android version: " + s.setNum(getandroid()));
@@ -2451,9 +2470,35 @@
                       }
 
 
+
+
+
                       QString udaddr = daddr + ":" + port;
                       cstring = getadbpath() + " connect " + udaddr;
                       command = connectadb(cstring);
+
+                 if (command.contains("failed to authenticate"))
+                        {
+                            isConnected = false;
+                            ui->deviceTable->setItem(selectedRow, 2, new QTableWidgetItem("Unauthorized"));
+                            cstring = getadbpath() + " disconnect " + udaddr;
+                            command = connectadb(cstring);
+                            return;
+                      }
+
+
+
+                      if (command.contains("ffline"))
+                      {
+                            isConnected = false;
+                            ui->deviceTable->setItem(selectedRow, 2, new QTableWidgetItem("Offline"));
+                            cstring = getadbpath() + " disconnect " + udaddr;
+                            command = connectadb(cstring);
+                            return;
+                      }
+
+
+
 
                       logfile(cstring);
                       logfile(command);
