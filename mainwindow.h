@@ -72,9 +72,9 @@ private slots:
 
     void on_adbshellButton_clicked();
 
-    void splashButton_android();
 
-  void splashButton_other();
+
+
 
 
      void finishedCopy1();

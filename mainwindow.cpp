@@ -167,8 +167,6 @@
         QString returnText;
     };
 
-    QFutureWatcher<void> watcher1;
-     QFutureWatcher<void> watcher2;
 
     //////////////////////////////////////////////
     MainWindow::MainWindow(QWidget *parent) :
@@ -496,8 +494,7 @@
 
            }
 
-       connect(&watcher1, SIGNAL(finished()), SLOT(finishedCopy1()));
-       connect(&watcher2, SIGNAL(finished()), SLOT(finishedCopy2()));
+
        connect(ui->deviceTable, &QTableWidget::doubleClicked, this, &MainWindow::on_fmButton_clicked);
        connect(ui->textButton, &QPushButton::clicked, this, &MainWindow::on_actionSend_text_triggered);
        connect(ui->infoButton, &QPushButton::clicked, this, &MainWindow::systeminfo);
@@ -3243,245 +3240,6 @@
           {
             cacheButton_android();
           }
-
-    }
-
-
-
-    /////////////////////////////////////////////////////////////////////////////////////
-    void MainWindow::splashButton_android()
-    {
-
-          QString selectedDescription;
-          if (!validateDeviceSelection(selectedDescription)) {
-            return;
-          }
-
-          DeviceRecord device = queryDeviceRecord(selectedDescription);
-
-          if (device.ostype != "0") {
-            QMessageBox::critical(this, "Unavailable", "Android devices only.");
-            return;
-          }
-
-
-         if(!is_busybox())
-         {
-             QMessageBox::critical(0,"","Busybox installation failed.");
-            return;
-         }
-
-         busybox_permissions();
-
-
-
-       if (!is_package(device.xbmcpackage))
-          { QMessageBox::critical(
-                this,
-                "",
-                device.xbmcpackage+" not installed");
-             return;
-       }
-
-
-      QString cstring;
-      QString command;
-
-      QString mcpath="";
-
- //     if  (ostype == "0")
-  //        mcpath=data_root+ "Android/data/"+xbmcpackage+filepath;
-  //    else
-   //       mcpath="/sdcard/kodi_data/.kodi";
-
-
- //     if (isScoped()) {
-  //        mcpath=data_root + "kodi_data/" + xbmcpackage+filepath;
-
- //     } else {
-  //        mcpath=data_root + "Android/data/" + xbmcpackage+filepath;
-
-  //    }
-
-
-      cstring = getadb() + " shell ls /sdcard/xbmc_env.properties";
-      if(getreturncode(cstring))
-      {  cstring = getadb() + " shell cat /sdcard/xbmc_env.properties";
-          command=getadbOutput(cstring);
-          command.replace(QRegExp("[\r\n]"), "");
-          mcpath = command.mid(command.indexOf("xbmc.data=") + 10);
-          mcpath=mcpath+"/.kodi";
-      }
-      else
-
-      {
-          mcpath="/sdcard/Android/data/" + xbmcpackage+"/files/.kodi";
-
-      }
-
-
-
-
-      mcpath=mcpath+"/media";
-
-  //    qDebug() << mcpath;
-
-
-
-      cstring = getadb() + " shell ls "+mcpath;
-      command=getadbOutput(cstring);
-
-
-      cstring = getadb() + " shell ls "+mcpath;
-      command=getadbOutput(cstring);
-
-
-
-
-      if (command.contains("No such file or directory"))
-       {
-          cstring = getadb() + " mkdir -p "+ mcpath;
-          command=getadbOutput(cstring);
-      }
-
-
-
-
-
-    QElapsedTimer rtimer;
-    int nMilliseconds;
-    rtimer.start();
-
-
-
- //   QString fileName = QFileDialog::getOpenFileName(this,
-//     "Choose splash screen file", splashdir, tr("Files (*.png)"));
-
-
-     QString fileName = QFileDialog::getOpenFileName(this,
-     "Choose splash screen file", splashdir, tr("Files (*.png *.jpg *.jpeg)"));
-
-
-     if (!fileName.isEmpty() )
-     {
-
-
-         QMessageBox::StandardButton reply;
-           reply = QMessageBox::question(this, "Push", fileName+" selected. Continue?",
-               QMessageBox::Yes|QMessageBox::No);
-           if (reply == QMessageBox::Yes) {
-
-
-               cstring = getadb() + " push "+'"'+fileName+'"'+ " "+mcpath+"/splash.png";
-
-               command=RunLongProcess(cstring,"Splash Screen");
-
-               // logfile(cstring);
-               logfile(command);
-
-               nMilliseconds = rtimer.elapsed();
-               logfile("process time duration: "+ QString::number(nMilliseconds/1000)+ " seconds" );
-
-
-
-               if (command.contains("bytes"))
-
-
-               {
-
-
-
-                   QMessageBox::information(
-                               this,
-                              "",
-                              "Splash screen installed." );
-               }
-                   else
-
-               {
-
-                   QMessageBox::critical(
-                               this,
-                               "",
-                            "Splash screen installation failed.");}
-
-
-       }
-
-    }
-
-    }
-
-
-
-    ///////////////////////////////////////////////////////////////////////////////////////
-    void MainWindow::splashButton_other()
-    {
-
-    QElapsedTimer rtimer;
-    int nMilliseconds;
-    rtimer.start();
-
-
-
-    QString mcpath=filepath;
-
-     mcpath=mcpath+"/media/";
-
-
-    QDir dir(mcpath);
-    if (!dir.exists()) {
-        dir.mkpath(mcpath);
-    }
-
-
-
-     QString fileName = QFileDialog::getOpenFileName(this,
-    "Choose splash screen file", splashdir, tr("Files (*.png)"));
-
-     if (!fileName.isEmpty() )
-     {
-
-
-         QMessageBox::StandardButton reply;
-           reply = QMessageBox::question(this, "Push", fileName+" selected. Continue?",
-               QMessageBox::Yes|QMessageBox::No);
-           if (reply == QMessageBox::Yes) {
-
-               QFileInfo fileInfo(fileName);
-               QString filename(fileInfo.fileName());
-
-
-
-
-
-
-
-
-
-              QFile::copy(fileName, mcpath+"/"+"splash.png");
-
-               nMilliseconds = rtimer.elapsed();
-               logfile("process time duration: "+ QString::number(nMilliseconds/1000)+ " seconds" );
-
-
-               if (QFileInfo::exists(mcpath+"/"+"splash.png"))
-               {
-                    QMessageBox::information(this,"","Splash screen installed." );
-                   }
-
-             else
-               {
-               QMessageBox::information(this,"","Copy failed. See log." );
-               logfile("Copy of "+fileName);
-               logfile("to folder "+mcpath);
-               logfile("failed for "+filename);
-
-                  }
-               }
-
-
-    }
 
     }
 
@@ -7750,20 +7508,134 @@ void MainWindow::on_startapp_clicked()
 void MainWindow::on_actionSplash_Screen_triggered()
 {
 
-
     QString selectedDescription;
     if (!validateDeviceSelection(selectedDescription)) {
      return;
     }
 
+
+    int selectedRow = ui->deviceTable->currentRow();
+    if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
+     selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+    } else {
+     QMessageBox::critical(this, "", "No device selected in table");
+     return;
+    }
+
     DeviceRecord device = queryDeviceRecord(selectedDescription);
 
-            if  (device.ostype != "0")
-            splashButton_other();
-            else
+
+    if(!is_busybox())
+    {
+     QMessageBox::critical(0,"","Busybox installation failed.");
+     return;
+    }
+
+    busybox_permissions();
+
+
+
+    if (!is_package(device.xbmcpackage))
+    { QMessageBox::critical(
+         this,
+         "",
+         device.xbmcpackage+" not installed");
+     return;
+    }
+
+
+    QString cstring;
+    QString command;
+    QString mcpath="";
+
+
+    cstring = getadb() + " shell ls /sdcard/xbmc_env.properties";
+    if(getreturncode(cstring))
+    {  cstring = getadb() + " shell cat /sdcard/xbmc_env.properties";
+     command=getadbOutput(cstring);
+     command.replace(QRegExp("[\r\n]"), "");
+     mcpath = command.mid(command.indexOf("xbmc.data=") + 10);
+     mcpath=mcpath+"/.kodi";
+    }
+    else
+
+    {
+     mcpath="/sdcard/Android/data/" + device.xbmcpackage+"/files/.kodi";
+
+    }
+
+
+
+
+    mcpath=mcpath+"/media";
+
+    cstring = getadb() + " shell ls "+mcpath;
+    command=getadbOutput(cstring);
+
+
+    cstring = getadb() + " shell ls "+mcpath;
+    command=getadbOutput(cstring);
+
+
+
+
+    if (command.contains("No such file or directory"))
+    {
+     cstring = getadb() + " mkdir -p "+ mcpath;
+     command=getadbOutput(cstring);
+    }
+
+
+
+
+    QString fileName = QFileDialog::getOpenFileName(this,"Choose splash screen file", QDir::homePath(), tr("Files (*.png *.jpg *.jpeg)"));
+
+
+
+    if (!fileName.isEmpty() )
+    {
+
+
+     QMessageBox::StandardButton reply;
+     reply = QMessageBox::question(this, "Push", fileName+" selected. Continue?",
+                                   QMessageBox::Yes|QMessageBox::No);
+     if (reply == QMessageBox::Yes) {
+
+
+            cstring = getadb() + " push "+'"'+fileName+'"'+ " "+mcpath+"/splash.png";
+
+            command=RunLongProcess(cstring,"Splash Screen");
+
+            // logfile(cstring);
+            logfile(command);
+
+
+            if (command.contains("bytes"))
+
+
             {
-            splashButton_android();
+
+
+
+              QMessageBox::information(
+                  this,
+                  "",
+                  "Splash screen installed." );
             }
+            else
+
+            {
+
+              QMessageBox::critical(
+                  this,
+                  "",
+                  "Splash screen installation failed.");}
+
+
+     }
+
+    }
+
 
 
 }
