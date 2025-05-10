@@ -60,9 +60,6 @@ usbfileDialog::usbfileDialog(bool iskodi, QWidget *parent) :
       tmpdir1= QDir::homePath()+"/.jocala/scripts/";
   }
 
-QString programName = QCoreApplication::applicationName();
-
-  logfile(programName);
 
   ui->kodiDirs->clear();
 
