@@ -1316,7 +1316,7 @@
     {
 
 
-
+             bool is_packageInstalled;
 
 
         QString cstring = getadb() + " shell pm list packages ";
@@ -2639,20 +2639,17 @@
 
 
         QString selectedDescription;
-        if (!validateDeviceSelection(selectedDescription)) {
+        int selectedRow = ui->deviceTable->currentRow();
+        if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
+            selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+        } else {
+            QMessageBox::critical(this, "", "No device selected in table");
             return;
         }
-
         DeviceRecord device = queryDeviceRecord(selectedDescription);
 
-        if (device.ostype != "0") {
-            QMessageBox::critical(this, "Unavailable", "Android devices only.");
-            return;
-        }
 
-        is_package(device.xbmcpackage);
-
-       if (!is_packageInstalled)
+       if (!is_package(device.xbmcpackage))
           { QMessageBox::critical(
                 this,
                 "",
@@ -2674,12 +2671,9 @@
           else
 
           {
-           mcpath="/sdcard/Android/data/" + xbmcpackage+"/files/.kodi";
+           mcpath="/sdcard/Android/data/" + device.xbmcpackage+"/files/.kodi";
 
           }
-
-
-
 
 
 
@@ -2845,12 +2839,6 @@
                    return;
         }
 
-        DeviceRecord device = queryDeviceRecord(selectedDescription);
-
-        if (device.ostype != "0") {
-                   QMessageBox::critical(this, "Unavailable", "Android devices only.");
-                   return;
-        }
 
 
 
