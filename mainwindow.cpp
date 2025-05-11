@@ -1348,7 +1348,8 @@
 
     void MainWindow::createTables()
     {
-     //   logfile("creating adblink.db");
+
+        logfile("creating adblink.db");
 
 
 
@@ -1914,7 +1915,7 @@
                       QString port;
 
 
-                     // Improved JSON file handling with error checking
+
                       QJsonObject obj;
                       QFile file(databasedir + "adblink.json");
                       bool checkscope = false; // Default value
@@ -1955,7 +1956,7 @@
                               port = "5555";
                             }
 
-                            // Validate IP address using isNull (avoids isValid error)
+
                             QHostAddress address(daddr);
                             if (daddr.isEmpty() || address.isNull()) {
                               logfile("Invalid IP address: " + daddr);
@@ -1963,7 +1964,7 @@
                               return;
                             }
 
-                            // Validate port
+
                             bool ok;
                             int portNum = port.toInt(&ok);
                             if (!ok || portNum < 1 || portNum > 65535) {
@@ -1999,8 +2000,10 @@
 
                               if (command.contains("failed to authenticate") || command.contains("ffline")) {
                                    logfile(command);
+                                   logfile(daddr+" "+"fails to authenticate");
                                    cstring = getadbpath() + " disconnect " + daddr;
                                    command = connectadb(cstring);
+                                   isConnected = false;
                               }
 
 
@@ -2055,7 +2058,9 @@
                       if (command.contains("failed to authenticate") || command.contains("ffline")) {
                             isConnected = false;
                             ui->deviceTable->setItem(selectedRow, 2, new QTableWidgetItem(
-                                                                         command.contains("failed to authenticate") ? "Unauthorized" : "Offline"));
+                             command.contains("failed to authenticate") ? "Unauthorized" : "Offline"));
+                             logfile(cstring);
+                             logfile(command);
                             QString cstring = getadbpath() + " disconnect " + daddr;
                             command = connectadb(cstring);
                             return;
@@ -7792,10 +7797,7 @@ void MainWindow::on_actionSend_text_triggered()
 
  DeviceRecord device = queryDeviceRecord(selectedDescription);
 
- if (device.ostype != "0") {
-            QMessageBox::critical(this, "Unavailable", "Android devices only.");
-            return;
- }
+
  QString command;
  QString cstring;
 
