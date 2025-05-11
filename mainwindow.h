@@ -87,9 +87,6 @@ private slots:
 
     void delay(int secs);
 
-   void insertDevice();
-
-   void backupAndroid();
 
 
    void busybox_permissions();
@@ -153,7 +150,7 @@ private slots:
 
      QString strip (QString str);
 
-    void default_device_values();
+//    void default_device_values();
 
     void blank_entry_form();
 
@@ -347,9 +344,6 @@ private slots:
 
 
 
-  void on_connWSA_clicked();
-
-
 
   void on_actionView_Changelog_triggered();
 
@@ -361,12 +355,7 @@ private slots:
 
   void on_Erase_adbLink_database_triggered();
 
-  void on_actionWSA_triggered();
-
-  void on_actionConnect_WSA_triggered();
-
-
-  void on_actionSet_Kodi_permissions_triggered();
+ void on_actionSet_Kodi_permissions_triggered();
 
   void on_actionGet_UID_from_APK_file_triggered();
 
