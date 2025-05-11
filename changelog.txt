@@ -2,12 +2,15 @@ XX/XX/25
 
 Version 6.4
 
+adb updated to Version 36.0.0-13206524
+
 Merge of adblink & adblink2 complete. Choose
 which view is active at startup, switch at will
 
-Device list moved to scrollable table which
-also displays IP and connection status. This
-table is sortable by device or connection.
+The device list has moved to a table. Each row
+displays device name, IP and connection status.
+Sort on any column. 
+
 
 
 /////////

@@ -29,6 +29,8 @@ DeviceRecord queryDeviceRecord(const QString& description);
 
 private slots:
 
+    bool renameColumnIfNotRenamed(const QString& oldColumnName, const QString& newColumnName);
+
      void onApplicationQuit();
 
     bool validateDeviceSelection(QString& selectedDescription);
