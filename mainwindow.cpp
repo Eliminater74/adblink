@@ -575,13 +575,14 @@
         }
 
 
-            ui->deviceTable->setColumnCount(3);
-            ui->deviceTable->setHorizontalHeaderLabels(QStringList() << "Device" << "IP" << "Status");
-            ui->deviceTable->verticalHeader()->setVisible(false);
-            ui->deviceTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-            ui->deviceTable->setShowGrid(true);
-            ui->deviceTable->setSortingEnabled(true);
-
+        ui->deviceTable->setColumnCount(3);
+        ui->deviceTable->setHorizontalHeaderLabels(QStringList() << "Device" << "IP" << "Status");
+        ui->deviceTable->verticalHeader()->setVisible(false);
+        ui->deviceTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        ui->deviceTable->setShowGrid(true);
+        ui->deviceTable->setSortingEnabled(true);
+        ui->deviceTable->setSelectionMode(QAbstractItemView::SingleSelection);
+        ui->deviceTable->setSelectionBehavior(QAbstractItemView::SelectRows);
 
 
         loadDeviceTable();
@@ -2172,6 +2173,8 @@
            }
 
            ui->adhocip->setText("");
+
+            loadDeviceTable();
 
            return;
      }
@@ -9479,11 +9482,16 @@ void MainWindow::loadDeviceTable()
       QSqlQuery query;
 
       ui->deviceTable->clear();
-      ui->deviceTable->setColumnCount(3); // Set column count to 3
-      ui->deviceTable->setHorizontalHeaderLabels(QStringList() << "Device" << "IP" << "Status"); // Label middle column as IP
-      ui->deviceTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+      ui->deviceTable->setColumnCount(3);
+      ui->deviceTable->setHorizontalHeaderLabels(QStringList() << "Device" << "IP" << "Status");
+      ui->deviceTable->verticalHeader()->setVisible(false);
+      ui->deviceTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+      ui->deviceTable->setShowGrid(true);
+      ui->deviceTable->setSortingEnabled(true); // Enable sorting
 
-      sqlstatement = "SELECT description, daddr, ostype, isusb FROM device";
+
+
+      sqlstatement = "SELECT description, daddr, isusb FROM device";
       query.exec(sqlstatement);
       int row = 0;
       ui->deviceTable->setRowCount(0);
@@ -9492,16 +9500,17 @@ void MainWindow::loadDeviceTable()
                // Set Device (description)
                ui->deviceTable->setItem(row, 0, new QTableWidgetItem(query.value(0).toString())); // Device
                // Check if isusb is true
-               bool isUsb = query.value(3).toBool();
+               bool isUsb = query.value(2).toBool();
                // Set IP to "N/A" if isusb is true, otherwise use daddr or "N/A" if empty
                QString ip = isUsb ? "N/A" : (query.value(1).toString().isEmpty() ? "N/A" : query.value(1).toString());
                ui->deviceTable->setItem(row, 1, new QTableWidgetItem(ip)); // IP
-               // Set Status to "USB" if isusb is true, otherwise based on ostype
-               QString status = isUsb ? "USB" : (query.value(2).toString() != "0" ? "Local" : "Disconnected");
+               // Set Status to "USB" if isusb is true, otherwise "Disconnected"
+               QString status = isUsb ? "USB" : "Disconnected";
                ui->deviceTable->setItem(row, 2, new QTableWidgetItem(status)); // Status
                row++;
       }
 
-      ui->dsort->setChecked(true);
+
+
       ui->deviceTable->sortItems(0, Qt::AscendingOrder);
 }
