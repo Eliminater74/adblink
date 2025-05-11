@@ -580,7 +580,7 @@
             ui->deviceTable->verticalHeader()->setVisible(false);
             ui->deviceTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
             ui->deviceTable->setShowGrid(true);
-
+            ui->deviceTable->setSortingEnabled(true);
 
 
 

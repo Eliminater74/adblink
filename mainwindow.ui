@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>649</width>
-    <height>364</height>
+    <width>615</width>
+    <height>378</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -83,7 +83,7 @@
    <widget class="QTableWidget" name="deviceTable">
     <property name="geometry">
      <rect>
-      <x>60</x>
+      <x>50</x>
       <y>10</y>
       <width>321</width>
       <height>129</height>
@@ -99,8 +99,8 @@
    <widget class="QWidget" name="mainwindow_layoutWidget">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>10</y>
+      <x>1050</x>
+      <y>40</y>
       <width>36</width>
       <height>107</height>
      </rect>
@@ -172,7 +172,7 @@
    <widget class="QStackedWidget" name="stackedWidget">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>10</x>
       <y>140</y>
       <width>571</width>
       <height>191</height>
@@ -880,7 +880,7 @@
    <widget class="QLineEdit" name="adhocip">
     <property name="geometry">
      <rect>
-      <x>400</x>
+      <x>390</x>
       <y>114</y>
       <width>180</width>
       <height>21</height>
@@ -908,7 +908,7 @@
    <widget class="QWidget" name="mainwindow_layoutWidget_4">
     <property name="geometry">
      <rect>
-      <x>400</x>
+      <x>390</x>
       <y>10</y>
       <width>176</width>
       <height>100</height>
@@ -1084,7 +1084,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>649</width>
+     <width>615</width>
      <height>24</height>
     </rect>
    </property>
