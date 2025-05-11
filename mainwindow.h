@@ -37,6 +37,8 @@ private slots:
 
     void loadDeviceTable();
 
+      void dropPreferences();
+
     void handleFilemanagerFinished();
 
     void onReqCompleted();
