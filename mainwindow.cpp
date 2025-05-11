@@ -2791,8 +2791,13 @@
                    return;
              }
 
-             loadDeviceTable();
+
              }
+
+
+             QSqlDatabase::database().commit();
+             loadDeviceTable();
+
     }
 //////////////////
 
@@ -9476,41 +9481,46 @@ void MainWindow::onApplicationQuit() {
       file.write(doc.toJson());
       file.close();
 }
+
 void MainWindow::loadDeviceTable()
 {
       QString sqlstatement;
       QSqlQuery query;
 
-      ui->deviceTable->clear();
+      // Clear table contents and reset structure
+      ui->deviceTable->clearContents();
+      ui->deviceTable->setRowCount(0);
       ui->deviceTable->setColumnCount(3);
       ui->deviceTable->setHorizontalHeaderLabels(QStringList() << "Device" << "IP" << "Status");
       ui->deviceTable->verticalHeader()->setVisible(false);
       ui->deviceTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
       ui->deviceTable->setShowGrid(true);
-      ui->deviceTable->setSortingEnabled(true); // Enable sorting
+      ui->deviceTable->setSortingEnabled(false); // Disable sorting during population
 
-
-
+      // Execute query
       sqlstatement = "SELECT description, daddr, isusb FROM device";
-      query.exec(sqlstatement);
+      if (!query.exec(sqlstatement)) {
+               qDebug() << "Query failed:" << query.lastError().text();
+               return;
+      }
+
+      // Populate table
       int row = 0;
-      ui->deviceTable->setRowCount(0);
       while (query.next()) {
                ui->deviceTable->insertRow(row);
-               // Set Device (description)
-               ui->deviceTable->setItem(row, 0, new QTableWidgetItem(query.value(0).toString())); // Device
-               // Check if isusb is true
+               ui->deviceTable->setItem(row, 0, new QTableWidgetItem(query.value(0).toString()));
                bool isUsb = query.value(2).toBool();
-               // Set IP to "N/A" if isusb is true, otherwise use daddr or "N/A" if empty
                QString ip = isUsb ? "N/A" : (query.value(1).toString().isEmpty() ? "N/A" : query.value(1).toString());
                ui->deviceTable->setItem(row, 1, new QTableWidgetItem(ip)); // IP
-               // Set Status to "USB" if isusb is true, otherwise "Disconnected"
                QString status = isUsb ? "USB" : "Disconnected";
                ui->deviceTable->setItem(row, 2, new QTableWidgetItem(status)); // Status
                row++;
       }
 
-
-
+      // Re-enable sorting and sort
+      ui->deviceTable->setSortingEnabled(true);
       ui->deviceTable->sortItems(0, Qt::AscendingOrder);
+
+      // Force UI refresh
+      ui->deviceTable->viewport()->update();
 }
