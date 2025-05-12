@@ -33,6 +33,8 @@ private slots:
 
      void onApplicationQuit();
 
+     void serverlabel();
+
     bool validateDeviceSelection(QString& selectedDescription);
 
     void loadDeviceTable();

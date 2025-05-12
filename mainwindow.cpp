@@ -1,4 +1,3 @@
-
     #include "mainwindow.h"
     #include "ui_mainwindow.h"
     #include "about.h"
@@ -3704,7 +3703,9 @@
            ui->server_running->setText("");
          }
 
-     return command;
+         serverlabel();
+
+         return command;
     }
 
 
@@ -8677,3 +8678,15 @@ void MainWindow::on_actionSet_Kodi_permissions_triggered()
 
 }
 
+////////////////////////////////////
+
+void MainWindow::serverlabel()
+{
+           QString cstring = getadbpath() + " devices";
+           QString c = getadbOutput(cstring);
+           if (c.contains("List of devices"))
+                      ui->server_running->setText(adbstr1);
+           else
+                      ui->server_running->setText(adbstr2);
+
+}
