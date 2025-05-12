@@ -106,6 +106,8 @@
     bool disableroot = false;
     bool wsa = false;
     bool scoped = false;
+
+
     QString filename = "";
     QString apphome =  "";
     QString scriptdir = "";
@@ -118,11 +120,13 @@
 
 
 
-   // QString xbmcpackage ="";
-    QString ostype = "";
+
+//    QString ostype = "";
 
    QString data_root = "";
-    QString buffersize = "";
+
+
+   QString buffersize = "";
     QString bufferfactor = "";
     int buffermode = 1;
 
