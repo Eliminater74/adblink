@@ -2,15 +2,6 @@ XX/XX/25
 
 Version 6.4
 
-Windows: adblink's database/script 
-directory has moved from
-C:\Users\<yourid>\AppData\Roaming\.jocala
-to C:\Users\<yourid>\.jocala
-
-If you want to keep your data you can simply
-move directory .jocala from the old location
-to the new. The , is required in the filename.
-
 adb updated to Version 36.0.0-13206524
 
 Merge of adblink & adblink2 complete. Choose
