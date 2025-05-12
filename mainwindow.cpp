@@ -102,8 +102,7 @@
     bool jsonexists = false;
     bool updatecheck = true;
     bool versioncheck = true;
-    bool isusb = false;
-    bool disableroot = false;
+
     bool wsa = false;
     bool scoped = false;
 
@@ -118,7 +117,8 @@
     QString tempdir="";
 
 
-
+    // bool isusb = false;
+  //  bool disableroot = false;
 
  //  QString data_root = "";
 
