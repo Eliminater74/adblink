@@ -95,19 +95,10 @@
     const QString busypath="/data/local/tmp/adblink/";
     const QString tempdir = "/data/local/tmp/";
 
-
-   // bool dbexists = false;
-
-   // bool jsonexists = false;
-
-    bool updatecheck = true;
-    bool versioncheck = true;
-
-    QString filename = "";
     QString apphome =  "";
     QString scriptdir = "";
     QString aapt = "";
-    QString fastboot = "";
+ //   QString fastboot = "";
     QString xmldir = "";
     QString splashdir = "";
 
@@ -2455,7 +2446,6 @@
                    device = queryDeviceRecord(selectedDescription);
                    olddaddr = device.daddr;
                    olddescription = device.description;
-                   updatecheck = true;
                    qDebug() << device.description << " " << device.pulldir;
 
              }
