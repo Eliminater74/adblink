@@ -96,8 +96,10 @@
     const QString tempdir = "/data/local/tmp/";
 
 
-    bool dbexists = false;
-    bool jsonexists = false;
+   // bool dbexists = false;
+
+   // bool jsonexists = false;
+
     bool updatecheck = true;
     bool versioncheck = true;
 
@@ -286,19 +288,13 @@
  //     hdir = QDir::homePath();
 
 
-      if (QFileInfo::exists(dbstring))
-        dbexists = true;
-      else
-        dbexists = false;
-
-
-
+/*
 
       if (QFileInfo::exists(databasedir+"/adblink.json"))
           jsonexists = true;
       else
           jsonexists = false;
-
+*/
 
       QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
       db.setDatabaseName(dbstring);
@@ -325,14 +321,14 @@
 */
 
 
-      if (!dbexists)
+      if (!QFileInfo::exists(dbstring))
        {
           createTables();
         }
 
 
 
-           if (!jsonexists)
+           if (!QFileInfo::exists(databasedir+"/adblink.json"))
              {
 
 
