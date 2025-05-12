@@ -95,28 +95,26 @@
     const QString busypath="/data/local/tmp/adblink/";
     const QString tempdir = "/data/local/tmp/";
 
+
+    //  applicationDirPath()
     QString apphome =  "";
     QString scriptdir = "";
     QString aapt = "";
- //   QString fastboot = "";
     QString xmldir = "";
     QString splashdir = "";
-
-
-
-    QString dbstring = "";
-    QString jsonstring = "";
-    QString description = "";
-    QString filepath = "";
-
-    QString adblog;
-    QStringList bufferlist;
-
     QString adbfiles;
     QString logfiledir;
     QString databasedir;
     QString downloaddir;
     QString scrcpydir;
+
+    //  end
+
+    QString dbstring = "";
+    QString jsonstring = "";
+//    QString description = "";
+    QString filepath = "";
+
 
 
     int checkversion;
@@ -3729,7 +3727,7 @@
     ui->progressBar->setHidden(false);
     ui->progressBar->setValue(0);
     QString command;
-    QString s = description+" "+jobname;
+    QString s = jobname;
     RunProcessList << s;
     ui->listRunningJobs->addItem(s);
     ui->server_running->setText(s);
@@ -4734,7 +4732,7 @@
            command.replace( " ", "" );
            dialog.setcurrentscreen("Current: "+command);
 
-           dialog.setdevicelabel(description);
+           dialog.setdevicelabel(device.description);
            dialog.setandroidlabel(android);
 
 
