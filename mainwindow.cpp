@@ -120,10 +120,7 @@
 
 
 
-
-//    QString ostype = "";
-
-   QString data_root = "";
+ //  QString data_root = "";
 
 
    QString buffersize = "";
@@ -3721,7 +3718,7 @@
             fmdialog->setData(selectedDescription);
          }
 
-         QString kp = data_root + filepath;
+         QString kp = device.data_root + filepath;
 
          if (pulldir.isEmpty() || pulldir == download)
             fmpullpath = download;
@@ -3836,44 +3833,6 @@
             delete ui->listRunningJobs->item(i);
      }
 
-
-
-    }
-
-
-
-
-    //////////////////////////////////////////////
-
-    void MainWindow::updateDeviceRecord()
-    {
-
-        QString tempstring;
-        QString sqlstatement;
-        QSqlQuery query;
-       // QString quote = "\"";
-
-
-         data_root="VVVV";
-
-         tempstring = data_root;
-
-         //tempstring.replace(QString("'"), QString("''"));
-
-
-       //   sqlstatement = "UPDATE device SET data_root='"+tempstring+"'  WHERE description="+'"'+ui->deviceXox->currentText()+'"';
-
-
-         logfile(sqlstatement);
-
-          query.exec(sqlstatement);
-
-          if (query.lastError().isValid())
-           {
-             logfile(sqlstatement);
-             logfile("SqLite error:" + query.lastError().text());
-             logfile("SqLite error code:"+ QString::number( query.lastError().number() ));
-            }
 
 
     }

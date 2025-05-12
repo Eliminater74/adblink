@@ -129,7 +129,7 @@ private slots:
 
    QString RunLongProcess(QString cstring, QString jobname);
 
-   void updateDeviceRecord();
+
 
    void usbbuttons(bool isusb);
 
