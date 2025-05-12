@@ -116,7 +116,7 @@
     QString tempdir="";
 
 
-  QString sldir = "";
+ //  QString sldir = "";
 
       QString pushdir = "";
    QString pulldir = "";
