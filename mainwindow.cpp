@@ -89,10 +89,11 @@
     #endif
 
 
-     QString vqurl = "http://www.jocala.com/version.txt";
-
-
-    QRegularExpression validip( "[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
+    const QString vqurl = "http://www.jocala.com/version.txt";
+    const QString adbstr1 = "ADB server on ";
+    const QString adbstr2 = "ADB server off ";
+    const QString busypath="/data/local/tmp/adblink/";
+    const QString tempdir = "/data/local/tmp/";
 
 
     bool isConnected = false;
@@ -110,14 +111,14 @@
     QString fastboot = "";
     QString xmldir = "";
     QString splashdir = "";
-    QString tempdir="";
+
 
 
     QString dbstring = "";
     QString jsonstring = "";
     QString description = "";
     QString filepath = "";
-    QString busypath="/data/local/tmp/adblink/";
+
     QString adblog;
     QStringList bufferlist;
 
@@ -125,8 +126,6 @@
     QString busybox;
 
 
-    QString adbstr1 = "ADB server on  ";
-    QString adbstr2 = "ADB server off ";
 
     QString adbfiles;
     QString logfiledir;
@@ -137,16 +136,8 @@
 
     int checkversion;
 
-
-
-
-
     QSqlDatabase db;
 
-    struct adbRecieve {
-        int returncode;
-        QString returnText;
-    };
 
 
     //////////////////////////////////////////////
@@ -174,7 +165,7 @@
        scrcpydir=QCoreApplication::applicationDirPath()+"/adbfiles/"+"scrcpy/";
        xmldir = adbfiles+"remotes/";
        splashdir = adbfiles+"splash/";
-       tempdir = "/data/local/tmp/";
+
 
        if (!QFile::exists(adbfiles + "adb") && !QFile::exists(adbfiles + "adb.exe")) {
          QMessageBox::critical(0, "", "adb binary missing!\n", QMessageBox::Cancel);
