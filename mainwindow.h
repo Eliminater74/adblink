@@ -69,8 +69,8 @@ private slots:
     void on_restoreButton_clicked();
     void dos_shell();
 
-    void  cacheButton_other();
-    void  cacheButton_android();
+
+
 
 
 
@@ -256,12 +256,7 @@ private slots:
    void on_stopapp_clicked();
 
 
-   void restoreAndroid();
 
-
-
-
-   void restoreOther();
 
   // void on_actionEdit_XML_files_triggered();
 
