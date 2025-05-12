@@ -96,9 +96,6 @@
     const QString tempdir = "/data/local/tmp/";
 
 
-    bool isConnected = false;
-    bool serverRunning = false;
-
     bool dbexists = false;
     bool jsonexists = false;
     bool updatecheck = true;
@@ -222,7 +219,7 @@
 
          ui->server_running->setText(adbstr2);
 
-     //    qDebug() << program;
+
 
       rotate_logfile();
 
@@ -435,9 +432,9 @@
     new QShortcut(QKeySequence("Ctrl+S"), this, SLOT(on_actionSend_text_triggered()));
 
 
-        start_server();
+
         logfile("starting server");
-        if (serverRunning)
+        if (start_server())
          { ui->server_running->setText(adbstr1);
             }
 
@@ -1102,22 +1099,21 @@
 
 
      //////////////////////////////////////////
-     void MainWindow::kill_server()
+    void MainWindow::kill_server()
     {
 
      QString cstring = getadbpath() + " kill-server";
      QString command=getadbOutput(cstring);
      logfile("server stopped");
-     serverRunning = false;
-
+      ui->server_running->setText(adbstr2);
     }
 
 
     //////////////////////////////////////
-    void MainWindow::start_server()
+    bool MainWindow::start_server()
     {
 
-
+     bool serverRunning;
 
         QString cstring = getadbpath() + " kill-server";
         QString command=getadbOutput(cstring);
@@ -1156,7 +1152,7 @@
        //  logfile(command);
         // logfile(cstring);
 
-
+             return serverRunning;
 
     }
 
@@ -1735,6 +1731,7 @@
                       int selectedRow;
                       QString daddr;
                       QString port;
+                      bool isConnected;
 
 
 
@@ -1917,7 +1914,7 @@
 
                       if (isConnected) {
                             ui->server_running->setText(adbstr1);
-                            serverRunning = true;
+
 
                       }
 
@@ -2293,10 +2290,7 @@
 
           DeviceRecord device = queryDeviceRecord(selectedDescription);
 
-          if (device.ostype != "0") {
-           QMessageBox::critical(this, "Unavailable", "Android devices only.");
-           return;
-          }
+
 
 
 
@@ -2304,7 +2298,6 @@
          reply = QMessageBox::question(this, "Reboot Device", "Reboot Device?",
              QMessageBox::Yes|QMessageBox::No);
          if (reply == QMessageBox::Yes) {
-             isConnected=false;
             logfile("rebooting device");
             rebootDevice(" reboot");
          }
@@ -2338,7 +2331,7 @@
          reply = QMessageBox::question(this, "", "Reboot to bootloader?",
              QMessageBox::Yes|QMessageBox::No);
          if (reply == QMessageBox::Yes) {
-             isConnected=false;
+
 
 
              logfile("rebooting device recovery");
@@ -2374,7 +2367,7 @@
          reply = QMessageBox::question(this, "", "Reboot to recovery?",
              QMessageBox::Yes|QMessageBox::No);
          if (reply == QMessageBox::Yes) {
-             isConnected=false;
+
 
 
              logfile("rebooting device recovery");

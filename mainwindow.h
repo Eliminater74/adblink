@@ -154,9 +154,9 @@ private slots:
 
     void blank_entry_form();
 
-    void kill_server();
+   void kill_server();
 
-   void start_server();
+   bool start_server();
 
 
 
