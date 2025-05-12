@@ -234,7 +234,7 @@ private slots:
 
   void androidRemote();
 
-  void  otherRemote();
+
 
    void  screenCap();
 

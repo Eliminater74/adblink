@@ -113,9 +113,6 @@
     QString dbstring = "";
     QString jsonstring = "";
 
-//    QString filepath = "";
-
-
 
     int checkversion;
 
