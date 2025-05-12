@@ -122,11 +122,6 @@
     QString adblog;
     QStringList bufferlist;
 
-
-    QString busybox;
-
-
-
     QString adbfiles;
     QString logfiledir;
     QString databasedir;
@@ -159,8 +154,6 @@
        adbfiles=QCoreApplication::applicationDirPath()+"/adbfiles/";
        aapt=QCoreApplication::applicationDirPath()+"/adbfiles/"+"aapt";
        aapt = '"'+aapt+'"';
-       busybox = QCoreApplication::applicationDirPath()+"/adbfiles/busybox";
-       busybox = '"'+busybox+'"';
        apphome = QCoreApplication::applicationDirPath();
        scrcpydir=QCoreApplication::applicationDirPath()+"/adbfiles/"+"scrcpy/";
        xmldir = adbfiles+"remotes/";
@@ -3159,8 +3152,7 @@
       if (command.contains("No such file or directory"))
          {
 
-      //      QString busybox;
-      //         busybox = apphome+"/adbfiles/busybox";
+      QString busybox = '"' + QCoreApplication::applicationDirPath() + "/adbfiles/busybox" + '"';
 
           cstring = getadb() + " push "+busybox+ " /data/local/tmp/adblink/";
 
@@ -4517,7 +4509,7 @@
     {
 
 
-    //    QString busybox;
+        QString busybox = '"' + QCoreApplication::applicationDirPath() + "/adbfiles/busybox" + '"';
         QString cstring;
         QString command;
 
