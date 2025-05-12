@@ -39,8 +39,6 @@ private slots:
 
     void loadDeviceTable();
 
-      void dropPreferences();
-
     void handleFilemanagerFinished();
 
     void onReqCompleted();
@@ -64,9 +62,6 @@ private slots:
     void on_actionHelp_triggered();
 
     void on_backupButton_clicked();
-
-    void open_pref_database();
-
 
     void on_restoreButton_clicked();
     void dos_shell();

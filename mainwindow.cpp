@@ -95,7 +95,8 @@
     const QString tempdir = "/data/local/tmp/";
 
 
-    //  applicationDirPath()
+//  applicationDirPath()
+
     QString apphome =  "";
     QString scriptdir = "";
     QString aapt = "";
@@ -106,17 +107,10 @@
     QString databasedir;
     QString downloaddir;
     QString scrcpydir;
-
-    //  end
-
     QString dbstring = "";
     QString jsonstring = "";
 
-
-
-    int checkversion;
-
-    QSqlDatabase db;
+//  end applicationDirPath()
 
 
 
@@ -442,7 +436,7 @@
 
         logfile("closing program");
         kill_server();
-        db.close();
+ //       db.close();
          delete ui;
 
 
@@ -4381,30 +4375,6 @@
      return true;
 
     }
-
-
-    //////////////////////////////////////////////
-    void MainWindow::open_pref_database()
-
-    {
-
-
-        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-        db.setDatabaseName(dbstring);
-
-
-        if (!db.open()) {
-            QMessageBox::critical(0, qApp->tr("Cannot open database"),
-                "Database error:\n"+dbstring
-                         , QMessageBox::Cancel);
-         logfile("error opening database "+dbstring);
-
-        }
-
-
-
-    }
-
 
 
     ////////////////////////////////////////////////////////
@@ -8458,6 +8428,10 @@ bool MainWindow::renameColumnIfNotRenamed(const QString& oldColumnName, const QS
 {
 
 
+
+      QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+      db.setDatabaseName(dbstring);
+
       QSqlQuery query(db);
       query.prepare("PRAGMA table_info(device)");
 
@@ -8495,115 +8469,6 @@ bool MainWindow::renameColumnIfNotRenamed(const QString& oldColumnName, const QS
 
       return true;
 }
-
-void MainWindow::dropPreferences()
-{
-
-
-        QSqlQuery query(db);
-
-           if (db.tables().contains("preferences"))
-
-           {
-
-
-          QString databaseFile = databasedir + "/adblink.db";
-          QString backupFile = databasedir + "/backup.db";
-
-          QFileInfo fileInfo(databaseFile);
-          if (fileInfo.exists())
-            {
-                 if (!QFile::exists(backupFile))
-                 {
-                    if (QFile::copy(databaseFile, backupFile))
-                      logfile("Backup adblink database file created");
-                   else
-                      logfile("ERROR: Unable to create backup adblink database file");
-                 }
-             }
-
-
-
-
-                             QJsonObject obj;
-
-
-                             obj["checkversion"] = getadbPref();
-                             obj["scrcpy"] = true;
-                             obj["oldfm"] = false;
-
-
-
-                             obj["dropdown"] = getmsgboxtype();
-
-                             if (getdownloadpath() != NULL)
-                              obj["download"] = getdownloadpath();
-                             else  obj["download"] = QDir::homePath();
-
-
-
-                             obj["install"] = QDir::homePath();;
-                             obj["backup"] = QDir::homePath();
-
-                            QJsonDocument doc(obj);
-
-                            QFile file(databasedir+"adblink.json");
-                            file.open(QIODevice::WriteOnly);
-                            file.write(doc.toJson());
-                            file.close();
-
-
-                QString sqlstatement="DROP TABLE preferences";
-                  query.exec(sqlstatement);
-                   if(!query.isActive())
-                      {   logfile("SQLERROR: "+query.lastError().text());
-                           return; }
-
-                   sqlstatement = "ALTER TABLE device ADD flag1 TEXT";
-                      query.exec(sqlstatement);
-                      if (!query.isActive()) {
-                          logfile("SQLERROR: " + query.lastError().text());
-                          return;
-                      }
-
-
-
-
-                      sqlstatement = "ALTER TABLE device ADD flag2 TEXT";
-                      query.exec(sqlstatement);
-                      if (!query.isActive()) {
-                          logfile("SQLERROR: " + query.lastError().text());
-                          return;
-                      }
-
-                      sqlstatement = "ALTER TABLE device ADD flag3 TEXT";
-                      query.exec(sqlstatement);
-                      if (!query.isActive()) {
-                          logfile("SQLERROR: " + query.lastError().text());
-                          return;
-                      }
-
-                      sqlstatement = "ALTER TABLE device ADD flag4 TEXT";
-                      query.exec(sqlstatement);
-                      if (!query.isActive()) {
-                          logfile("SQLERROR: " + query.lastError().text());
-                          return;
-                      }
-
-                      sqlstatement = "ALTER TABLE device ADD flag5 TEXT";
-                      query.exec(sqlstatement);
-                      if (!query.isActive()) {
-                          logfile("SQLERROR: " + query.lastError().text());
-                          return;
-                      }
-
-
-           }
-
-
-
-}
-
 
 
 void MainWindow::on_actionSet_Kodi_permissions_triggered()
