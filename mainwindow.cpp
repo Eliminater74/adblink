@@ -116,9 +116,8 @@
     QString tempdir="";
 
 
-    QString hdir = "";
+  QString sldir = "";
 
-    QString sldir = "";
       QString pushdir = "";
    QString pulldir = "";
     QString xbmcpackage ="";
@@ -318,7 +317,7 @@
 
 
 
-      hdir = QDir::homePath();
+ //     hdir = QDir::homePath();
 
 
       if (QFileInfo::exists(dbstring))
@@ -8882,6 +8881,8 @@ DeviceRecord MainWindow::queryDeviceRecord(const QString& description) {
                logfile("SqLite error code:" + QString::number(query.lastError().number()));
  }
 
+
+/*
  // Apply fallbacks from getRecord
  if (record.daddr.isEmpty()) {
                record.daddr = description;
@@ -8908,6 +8909,9 @@ DeviceRecord MainWindow::queryDeviceRecord(const QString& description) {
  } else {
                versioncheck = true;
  }
+
+
+*/
 
  return record;
 }
