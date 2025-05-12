@@ -5645,7 +5645,7 @@
 
                                out  << "set PATH=%PATH%;"+adbfiles+";" << endl;
 
-                               out  <<  "adb.exe "+ daddr + " shell"  << endl;
+                               out  <<  "adb.exe -s "+ daddr + " shell"  << endl;
 
 
 
