@@ -103,10 +103,6 @@
     bool updatecheck = true;
     bool versioncheck = true;
 
- //   bool wsa = false;
- //   bool scoped = false;
-
-
     QString filename = "";
     QString apphome =  "";
     QString scriptdir = "";
