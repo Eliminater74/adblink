@@ -117,16 +117,6 @@
     QString tempdir="";
 
 
-    // bool isusb = false;
-  //  bool disableroot = false;
-
- //  QString data_root = "";
-
-
-   QString buffersize = "";
-    QString bufferfactor = "";
-    int buffermode = 1;
-
     QString dbstring = "";
     QString jsonstring = "";
     QString description = "";
@@ -2707,6 +2697,11 @@
     }
 
     DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+
+    QString buffersize = "";
+    QString bufferfactor = "";
+    int buffermode = 1;
 
 
     bool oldxml = false;
