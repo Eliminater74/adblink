@@ -116,9 +116,7 @@
     QString tempdir="";
 
 
- //  QString sldir = "";
-
-      QString pushdir = "";
+//      QString pushdir = "";
    QString pulldir = "";
     QString xbmcpackage ="";
     QString ostype = "";
