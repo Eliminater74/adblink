@@ -112,8 +112,6 @@
     QString dbstring = "";
     QString jsonstring = "";
 
-//    QString filepath = "";
-
 
 
     int checkversion;
@@ -273,17 +271,6 @@
 
 
 
- //     hdir = QDir::homePath();
-
-
-/*
-
-      if (QFileInfo::exists(databasedir+"/adblink.json"))
-          jsonexists = true;
-      else
-          jsonexists = false;
-*/
-
       QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
       db.setDatabaseName(dbstring);
 
@@ -436,7 +423,7 @@
         ui->deviceTable->setSortingEnabled(true);
         ui->deviceTable->setSelectionMode(QAbstractItemView::SingleSelection);
         ui->deviceTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-
+       ui->deviceTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
 
 
