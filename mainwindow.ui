@@ -1111,14 +1111,6 @@
     <property name="title">
      <string>Utility</string>
     </property>
-    <widget class="QMenu" name="menuReboot_2">
-     <property name="title">
-      <string>Reboot</string>
-     </property>
-     <addaction name="actionReboot"/>
-     <addaction name="actionRecovery"/>
-     <addaction name="actionReboot_bootloader"/>
-    </widget>
     <addaction name="actionSwitch_View"/>
     <addaction name="actionReiinstall_Busybox"/>
     <addaction name="actionPaste_path"/>
@@ -1131,7 +1123,7 @@
     <addaction name="Erase_adbLink_database"/>
     <addaction name="actionWireless_ADBD"/>
     <addaction name="actionTest_adb_connection"/>
-    <addaction name="menuReboot_2"/>
+    <addaction name="actionReboot"/>
    </widget>
    <widget class="QMenu" name="menuKodi">
     <property name="title">
