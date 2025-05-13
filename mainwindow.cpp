@@ -4744,7 +4744,7 @@
 
              out  << "set PATH=%PATH%;"+adbfiles+";" << endl;
 
-             out  <<  "getadbpath() -s "+ device.daddr + " logcat" << endl;
+             out  <<  getadbpath() + " -s "+ device.daddr + " logcat" << endl;
 
 
 
