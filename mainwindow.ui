@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>628</width>
-    <height>384</height>
+    <height>398</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -887,7 +887,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>390</x>
@@ -1123,9 +1123,9 @@
     <addaction name="actionReiinstall_Busybox"/>
     <addaction name="actionPaste_path"/>
     <addaction name="actionArchitecture"/>
+    <addaction name="actionSet_Kodi_permissions"/>
     <addaction name="actionOculus_VR"/>
     <addaction name="actionSend_text"/>
-    <addaction name="actionSet_Kodi_permissions"/>
     <addaction name="actionGet_UID_from_APK_file"/>
     <addaction name="View_Changelog"/>
     <addaction name="Erase_adbLink_database"/>

@@ -331,7 +331,7 @@
 
        connect(ui->deviceTable, &QTableWidget::doubleClicked, this, &MainWindow::on_fmButton_clicked);
        connect(ui->textButton, &QPushButton::clicked, this, &MainWindow::on_actionSend_text_triggered);
-       connect(ui->infoButton, &QPushButton::clicked, this, &MainWindow::systeminfo);
+       connect(ui->infoButton, &QPushButton::clicked, this, &MainWindow::on_actionArchitecture_triggered);
 
 
 
@@ -1972,52 +1972,46 @@
 
 
 
-    ////////////////////////////////////////
-
-    void MainWindow::androidRemote()
+    void MainWindow::on_actionPush_remote_triggered()
     {
 
-        QString cstring;
-        QString command;
-        QString mcpath="";
+    QString cstring;
+    QString command;
+    QString mcpath="";
+
+    QString selectedDescription;
+    if (!validateDeviceSelection(selectedDescription)) {
+               return;
+    }
+
+    DeviceRecord device = queryDeviceRecord(selectedDescription);
 
 
-        QString selectedDescription;
-        int selectedRow = ui->deviceTable->currentRow();
-        if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
-            selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
-        } else {
-            QMessageBox::critical(this, "", "No device selected in table");
-            return;
-        }
-        DeviceRecord device = queryDeviceRecord(selectedDescription);
-
-
-       if (!is_package(device.xbmcpackage))
-          { QMessageBox::critical(
-                this,
-                "",
-                device.xbmcpackage+" not installed");
-             return;
-       }
+    if (!is_package(device.xbmcpackage))
+    { QMessageBox::critical(
+                   this,
+                   "",
+                   device.xbmcpackage+" not installed");
+               return;
+    }
 
 
 
 
-          cstring = getadb() + " shell ls /sdcard/xbmc_env.properties";
-          if(getreturncode(cstring))
-          {  cstring = getadb() + " shell cat /sdcard/xbmc_env.properties";
-           command=getadbOutput(cstring);
-           command.replace(QRegExp("[\r\n]"), "");
-           mcpath = command.mid(command.indexOf("xbmc.data=") + 10);
-           mcpath=mcpath+"/.kodi";
-          }
-          else
+    cstring = getadb() + " shell ls /sdcard/xbmc_env.properties";
+    if(getreturncode(cstring))
+    {  cstring = getadb() + " shell cat /sdcard/xbmc_env.properties";
+               command=getadbOutput(cstring);
+               command.replace(QRegExp("[\r\n]"), "");
+               mcpath = command.mid(command.indexOf("xbmc.data=") + 10);
+               mcpath=mcpath+"/.kodi";
+    }
+    else
 
-          {
-           mcpath="/sdcard/Android/data/" + device.xbmcpackage+"/files/.kodi";
+    {
+               mcpath="/sdcard/Android/data/" + device.xbmcpackage+"/files/.kodi";
 
-          }
+    }
 
 
 
@@ -2028,11 +2022,11 @@
 
     if (command.contains("No such file or directory"))
     {
-       QMessageBox::critical(
+               QMessageBox::critical(
                    this,
-                  "",
+                   "",
                    "Kodi data not found"+mcpath);
-                   return;
+               return;
     }
 
     mcpath = mcpath+"/userdata/keymaps/";
@@ -2041,26 +2035,26 @@
     command=getadbOutput(cstring);
 
     if (command.contains("No such file or directory"))
-     {
-        cstring = getadb() + " mkdir -p "+ mcpath;
-        command=getadbOutput(cstring);
+    {
+               cstring = getadb() + " mkdir -p "+ mcpath;
+               command=getadbOutput(cstring);
     }
 
 
 
 
-     QString fileName = QFileDialog::getOpenFileName(this,
-     "Choose remote xml file", QDir::homePath(), tr("Files (*.xml)"));
+    QString fileName = QFileDialog::getOpenFileName(this,
+                                                    "Choose remote xml file", QDir::homePath(), tr("Files (*.xml)"));
 
-     if (!fileName.isEmpty() )
-     {
+    if (!fileName.isEmpty() )
+    {
 
 
-      QMessageBox::StandardButton reply;
-      reply = QMessageBox::question(this, "Push", fileName+" selected. Continue?",QMessageBox::Yes|QMessageBox::No);
+               QMessageBox::StandardButton reply;
+               reply = QMessageBox::question(this, "Push", fileName+" selected. Continue?",QMessageBox::Yes|QMessageBox::No);
 
-       if (reply == QMessageBox::No)
-             return;
+               if (reply == QMessageBox::No)
+                   return;
 
 
                cstring = getadb() + " push "+'"'+fileName+'"'+ " "+mcpath+"/keyboard.xml";
@@ -2080,18 +2074,18 @@
                {
 
 
-                  QMessageBox::information(this,"","Remote xml installed.");
+                   QMessageBox::information(this,"","Remote xml installed.");
 
 
                }
-                   else
+               else
 
                {
 
                    QMessageBox::critical(
-                               this,
-                               "",
-                            "Remote xml installation failed.");}
+                       this,
+                       "",
+                       "Remote xml installation failed.");}
 
 
 
@@ -2099,25 +2093,6 @@
 
 
 
-
-    }
-
-
-
-
-
-    void MainWindow::on_actionPush_remote_triggered()
-    {
-
-        QString selectedDescription;
-        if (!validateDeviceSelection(selectedDescription)) {
-                   return;
-        }
-
-
-
-
-           androidRemote();
 
 
     }
@@ -2771,22 +2746,7 @@
 
     DeviceRecord device = queryDeviceRecord(selectedDescription);
 
-
-
-           if (device.ostype != "0")
-            {
-                otherLog();
-           }
-
-           else
-
-
-          {
             androidLog();
-          }
-
-
-
 
     }
 
@@ -2864,33 +2824,6 @@
         klogdialog.exec();
 
     }
-
-
-    //////////////////////////////////////////////////
-    void MainWindow::otherLog()
-    {
-
-        QString selectedDescription;
-        if (!validateDeviceSelection(selectedDescription)) {
-            return;
-        }
-
-        DeviceRecord device = queryDeviceRecord(selectedDescription);
-
-       // iOS/ATV2	/private/var/mobile/Library/Preferences/kodi.log
-       // Linux	$HOME/.kodi/temp/kodi.log
-      //   Mac OS X	/Users/<username>/Library/Logs/kodi.log
-      //  Windows	%APPDATA%\Kodi\kodi.log
-
-
-        logfile("opening kodi log");
-        oslogDialog oslogdialog;
-        oslogdialog.ospassdata(device.ostype);
-        oslogdialog.setModal(true);
-        oslogdialog.exec();
-
-    }
-
 
     ////////////////////////////////////////////////////
     void MainWindow::on_actionView_adbLink_Log_triggered()
@@ -3226,6 +3159,7 @@
     //////////////////////////////////////////////////////////
     void MainWindow::on_actionPaste_path_triggered()
     {
+
         QClipboard *pathClipboard = QApplication::clipboard();
         pathClipboard->setText("PATH=$PATH:/data/local/tmp/adblink\n");
     }
@@ -3851,11 +3785,7 @@
 
 
               QString selectedDescription;
-              int selectedRow = ui->deviceTable->currentRow();
-              if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
-                selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
-              } else {
-                QMessageBox::critical(this, "", "No device selected in table");
+              if (!validateDeviceSelection(selectedDescription)) {
                 return;
               }
 
@@ -4349,6 +4279,17 @@
     {
 
 
+
+     QString selectedDescription;
+     if (!validateDeviceSelection(selectedDescription)) {
+                              return;
+     }
+
+     DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+
+
+
         QString busybox = '"' + QCoreApplication::applicationDirPath() + "/adbfiles/busybox" + '"';
         QString cstring;
         QString command;
@@ -4436,15 +4377,7 @@
     void MainWindow::on_actionArchitecture_triggered()
     {
 
-    systeminfo();
 
-    }
-
-
-
-    ///////////////////////////////////////////////////////
-    void MainWindow::systeminfo()
-    {
     QString selectedDescription;
     if (!validateDeviceSelection(selectedDescription)) {
                    return;
@@ -4452,71 +4385,71 @@
 
     DeviceRecord device = queryDeviceRecord(selectedDescription);
 
-    if (device.ostype != "0") {
-                   QMessageBox::critical(this, "Unavailable", "Android devices only.");
-                   return;
-    }
-       QString android = QString::number(getandroid());
-       QString cstring;
-       QString archi;
 
-       QString adevice=devicename();
-       QString manufact=manufacturer();
+    QString android = QString::number(getandroid());
+    QString cstring;
+    QString archi;
 
-       QString scoped;
-       QString kbase = "/sdcard/Android/data/";
-       QStringList list;
+    QString adevice=devicename();
+    QString manufact=manufacturer();
+
+    QString scoped;
+    QString kbase = "/sdcard/Android/data/";
+    QStringList list;
 
 
-      if (!isScoped())
-         scoped = "false";
-      else scoped = "true";
+    if (!isScoped())
+                   scoped = "false";
+    else scoped = "true";
 
 
-       cstring = getadb() + " shell getprop ro.product.cpu.abi";
-       archi=getadbOutput(cstring);
+    cstring = getadb() + " shell getprop ro.product.cpu.abi";
+    archi=getadbOutput(cstring);
 
-       list.append(archi);
-       list.append(android);
-       list.append(scoped);
-       list.append(adevice);
-       list.append(manufact);
-
-
-       deviceinfoDialog dialog(this);
-       dialog.setWindowModality(Qt::WindowModal);
-       dialog.setWindowFlags(dialog.windowFlags() & ~Qt::WindowContextHelpButtonHint);
-
-       dialog.setWindowTitle(device.description);
-
-       dialog.devinfo(list);
-
-       dialog.setModal(true);
-
-       if(dialog.exec() == QDialog::Accepted)
-       {
-         return;
-
-       }
+    list.append(archi);
+    list.append(android);
+    list.append(scoped);
+    list.append(adevice);
+    list.append(manufact);
 
 
-// adb shell dumpsys battery
+    deviceinfoDialog dialog(this);
+    dialog.setWindowModality(Qt::WindowModal);
+    dialog.setWindowFlags(dialog.windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-    }
+    dialog.setWindowTitle(device.description);
 
+    dialog.devinfo(list);
 
+    dialog.setModal(true);
 
-
-
-
-    void MainWindow::on_pushTimers_clicked()
+    if(dialog.exec() == QDialog::Accepted)
     {
-        on_actionSleep_adjust_triggered();
+                   return;
+
+    }
+
+
+    // adb shell dumpsys battery
+
+
+
     }
 
 
 
-    void MainWindow::on_actionSleep_adjust_triggered()
+
+
+     void MainWindow::on_actionSleep_adjust_triggered()
+    {
+
+    }
+
+
+
+
+
+  void MainWindow::on_pushTimers_clicked()
     {
 
         QString selectedDescription;
@@ -4665,16 +4598,11 @@
     void MainWindow::on_actiondelthumb_triggered()
     {
             QString selectedDescription;
-            int selectedRow = ui->deviceTable->currentRow();
-            if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
-                selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
-            } else {
-                QMessageBox::critical(this, "", "No device selected in table");
+            if (!validateDeviceSelection(selectedDescription)) {
                 return;
             }
 
-         DeviceRecord device = queryDeviceRecord(selectedDescription);
-
+            DeviceRecord device = queryDeviceRecord(selectedDescription);
 
         QString cstring;
         QString command;
@@ -6456,13 +6384,6 @@ void MainWindow::on_actionSplash_Screen_triggered()
     }
 
 
-    int selectedRow = ui->deviceTable->currentRow();
-    if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
-     selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
-    } else {
-     QMessageBox::critical(this, "", "No device selected in table");
-     return;
-    }
 
     DeviceRecord device = queryDeviceRecord(selectedDescription);
 
@@ -6684,6 +6605,15 @@ void MainWindow::on_actionOculus_VR_triggered()
 {
 
 
+ QString selectedDescription;
+ if (!validateDeviceSelection(selectedDescription)) {
+            return;
+ }
+
+ DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+
+
  /*
 
 
@@ -6780,18 +6710,6 @@ getadbpath() shell am force-stop com.oculus.xrstreamingclient
 
 
 */
-
- QString selectedDescription;
- if (!validateDeviceSelection(selectedDescription)) {
-            return;
- }
-
- DeviceRecord device = queryDeviceRecord(selectedDescription);
-
- if (device.ostype != "0") {
-            QMessageBox::critical(this, "Unavailable", "Android devices only.");
-            return;
- }
 
  QString cstring;
  QString command;
@@ -8449,9 +8367,6 @@ void MainWindow::on_actionSet_Kodi_permissions_triggered()
            DeviceRecord device = queryDeviceRecord(selectedDescription);
 
 
-
-
-
            QString flag;
 
            QString cstring;
@@ -8463,7 +8378,10 @@ void MainWindow::on_actionSet_Kodi_permissions_triggered()
            setpDialog dialog(this);
            dialog.setWindowModality(Qt::WindowModal);
 
-           dialog.setpname(device.xbmcpackage);
+            if (ui->stackedWidget->currentIndex() == 0)
+                   dialog.setpname(device.xbmcpackage);
+            else
+                   dialog.setpname("");
 
 
 
@@ -8530,3 +8448,11 @@ bool MainWindow::validateIPAddress(const QString& ipAddress) {
 
            return ipRegex.match(normalized).hasMatch();
 }
+
+void MainWindow::on_infoButton_clicked()
+{
+
+   on_actionArchitecture_triggered();
+
+}
+

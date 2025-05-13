@@ -52,7 +52,7 @@ private slots:
 
     void on_connButton_clicked();
 
-    void systeminfo();
+
 
     void on_sideload_Button_clicked();
 
@@ -182,7 +182,7 @@ private slots:
 
     void on_actionReboot_triggered();
 
-    void otherLog();
+
 
     void deleteRecord(QString descrip);
 
@@ -233,10 +233,6 @@ private slots:
     bool getIsUsb(QString mdaddr);
 
     void on_newRecord_clicked();
-
-  void androidRemote();
-
-
 
    void  screenCap();
 
@@ -381,6 +377,8 @@ private slots:
   void on_screencap1_clicked();
 
   void on_screencap2_clicked();
+
+  void on_infoButton_clicked();
 
   private:
     Ui::MainWindow *ui;
