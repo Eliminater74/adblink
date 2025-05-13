@@ -1687,16 +1687,32 @@
     void MainWindow::on_connButton_clicked()
     {
 
+        QString adhoc="Ad hoc IP";
+        QString cstring;
+        QString command;
+        QString s;
+        QString selectedDescription;
+        QString daddr;
+        QString port;
+        bool isConnected;
+        int selectedRow;
 
 
-                      QString cstring;
-                      QString command;
-                      QString s;
-                      QString selectedDescription;
-                      int selectedRow;
-                      QString daddr;
-                      QString port;
-                      bool isConnected;
+        if (!ui->adhocip->text().isEmpty())
+        {
+           adhocip();
+           ui->adhocip->clear();
+             for (int row = 0; row < ui->deviceTable->rowCount(); ++row) {
+          QTableWidgetItem* item = ui->deviceTable->item(row, 0);
+           if (item && item->text() == adhoc) {
+       ui->deviceTable->selectRow(row);
+        break;
+         }
+       }
+     }
+
+
+
 
 
 
@@ -1725,85 +1741,6 @@
 
 
 
-                      // Handle ad-hoc IP input with validation
-                      if (!ui->adhocip->text().isEmpty())
-                      {
-                            QString adhocIPText = ui->adhocip->text();
-                            int colonIndex = adhocIPText.indexOf(':');
-                            QString daddr, port;
-
-                            if (colonIndex != -1) {
-                              daddr = adhocIPText.left(colonIndex);
-                              port = adhocIPText.mid(colonIndex + 1);
-                            } else {
-                              daddr = adhocIPText;
-                              port = "5555";
-                            }
-
-
-                            QHostAddress address(daddr);
-                            if (daddr.isEmpty() || address.isNull()) {
-                              logfile("Invalid IP address: " + daddr);
-                              QMessageBox::critical(this, "", "Invalid IP address: " + daddr);
-                              return;
-                            }
-
-
-                            bool ok;
-                            int portNum = port.toInt(&ok);
-                            if (!ok || portNum < 1 || portNum > 65535) {
-                              logfile("Invalid port: " + port);
-                              QMessageBox::critical(this, "", "Invalid port: " + port);
-                              return;
-                            }
-
-                            cstring = getadbpath() + " connect " + daddr + ":" + port;
-                            logfile(cstring);
-                            command = connectadb(cstring);
-
-
-
-                            if (command.contains("connected to"))
-                            {
-                              isConnected = true;
-                              // Add new row to deviceTable with daddr and Connected
-                              int newRow = ui->deviceTable->rowCount();
-                              ui->deviceTable->insertRow(newRow);
-                              ui->deviceTable->setItem(newRow, 0, new QTableWidgetItem("Ad hoc IP"));
-                              ui->deviceTable->setItem(newRow, 1, new QTableWidgetItem(daddr));
-                              ui->deviceTable->setItem(newRow, 2, new QTableWidgetItem("Connected"));
-                              ui->deviceTable->clearSelection(); // Clear previous selections
-                              ui->deviceTable->setCurrentCell(newRow, 0); // Set active cell
-                              ui->deviceTable->selectRow(newRow); // Highlight the row
-                              ui->deviceTable->setFocus(); // Ensure table has focus
-                              logfile("Connected to " + daddr);
-                              logfile("Android version: " + s.setNum(getandroid()));
-                            }
-                            else {
-
-
-                              if (command.contains("failed to authenticate") || command.contains("ffline")) {
-                                   logfile(command);
-                                   logfile(daddr+" "+"fails to authenticate");
-                                   cstring = getadbpath() + " disconnect " + daddr;
-                                   command = connectadb(cstring);
-                                   isConnected = false;
-                              }
-
-
-                              isConnected = false;
-                              logfile("Unable to connect to: " + daddr + ":" + port);
-                              QMessageBox::critical(this, "", "Unable to connect to: " + daddr + ":" + port+"\nSee log.");
-                            }
-
-                            return;
-                      }
-
-
-
-
-
-
                       selectedRow = ui->deviceTable->currentRow();
                       if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
                             selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
@@ -1811,6 +1748,7 @@
                             QMessageBox::critical(this, "", "No device selected in table");
                             return;
                       }
+
                       DeviceRecord device = queryDeviceRecord(selectedDescription);
 
 
@@ -1915,6 +1853,62 @@
     }
 
 
+    void MainWindow::adhocip()
+    {
+                      QString cstring;
+                      QString command;
+                      QString daddr;
+                      QString port;
+
+                      if (!ui->adhocip->text().isEmpty())
+                      {
+                            QString adhocIPText = ui->adhocip->text().trimmed();
+                            int colonIndex = adhocIPText.indexOf(':');
+                            QString daddr, port;
+
+                            if (colonIndex != -1) {
+                              daddr = adhocIPText.left(colonIndex).trimmed();
+                              port = adhocIPText.mid(colonIndex + 1).trimmed();
+                            } else {
+                              daddr = adhocIPText;
+                              port = "5555";
+                            }
+
+                            QHostAddress address(daddr);
+                            if (daddr.isEmpty() || address.isNull()) {
+                              logfile("Invalid IP address: " + daddr);
+                              QMessageBox::critical(this, "", "Invalid IP address: " + daddr);
+                              return;
+                            }
+
+                            bool ok;
+                            int portNum = port.toInt(&ok);
+                            if (!ok || portNum < 1 || portNum > 65535) {
+                              logfile("Invalid port: " + port);
+                              QMessageBox::critical(this, "", "Invalid port: " + port);
+                              return;
+                            }
+
+                            QSqlQuery query;
+                            query.prepare("INSERT OR REPLACE INTO device (description, daddr, port, isusb, data_root, xbmcpackage, filepath) "
+                                          "VALUES (:description, :daddr, :port, :isusb, :data_root, :xbmcpackage, :filepath)");
+                            query.bindValue(":description", "Ad hoc IP");
+                            query.bindValue(":daddr", daddr);
+                            query.bindValue(":port", port);
+                            query.bindValue(":isusb", 0);
+                            query.bindValue(":data_root", "/sdcard/");
+                            query.bindValue(":xbmcpackage", "org.xbmc.kodi");
+                            query.bindValue(":filepath", "/files/.kodi");
+                            if (!query.exec()) {
+                              logfile("Failed to insert temporary device: " + query.lastError().text());
+                            } else {
+                              logfile("Temporary device record inserted: Ad hoc IP, " + daddr + ":" + port);
+                            }
+                      }
+
+                      loadDeviceTable();
+    }
+
     ////////////////////////////////////////////////////////////////
 
 
@@ -1945,35 +1939,6 @@
    if (reply == QMessageBox::No) {
            return;
      }
-
-
-
-     if (!ui->adhocip->text().isEmpty())
-     {
-
-           QString cstring = getadbpath() + " disconnect " + daddr;
-           QString command = getadbOutput(cstring);
-           logfile("disconnect: " + daddr);
-           logfile(command);
-
-           selectedRow = ui->deviceTable->currentRow();
-           if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
-                              ui->deviceTable->removeRow(selectedRow);
-           }
-
-           ui->adhocip->setText("");
-
-            loadDeviceTable();
-
-           return;
-     }
-
-
-
-
-
-        //  QString selectedDescription;
-
 
 
 
@@ -2514,13 +2479,15 @@
              loadDeviceTable();
 
     }
-//////////////////
 
-    ////////////////////////////////////////
-    void MainWindow::on_delRecord_clicked()
+////////////////////////////////////////
+
+ void MainWindow::on_delRecord_clicked()
     {
 
       QString descrip;
+      QString daddr;
+
       int selectedRow = ui->deviceTable->currentRow();
       if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
     descrip = ui->deviceTable->item(selectedRow, 0)->text();
@@ -2543,8 +2510,18 @@
 
     deleteRecord(descrip);
 
-    ui->deviceTable->removeRow(selectedRow);
 
+    selectedRow = ui->deviceTable->currentRow();
+    daddr = ui->deviceTable->item(selectedRow, 1)->text();
+
+
+
+    QString cstring = getadbpath() + " disconnect "+daddr;
+    QString command=getadbOutput(cstring);
+    logfile (command);
+    logfile("disconnect: "+daddr);
+
+    ui->deviceTable->removeRow(selectedRow);
     logfile(descrip + " is deleted");
 
       }

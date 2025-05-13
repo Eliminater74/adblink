@@ -43,6 +43,8 @@ private slots:
 
     void onReqCompleted();
 
+    void adhocip();
+
     void on_actionAbout_triggered();
 
     void on_connButton_clicked();
