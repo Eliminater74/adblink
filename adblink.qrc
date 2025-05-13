@@ -11,6 +11,8 @@
         <file>assets/adblink3.png</file>
         <file>assets/kodi.html</file>
         <file>assets/busybox.html</file>
+        <file>assets/switch.html</file>
+        <file>assets/perms.html</file>
         <file>assets/about.html</file>
         <file>assets/adbwifi.html</file>
         <file>assets/main.html</file>
@@ -25,6 +27,7 @@
         <file>assets/nonandroid.html</file>
         <file>assets/console.html</file>
         <file>assets/editor.html</file>
+        <file>assets/createkodi.html</file>
         <file>assets/installapk.html</file>
         <file>assets/offline.html</file>
         <file>assets/menu.html</file>
@@ -38,8 +41,13 @@
         <file>assets/screen.html</file>
         <file>assets/uninapk.html</file>
         <file>assets/vlog.html</file>
+        <file>assets/klog.html</file>
         <file>assets/authorize.html</file>
         <file>assets/kodifolders.html</file>
+        <file>assets/stext.html</file>        
+        <file>assets/change.html</file>                
+        <file>assets/quest.html</file>
+        <file>assets/erase.html</file>
         <file>assets/download.html</file>
         <file>assets/path2clip.html</file>
         <file>assets/colorlink.png</file>
