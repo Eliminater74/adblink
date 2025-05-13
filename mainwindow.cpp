@@ -1687,7 +1687,7 @@
     void MainWindow::on_connButton_clicked()
     {
 
-        QString adhoc="Ad hoc IP";
+        QString adhoc="Ad hoc";
         QString cstring;
         QString command;
         QString s;
@@ -1705,7 +1705,7 @@
              for (int row = 0; row < ui->deviceTable->rowCount(); ++row) {
           QTableWidgetItem* item = ui->deviceTable->item(row, 0);
            if (item && item->text() == adhoc) {
-       ui->deviceTable->selectRow(row);
+        ui->deviceTable->selectRow(row);
         break;
          }
        }
@@ -1715,10 +1715,9 @@
 
 
 
-
                       QJsonObject obj;
                       QFile file(databasedir + "adblink.json");
-                      bool checkscope = false; // Default value
+                      bool checkscope = false;
                       if (!file.open(QIODevice::ReadOnly)) {
                             logfile("Failed to open adblink.json");
                             QMessageBox::critical(this, "", "Failed to read configuration file");
@@ -1759,17 +1758,13 @@
                       }
 
 
-
-                      if (device.isusb) {
-                            port = "";
-                            daddr = device.daddr;
-                      } else {
-                            port = device.port.isEmpty() ? "5555" : device.port;
-                            daddr = device.daddr + ":" + port;
-                      }
+                     if (!validateIPAddress(device.daddr)) {
+                            QMessageBox::critical(this, "Error", "IXnvalid IP address");
+                     }
 
 
-
+                    port = device.port.isEmpty() ? "5555" : device.port;
+                    daddr = device.daddr + ":" + port;
 
 
 
@@ -1874,12 +1869,6 @@
                               port = "5555";
                             }
 
-                            QHostAddress address(daddr);
-                            if (daddr.isEmpty() || address.isNull()) {
-                              logfile("Invalid IP address: " + daddr);
-                              QMessageBox::critical(this, "", "Invalid IP address: " + daddr);
-                              return;
-                            }
 
                             bool ok;
                             int portNum = port.toInt(&ok);
@@ -1887,12 +1876,12 @@
                               logfile("Invalid port: " + port);
                               QMessageBox::critical(this, "", "Invalid port: " + port);
                               return;
-                            }
+                        }
 
                             QSqlQuery query;
                             query.prepare("INSERT OR REPLACE INTO device (description, daddr, port, isusb, data_root, xbmcpackage, filepath) "
                                           "VALUES (:description, :daddr, :port, :isusb, :data_root, :xbmcpackage, :filepath)");
-                            query.bindValue(":description", "Ad hoc IP");
+                            query.bindValue(":description", "Ad hoc");
                             query.bindValue(":daddr", daddr);
                             query.bindValue(":port", port);
                             query.bindValue(":isusb", 0);
@@ -8512,10 +8501,32 @@ void MainWindow::on_actionSet_Kodi_permissions_triggered()
 void MainWindow::serverlabel()
 {
            QString cstring = getadbpath() + " devices";
-           QString c = getadbOutput(cstring);
-           if (c.contains("List of devices"))
+           QString command = getadbOutput(cstring);
+           if (command.contains("List of devices"))
                       ui->server_running->setText(adbstr1);
            else
                       ui->server_running->setText(adbstr2);
 
+}
+
+/////////////////////////////////////////////////////////////////
+
+bool MainWindow::validateIPAddress(const QString& ipAddress) {
+
+           QString normalized = ipAddress.trimmed();
+
+
+           QRegularExpression ipRegex(
+               // IPv4 pattern
+               "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}"
+               "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+               "|"
+
+               "^[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9]?"
+               "(\\.[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9]?)*"
+               "\\.[a-zA-Z0-9]{1,}$",
+               QRegularExpression::CaseInsensitiveOption
+               );
+
+           return ipRegex.match(normalized).hasMatch();
 }
