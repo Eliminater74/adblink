@@ -408,7 +408,7 @@ void usbfileDialog::on_pullButton_clicked()
             cstring = adb21 + rootShell + " rm -r " + fname;
             command = getadbOutput(cstring);
         } else {
-            logfile( "Destination: " + pulldir_ufd + "\n" + fileName + " " + command);
+            logfile( "Destination: " + pulldir_ufd + "\n" + fileName); //  + " " + command
         }
        }
 
