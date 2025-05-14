@@ -3264,17 +3264,6 @@
 
 
 
-    ///////////////////////////////////////////////////////
-
-    bool MainWindow::xcheck_devices()
-    {
-
-
-     return true;
-
-    }
-
-
     ////////////////////////////////////////////////////////
 
     void MainWindow::on_actionReiinstall_Busybox_triggered()
@@ -3433,23 +3422,14 @@
 
 
     // adb shell dumpsys battery
-
+    // present == false no batt
 
 
     }
 
 
 
-
-
-     void MainWindow::on_actionSleep_adjust_triggered()
-    {
-
-    }
-
-
-
-
+////////////////////////////////////////////
 
   void MainWindow::on_pushTimers_clicked()
     {
@@ -3596,6 +3576,7 @@
 
     }
 
+//////////////////////////////////////////////////////
 
     void MainWindow::on_actiondelthumb_triggered()
     {
@@ -3675,157 +3656,6 @@
 
 
     }
-
-
-
-
-    void MainWindow::on_actionTest_adb_connection_triggered()
-    {
-
-            QString selectedDescription;
-            if (!validateDeviceSelection(selectedDescription)) {
-              return;
-            }
-
-            DeviceRecord device = queryDeviceRecord(selectedDescription);
-
-            if (device.ostype != "0") {
-              QMessageBox::critical(this, "Unavailable", "Android devices only.");
-              return;
-            }
-
-
-        QJsonObject obj;
-        QJsonDocument doc(obj);
-        QFile file(databasedir+"adblink.json");
-        file.open(QIODevice::ReadOnly);
-        doc = QJsonDocument::fromJson(file.readAll());
-        obj = doc.object();
-        QString dropdown = obj["dropdown"].toString();
-        int mcheck=dropdown.toInt();
-
-
-
-        logfile("detaching console process");
-
-
-        if (device.isusb)
-             logfile(device.daddr);
-         else
-             logfile(device.daddr+":"+device.port);
-
-
-
-
-        QString cstring = "";
-        QString command ="";
-        QString editport = "";
-
-
-        if (os == 1)
-
-        {
-
-
-             QString commstr = scriptdir+"/logcat.bat";
-             QFile file(commstr);
-
-             if(!file.open(QFile::WriteOnly |
-                            QFile::Text))
-             {
-                  logfile("error creating logcat.bat!");
-                  QMessageBox::critical(this,"","Error creating bat file!");
-                  return;
-             }
-
-
-
-
-
-             QTextStream out(&file);
-
-             out  << "set PATH=%PATH%;"+adbfiles+";" << endl;
-
-             out  <<  getadbpath() + " -s "+ device.daddr + " logcat" << endl;
-
-
-
-             file.flush();
-             file.close();
-
-
-
-             QProcess::startDetached("cmd.exe", QStringList() << "/c" << "start"  << "" << commstr);
-
-        }
-
-
-
-         else
-
-           {
-
-            QString commstr = apphome+"logcat.sh";
-            QFile::remove(commstr);
-            QFile file(commstr);
-
-
-
-                     if(!file.open(QFile::WriteOnly))
-
-                 {
-                    logfile("error creating console.sh!");
-                     QMessageBox::critical(this,"","Error creating command file!");
-                     return;
-                 }
-
-
-
-           QTextStream out(&file);
-
-           out  << "#!/bin/sh" << endl;
-           out  <<  getadb()+ " logcat " << endl;
-           cstring = getadb()+ " logcat";
-
-                 file.flush();
-                 file.close();
-
-           cstring = "chmod 0755 " + commstr ;
-           command=getadbOutput(cstring);
-
-            QString shelldir = '"'+apphome+"logcat.sh"+'"';
-
-
-
-           if (os == 0)
-                {
-
-                if (mcheck==0)
-                    cstring = "konsole --workdir="+apphome+ " -e "+apphome+"logcat.sh";
-                    else
-                    cstring = "/usr/bin/xfce4-terminal --working-directory="+apphome+ " -x "+apphome+"logcat.sh";
-                    // cstring = "/usr/bin/gnome-terminal --working-directory="+apphome+ " -x "+apphome+"logcat.sh";
-
-                 }
-
-
-           if (os == 2)
-                {
-
-                if (mcheck==0)
-                    cstring = "open -a iTerm.app "+shelldir;
-                    else
-                    cstring = "open -a Terminal.app "+shelldir;;
-
-                 }
-
-
-           QProcess::startDetached(cstring);
-
-        }
-
-    }
-
 
 
 

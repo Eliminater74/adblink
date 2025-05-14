@@ -261,22 +261,15 @@ private slots:
 
 
 
-   bool xcheck_devices();
-
-
-
   void on_adhocip_returnPressed();
 
   void on_actionReiinstall_Busybox_triggered();
 
   void on_actionArchitecture_triggered();
 
-  void on_actionSleep_adjust_triggered();
 
 
   void on_actiondelthumb_triggered();
-
-  void on_actionTest_adb_connection_triggered();
 
   void on_actionPush_remote_triggered();
 
