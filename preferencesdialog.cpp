@@ -33,13 +33,7 @@ QString adbdir_pref;
 QString adb_pref;
 bool su_pref;
 
-////////////////////////////////////////////////
-QString strip2(QString str)
-{
-    str = str.simplified();
-    str.replace(" ", "");
-    return str;
-}
+
 
 ///////////////////////////////////////////////////
 preferencesDialog::preferencesDialog(QWidget *parent, bool showkodi) :
@@ -58,11 +52,12 @@ preferencesDialog::preferencesDialog(QWidget *parent, bool showkodi) :
 
     if(!showkodi)
        {  this->setFixedWidth(350);
-          ui->listkodirootBox->setVisible(false);
-          ui->partlabel->setVisible(false);
+
     }
 
 
+    ui->listkodirootBox->setVisible(showkodi);
+    ui->partlabel->setVisible(showkodi);
     ui->ostypeBox->setVisible(showkodi);
     ui->filepath->setVisible(showkodi);
     ui->filepathButton->setVisible(showkodi);
@@ -503,11 +498,13 @@ void preferencesDialog::on_scoped_clicked(bool checked)
     }
 }
 
-/*
-void preferencesDialog::on_ostypeBox_activated(int index)
+
+
+
+////////////////////////////////////////////////
+QString strip2(QString str)
 {
-
+    str = str.simplified();
+    str.replace(" ", "");
+    return str;
 }
-*/
-
-
