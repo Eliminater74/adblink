@@ -57,9 +57,10 @@ preferencesDialog::preferencesDialog(QWidget *parent, bool showkodi) :
        this->setFixedWidth(540);
 
     if(!showkodi)
-    this->setFixedWidth(350);
-
-
+       {  this->setFixedWidth(350);
+          ui->listkodirootBox->setVisible(false);
+          ui->partlabel->setVisible(false);
+    }
 
 
     ui->ostypeBox->setVisible(showkodi);
