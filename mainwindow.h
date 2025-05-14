@@ -107,9 +107,6 @@ private slots:
 
 
 
-   void  finishedLocalBackup();
-
-
 
    void writeBackup (QString dir);
 
@@ -262,24 +259,13 @@ private slots:
 
   void updateckversion(int value);
 
-   void updateMsgboxtype(int value);
-   void updatedownloaddir(QString value);
 
-   QString getDaddr(QString descrip);
-
-  bool getadbPref();
-
-   int getmsgboxtype();
 
    bool xcheck_devices();
 
-  QString getdownloadpath();
 
-  void on_actionDown_SPMC_triggered();
 
   void on_adhocip_returnPressed();
-
-//  void on_actionGet_package_name_triggered();
 
   void on_actionReiinstall_Busybox_triggered();
 

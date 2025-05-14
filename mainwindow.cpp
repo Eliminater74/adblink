@@ -2851,25 +2851,6 @@
     }
 
 
-    /////////////////////////////////////////////
-    void MainWindow::finishedLocalBackup()
-    {
-
-      logfile("Backup finished.");
-
-      QString mstring =  "Local Kodi backup";
-
-     for(int i = 0; i < ui->listRunningJobs->count(); ++i)
-     {
-         QString str = ui->listRunningJobs->item(i)->text();
-        if (str==mstring)
-            delete ui->listRunningJobs->item(i);
-     }
-
-
-
-    }
-
 
     ////////////////////////////////////////////////////////
 
@@ -3119,8 +3100,6 @@
 
     ////////////////////////////////////////////////////////////////////////
 
-    ////////////////////////////////
-
     void MainWindow::on_clearButton_clicked()
     {
         ui->adhocip->setText("");
@@ -3129,6 +3108,7 @@
     }
 
 
+////////////////////////////////////////////////////////////
 
     void MainWindow::on_actionPreferences_triggered()
     {
@@ -3224,101 +3204,6 @@
          }
     }
 
-    ////////////////////////////////
-
-    bool MainWindow::getadbPref()
-
-    {
-
-
-
-
-
-
-        QString sqlstatement;
-
-        QSqlQuery query;
-
-         QString tmpstr ;
-
-         int ckver;
-
-         bool vercheck;
-
-                 sqlstatement= "SELECT  checkversion FROM preferences";
-                 query.exec(sqlstatement);
-
-
-
-                         while (query.next()) {
-                               tmpstr = query.value(0).toString();
-                         }
-
-
-                           if (query.lastError().isValid())
-                            {
-                              logfile(sqlstatement);
-                              logfile("SqLite error:" + query.lastError().text());
-                              logfile("SqLite error code:"+ QString::number( query.lastError().number() ));
-                             }
-
-          ckver=tmpstr.toInt();
-
-         if (ckver==0)
-             vercheck=false;
-         else
-             vercheck=true;
-
-
-         return vercheck;
-
-    }
-
-
-    //////////////////////////////////////
-
-    int  MainWindow::getmsgboxtype()
-
-    {
-
-
-        QString sqlstatement;
-
-        QSqlQuery query;
-
-         QString tmpstr ;
-
-       int mcheck;
-
-                 sqlstatement= "SELECT  msgboxtype FROM preferences";
-                 query.exec(sqlstatement);
-
-
-
-                         while (query.next()) {
-                               tmpstr = query.value(0).toString();
-                         }
-
-
-                           if (query.lastError().isValid())
-                            {
-                              logfile(sqlstatement);
-                              logfile("SqLite error:" + query.lastError().text());
-                              logfile("SqLite error code:"+ QString::number( query.lastError().number() ));
-                             }
-
-
-
-
-                           mcheck=tmpstr.toInt();
-
-
-
-
-         return mcheck;
-
-    }
-
 
 
     //////////////////////////////////////////
@@ -3350,112 +3235,6 @@
 
 
 
-    //////////////////////////////////////////
-
-    void MainWindow::updateMsgboxtype(int value)
-    {
-
-        QString sqlstatement;
-        QSqlQuery query;
-        QString str;
-
-      str.setNum(value);
-
-        sqlstatement = "UPDATE preferences SET msgboxtype='"+str+"'";
-        logfile(sqlstatement);
-        query.exec(sqlstatement);
-
-         if (query.lastError().isValid())
-          {
-            logfile(sqlstatement);
-            logfile("SqLite error:" + query.lastError().text());
-            logfile("SqLite error code:"+ QString::number( query.lastError().number() ));
-           }
-
-
-
-
-    }
-
-
-
-    //////////////////////////////////////////
-
-    void MainWindow::updatedownloaddir(QString str)
-    {
-
-        QString sqlstatement;
-        QSqlQuery query;
-
-
-        sqlstatement = "UPDATE preferences SET downloaddir='"+str+"'";
-        logfile(sqlstatement);
-        query.exec(sqlstatement);
-
-         if (query.lastError().isValid())
-          {
-            logfile(sqlstatement);
-            logfile("SqLite error:" + query.lastError().text());
-            logfile("SqLite error code:"+ QString::number( query.lastError().number() ));
-           }
-
-
-
-
-    }
-
-
-
-
-
-    //////////////////////////////////////
-
-    QString MainWindow::getdownloadpath()
-
-    {
-
-        return ("");
-
-        QSqlQuery query;
-        QString sqlstatement;
-       QString downloaddir;
-
-        sqlstatement= "SELECT downloaddir FROM preferences WHERE Id=1";
-
-        query.prepare( sqlstatement );
-
-        if (!query.exec()){
-            logfile(sqlstatement);
-            logfile("SqLite error:" + query.lastError().text());
-            logfile("SqLite error code:"+ QString::number( query.lastError().number() ));
-        }
-        else
-        {
-            if( query.next( ) )
-             downloaddir = query.value(0).toString();
-        }
-
-
-
-    return downloaddir;
-
-
-    }
-
-
-    void MainWindow::on_actionDown_SPMC_triggered()
-    {
-
-
-        QString link = "http://spmc.semperpax.com/";
-        QDesktopServices::openUrl(QUrl(link));
-
-
-    }
-
-
-
-
 
     ////////////////////////////////////////////////
 
@@ -3474,44 +3253,6 @@
     }
 
 
-
-
-    ///////////////////////////////////////////////
-
-    QString MainWindow::getDaddr(QString descrip)
-
-    {
-
-        QString quote = "\"";
-        QString mdaddr;
-        QString sqlstatement;
-        descrip = quote+descrip+quote;
-        QSqlQuery query;
-
-
-
-                 sqlstatement= "SELECT daddr FROM device WHERE description=" + descrip;
-                 query.exec(sqlstatement);
-                 logfile(sqlstatement);
-
-
-                         while (query.next()) {
-                                mdaddr = query.value(0).toString();
-                              }
-
-
-                           if (query.lastError().isValid())
-                            {
-                              logfile(sqlstatement);
-                              logfile("SqLite error:" + query.lastError().text());
-                              logfile("SqLite error code:"+ QString::number( query.lastError().number() ));
-                             }
-
-
-    return mdaddr;
-
-
-    }
 
     ////////////////////////////////////////////////
 
