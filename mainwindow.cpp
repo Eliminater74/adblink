@@ -810,33 +810,24 @@
 
 
 
-    ////////////////////////////////
+////////////////////////////////
 
     void MainWindow::createTables()
     {
-
         logfile("creating adblink.db");
 
-
-
-        QString sqlstatement="CREATE TABLE device (Id INTEGER PRIMARY KEY, daddr text,description text NOT NULL UNIQUE,pulldir text,xbmcpackage text,data_root text,buffermode int, buffersize text, bufferfactor text, filepath text, port text,isusb int, ostype text, disableroot int, flag1 text,flag2 text,flag3 text,flag4 text,flag5 text)";
-
+        QString sqlstatement = "CREATE TABLE IF NOT EXISTS \"device\" (Id INTEGER PRIMARY KEY, daddr text, description text NOT NULL UNIQUE, pulldir text, xbmcpackage text, data_root text, buffermode int, buffersize text, bufferfactor text, filepath text, port text, isusb int, ostype text, logfilename text, disableroot int, flag1 TEXT, flag2 TEXT, flag3 TEXT, flag4 TEXT, flag5 TEXT)";
 
         QSqlQuery query;
         query.exec(sqlstatement);
 
         if (query.lastError().isValid())
-         {
+        {
             logfile(sqlstatement);
             logfile("SqLite error:" + query.lastError().text());
-            logfile("SqLite error code:"+ QString::number( query.lastError().number() ));
-           }
-
-
-
-
+            logfile("SqLite error code:" + QString::number(query.lastError().number()));
+        }
     }
-
 
 
     //////////////////////////////////////////////
