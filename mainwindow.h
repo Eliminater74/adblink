@@ -221,17 +221,6 @@ private slots:
     void on_killServer_clicked();
 
 
-
-    bool record_exists(QString descrip);
-
-    QString getDescription(QString mdaddr);
-    QString getDevice(QString mdaddr);
-    QString getPort(QString mdaddr);
-    QString getOSType(QString mdaddr);
-    bool getflag1(QString mdaddr);
-    QString getWSA(QString mdaddr);
-    bool getIsUsb(QString mdaddr);
-
     void on_newRecord_clicked();
 
    void  screenCap();
