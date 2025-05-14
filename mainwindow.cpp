@@ -231,38 +231,16 @@
          }
 
 
-//=============================
-
-
-
-
-      if (os == 1)
-              {
-              logfile("Windows");
-              }
-
-         if (os == 2)
-
-              {
-            logfile("macOS");
-              }
-
-
-
-         if (os == 0)
-
-              {
-            logfile("Linux");
-
-              }
-
-
-
-
-
-
-              logfile("------------");
-
+         if (os == 1) {
+             logfile("Windows");
+         } else if (os == 2) {
+             logfile("macOS");
+         } else if (os == 0) {
+             logfile("Linux");
+         } else {
+             logfile("Unknown OS");
+         }
+         logfile("------------");
 
 
       QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
@@ -784,7 +762,7 @@
 
 
     ////////////////////////////////
-    int MainWindow::getRows()
+    int MainWindow::getRowsx()
     {
 
        int rowcount=0;
@@ -808,49 +786,6 @@
     }
 
 
-
-
-////////////////////////////////
-
-    void MainWindow::createTables()
-    {
-        logfile("creating adblink.db");
-
-        QString sqlstatement = "CREATE TABLE IF NOT EXISTS \"device\" (Id INTEGER PRIMARY KEY, daddr text, description text NOT NULL UNIQUE, pulldir text, xbmcpackage text, data_root text, buffermode int, buffersize text, bufferfactor text, filepath text, port text, isusb int, ostype text, logfilename text, disableroot int, flag1 TEXT, flag2 TEXT, flag3 TEXT, flag4 TEXT, flag5 TEXT)";
-
-        QSqlQuery query;
-        query.exec(sqlstatement);
-
-        if (query.lastError().isValid())
-        {
-            logfile(sqlstatement);
-            logfile("SqLite error:" + query.lastError().text());
-            logfile("SqLite error code:" + QString::number(query.lastError().number()));
-        }
-    }
-
-
-    //////////////////////////////////////////////
-
-    void MainWindow::deleteRecord(QString descrip)
-
-    {
-
-
-      QString sqlstatement;
-
-      QString quote = "\"";
-
-      descrip = quote+descrip+quote;
-      QSqlQuery query;
-
-
-       sqlstatement= "DELETE FROM device WHERE description=" + descrip;
-       query.exec(sqlstatement);
-
-
-
-    }
 
     //////////////////////////////////
 
@@ -8047,3 +7982,46 @@ void MainWindow::on_infoButton_clicked()
 
 }
 
+
+// SQL code
+///////////////////////////////////////////////////
+
+void MainWindow::createTables()
+{
+   logfile("creating adblink.db");
+
+   QString sqlstatement = "CREATE TABLE IF NOT EXISTS \"device\" (Id INTEGER PRIMARY KEY, daddr text, description text NOT NULL UNIQUE, pulldir text, xbmcpackage text, data_root text, buffermode int, buffersize text, bufferfactor text, filepath text, port text, isusb int, ostype text, logfilename text, disableroot int, flag1 TEXT, flag2 TEXT, flag3 TEXT, flag4 TEXT, flag5 TEXT)";
+
+   QSqlQuery query;
+   query.exec(sqlstatement);
+
+   if (query.lastError().isValid())
+   {
+                      logfile(sqlstatement);
+                      logfile("SqLite error:" + query.lastError().text());
+                      logfile("SqLite error code:" + QString::number(query.lastError().number()));
+   }
+}
+
+
+//////////////////////////////////////////////
+
+void MainWindow::deleteRecord(QString descrip)
+
+{
+
+
+   QString sqlstatement;
+
+   QString quote = "\"";
+
+   descrip = quote+descrip+quote;
+   QSqlQuery query;
+
+
+   sqlstatement= "DELETE FROM device WHERE description=" + descrip;
+   query.exec(sqlstatement);
+
+
+
+}

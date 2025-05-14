@@ -161,7 +161,7 @@ private slots:
    bool is_package(QString package);
 
 
-   int getRows();
+   int getRowsx();
 
 
 
