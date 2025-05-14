@@ -308,18 +308,11 @@ private slots:
   void on_actionSend_text_triggered();
 
 
-  void on_test_clicked();
-
   void on_actionEdit_XML_triggered();
 
   void on_actionScreen_Capture_triggered();
 
   void on_actionKeypad_triggered();
-
-  void on_ascend_clicked();
-
-  void on_descend_clicked();
-
 
 
   void on_actionSwitch_View_triggered();

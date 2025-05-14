@@ -345,22 +345,6 @@
     new QShortcut (QKeySequence("Ctrl+O"), this, SLOT(on_actionSend_text_triggered()));
 
 
-    QFont buttonFont("Arial", 8); // Small size to fit 30x30
-    ui->ascend->setFont(buttonFont);
-    ui->descend->setFont(buttonFont);
-
-    // Set button size and arrows
-    ui->ascend->setFixedSize(30, 30);
-    ui->descend->setFixedSize(30, 30);
-    ui->ascend->setText(QString::fromUtf8("\u2193"));
-    ui->descend->setText(QString::fromUtf8("\u2191"));
-
-    // Style buttons to avoid clipping
-    ui->ascend->setStyleSheet("padding: 2px; text-align: center;");
-    ui->descend->setStyleSheet("padding: 2px; text-align: center;");
-
-
-
 
     if (program=="adblink")
     {
@@ -827,11 +811,6 @@
         bool sortpref = doc.object()["sortpref"].toBool();
         bool startview = doc.object()["startview"].toBool();
         file.close();
-
-        if (sortpref)
-                  ui->csort->setChecked(true);
-        else
-                  ui->dsort->setChecked(true);
 
 
 
@@ -3660,7 +3639,8 @@
 
 
 
-    ///////////////////////////////////
+////////////////////////////////////////////////////////////////
+
     void MainWindow::on_actionCreate_kodi_data_triggered()
 
      {
@@ -4457,31 +4437,6 @@ void MainWindow::writeInstall (QString install) {
 
 }
 
-/////////////////////////////////////////////////////
-void MainWindow::on_Erase_adbLink_database_triggered()
-{
-    QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(0, "", "Erase device database?\n\nWARNING: This action will delete all device records. Are you sure you want to proceed?",
-                                  QMessageBox::Yes|QMessageBox::No);
-    if (reply == QMessageBox::Yes)
-    {
-                                   QSqlQuery pquery;
-                                   QString sqlstatement = "DROP TABLE device";
-                                   pquery.exec(sqlstatement);
-                                   if (!pquery.isActive())
-                                   {
-                  logfile("SQLERROR: " + pquery.lastError().text());
-                  return;
-                                   }
-
-                                   createTables();
-                                   loadDeviceTable();
-
-    }
-}
-
-
-
 
 ////////////////////////////////////////////
 void MainWindow::on_backupButton_clicked()
@@ -5142,10 +5097,6 @@ void MainWindow::on_startapp_clicked()
 
     DeviceRecord device = queryDeviceRecord(selectedDescription);
 
-    if (device.ostype != "0") {
-     QMessageBox::critical(this, "Unavailable", "Android devices only.");
-     return;
-    }
 
 
     bool startstop;
@@ -6485,44 +6436,6 @@ getadbpath() shell am force-stop com.oculus.xrstreamingclient
 
 
 
-
-
-
-void MainWindow::on_test_clicked()
-{
-
-
- QString cstring;
- QString command;
- QString mcpath;
-
- QString selectedDescription;
- if (!validateDeviceSelection(selectedDescription)) {
-           return;
- }
-
- DeviceRecord device = queryDeviceRecord(selectedDescription);
-
- if (device.ostype != "0") {
-           QMessageBox::critical(this, "Unavailable", "Android devices only.");
-           return;
- }
- cstring = getadb() + " shell ls /sdcard/xbmc_env.properties";
- if(getreturncode(cstring))
- {  cstring = getadb() + " shell cat /sdcard/xbmc_env.properties";
-           command=getadbOutput(cstring);
-           command.replace(QRegExp("[\r\n]"), "");
-           mcpath = command.mid(command.indexOf("xbmc.data=") + 10);
-          // mcpath=mcpath+"/.kodi";
- }
-
-
- qDebug() << mcpath;
-
-
-
-}
-
 ////////////////////////////////////////////////
 
 
@@ -6733,58 +6646,6 @@ void MainWindow::on_actionScreen_Capture_triggered()
 void MainWindow::on_actionKeypad_triggered()
 {
  on_keypadButton_clicked();
-}
-
-void MainWindow::on_ascend_clicked()
-{
- QString selectedDevice;
- if (ui->deviceTable->currentItem() && ui->deviceTable->currentRow() >= 0) {
-           selectedDevice = ui->deviceTable->item(ui->deviceTable->currentRow(), 0)->text();
- }
-
- // Sort by Device (description) or Status based on radio button
- int sortColumn = ui->dsort->isChecked() ? 0 : (ui->csort->isChecked() ? 2 : 0); // Default to Device if neither is checked
- ui->deviceTable->sortItems(sortColumn, Qt::AscendingOrder);
-
- // Reselect the previously selected row
- if (!selectedDevice.isEmpty()) {
-           for (int row = 0; row < ui->deviceTable->rowCount(); ++row) {
-              if (ui->deviceTable->item(row, 0)->text() == selectedDevice) {
-               ui->deviceTable->clearSelection(); // Clear previous selection
-               ui->deviceTable->setCurrentCell(row, 0); // Set active cell
-               ui->deviceTable->selectRow(row); // Highlight entire row
-               ui->deviceTable->setFocus(); // Ensure table has focus
-               break;
-              }
-           }
- }
-}
-
-/////////////////////////////////
-
-void MainWindow::on_descend_clicked()
-{
- QString selectedDevice;
- if (ui->deviceTable->currentItem() && ui->deviceTable->currentRow() >= 0) {
-           selectedDevice = ui->deviceTable->item(ui->deviceTable->currentRow(), 0)->text();
- }
-
- // Sort by Device (description) or Status based on radio button
- int sortColumn = ui->dsort->isChecked() ? 0 : (ui->csort->isChecked() ? 2 : 0); // Default to Device if neither is checked
- ui->deviceTable->sortItems(sortColumn, Qt::DescendingOrder);
-
- // Reselect the previously selected row
- if (!selectedDevice.isEmpty()) {
-           for (int row = 0; row < ui->deviceTable->rowCount(); ++row) {
-              if (ui->deviceTable->item(row, 0)->text() == selectedDevice) {
-               ui->deviceTable->clearSelection(); // Clear previous selection
-               ui->deviceTable->setCurrentCell(row, 0); // Set active cell
-               ui->deviceTable->selectRow(row); // Highlight entire row
-               ui->deviceTable->setFocus(); // Ensure table has focus
-               break;
-              }
-           }
- }
 }
 
 //////////////////////////////////
@@ -7086,13 +6947,7 @@ void MainWindow::onApplicationQuit() {
                qWarning() << "Invalid JSON format in" << file.fileName();
                return;
       }
-      obj = doc.object();
-      obj["sortpref"] = ui->dsort->isChecked() ? false : true; // Set false if dsort is checked, true otherwise
-      doc.setObject(obj);
-      if (!file.open(QIODevice::WriteOnly)) {
-               qWarning() << "Cannot open file for writing:" << file.fileName();
-               return;
-      }
+
       file.write(doc.toJson());
       file.close();
 }
@@ -7380,4 +7235,29 @@ void MainWindow::deleteRecord(QString descrip)
 
 
 }
+
+
+/////////////////////////////////////////////////////
+void MainWindow::on_Erase_adbLink_database_triggered()
+{
+   QMessageBox::StandardButton reply;
+   reply = QMessageBox::question(0, "", "Erase device database?\n\nWARNING: This action will delete all device records. Are you sure you want to proceed?",
+                                 QMessageBox::Yes|QMessageBox::No);
+   if (reply == QMessageBox::Yes)
+   {
+                      QSqlQuery pquery;
+                      QString sqlstatement = "DROP TABLE device";
+                      pquery.exec(sqlstatement);
+                      if (!pquery.isActive())
+                      {
+                          logfile("SQLERROR: " + pquery.lastError().text());
+                          return;
+                      }
+
+                      createTables();
+                      loadDeviceTable();
+
+   }
+}
+
 

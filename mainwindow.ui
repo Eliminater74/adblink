@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>628</width>
-    <height>398</height>
+    <height>406</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -95,79 +95,6 @@
     <column/>
     <column/>
     <column/>
-   </widget>
-   <widget class="QWidget" name="mainwindow_layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>1050</x>
-      <y>40</y>
-      <width>36</width>
-      <height>107</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QRadioButton" name="dsort">
-       <property name="toolTip">
-        <string>Sort by description</string>
-       </property>
-       <property name="text">
-        <string>D</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QRadioButton" name="csort">
-       <property name="toolTip">
-        <string>Sort by connection</string>
-       </property>
-       <property name="text">
-        <string>C</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="ascend">
-       <property name="minimumSize">
-        <size>
-         <width>30</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>30</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="descend">
-       <property name="minimumSize">
-        <size>
-         <width>30</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>30</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-    </layout>
    </widget>
    <widget class="QStackedWidget" name="stackedWidget">
     <property name="geometry">
