@@ -83,9 +83,6 @@ private slots:
 
 
 
-     void finishedCopy1();
-    void finishedCopy2();
-
 
     void delay(int secs);
 
@@ -161,20 +158,12 @@ private slots:
    bool is_package(QString package);
 
 
-   int getRowsx();
-
 
 
 
     void androidLog();
 
 
-
-   void copyFolder(QString sourceFolder, QString destFolder);
-
-     void kodiFolder(QString sourceFolder, QString destFolder);
-
- //   void getRecord(QString descrip);
 
     void on_actionReboot_triggered();
 

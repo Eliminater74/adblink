@@ -761,32 +761,6 @@
 
 
 
-    ////////////////////////////////
-    int MainWindow::getRowsx()
-    {
-
-       int rowcount=0;
-       QString sqlstatement = "SELECT Count(*) FROM device";
-
-        QSqlQuery query;
-        query.exec(sqlstatement);
-        while (query.next()) {
-              rowcount = query.value(0).toInt();
-        }
-
-        if (query.lastError().isValid())
-         {
-            logfile(sqlstatement);
-            logfile("SqLite error:" + query.lastError().text());
-            logfile("SqLite error code:"+ QString::number( query.lastError().number() ));
-           }
-
-
-        return rowcount;
-    }
-
-
-
     //////////////////////////////////
 
     bool MainWindow::isConnectedToNetwork()
@@ -1044,14 +1018,6 @@
 
 
         DeviceRecord device = queryDeviceRecord(selectedDescription);
-
-
-        if (device.ostype != "0") {
-            QMessageBox::critical(this, "Unavailable", "Android devices only.");
-            return;
-        }
-
-
 
 
          bool installer=false;
@@ -1373,6 +1339,8 @@
 
     }
 
+
+////////////////////////////////////////////
 
     void MainWindow::adhocip()
     {
@@ -1779,10 +1747,7 @@
              QStringList dstringlist;
              QString selectedDescription;
              DeviceRecord device;
-             QString olddaddr;
-             QString olddescription;
 
-             // Fetch connected devices using adb
              cstring = getadbpath() + " devices";
              command = getadbOutput(cstring);
              QThread::sleep(2);
@@ -1807,11 +1772,7 @@
              if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0))
              {
                    selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
-                   device = queryDeviceRecord(selectedDescription);
-                   olddaddr = device.daddr;
-                   olddescription = device.description;
-                   qDebug() << device.description << " " << device.pulldir;
-
+                   device = queryDeviceRecord(selectedDescription);                 
              }
              else
              {
@@ -1864,9 +1825,7 @@
              if (device.isusb)
                    dialog.setport("");
              else
-                   dialog.setport(device.port);
-             dialog.setscope(device.scoped);
-             dialog.setwsa(device.wsa);
+             dialog.setport(device.port);
              dialog.setdaddr(device.daddr);
              dialog.setisusb(device.isusb);
              }
@@ -1889,8 +1848,6 @@
              QString daddr = dialog.daddr();
              bool isusb = dialog.isusb();
              QString ostype = dialog.ostype();
-             // bool scoped = dialog.scoped();
-            // bool wsa = dialog.wsa();
              int disableroot = dialog.disableroot();
 
              // Validate description (non-empty)
@@ -1968,53 +1925,6 @@
              QSqlDatabase::database().commit();
              loadDeviceTable();
 
-    }
-
-////////////////////////////////////////
-
- void MainWindow::on_delRecord_clicked()
-    {
-
-      QString descrip;
-      QString daddr;
-
-      int selectedRow = ui->deviceTable->currentRow();
-      if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
-    descrip = ui->deviceTable->item(selectedRow, 0)->text();
-      } else {
-    QMessageBox::critical(this, "", "No device selected in table");
-    return;
-      }
-
-      if (!descrip.isEmpty())
-      {
-    QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(this, "", "Delete " + descrip + "?",
-                                  QMessageBox::Yes | QMessageBox::No);
-
-    if (reply == QMessageBox::No)
-    {
-              return;
-    }
-
-
-    deleteRecord(descrip);
-
-
-    selectedRow = ui->deviceTable->currentRow();
-    daddr = ui->deviceTable->item(selectedRow, 1)->text();
-
-
-
-    QString cstring = getadbpath() + " disconnect "+daddr;
-    QString command=getadbOutput(cstring);
-    logfile (command);
-    logfile("disconnect: "+daddr);
-
-    ui->deviceTable->removeRow(selectedRow);
-    logfile(descrip + " is deleted");
-
-      }
     }
 
 
@@ -2506,181 +2416,6 @@
     }
 
 
-    /////////////////////////////////////////////////////////////////////
-
-    void MainWindow::copyFolder(QString sourceFolder, QString destFolder)
-    {
-
-    QDir sourceDir(sourceFolder);
-    if(!sourceDir.exists())
-    return;
-
-    QDir destDir(destFolder);
-    if(!destDir.exists())
-    {
-    destDir.mkdir(destFolder);
-    }
-
-    QStringList files = sourceDir.entryList(QDir::Files);
-
-    for(int i = 0; i< files.count(); i++)
-    {
-    QString srcName = sourceFolder + "/" + files[i];
-    QString destName = destFolder + "/" + files[i];
-    QFile::copy(srcName, destName);
-    }
-
-    files.clear();
-
-    files = sourceDir.entryList(QDir::AllDirs | QDir::NoDotAndDotDot);
-
-    for(int i = 0; i< files.count(); i++)
-    {
-    QString srcName = sourceFolder + "/" + files[i];
-    QString destName = destFolder + "/" + files[i];
-
-    copyFolder(srcName, destName);
-    }
-
-
-
-    }
-
-
-
-    /////////////////////////////////////////////////////////////////////
-
-    void MainWindow::kodiFolder(QString sourceFolder, QString destFolder)
-    {
-
-
-    QDir sourceDir(sourceFolder);
-    QDir destDir(destFolder);
-
-    if(!sourceDir.exists())
-    return;
-
-    QDir backupfolder(destFolder+".backup");
-
-      if (backupfolder.exists())
-      {
-         logfile("Kodi folder backup already exists. Delete or rename it.");
-         return;
-      }
-
-
-
-     bool check = destDir.rename(destFolder, destFolder+".backup");
-
-     if (!check)
-     {
-         logfile("Problem backing up local Kodi folder");
-         return;
-     }
-
-
-
-    if(!destDir.exists())
-    {
-    destDir.mkdir(destFolder);
-    }
-
-    QStringList files = sourceDir.entryList(QDir::Files);
-    for(int i = 0; i< files.count(); i++)
-    {
-    QString srcName = sourceFolder + "/" + files[i];
-    QString destName = destFolder + "/" + files[i];
-    QFile::copy(srcName, destName);
-    }
-    files.clear();
-    files = sourceDir.entryList(QDir::AllDirs | QDir::NoDotAndDotDot);
-    for(int i = 0; i< files.count(); i++)
-    {
-    QString srcName = sourceFolder + "/" + files[i];
-    QString destName = destFolder + "/" + files[i];
-    copyFolder(srcName, destName);
-    }
-
-
-
-    }
-
-
-
-    /////////////////////////////////////////////
-    void MainWindow::finishedCopy1()
-    {
-
-
-      logfile("Backup finished.");
-
-        QString mstring =  "Local backup";
-
-       for(int i = 0; i < ui->listRunningJobs->count(); ++i)
-       {
-           QString str = ui->listRunningJobs->item(i)->text();
-          if (str==mstring)
-              delete ui->listRunningJobs->item(i);
-       }
-
-
-    if (ui->listRunningJobs->count() > 0 )
-           {
-            ui->progressBar->setHidden(false);
-            ui->progressBar->setValue(0);
-             }
-       else
-          {
-            ui->progressBar->setHidden(true);
-            ui->progressBar->setValue(0);
-        }
-
-
-
-
-
-
-
-
-
-
-    QMessageBox::information(this,"","Local backup finished");
-
-
-    }
-
-
-
-    /////////////////////////////////////////////
-    void MainWindow::finishedCopy2()
-    {
-
-      logfile("Restore finished.");
-
-         // QString mstring =  "Local Kodi restore";
-         QString mstring =  "Local restore";
-       for(int i = 0; i < ui->listRunningJobs->count(); ++i)
-       {
-           QString str = ui->listRunningJobs->item(i)->text();
-          if (str==mstring)
-              delete ui->listRunningJobs->item(i);
-       }
-
-
-       if (ui->listRunningJobs->count() > 0 )
-              {
-               ui->progressBar->setHidden(false);
-               ui->progressBar->setValue(0);
-                }
-          else
-             {
-               ui->progressBar->setHidden(true);
-               ui->progressBar->setValue(0);
-              }
-
-           QMessageBox::information(this,"","Local restore finished");
-
-    }
 
     //////////////////////////////////////////////////////////
     void MainWindow::on_actionPaste_path_triggered()
@@ -7983,6 +7718,55 @@ void MainWindow::on_infoButton_clicked()
 }
 
 
+////////////////////////////////////////
+
+void MainWindow::on_delRecord_clicked()
+{
+
+   QString descrip;
+   QString daddr;
+
+   int selectedRow = ui->deviceTable->currentRow();
+   if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
+                      descrip = ui->deviceTable->item(selectedRow, 0)->text();
+   } else {
+                      QMessageBox::critical(this, "", "No device selected in table");
+                      return;
+   }
+
+   if (!descrip.isEmpty())
+   {
+                      QMessageBox::StandardButton reply;
+                      reply = QMessageBox::question(this, "", "Delete " + descrip + "?",
+                                                    QMessageBox::Yes | QMessageBox::No);
+
+                      if (reply == QMessageBox::No)
+                      {
+                          return;
+                      }
+
+
+                      deleteRecord(descrip);
+
+
+                      selectedRow = ui->deviceTable->currentRow();
+                      daddr = ui->deviceTable->item(selectedRow, 1)->text();
+
+
+
+                      QString cstring = getadbpath() + " disconnect "+daddr;
+                      QString command=getadbOutput(cstring);
+                      logfile (command);
+                      logfile("disconnect: "+daddr);
+
+                      ui->deviceTable->removeRow(selectedRow);
+                      logfile(descrip + " is deleted");
+
+   }
+}
+
+
+
 // SQL code
 ///////////////////////////////////////////////////
 
@@ -8025,3 +7809,4 @@ void MainWindow::deleteRecord(QString descrip)
 
 
 }
+
