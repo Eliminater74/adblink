@@ -4,12 +4,20 @@ Version 6.4
 
 adb updated to Version 36.0.0-13206524
 
-Merge of adblink & adblink2 complete. Choose
-which view is active at startup, switch at will
+Merge of adblink (Kodi) & adblink2 (non-Kodi)
+is complete. adblink now offers two views, Kodi
+and Android. Kodi view offers Kodi functionality,
+Android view does not. Select startup view via
+preferences, switch views at will.
 
-The device list has moved to a table. Each row
-displays device name, IP and connection status.
-Sort on any column. 
+
+Device selection has moved from a dropdown list
+to a scrollable table. Each row displays three
+columns, device name, IP and connection status.
+The active device is selected by clicking the
+device's row in the table. Sort on any column.
+
+adblink help updated for v6.4
 
 
 
