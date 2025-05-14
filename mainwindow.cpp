@@ -802,7 +802,7 @@
         doc = QJsonDocument::fromJson(file.readAll());
         obj = doc.object();
         bool checkversion = doc.object()["checkversion"].toBool();
-        bool sortpref = doc.object()["sortpref"].toBool();
+
         bool startview = doc.object()["startview"].toBool();
         file.close();
 
@@ -6954,7 +6954,7 @@ void MainWindow::onApplicationQuit() {
 }
 
 
-//////////////////////////////////
+///////////////////////////////////////////////
 
 void MainWindow::loadDeviceTable()
 {
@@ -6969,6 +6969,8 @@ void MainWindow::loadDeviceTable()
       ui->deviceTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
       ui->deviceTable->setShowGrid(true);
       ui->deviceTable->setSortingEnabled(false);
+      ui->deviceTable->setSelectionMode(QAbstractItemView::SingleSelection); // Add this line
+      ui->deviceTable->setSelectionBehavior(QAbstractItemView::SelectRows); // Add this line
 
       sqlstatement = "SELECT description, daddr, isusb FROM device";
       if (!query.exec(sqlstatement)) {
@@ -6996,7 +6998,9 @@ void MainWindow::loadDeviceTable()
       ui->deviceTable->viewport()->update();
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////
 
 bool MainWindow::renameColumn(const QString& oldColumnName, const QString& newColumnName)
 {
