@@ -32,7 +32,7 @@ private slots:
 
     bool validateIPAddress(const QString& ipAddress);
 
-    bool renameColumnIfNotRenamed(const QString& oldColumnName, const QString& newColumnName);
+    bool renameColumn(const QString& oldColumnName, const QString& newColumnName);
 
      void onApplicationQuit();
 

@@ -17,7 +17,6 @@
     #include "restdialog.h"
     #include "klogdialog.h"
     #include "tcpipdialog.h"
-    #include "oslogdialog.h"
     #include "adbprefdialog.h"
     #include "sleepdialog.h"
     #include "oculusdialog.h"
@@ -121,11 +120,6 @@
     {
 
        connect(qApp, &QCoreApplication::aboutToQuit, this, &MainWindow::onApplicationQuit);
-
-//ro.product.product.device
-//ro.product.manufacturer
-// ro.product.brand
-//  adb shell getprop ro.build.version.release
 
 
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -259,7 +253,7 @@
 
 /*
       if (db.open()) {
-      bool success = renameColumnIfNotRenamed("oldname", "newname");
+      bool success = renameColumn("oldname", "newname");
       if (success)
          logfile("database column renamed");
       }
@@ -3348,6 +3342,9 @@
     {
 
 
+
+
+
     QString selectedDescription;
     if (!validateDeviceSelection(selectedDescription)) {
                    return;
@@ -3402,6 +3399,10 @@
 
     // adb shell dumpsys battery
     // present == false no batt
+    //ro.product.product.device
+    //ro.product.manufacturer
+    // ro.product.brand
+    //  adb shell getprop ro.build.version.release
 
 
     }
@@ -6995,7 +6996,10 @@ void MainWindow::loadDeviceTable()
       ui->deviceTable->viewport()->update();
 }
 
-bool MainWindow::renameColumnIfNotRenamed(const QString& oldColumnName, const QString& newColumnName)
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool MainWindow::renameColumn(const QString& oldColumnName, const QString& newColumnName)
 {
 
 
@@ -7041,6 +7045,8 @@ bool MainWindow::renameColumnIfNotRenamed(const QString& oldColumnName, const QS
       return true;
 }
 
+
+////////////////////////////////////////////////////////////
 
 void MainWindow::on_actionSet_Kodi_permissions_triggered()
 {
@@ -7192,8 +7198,6 @@ void MainWindow::on_delRecord_clicked()
 }
 
 
-
-// SQL code
 ///////////////////////////////////////////////////
 
 void MainWindow::createTables()
