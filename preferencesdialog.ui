@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>543</width>
-    <height>408</height>
+    <width>551</width>
+    <height>370</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,19 +19,6 @@
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>
   </property>
-  <widget class="QLabel" name="recnum">
-   <property name="geometry">
-    <rect>
-     <x>250</x>
-     <y>600</y>
-     <width>59</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>TextLabel</string>
-   </property>
-  </widget>
   <widget class="QGroupBox" name="mediaBox">
    <property name="geometry">
     <rect>
@@ -102,8 +89,8 @@
    </property>
    <property name="geometry">
     <rect>
-     <x>250</x>
-     <y>630</y>
+     <x>170</x>
+     <y>610</y>
      <width>97</width>
      <height>20</height>
     </rect>
@@ -134,7 +121,7 @@
    </property>
    <property name="geometry">
     <rect>
-     <x>390</x>
+     <x>190</x>
      <y>640</y>
      <width>56</width>
      <height>24</height>
@@ -150,8 +137,8 @@
   <widget class="QWidget" name="preferencesdialog_layoutWidget">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>350</y>
+     <x>30</x>
+     <y>320</y>
      <width>145</width>
      <height>32</height>
     </rect>
@@ -179,102 +166,11 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="preferencesdialog_layoutWidget_3">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>280</y>
-     <width>87</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_3">
-    <item>
-     <widget class="QLabel" name="label_6">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="text">
-       <string>Port</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLineEdit" name="port">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>50</width>
-        <height>21</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>50</width>
-        <height>21</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Port for IP connections. Defaults to 5555&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <property name="placeholderText">
-       <string>5555</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="preferencesdialog_layoutWidget_4">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>311</y>
-     <width>221</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_2">
-    <item>
-     <widget class="QCheckBox" name="isusb">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Check this box for USB connections&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <property name="text">
-       <string>USB Connection</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QCheckBox" name="disableroot">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disable root for misbehaving su installations&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <property name="text">
-       <string>Disable root</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
   <widget class="QWidget" name="preferencesdialog_layoutWidget_5">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>179</y>
+     <x>36</x>
+     <y>173</y>
      <width>216</width>
      <height>96</height>
     </rect>
@@ -423,8 +319,8 @@
   <widget class="QWidget" name="preferencesdialog_layoutWidget_6">
    <property name="geometry">
     <rect>
-     <x>270</x>
-     <y>170</y>
+     <x>286</x>
+     <y>164</y>
      <width>233</width>
      <height>117</height>
     </rect>
@@ -548,8 +444,8 @@
   <widget class="QListWidget" name="listkodirootBox">
    <property name="geometry">
     <rect>
-     <x>176</x>
-     <y>56</y>
+     <x>350</x>
+     <y>610</y>
      <width>150</width>
      <height>100</height>
     </rect>
@@ -573,24 +469,11 @@
     </size>
    </property>
   </widget>
-  <widget class="QLabel" name="partlabel">
-   <property name="geometry">
-    <rect>
-     <x>176</x>
-     <y>32</y>
-     <width>101</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Device partitions</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
-     <x>14</x>
-     <y>32</y>
+     <x>30</x>
+     <y>26</y>
      <width>115</width>
      <height>16</height>
     </rect>
@@ -602,8 +485,8 @@
   <widget class="QListWidget" name="listDevicesp">
    <property name="geometry">
     <rect>
-     <x>14</x>
-     <y>56</y>
+     <x>30</x>
+     <y>50</y>
      <width>150</width>
      <height>100</height>
     </rect>
@@ -623,6 +506,95 @@
    <property name="toolTip">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Double-click to copy value to address field&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
+  </widget>
+  <widget class="QCheckBox" name="disableroot">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>550</y>
+     <width>97</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disable root for misbehaving su installations&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="text">
+    <string>Disable root</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>36</x>
+     <y>274</y>
+     <width>221</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QLabel" name="label_6">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Port</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="port">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>50</width>
+          <height>21</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>50</width>
+          <height>21</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Port for IP connections. Defaults to 5555&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="placeholderText">
+         <string>5555</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="isusb">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Check this box for USB connections&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string>USB Connection</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <tabstops>

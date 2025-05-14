@@ -42,6 +42,8 @@ preferencesDialog::preferencesDialog(QWidget *parent, bool showkodi) :
 {
     ui->setupUi(this);
 
+
+
     connect(ui->saveButton, &QPushButton::clicked, this, &QDialog::accept);
     connect(ui->cancelButton, &QPushButton::clicked, this, &QDialog::reject);
 
@@ -51,13 +53,12 @@ preferencesDialog::preferencesDialog(QWidget *parent, bool showkodi) :
        this->setFixedWidth(540);
 
     if(!showkodi)
-       {  this->setFixedWidth(350);
+       {  this->setFixedWidth(275);
 
     }
 
 
-    ui->listkodirootBox->setVisible(showkodi);
-    ui->partlabel->setVisible(showkodi);
+
     ui->ostypeBox->setVisible(showkodi);
     ui->filepath->setVisible(showkodi);
     ui->filepathButton->setVisible(showkodi);
