@@ -152,10 +152,6 @@ private slots:
 
      QString strip (QString str);
 
-//    void default_device_values();
-
-    void blank_entry_form();
-
    void kill_server();
 
    bool start_server();
@@ -189,8 +185,6 @@ private slots:
     bool isConnectedToNetwork();
 
 
-
-    void addcolumn1();
 
     void on_actionRecovery_triggered();
 

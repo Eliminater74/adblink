@@ -706,56 +706,6 @@
 
 
 
-/*
-     ////////////////////////////////////////////
-
-     void MainWindow::default_device_values()
-     {
-
-          ostype="0";
-         scoped = "0";
-         wsa="0";
-         sldir = QDir::homePath();
-         pushdir = QDir::homePath();
-         port = "5555";
-         filepath = "/files/.kodi";
-         buffermode = 1;
-         buffersize = "20971520";
-         bufferfactor = "1";
-         versioncheck=true;
-         xbmcpackage = "org.xbmc.kodi";
-         data_root="/sdcard/";
-     }
-
-
-*/
-
-
-     ////////////////////////////////////////////
-
-     void MainWindow::blank_entry_form()
-     {
-/*
-         daddr="";
-         ostype="0";
-         description="";
-         pulldir = "";
-         isusb = false;
-         filepath = "/files/.kodi";
-         port = "";
-         buffermode = 1;
-         buffersize = "20971520";
-         port = "5555";
-         bufferfactor = "1";
-         xbmcpackage = "org.xbmc.kodi";
-         data_root="/sdcard/";
-        disableroot = false;
-        scoped=false;
-        wsa=false;
-*/
-     }
-
-
      //////////////////////////////////////////
     void MainWindow::kill_server()
     {
@@ -776,25 +726,15 @@
         QString cstring = getadbpath() + " kill-server";
         QString command=getadbOutput(cstring);
 
-      //   logfile("server test");
-      //   logfile(command);
-      //   logfile(cstring);
 
            cstring = getadbpath() + " start-server";
           command=getadbOutput(cstring);
-
-       //   logfile("server test");
-      //    logfile(command);
-       //   logfile(cstring);
-
 
 
 
          if (command.contains("daemon started successfully"))
             {
-             //  logfile("server started");
-             // logfile(cstring);
-            //   logfile(command);
+
                serverRunning = true;
               }
 
@@ -806,9 +746,6 @@
              serverRunning = false;
              }
 
-       //  logfile("server test");
-       //  logfile(command);
-        // logfile(cstring);
 
              return serverRunning;
 
@@ -919,40 +856,10 @@
 
        sqlstatement= "DELETE FROM device WHERE description=" + descrip;
        query.exec(sqlstatement);
-     //  logfile(sqlstatement);
 
 
-    }
-
-
-    /////////////////////////////////////
-
-    void MainWindow::addcolumn1()
-    {
-    QString sqlstatement="SELECT rootpath FROM device ";
-     QSqlQuery query;
-     query.exec(sqlstatement);
-
-     if (query.lastError().number() == 1)
-      {
-         sqlstatement = "ALTER TABLE device ADD COLUMN rootpath int";
-         query.exec(sqlstatement);
-
-
-         if (query.lastError().isValid())
-          {
-            logfile("rootpath column NOT added to device table");
-            logfile(sqlstatement);
-            logfile("SqLite error:" + query.lastError().text());
-            logfile("SqLite error code:"+ QString::number( query.lastError().number() ));
-            QMessageBox::critical(0,"","Can't alter databse. See log.");
-         }
-       else logfile("rootpath column added to device table");
-
-     }
 
     }
-
 
     //////////////////////////////////
 
