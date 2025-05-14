@@ -1,1 +1,0 @@
-QString program="wsalink";

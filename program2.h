@@ -1,1 +1,0 @@
-QString program="adblink2";

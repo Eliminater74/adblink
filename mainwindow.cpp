@@ -394,7 +394,6 @@
 
     }
 
-    new QShortcut(QKeySequence("Ctrl+S"), this, SLOT(on_actionSend_text_triggered()));
 
 
 
@@ -8109,7 +8108,7 @@ void MainWindow::on_actionSwitch_View_triggered()
  if (ui->stackedWidget->currentIndex() == 0) {
 
                QMessageBox::StandardButton reply;
-               reply = QMessageBox::question(this, "Kodi", "Disable Kodi functions?",
+               reply = QMessageBox::question(this, "Kodi", "Switch to Android View?",
                                              QMessageBox::Yes | QMessageBox::No);
                if (reply == QMessageBox::No) {
               return;
@@ -8123,7 +8122,7 @@ void MainWindow::on_actionSwitch_View_triggered()
  else {
 
                QMessageBox::StandardButton reply;
-               reply = QMessageBox::question(this, "Kodi", "Enable Kodi functions?",
+               reply = QMessageBox::question(this, "Kodi", "Switch to Kodi View?",
                                              QMessageBox::Yes | QMessageBox::No);
                if (reply == QMessageBox::No) {
               return;
