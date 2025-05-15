@@ -10,7 +10,8 @@
 #include <QElapsedTimer>
 #include <QDesktopServices>
 #include <QDir>
-
+#include <QDialogButtonBox>
+#include <QAbstractButton>
 
 #ifdef Q_OS_LINUX
  int osp=0;
@@ -21,17 +22,17 @@ int osp=2;
 #endif
 
 
-adbprefDialog::adbprefDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::adbprefDialog)
-{
-    ui->setupUi(this);
+ adbprefDialog::adbprefDialog(QWidget *parent) :
+     QDialog(parent),
+     ui(new Ui::adbprefDialog),
+     m_networkManager(new QNetworkAccessManager(this))
+ {
+     ui->setupUi(this);
+     this->setFixedHeight(360);
+     this->setFixedWidth(550);
 
-    this->setFixedHeight(360);
-    this->setFixedWidth(550);
+ }
 
-
-}
 adbprefDialog::~adbprefDialog()
 {
     delete ui;
@@ -41,18 +42,12 @@ void adbprefDialog::on_checkButton_clicked()
 {
     QNetworkRequest request;
     request.setUrl(QUrl("http://www.jocala.com/version.txt"));
-
-    // Either:
-    // 1) Create once in constructor and reuse (recommended)
-    // or
-    // 2) Assign parent so Qt cleans it up
-    QNetworkAccessManager *m_networkManager = new QNetworkAccessManager(this);
+ //   QNetworkAccessManager *m_networkManager = new QNetworkAccessManager(this);
 
     QNetworkReply *reply = m_networkManager->get(request);
 
     connect(reply, &QNetworkReply::finished, this, &adbprefDialog::onRequestCompleted);
 }
-
 void adbprefDialog::onRequestCompleted()
 {
     QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
@@ -61,53 +56,57 @@ void adbprefDialog::onRequestCompleted()
 
     if (reply->error() != QNetworkReply::NoError)
     {
-        int err = reply->error();
-        QString s2 = QString::number(err);
-        QMessageBox::critical(this, "", "Network error: " + s2, QMessageBox::Cancel);
+        QMessageBox::critical(this, "", "Network error: " + reply->errorString(), QMessageBox::Ok);
         reply->deleteLater();
         return;
     }
 
     QByteArray data = reply->readAll();
-    QString s1(data);
-    s1 = strip2(s1);  // Assuming your custom trimming function
+    if (data.isEmpty())
+    {
+        QMessageBox::critical(this, "", "Received empty response", QMessageBox::Ok);
+        reply->deleteLater();
+        return;
+    }
+
+    QString s1 = QString::fromUtf8(data);
+    s1 = s1.trimmed(); // Replace strip2 with QString::trimmed, assuming it trims whitespace
 
     if (version2 != s1)
     {
-        QDialog dialog(this);  // Pass parent for modal dialog ownership
-        QVBoxLayout layout(&dialog);
-        QLabel messageLabel("adbLink version " + s1 + " is ready. Download?");
-        layout.addWidget(&messageLabel);
+        QDialog dialog(this);
+        QVBoxLayout* layout = new QVBoxLayout(&dialog);
+        QLabel* messageLabel = new QLabel("adbLink version " + s1 + " is ready. Download?");
+        layout->addWidget(messageLabel);
 
-        QHBoxLayout buttonLayout;
-        QPushButton yesButton("Yes");
-        QPushButton noButton("No");
-        QPushButton changelogButton("Changelog");
+        QDialogButtonBox* buttonBox = new QDialogButtonBox(&dialog);
+        buttonBox->addButton("Yes", QDialogButtonBox::AcceptRole);
+        buttonBox->addButton("No", QDialogButtonBox::RejectRole);
+        buttonBox->addButton("Changelog", QDialogButtonBox::ActionRole);
+        layout->addWidget(buttonBox);
 
-        buttonLayout.addWidget(&yesButton);
-        buttonLayout.addWidget(&noButton);
-        buttonLayout.addWidget(&changelogButton);
-
-        layout.addLayout(&buttonLayout);
-
-        QObject::connect(&yesButton, &QPushButton::clicked, [&]() {
-            QDesktopServices::openUrl(QUrl("http://www.jocala.com"));
-            dialog.close();
+        connect(buttonBox, &QDialogButtonBox::accepted, [&]() {
+            QUrl url("https://www.jocala.com");
+            if (!QDesktopServices::openUrl(url))
+            {
+                QMessageBox::warning(this, "", "Failed to open download page");
+            }
+            dialog.accept();
         });
-
-        QObject::connect(&noButton, &QPushButton::clicked, [&]() {
-            dialog.close();
-        });
-
-        QObject::connect(&changelogButton, &QPushButton::clicked, [&]() {
-            changelog();
+        connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+        connect(buttonBox, &QDialogButtonBox::clicked, [&](QAbstractButton* button) {
+            if (buttonBox->buttonRole(button) == QDialogButtonBox::ActionRole)
+            {
+                changelog();
+                dialog.close(); // Close dialog after changelog, if appropriate
+            }
         });
 
         dialog.exec();
     }
     else
     {
-        QMessageBox::information(this, "", "No adbLink update available", QMessageBox::Cancel);
+        QMessageBox::information(this, "", "No adbLink update available", QMessageBox::Ok );
     }
 
     reply->deleteLater();

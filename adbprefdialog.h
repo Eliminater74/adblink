@@ -1,6 +1,6 @@
 #ifndef ADBPREFDIALOG_H
 #define ADBPREFDIALOG_H
-
+#include <QNetworkAccessManager>
 #include <QDialog>
 
 namespace Ui {
@@ -70,7 +70,12 @@ private slots:
 
 
 private:
+
     Ui::adbprefDialog *ui;
+    QNetworkAccessManager* m_networkManager;
+
+
+
 };
 
 #endif // ADBPREFDIALOG_H
