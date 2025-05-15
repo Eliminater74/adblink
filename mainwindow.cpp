@@ -113,11 +113,12 @@
 
 
 
-    //////////////////////////////////////////////
-    MainWindow::MainWindow(QWidget *parent) :
-        QMainWindow(parent),
-        ui(new Ui::MainWindow)
+        MainWindow::MainWindow(QWidget *parent)
+        : QMainWindow(parent)
+        , ui(new Ui::MainWindow)
+        , m_networkManager(new QNetworkAccessManager(this))
     {
+
 
        connect(qApp, &QCoreApplication::aboutToQuit, this, &MainWindow::onApplicationQuit);
 
@@ -389,7 +390,7 @@
 
 
         logfile("closing program");
-        kill_server();
+   //   kill_server();
          delete ui;
 
 
@@ -789,7 +790,7 @@
 
 
 
-
+/*
 
     //////////////////////////////////////////////////////////////////////
     void MainWindow::do_versioncheck() {
@@ -895,7 +896,91 @@
     }
 
 
+*/
 
+    void MainWindow::do_versioncheck()
+    {
+        QJsonObject obj;
+        QJsonDocument doc(obj);
+        QFile file(databasedir + "adblink.json");
+        if (file.open(QIODevice::ReadOnly)) {
+            doc = QJsonDocument::fromJson(file.readAll());
+            obj = doc.object();
+            file.close();
+        }
+        bool checkversion = obj["checkversion"].toBool();
+        bool startview = obj["startview"].toBool();
+
+        if (startview) {
+            ui->stackedWidget->setCurrentIndex(1);
+            ui->menuKodi->menuAction()->setVisible(false);
+        } else {
+            ui->stackedWidget->setCurrentIndex(0);
+            ui->menuKodi->menuAction()->setVisible(true);
+        }
+
+        if (checkversion) {
+            if (!QUrl(vqurl).isValid()) {
+                QMessageBox::critical(this, "", "Invalid URL for version check", QMessageBox::Cancel);
+                return;
+            }
+            QNetworkRequest request;
+            request.setUrl(QUrl(vqurl));
+            QNetworkReply *reply = m_networkManager->get(request);
+            connect(reply, &QNetworkReply::finished, this, &MainWindow::onReqCompleted);
+        }
+    }
+
+    void MainWindow::onReqCompleted()
+    {
+        QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
+        if (!reply) {
+            return;
+        }
+
+        if (reply->error() != QNetworkReply::NoError) {
+            QMessageBox::critical(this, "", "Network error: " + reply->errorString(), QMessageBox::Cancel);
+            reply->deleteLater();
+            return;
+        }
+
+        QByteArray data = reply->readAll();
+        QString s1(data);
+        s1 = s1.trimmed();
+
+        if (version != s1) {
+            QDialog dialog(this);
+            QVBoxLayout layout(&dialog);
+            QLabel messageLabel("adbLink version " + s1 + " is ready. Download?");
+            layout.addWidget(&messageLabel);
+
+            QHBoxLayout buttonLayout;
+            QPushButton yesButton("Yes");
+            QPushButton noButton("No");
+            QPushButton changelogButton("Changelog");
+
+            buttonLayout.addWidget(&yesButton);
+            buttonLayout.addWidget(&noButton);
+            buttonLayout.addWidget(&changelogButton);
+
+            layout.addLayout(&buttonLayout);
+
+            connect(&yesButton, &QPushButton::clicked, [&dialog]() {
+                QDesktopServices::openUrl(QUrl("http://www.jocala.com"));
+                dialog.close();
+            });
+
+            connect(&noButton, &QPushButton::clicked, [&dialog]() {
+                dialog.close();
+            });
+
+            connect(&changelogButton, &QPushButton::clicked, this, &MainWindow::on_actionView_Changelog_triggered);
+
+            dialog.exec();
+        }
+
+        reply->deleteLater();
+    }
 
 
 
@@ -6889,26 +6974,11 @@ void MainWindow::screenCap()
 }
 
 
-
 void MainWindow::onApplicationQuit() {
-      QJsonObject obj;
-      QJsonDocument doc(obj);
-      QFile file(databasedir + "adblink.json");
-      if (!file.open(QIODevice::ReadOnly)) {
-               qWarning() << "Cannot open file for reading:" << file.fileName();
-               return;
-      }
-      doc = QJsonDocument::fromJson(file.readAll());
-      file.close();
-      if (doc.isNull()) {
-               qWarning() << "Invalid JSON format in" << file.fileName();
-               return;
-      }
 
-      file.write(doc.toJson());
-      file.close();
+// stub for exit functions.
+
 }
-
 
 ///////////////////////////////////////////////
 

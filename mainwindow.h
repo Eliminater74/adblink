@@ -6,7 +6,7 @@
 #include <QMessageBox>
 #include "usbfiledialog.h"
 #include <QTextEdit>
-
+#include <QNetworkAccessManager>
 #include "devicerecord.h"
 
 
@@ -358,10 +358,9 @@ private slots:
 
   private:
     Ui::MainWindow *ui;
-
- usbfileDialog *fmdialog;
-
- QStringList RunProcessList;
+    QNetworkAccessManager *m_networkManager;
+    usbfileDialog *fmdialog;
+    QStringList RunProcessList;
 
 
 
