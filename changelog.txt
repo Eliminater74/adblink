@@ -6,6 +6,10 @@ adb updated to Version 36.0.0-13206524
 
 adblink help updated for v6.4
 
+adb shell now has full automatic access to
+busybox, adding a huge array of *nix commands to
+the Android command-line.
+
 Merge of adblink (Kodi) & adblink2 (non-Kodi)
 is complete. adblink now offers two views, Kodi
 and Android.

@@ -4047,19 +4047,9 @@
 
 
 
-                 if (ui->adhocip->text().isEmpty())
-                 {
-
-                    qDebug() << daddr;
-                    cstring = getadbpath() + " -s " + daddr + " shell ";
+                    cstring = getadbpath() + " -s " + daddr + " shell -t \"export PATH=\\$PATH:/data/local/tmp/adblink; sh -i\"";
                     out << cstring << endl;
 
-                 }
-                 else
-                 {
-                    out << getadbpath() + " -s " + ui->adhocip->text() + " shell " << endl;
-
-                 }
 
 
                  file.flush();
@@ -4342,7 +4332,7 @@
 
     }
 
-
+/*
 
     //////////////////////////////////////////////////////////
 
@@ -4397,6 +4387,7 @@
 
 
 
+
                                file.flush();
                                file.close();
 
@@ -4406,7 +4397,7 @@
 
                       }
 
-
+   */
 
 
 
@@ -4424,7 +4415,52 @@
   return backup;
 }
 
+ void MainWindow::dos_shell()
+ {
+  QString sernum = "";
+  QString port = "";
+  QString daddr = "";
 
+  QString selectedDescription;
+  if (!validateDeviceSelection(selectedDescription)) {
+                 return;
+  }
+
+  DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+  if (device.isusb) {
+                 port = "";
+                 daddr = device.daddr;
+  } else {
+                 port = device.port.isEmpty() ? "5555" : device.port;
+                 daddr = device.daddr + ":" + port;
+  }
+
+  QString programName = QCoreApplication::applicationName();
+
+  QString commstr = scriptdir + "/shell.bat";
+  QFile file(commstr);
+
+  if (!file.open(QFile::WriteOnly | QFile::Text)) {
+                 logfile("error creating shell.bat!");
+                 QMessageBox::critical(this, "", "Error creating bat file!");
+                 return;
+  }
+
+  QTextStream out(&file);
+
+  out << "echo off" << endl;
+
+  out << "set PATH=%PATH%;" + adbfiles + ";" << endl;
+  out << "adb.exe -s " + daddr + " shell -t \"export PATH=\\$PATH:/data/local/tmp/adblink; export PS1=\\$HOSTNAME:\\$PWD\\$\\ ; sh -i\"" << endl;
+
+
+
+  file.flush();
+  file.close();
+
+  QProcess::startDetached("cmd.exe", QStringList() << "/c" << "start" << "" << commstr);
+ }
 
 ///////////////////////////////////////////////////
 void MainWindow::writeBackup (QString dir) {

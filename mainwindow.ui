@@ -1040,7 +1040,6 @@
     </property>
     <addaction name="actionSwitch_View"/>
     <addaction name="actionReiinstall_Busybox"/>
-    <addaction name="actionPaste_path"/>
     <addaction name="actionArchitecture"/>
     <addaction name="actionSet_Kodi_permissions"/>
     <addaction name="actionOculus_VR"/>
