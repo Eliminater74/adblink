@@ -176,7 +176,7 @@
     <item>
      <widget class="QCheckBox" name="startview">
       <property name="text">
-       <string>Disable Kodi features</string>
+       <string>Android view at startup</string>
       </property>
      </widget>
     </item>

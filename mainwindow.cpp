@@ -824,7 +824,8 @@
         QNetworkRequest request;
        request.setUrl(QUrl(vqurl));
 
-       QNetworkAccessManager *nam = new QNetworkAccessManager();
+
+       QNetworkAccessManager *nam = new QNetworkAccessManager(this);
        QNetworkReply *reply = nam->get(request);
 
        connect(reply, SIGNAL(finished()),
@@ -840,73 +841,56 @@
 
 
 
-    /////////////////////////////////
     void MainWindow::onReqCompleted() {
-       QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
+    QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
 
-
-       if (reply->error() != QNetworkReply::NoError)
-       {
-
-           int err = reply->error();
-           QString s2 = QString::number(err);
-           QMessageBox::critical(0, "","Network error: " + s2,QMessageBox::Cancel);
-           return;
-
-       }
-
-       QByteArray data = reply->readAll();
-
-       QString s1(data);
-
-           s1 = strip(s1);
-
-
-
-
-           if (version != s1)
-           {
-               QDialog dialog;
-               QVBoxLayout layout(&dialog); // Use QVBoxLayout for vertical arrangement
-               QLabel messageLabel("adbLink version " + s1 + " is ready. Download?");
-               layout.addWidget(&messageLabel);
-
-               QHBoxLayout buttonLayout; // QHBoxLayout for buttons
-               QPushButton yesButton("Yes");
-               QPushButton noButton("No");
-               QPushButton changelogButton("Changelog");
-
-               buttonLayout.addWidget(&yesButton);
-               buttonLayout.addWidget(&noButton);
-               buttonLayout.addWidget(&changelogButton);
-
-               layout.addLayout(&buttonLayout); // Add the button layout to the main layout
-
-               QObject::connect(&yesButton, &QPushButton::clicked, [&]() {
-                   QString link = "http://www.jocala.com";
-                   QDesktopServices::openUrl(QUrl(link));
-                   dialog.close();
-               });
-
-               QObject::connect(&noButton, &QPushButton::clicked, [&]() {
-                   // Handle "No" button click
-                   dialog.close();
-               });
-
-               QObject::connect(&changelogButton, &QPushButton::clicked, [&]() {
-                   on_actionView_Changelog_triggered();
-                   // dialog.close();
-               });
-
-               dialog.exec();
-           }
-
-
-
-         //  delete reply;
-
+    if (reply->error() != QNetworkReply::NoError) {
+       int err = reply->error();
+       QString s2 = QString::number(err);
+       QMessageBox::critical(this, "", "Network error: " + s2, QMessageBox::Cancel);
+       reply->deleteLater();
+       return;
     }
 
+    QByteArray data = reply->readAll();
+    QString s1(data);
+    s1 = strip(s1);  // or s1.trimmed();
+
+    if (version != s1) {
+       QDialog dialog;
+       QVBoxLayout layout(&dialog);
+       QLabel messageLabel("adbLink version " + s1 + " is ready. Download?");
+       layout.addWidget(&messageLabel);
+
+       QHBoxLayout buttonLayout;
+       QPushButton yesButton("Yes");
+       QPushButton noButton("No");
+       QPushButton changelogButton("Changelog");
+
+       buttonLayout.addWidget(&yesButton);
+       buttonLayout.addWidget(&noButton);
+       buttonLayout.addWidget(&changelogButton);
+
+       layout.addLayout(&buttonLayout);
+
+       QObject::connect(&yesButton, &QPushButton::clicked, [&]() {
+           QDesktopServices::openUrl(QUrl("http://www.jocala.com"));
+           dialog.close();
+       });
+
+       QObject::connect(&noButton, &QPushButton::clicked, [&]() {
+           dialog.close();
+       });
+
+       QObject::connect(&changelogButton, &QPushButton::clicked, [&]() {
+           on_actionView_Changelog_triggered();
+       });
+
+       dialog.exec();
+    }
+
+    reply->deleteLater();
+    }
 
 
 
