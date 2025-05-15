@@ -812,8 +812,10 @@
 
         if (startview) {
                   ui->stackedWidget->setCurrentIndex(1);
+                  ui->menuKodi->menuAction()->setVisible(false);
         } else {
                   ui->stackedWidget->setCurrentIndex(0);
+                    ui->menuKodi->menuAction()->setVisible(true);
         }
 
 
@@ -3160,36 +3162,6 @@
 
          }
     }
-
-
-
-    //////////////////////////////////////////
-
-    void MainWindow::updateckversion(int value)
-    {
-
-        QString sqlstatement;
-        QSqlQuery query;
-        QString str;
-
-      str.setNum(value);
-
-        sqlstatement = "UPDATE preferences SET checkversion='"+str+"' ";
-        logfile(sqlstatement);
-        query.exec(sqlstatement);
-
-         if (query.lastError().isValid())
-          {
-            logfile(sqlstatement);
-            logfile("SqLite error:" + query.lastError().text());
-            logfile("SqLite error code:"+ QString::number( query.lastError().number() ));
-           }
-
-
-
-
-    }
-
 
 
 

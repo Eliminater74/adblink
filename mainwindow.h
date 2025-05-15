@@ -292,9 +292,6 @@ private slots:
 
   void on_actionPreferences_triggered();
 
-  void updateckversion(int value);
-
-
 
   void on_adhocip_returnPressed();
 
