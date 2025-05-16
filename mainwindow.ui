@@ -39,7 +39,7 @@
    <widget class="QPushButton" name="donate">
     <property name="geometry">
      <rect>
-      <x>120</x>
+      <x>150</x>
       <y>322</y>
       <width>301</width>
       <height>31</height>

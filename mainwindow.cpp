@@ -297,15 +297,43 @@
                     file.open(QIODevice::WriteOnly);
                     file.write(doc.toJson());
                     file.close();
-
-
-
-
            }
 
+           ui->fmButton->setFixedSize(120,32);
+           ui->adbshellButton1->setFixedSize(120,32);
+           ui->backupButton->setFixedSize(120,32);
+           ui->restoreButton->setFixedSize(120,32);
+           ui->sideload_Button->setFixedSize(120,32);
+           ui->uninstall_Button->setFixedSize(120,32);
+           ui->mvdataButton->setFixedSize(120,32);
+           ui->pushTimers->setFixedSize(120,32);
+           ui->screencap1->setFixedSize(120,32);
+           ui->stopADB->setFixedSize(120,32);
+           ui->scpyButton->setFixedSize(120,32);
+           ui->cacheButton->setFixedSize(120,32);
+           ui->doConsole->setFixedSize(120,32);
+           ui->keypadButton->setFixedSize(120,32);
+           ui->startapp->setFixedSize(120,32);
+           ui->stopapp->setFixedSize(120,32);
+           ui->fmButton_2->setFixedSize(120,32);
+           ui->sideload_Button_2->setFixedSize(120,32);
+           ui->uninstall_Button_2->setFixedSize(120,32);
+           ui->infoButton->setFixedSize(120,32);
+           ui->screencap2->setFixedSize(120,32);
+           ui->stopADB2->setFixedSize(120,32);
+           ui->startapp_2->setFixedSize(120,32);
+           ui->stopapp_2->setFixedSize(120,32);
+           ui->adbshellButton_2->setFixedSize(120,32);
+           ui->doConsole_2->setFixedSize(120,32);
+           ui->textButton->setFixedSize(120,32);
+           ui->scpyButton_2->setFixedSize(120,32);
 
-
-
+           ui->connButton->setFixedSize(80,32);
+           ui->disButton->setFixedSize(80,32);
+           ui->newRecordButton->setFixedSize(80,32);
+           ui->editRecordButton->setFixedSize(80,32);
+           ui->delRecordButton->setFixedSize(80,32);
+           ui->clearAdhocButton->setFixedSize(80,32);
 
      ui->newRecordButton->setShortcut(QKeySequence("Ctrl+B"));
      ui->editRecordButton->setShortcut(QKeySequence("Ctrl+C"));
