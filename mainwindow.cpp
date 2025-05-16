@@ -77,6 +77,9 @@
     #include <QShortcut>
     #include <QDebug>
     #include <QRegularExpression>
+    #include <QStackedWidget>
+    #include <QGridLayout>
+    #include <QVBoxLayout>
 
     #ifdef Q_OS_LINUX
      int os=0;
@@ -301,57 +304,85 @@
            }
 
 
-       connect(ui->deviceTable, &QTableWidget::doubleClicked, this, &MainWindow::on_fmButton_clicked);
-       connect(ui->textButton, &QPushButton::clicked, this, &MainWindow::on_actionSend_text_triggered);
-       connect(ui->infoButton, &QPushButton::clicked, this, &MainWindow::on_actionArchitecture_triggered);
 
 
 
-     ui->newRecord->setShortcut(QKeySequence("Ctrl+B"));
-     ui->editRecord->setShortcut(QKeySequence("Ctrl+C"));
-     ui->delRecord->setShortcut(QKeySequence("Ctrl+D"));
+     ui->newRecordButton->setShortcut(QKeySequence("Ctrl+B"));
+     ui->editRecordButton->setShortcut(QKeySequence("Ctrl+C"));
+     ui->delRecordButton->setShortcut(QKeySequence("Ctrl+D"));
      ui->connButton->setShortcut(QKeySequence("Ctrl+E"));
      ui->disButton->setShortcut(QKeySequence("Ctrl+F"));
      ui->fmButton->setShortcut(QKeySequence("Ctrl+G"));
-    ui->adbshellButton->setShortcut(QKeySequence("Ctrl+I"));
+     ui->adbshellButton1->setShortcut(QKeySequence("Ctrl+I"));
     ui->sideload_Button->setShortcut(QKeySequence("Ctrl+L"));
     ui->uninstall_Button->setShortcut(QKeySequence("Ctrl+M"));
     ui->scpyButton->setShortcut(QKeySequence("Ctrl+R"));
     ui->doConsole->setShortcut(QKeySequence("Ctrl+T"));
     ui->stopapp->setShortcut(QKeySequence("Ctrl+U"));
     ui->startapp->setShortcut(QKeySequence("Ctrl+W"));
-    ui->clearButton->setShortcut(QKeySequence("Ctrl+Y"));
+    ui->clearAdhocButton->setShortcut(QKeySequence("Ctrl+Y"));
     ui->stopADB->setShortcut(QKeySequence("Ctrl+Z"));
-
-
-    connect(ui->fmButton_2, &QPushButton::clicked, this, &MainWindow::on_fmButton_clicked);
-    connect(ui->adbshellButton_2, &QPushButton::clicked, this, &MainWindow::on_adbshellButton_clicked);
-    connect(ui->sideload_Button_2, &QPushButton::clicked, this, &MainWindow::on_sideload_Button_clicked);
-    connect(ui->uninstall_Button_2, &QPushButton::clicked, this, &MainWindow::on_uninstall_Button_clicked);
-    connect(ui->stopADB2, &QPushButton::clicked, this, &MainWindow::on_killServer_clicked);
-    connect(ui->scpyButton_2, &QPushButton::clicked, this, &MainWindow::on_scpyButton_clicked);
-    connect(ui->doConsole_2, &QPushButton::clicked, this, &MainWindow::on_doConsole_clicked);
-    connect(ui->startapp_2, &QPushButton::clicked, this, &MainWindow::on_startapp_clicked);
-    connect(ui->stopapp_2, &QPushButton::clicked, this, &MainWindow::on_stopapp_clicked);
-    connect(ui->stopADB, &QPushButton::clicked, this, &MainWindow::on_killServer_clicked);
-    connect(ui->screencap1, &QPushButton::clicked, this, &MainWindow::on_actionScreen_Capture_triggered);
-    connect(ui->screencap2, &QPushButton::clicked, this, &MainWindow::on_actionScreen_Capture_triggered);
-
     new QShortcut (QKeySequence("Ctrl+O"), this, SLOT(on_actionSend_text_triggered()));
 
+// connections
 
-/*
-    ui->spacer1->setVisible(false);
-    ui->spacer1->setEnabled(false);
-    ui->spacer2->setVisible(false);
-    ui->spacer2->setEnabled(false);
-    ui->spacer3->setVisible(false);
-    ui->spacer3->setEnabled(false);
-    ui->spacer4->setVisible(false);
-    ui->spacer4->setEnabled(false);
-*/
+ // grid1    
+    connect(ui->fmButton, &QPushButton::clicked, this, &MainWindow::fmButton_clicked);
+    connect(ui->adbshellButton1, &QPushButton::clicked, this, &MainWindow::adbshellButton_clicked);    
+    connect(ui->backupButton, &QPushButton::clicked, this, &MainWindow::backupButton_clicked);    
+    connect(ui->restoreButton, &QPushButton::clicked, this, &MainWindow::restoreButton_clicked);       
+    connect(ui->sideload_Button, &QPushButton::clicked, this, &MainWindow::sideload_Button_clicked);    
+    connect(ui->uninstall_Button, &QPushButton::clicked, this, &MainWindow::uninstall_Button_clicked);    
+    connect(ui->mvdataButton, &QPushButton::clicked, this, &MainWindow::mvdataButton_clicked);    
+    connect(ui->pushTimers, &QPushButton::clicked, this, &MainWindow::pushTimers_clicked);    
+    connect(ui->screencap1, &QPushButton::clicked, this, &MainWindow::screenCap);
+    connect(ui->stopADB, &QPushButton::clicked, this, &MainWindow::killServer_clicked);
+    connect(ui->scpyButton, &QPushButton::clicked, this, &MainWindow::scpyButton_clicked);    
+    connect(ui->cacheButton, &QPushButton::clicked, this, &MainWindow::cacheButton_clicked);
+    connect(ui->doConsole, &QPushButton::clicked, this, &MainWindow::doConsole_clicked);
+    connect(ui->keypadButton, &QPushButton::clicked, this, &MainWindow::keypadButton_clicked);
+    connect(ui->startapp, &QPushButton::clicked, this, &MainWindow::startapp_clicked);
+    connect(ui->stopapp, &QPushButton::clicked, this, &MainWindow::stopapp_clicked);
+    
+// grid2
+    connect(ui->fmButton_2, &QPushButton::clicked, this, &MainWindow::fmButton_clicked);
+    connect(ui->sideload_Button_2, &QPushButton::clicked, this, &MainWindow::sideload_Button_clicked);
+    connect(ui->uninstall_Button_2, &QPushButton::clicked, this, &MainWindow::uninstall_Button_clicked);
+    connect(ui->infoButton, &QPushButton::clicked, this, &MainWindow::on_actionArchitecture_triggered);
+    connect(ui->screencap2, &QPushButton::clicked, this, &MainWindow::screenCap);
+    connect(ui->stopADB2, &QPushButton::clicked, this, &MainWindow::killServer_clicked);
+    connect(ui->startapp_2, &QPushButton::clicked, this, &MainWindow::startapp_clicked);
+    connect(ui->stopapp_2, &QPushButton::clicked, this, &MainWindow::stopapp_clicked);
+    connect(ui->adbshellButton_2, &QPushButton::clicked, this, &MainWindow::adbshellButton_clicked);
+    connect(ui->doConsole_2, &QPushButton::clicked, this, &MainWindow::doConsole_clicked);
+    connect(ui->textButton, &QPushButton::clicked, this, &MainWindow::on_actionSend_text_triggered);
+    connect(ui->scpyButton_2, &QPushButton::clicked, this, &MainWindow::scpyButton_clicked);
 
-    if (program=="adblink")
+
+ connect(ui->connButton, &QPushButton::clicked, this, &MainWindow::connButton_clicked);
+ connect(ui->disButton, &QPushButton::clicked, this, &MainWindow::disButton_clicked);
+
+
+ connect(ui->newRecordButton, &QPushButton::clicked, this, [this]() {
+     dataentry(true);
+ });
+
+  connect(ui->editRecordButton, &QPushButton::clicked, this, [this]() {
+         dataentry(false);
+ });
+
+
+
+ connect(ui->delRecordButton, &QPushButton::clicked, this, &MainWindow::delRecordButton_clicked);
+ connect(ui->clearAdhocButton, &QPushButton::clicked, this, &MainWindow::on_clearAdhocButton_clicked);
+
+
+ connect(ui->deviceTable, &QTableWidget::doubleClicked, this, &MainWindow::fmButton_clicked);
+
+
+
+
+ if (program=="adblink")
     {
       ui->startapp->setShortcut(QKeySequence("Ctrl+V"));
       ui->mvdataButton->setShortcut(QKeySequence("Ctrl+N"));
@@ -373,18 +404,97 @@
 
         }
 
-/*
-        ui->deviceTable->setColumnCount(3);
-        ui->deviceTable->setHorizontalHeaderLabels(QStringList() << "Device" << "IP" << "Status");
-        ui->deviceTable->verticalHeader()->setVisible(false);
-        ui->deviceTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-        ui->deviceTable->setShowGrid(true);
-        ui->deviceTable->setSortingEnabled(true);
-        ui->deviceTable->setSelectionMode(QAbstractItemView::SingleSelection);
-        ui->deviceTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-       ui->deviceTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
-*/
+        QWidget* gridWidget1 = new QWidget();
+        QWidget* gridWidget2 = new QWidget();
+
+
+        QGridLayout* gridLayout1 = new QGridLayout(gridWidget1);
+        QGridLayout* gridLayout2 = new QGridLayout(gridWidget2);
+
+        // --------- Fill first grid
+        // Row 0
+        gridLayout1->addWidget(ui->fmButton,        0, 0);
+        gridLayout1->addWidget(ui->adbshellButton1, 0, 1);
+        gridLayout1->addWidget(ui->backupButton,    0, 2);
+        gridLayout1->addWidget(ui->restoreButton,   0, 3);
+
+        // Row 1
+        gridLayout1->addWidget(ui->sideload_Button,  1, 0);
+        gridLayout1->addWidget(ui->uninstall_Button, 1, 1);
+        gridLayout1->addWidget(ui->mvdataButton,     1, 2);
+        gridLayout1->addWidget(ui->pushTimers,       1, 3);
+
+        // Row 2
+        gridLayout1->addWidget(ui->screencap1,    2, 0);
+        gridLayout1->addWidget(ui->stopADB,       2, 1);
+        gridLayout1->addWidget(ui->scpyButton,    2, 2);
+        gridLayout1->addWidget(ui->cacheButton,   2, 3);
+
+        // Row 3
+        gridLayout1->addWidget(ui->doConsole,     3, 0);
+        gridLayout1->addWidget(ui->keypadButton,  3, 1);
+        gridLayout1->addWidget(ui->startapp,      3, 2);
+        gridLayout1->addWidget(ui->stopapp,       3, 3);
+
+        // --------- Fill second grid
+        // Row 0
+        gridLayout2->addWidget(ui->fmButton_2,         0, 0);
+        gridLayout2->addWidget(ui->sideload_Button_2,  0, 1);
+        gridLayout2->addWidget(ui->uninstall_Button_2, 0, 2);
+        gridLayout2->addWidget(ui->infoButton,         0, 3);
+
+        // Row 1
+        gridLayout2->addWidget(ui->screencap2,   1, 0);
+        gridLayout2->addWidget(ui->stopADB2,     1, 1);
+        gridLayout2->addWidget(ui->startapp_2,   1, 2);
+        gridLayout2->addWidget(ui->stopapp_2,    1, 3);
+
+        // Row 2
+        gridLayout2->addWidget(ui->adbshellButton_2, 2, 0);
+        gridLayout2->addWidget(ui->doConsole_2,      2, 1);
+        gridLayout2->addWidget(ui->textButton,       2, 2);
+        gridLayout2->addWidget(ui->scpyButton_2,     2, 3);
+
+        // Row 3 — spacers to match grid1 layout and size
+        gridLayout2->addItem(new QSpacerItem(0, 30, QSizePolicy::Minimum, QSizePolicy::Fixed), 3, 0);
+        gridLayout2->addItem(new QSpacerItem(0, 30, QSizePolicy::Minimum, QSizePolicy::Fixed), 3, 1);
+        gridLayout2->addItem(new QSpacerItem(0, 30, QSizePolicy::Minimum, QSizePolicy::Fixed), 3, 2);
+        gridLayout2->addItem(new QSpacerItem(0, 30, QSizePolicy::Minimum, QSizePolicy::Fixed), 3, 3);
+
+
+        gridWidget1->setContentsMargins(0, 0, 0, 0);
+        gridLayout1->setHorizontalSpacing(0);
+        gridLayout1->setVerticalSpacing(0);
+
+        gridWidget2->setContentsMargins(0, 0, 0, 0);
+        gridLayout2->setHorizontalSpacing(0);
+        gridLayout2->setVerticalSpacing(0);
+
+
+        ui->stackedWidget->layout()->setContentsMargins(0, 0, 0, 0);
+
+
+
+
+
+        // --------- Clear existing widgets from stackedWidget ---------
+        while (ui->stackedWidget->count() > 0) {
+      QWidget* w = ui->stackedWidget->widget(0);
+      ui->stackedWidget->removeWidget(w);
+      delete w;
+        }
+
+        // --------- Add the new grid widgets ---------
+        ui->stackedWidget->addWidget(gridWidget1);
+        ui->stackedWidget->addWidget(gridWidget2);
+
+        // --------- Show the first grid ---------
+        ui->stackedWidget->setCurrentIndex(0);
+
+
+
+
 
         loadDeviceTable();
         do_versioncheck();
@@ -1057,7 +1167,7 @@
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    void MainWindow::on_sideload_Button_clicked()
+    void MainWindow::sideload_Button_clicked()
     {
 
 
@@ -1121,7 +1231,7 @@
 
 
     ///////////////////////////////////////////////////////////////////////////
-    void MainWindow::on_uninstall_Button_clicked()
+    void MainWindow::uninstall_Button_clicked()
     {
 
 
@@ -1230,7 +1340,7 @@
 
 //////////////////////////////////////////////
 
-    void MainWindow::on_connButton_clicked()
+    void MainWindow::connButton_clicked()
     {
 
         QString adhoc="Ad hoc";
@@ -1449,7 +1559,7 @@
     ////////////////////////////////////////////////////////////////
 
 
-    void MainWindow::on_disButton_clicked()
+    void MainWindow::disButton_clicked()
     {
 
               QString daddr;
@@ -1769,7 +1879,7 @@
 
 
     ////////////////////////////////////////
-    void MainWindow::on_killServer_clicked()
+    void MainWindow::killServer_clicked()
     {
 
 
@@ -1987,7 +2097,7 @@
 
 
     ///////////////////////////////////////////
-    void MainWindow::on_cacheButton_clicked()
+    void MainWindow::cacheButton_clicked()
 
     {
 
@@ -2329,7 +2439,7 @@
 
     /////////////////////////////////////////////
 
-     void MainWindow::on_stopapp_clicked()
+     void MainWindow::stopapp_clicked()
 
     {
 
@@ -2661,7 +2771,7 @@
 
     ////////////////////////////////////////////////
 
-    void MainWindow::on_keypadButton_clicked()
+    void MainWindow::keypadButton_clicked()
     {
 
 
@@ -2704,7 +2814,7 @@
     ///////////////////////////////////////////////////////
 
 
-    void MainWindow::on_fmButton_clicked()
+    void MainWindow::fmButton_clicked()
     {
 
          QString selectedDescription;
@@ -3157,7 +3267,7 @@
 
     ////////////////////////////////////////////////////////////////////////
 
-    void MainWindow::on_clearButton_clicked()
+    void MainWindow::on_clearAdhocButton_clicked()
     {
         ui->adhocip->setText("");
 
@@ -3278,17 +3388,6 @@
 
 
     }
-
-
-
-    ////////////////////////////////////////////////
-
-    void MainWindow::on_adhocip_returnPressed()
-    {
-        on_connButton_clicked();
-    }
-
-
 
 
     ////////////////////////////////////////////////////////
@@ -3465,7 +3564,7 @@
 
 ////////////////////////////////////////////
 
-  void MainWindow::on_pushTimers_clicked()
+  void MainWindow::pushTimers_clicked()
     {
 
         QString selectedDescription;
@@ -3835,7 +3934,7 @@
 
     ////////////////////////////////////////
 
-       void MainWindow::on_doConsole_clicked()
+       void MainWindow::doConsole_clicked()
        {
 
 
@@ -3988,7 +4087,7 @@
    ////////////////////////////////////////////////
 
 
-       void MainWindow::on_adbshellButton_clicked()
+       void MainWindow::adbshellButton_clicked()
        {
 
               QString port;
@@ -4113,7 +4212,7 @@
 
     //////////////////////////////////////////////////////////
 
-       void MainWindow::on_scpyButton_clicked()
+       void MainWindow::scpyButton_clicked()
        {
               QString port;
               QString daddr;
@@ -4530,7 +4629,7 @@ void MainWindow::writeInstall (QString install) {
 
 
 ////////////////////////////////////////////
-void MainWindow::on_backupButton_clicked()
+void MainWindow::backupButton_clicked()
 {
     QString cstring;
     QString command;
@@ -4666,7 +4765,7 @@ void MainWindow::on_backupButton_clicked()
 
 /////////////////////////////////////////////
 
-void MainWindow::on_restoreButton_clicked() {
+void MainWindow::restoreButton_clicked() {
 
 
    QString selectedDescription;
@@ -4896,7 +4995,7 @@ void MainWindow::on_restoreButton_clicked() {
 
 
 //////////////////////////////////////////////
-void MainWindow::on_mvdataButton_clicked()
+void MainWindow::mvdataButton_clicked()
 {
 
     QString selectedDescription;
@@ -5177,7 +5276,7 @@ QString MainWindow::checkslash(QString qpath)
 }
 
 
-void MainWindow::on_startapp_clicked()
+void MainWindow::startapp_clicked()
 
 {
 
@@ -6736,7 +6835,7 @@ void MainWindow::on_actionScreen_Capture_triggered()
 
 void MainWindow::on_actionKeypad_triggered()
 {
- on_keypadButton_clicked();
+  keypadButton_clicked();
 }
 
 //////////////////////////////////
@@ -6923,34 +7022,8 @@ void MainWindow::on_actionSwitch_View_triggered()
 
 
 
-void MainWindow::on_newRecord_clicked()
-{
-      dataentry(true);
-}
 
 
-
-/////////////////////////////////////////////
-
-void MainWindow::on_editRecord_clicked()
-{
-      dataentry(false);
-
-
-}
-
-void MainWindow::on_screencap2_clicked()
-{
-
-      screenCap();
-}
-
-void MainWindow::on_screencap1_clicked()
-{
-
-      screenCap();
-
-}
 
 
 void MainWindow::screenCap()
@@ -7230,7 +7303,7 @@ void MainWindow::on_infoButton_clicked()
 
 ////////////////////////////////////////
 
-void MainWindow::on_delRecord_clicked()
+void MainWindow::delRecordButton_clicked()
 {
 
    QString descrip;
@@ -7341,5 +7414,7 @@ void MainWindow::on_Erase_adbLink_database_triggered()
 
    }
 }
+
+
 
 

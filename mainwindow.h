@@ -85,25 +85,25 @@ private slots:
 
     void on_actionAbout_triggered();
 
-    void on_connButton_clicked();
+    void connButton_clicked();
 
 
 
-    void on_sideload_Button_clicked();
+    void sideload_Button_clicked();
 
-    void on_disButton_clicked();
+    void disButton_clicked();
 
     void on_actionQuit_triggered();
 
-    void on_uninstall_Button_clicked();
+    void uninstall_Button_clicked();
 
     bool installAPK(QString filename);
 
     void on_actionHelp_triggered();
 
-    void on_backupButton_clicked();
+    void backupButton_clicked();
 
-    void on_restoreButton_clicked();
+    void restoreButton_clicked();
     void dos_shell();
 
 
@@ -111,7 +111,7 @@ private slots:
 
 
 
-    void on_adbshellButton_clicked();
+    void adbshellButton_clicked();
 
 
 
@@ -220,7 +220,7 @@ private slots:
 
     void on_actionDownload_Kodi_triggered();
 
-    void on_editRecord_clicked();
+
 
     void dataentry(bool isNewRecord);
     //void newentry(bool isNewRecord);
@@ -231,31 +231,31 @@ private slots:
 
 
 
-    void on_doConsole_clicked();
+    void doConsole_clicked();
 
-    void on_killServer_clicked();
+    void killServer_clicked();
 
 
-    void on_newRecord_clicked();
+
 
    void  screenCap();
 
 
-   void on_delRecord_clicked();
+   void delRecordButton_clicked();
 
 
-   void on_cacheButton_clicked();
+   void cacheButton_clicked();
 
  //  void on_splashButton_clicked();
 
-   void on_mvdataButton_clicked();
+   void mvdataButton_clicked();
 
    void on_actionView_Kodi_Log_triggered();
 
    void on_actionView_adbLink_Log_triggered();
 
 
-   void on_stopapp_clicked();
+   void stopapp_clicked();
 
 
 
@@ -269,11 +269,11 @@ private slots:
 
    void on_actionStart_Application_triggered();
 
-   void on_keypadButton_clicked();
+   void keypadButton_clicked();
 
 
 
-   void on_fmButton_clicked();
+   void fmButton_clicked();
 
 
 
@@ -286,14 +286,13 @@ private slots:
    void on_actionKodi_data_usage_triggered();
 
 
-  void on_clearButton_clicked();
+  void on_clearAdhocButton_clicked();
 
   void on_actionReboot_bootloader_triggered();
 
   void on_actionPreferences_triggered();
 
 
-  void on_adhocip_returnPressed();
 
   void on_actionReiinstall_Busybox_triggered();
 
@@ -310,20 +309,20 @@ private slots:
 
 
 
-  void on_scpyButton_clicked();
+  void scpyButton_clicked();
 
 
 
   void on_pushButton_clicked();
 
-  void on_pushTimers_clicked();
+  void pushTimers_clicked();
 
 
 
 
   void on_actionView_Changelog_triggered();
 
-  void  on_startapp_clicked();
+  void  startapp_clicked();
 
   void on_actionSplash_Screen_triggered();
 
@@ -350,11 +349,10 @@ private slots:
   void on_actionSwitch_View_triggered();
 
 
-  void on_screencap1_clicked();
-
-  void on_screencap2_clicked();
 
   void on_infoButton_clicked();
+
+
 
   private:
     Ui::MainWindow *ui;
