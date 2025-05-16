@@ -1557,55 +1557,6 @@
     }
 
     ////////////////////////////////////////////////////////////////
-/*
-
-    void MainWindow::disButton_clicked()
-    {
-
-              QString daddr;
-
-
-                      int selectedRow = ui->deviceTable->currentRow();
-                      if (selectedRow < 0 || !ui->deviceTable->item(selectedRow, 2) || !ui->deviceTable->item(selectedRow, 1)) {
-                            QMessageBox::critical(this, "", "No valid device selected");
-                            return ;
-                      }
-                      if (ui->deviceTable->item(selectedRow, 2)->text() != "Connected") {
-                            QMessageBox::critical(this, "", "Selected device is not connected");
-                            return;
-                      }
-                      daddr = ui->deviceTable->item(selectedRow, 1)->text();
-
-
-
-
-
-   QMessageBox::StandardButton reply;
-   reply = QMessageBox::question(this, "Disconnect", "Disconnect device?",
-       QMessageBox::Yes | QMessageBox::No);
-   if (reply == QMessageBox::No) {
-           return;
-     }
-
-
-
-
-             QString cstring = getadbpath() + " disconnect "+daddr;
-             QString command=getadbOutput(cstring);
-             logfile (command);
-             logfile("disconnect: "+daddr);
-
-             if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 2)) {
-            ui->deviceTable->setItem(selectedRow, 1, new QTableWidgetItem("Disconnected"));
-             }
-
-
-
-             loadDeviceTable();
-
-    }
-
-  */
 
     void MainWindow::disButton_clicked()
     {
