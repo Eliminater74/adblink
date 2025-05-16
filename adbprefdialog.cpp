@@ -42,12 +42,10 @@ void adbprefDialog::on_checkButton_clicked()
 {
     QNetworkRequest request;
     request.setUrl(QUrl("http://www.jocala.com/version.txt"));
- //   QNetworkAccessManager *m_networkManager = new QNetworkAccessManager(this);
-
     QNetworkReply *reply = m_networkManager->get(request);
-
     connect(reply, &QNetworkReply::finished, this, &adbprefDialog::onRequestCompleted);
 }
+
 void adbprefDialog::onRequestCompleted()
 {
     QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());

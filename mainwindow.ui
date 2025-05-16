@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>628</width>
-    <height>406</height>
+    <height>389</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -39,8 +39,8 @@
    <widget class="QPushButton" name="donate">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>670</y>
+      <x>150</x>
+      <y>310</y>
       <width>301</width>
       <height>31</height>
      </rect>
@@ -100,9 +100,9 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>160</y>
+      <y>140</y>
       <width>571</width>
-      <height>191</height>
+      <height>171</height>
      </rect>
     </property>
     <property name="currentIndex">

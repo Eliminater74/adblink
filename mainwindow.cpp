@@ -340,6 +340,16 @@
     new QShortcut (QKeySequence("Ctrl+O"), this, SLOT(on_actionSend_text_triggered()));
 
 
+/*
+    ui->spacer1->setVisible(false);
+    ui->spacer1->setEnabled(false);
+    ui->spacer2->setVisible(false);
+    ui->spacer2->setEnabled(false);
+    ui->spacer3->setVisible(false);
+    ui->spacer3->setEnabled(false);
+    ui->spacer4->setVisible(false);
+    ui->spacer4->setEnabled(false);
+*/
 
     if (program=="adblink")
     {
@@ -1746,7 +1756,10 @@
     /////////////////////////////////////////
     void MainWindow::on_donate_clicked()
     {
-        QString link = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=GKZMW456H6E5W";
+
+            qDebug() << "xxxx";
+
+       QString link = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=GKZMW456H6E5W";
        QDesktopServices::openUrl(QUrl(link));
 
     }
