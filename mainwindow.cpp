@@ -280,10 +280,9 @@
                      QJsonObject obj;
 
 
-                     obj["oldfm"] = false;
+
                      obj["checkversion"] = true;
                      obj["scrcpy"] = true;
-                     obj["checkscope"] = true;
                      obj["startview"] = true;
                      obj["dropdown"] = "0";
                      obj["download"] = QDir::homePath();
@@ -602,7 +601,7 @@
        // Validate getadb()
        QString adbPath = getadb();
        if (adbPath.isEmpty()) {
-            qDebug() << "Issue: getadb() returned empty path";
+        //    qDebug() << "Issue: getadb() returned empty path";
             return false;
        }
 
@@ -612,13 +611,13 @@
            QProcess process;
            process.start(command);
            if (!process.waitForFinished(5000)) {
-               qDebug() << "Issue: ADB command timed out:" << command;
+          //     qDebug() << "Issue: ADB command timed out:" << command;
                return QString();
            }
            QString output = process.readAllStandardOutput().trimmed();
            QString error = process.readAllStandardError().trimmed();
            if (process.exitCode() != 0 || !error.isEmpty()) {
-               qDebug() << "Issue: ADB command failed:" << command << "Error:" << error;
+           //    qDebug() << "Issue: ADB command failed:" << command << "Error:" << error;
                return error.isEmpty() ? "Unknown error" : error;
            }
            return output;
@@ -629,22 +628,22 @@
        bool ok;
        int apiLevel = apiOutput.toInt(&ok);
        if (!ok || apiOutput.isEmpty()) {
-            qDebug() << "Issue: Invalid or empty API level output:" << apiOutput;
+         //   qDebug() << "Issue: Invalid or empty API level output:" << apiOutput;
             return false;
        }
        if (apiLevel < 29) {
-            qDebug() << "Issue: API level too low for scoped storage:" << apiLevel;
+        //    qDebug() << "Issue: API level too low for scoped storage:" << apiLevel;
             return false;
        }
 
        // Check for root access
        QString whoami = runAdbCommand("shell whoami");
        if (whoami.isEmpty()) {
-            qDebug() << "Issue: Failed to determine user (whoami)";
+        //    qDebug() << "Issue: Failed to determine user (whoami)";
             return false;
        }
        if (whoami.contains("root")) {
-            qDebug() << "Issue: Root access detected, scoped storage may be bypassed";
+       //     qDebug() << "Issue: Root access detected, scoped storage may be bypassed";
             return false;
        }
 
@@ -657,7 +656,7 @@
        } else {
             restrictedAccess = touchOutput.contains("Permission denied", Qt::CaseInsensitive);
             if (!restrictedAccess && !touchOutput.isEmpty()) {
-                 qDebug() << "Issue: Unexpected touch output for primary path:" << touchOutput;
+             //    qDebug() << "Issue: Unexpected touch output for primary path:" << touchOutput;
             }
        }
 
@@ -670,7 +669,7 @@
             } else {
                  restrictedAccess = touchOutput.contains("Permission denied", Qt::CaseInsensitive);
                  if (!restrictedAccess && !touchOutput.isEmpty()) {
-                    qDebug() << "Issue: Unexpected touch output for DCIM path:" << touchOutput;
+               //     qDebug() << "Issue: Unexpected touch output for DCIM path:" << touchOutput;
                  }
             }
        }
@@ -678,11 +677,11 @@
        // Check filesystem permissions
        QString lsOutput = runAdbCommand("shell ls -ld /sdcard/");
        if (lsOutput.isEmpty()) {
-            qDebug() << "Issue: Failed to get /sdcard/ permissions";
+         //   qDebug() << "Issue: Failed to get /sdcard/ permissions";
        } else {
             bool permissiveFs = lsOutput.contains("rwxrwxrwx");
             if (permissiveFs) {
-                 qDebug() << "Issue: Permissive /sdcard/ permissions, vendor may bypass scoped storage";
+         //        qDebug() << "Issue: Permissive /sdcard/ permissions, vendor may bypass scoped storage";
                  restrictedAccess = false;
             }
        }
@@ -1460,61 +1459,31 @@
 
 //////////////////////////////////////////////
 
+
     void MainWindow::connButton_clicked()
     {
+                      QString adhoc="Ad hoc";
+                      QString cstring;
+                      QString command;
+                      QString s;
+                      QString selectedDescription;
+                      QString daddr;
+                      QString port;
+                      bool isConnected;
+                      int selectedRow;
 
-        QString adhoc="Ad hoc";
-        QString cstring;
-        QString command;
-        QString s;
-        QString selectedDescription;
-        QString daddr;
-        QString port;
-        bool isConnected;
-        int selectedRow;
-
-
-        if (!ui->adhocip->text().isEmpty())
-        {
-           adhocip();
-           ui->adhocip->clear();
-             for (int row = 0; row < ui->deviceTable->rowCount(); ++row) {
-          QTableWidgetItem* item = ui->deviceTable->item(row, 0);
-           if (item && item->text() == adhoc) {
-        ui->deviceTable->selectRow(row);
-        break;
-         }
-       }
-     }
-
-
-
-
-
-                      QJsonObject obj;
-                      QFile file(databasedir + "adblink.json");
-                      bool checkscope = false;
-                      if (!file.open(QIODevice::ReadOnly)) {
-                            logfile("Failed to open adblink.json");
-                            QMessageBox::critical(this, "", "Failed to read configuration file");
-                            return;
+                      if (!ui->adhocip->text().isEmpty())
+                      {
+                            adhocip();
+                            ui->adhocip->clear();
+                            for (int row = 0; row < ui->deviceTable->rowCount(); ++row) {
+                              QTableWidgetItem* item = ui->deviceTable->item(row, 0);
+                              if (item && item->text() == adhoc) {
+                  ui->deviceTable->selectRow(row);
+                  break;
+                              }
+                            }
                       }
-                      QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
-                      if (doc.isNull() || !doc.isObject()) {
-                            logfile("Invalid JSON in adblink.json");
-                            QMessageBox::critical(this, "", "Invalid configuration file format");
-                            return;
-                      }
-                      obj = doc.object();
-                      if (obj.contains("checkscope")) {
-                            checkscope = obj["checkscope"].toBool();
-                      } else {
-                            logfile("checkscope key missing in adblink.json, using default false");
-                      }
-                      file.close();
-
-
-
 
                       selectedRow = ui->deviceTable->currentRow();
                       if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
@@ -1526,101 +1495,58 @@
 
                       DeviceRecord device = queryDeviceRecord(selectedDescription);
 
-
                       if (device.isusb) {
                             logfile("USB connection attempted, not supported");
                             QMessageBox::critical(this, "", "Inactive for USB connections");
                             return;
                       }
 
+                      if (!validateIPAddress(device.daddr)) {
+                            QMessageBox::critical(this, "Error", "Invalid IP address");
+                            return;
+                      }
 
-                     if (!validateIPAddress(device.daddr)) {
-                            QMessageBox::critical(this, "Error", "IXnvalid IP address");
-                     }
-
-
-                    port = device.port.isEmpty() ? "5555" : device.port;
-                    daddr = device.daddr + ":" + port;
-
-
+                      port = device.port.isEmpty() ? "5555" : device.port;
+                      daddr = device.daddr + ":" + port;
 
                       cstring = getadbpath() + " connect " + daddr;
                       command = connectadb(cstring);
 
-
-                      if (command.contains("failed to authenticate") || command.contains("ffline")) {
+                      if (command.contains("failed to authenticate") || command.contains("offline")) {
                             isConnected = false;
                             ui->deviceTable->setItem(selectedRow, 2, new QTableWidgetItem(
-                             command.contains("failed to authenticate") ? "Unauthorized" : "Offline"));
-                             logfile(cstring);
-                             logfile(command);
+                                                                         command.contains("failed to authenticate") ? "Unauthorized" : "Offline"));
+                            logfile(cstring);
+                            logfile(command);
                             QString cstring = getadbpath() + " disconnect " + daddr;
                             command = connectadb(cstring);
                             return;
                       }
 
-
                       logfile(cstring);
                       logfile(command);
-
 
                       if (command.contains("connected to")) {
                             isConnected = true;
                             ui->deviceTable->setItem(selectedRow, 2, new QTableWidgetItem("Connected"));
-
 
                             ui->deviceTable->clearSelection();
                             ui->deviceTable->setCurrentCell(selectedRow, 0);
                             ui->deviceTable->selectRow(selectedRow);
                             ui->deviceTable->setFocus();
 
-
-
                             logfile("Connected to " + daddr);
                             logfile("Android version: " + s.setNum(getandroid()));
-
                       } else {
                             isConnected = false;
-                            ui->deviceTable->setItem(selectedRow, 2, new QTableWidgetItem("NA")); // Set Status to NA
+                            ui->deviceTable->setItem(selectedRow, 2, new QTableWidgetItem("NA"));
                             logfile("Unable to connect to: " + daddr);
                             QMessageBox::critical(this, "", "Unable to connect to: " + daddr);
                       }
 
                       if (isConnected) {
                             ui->server_running->setText(adbstr1);
-
-
                       }
-
-                      // Scoped storage check with improved logging
-                      if (checkscope && program == "adblink" && isScoped()) {
-
-                            if (ui->adhocip->text().isEmpty())
-                            {
-                            cstring = getadb() + " shell ls /sdcard/xbmc_env.properties";
-                            }
-                              else {
-                            cstring = getadbpath() + " -s " + ui->adhocip->text() + " shell ls /sdcard/xbmc_env.properties";
-
-                              }
-
-
-
-                            bool fileExists = getreturncode(cstring);
-                            logfile("Checked xbmc_env.properties: " + QString(fileExists ? "Found" : "Not found"));
-                            if (!fileExists) {
-                              QMessageBox::StandardButton reply;
-                              reply = QMessageBox::question(this, "Restore", "Scoped storage in effect\nCreate /sdcard/kodi_data?",
-                                                            QMessageBox::Yes | QMessageBox::No);
-                              if (reply == QMessageBox::Yes) {
-                                 on_actionCreate_kodi_data_triggered();
-                              }
-                            }
-
-
-
-                      }
-
     }
 
 
@@ -3450,7 +3376,6 @@
          QString backup = obj["backup"].toString();
 
          bool checkversion = doc.object()["checkversion"].toBool();
-         bool checkscope = doc.object()["checkscope"].toBool();
          bool scrcpy = doc.object()["scrcpy"].toBool();
          bool startview = doc.object()["startview"].toBool();
 
@@ -3462,10 +3387,7 @@
          else
              dialog.setversioncheck(false);
 
-         if (checkscope)
-             dialog.setscopecheck(true);
-         else
-             dialog.setscopecheck(false);
+
 
          if (scrcpy)
              dialog.setscrcpyargs(true);
@@ -3503,7 +3425,7 @@
                 obj["dropdown"] = dialog.macterm();
 
              obj["checkversion"] = dialog.versioncheck();
-             obj["checkscope"] = dialog.scopecheck();
+
              obj["scrcpy"] = dialog.scrcpyargs();
 
              obj["startview"] = dialog.startview();
@@ -4940,7 +4862,9 @@ void MainWindow::restoreButton_clicked() {
     QString xbmcpath;
     QString kbase;
     bool xbmc_env = false;
-    const QString adbPrefix = getadb() + " -s " + device.daddr + " ";
+    const QString adbPrefix = getadb() + " ";
+
+
 
     logfile("Starting restore for " + device.daddr); // Log restore start
 

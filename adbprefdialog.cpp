@@ -191,24 +191,11 @@ void adbprefDialog::setstartview(const bool &startview)
 
 
 
-void adbprefDialog::setscopecheck(const bool &scopecheck)
-{
-    ui->scopecheck->setChecked(scopecheck);
-}
-
-
 
 void adbprefDialog::setversioncheck(const bool &versioncheck)
 {
     ui->versioncheck->setChecked(versioncheck);
 }
-
-
-
-bool adbprefDialog::scopecheck() {
-   return ui->scopecheck->isChecked();
-}
-
 
 
 

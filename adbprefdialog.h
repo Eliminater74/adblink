@@ -18,7 +18,7 @@ public:
     QString version2;
 
      void setversioncheck(const bool &versioncheck);
-     void setscopecheck(const bool &scopecheck);
+
      void setscrcpyargs(const bool &scrcpyargs);
 
      void setstartview(const bool &startview);
@@ -38,7 +38,7 @@ void setbackupdir(const QString &bdir);
 
 
 bool versioncheck();
-bool scopecheck();
+
 bool scrcpyargs();
 
 bool startview();

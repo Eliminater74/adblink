@@ -167,13 +167,6 @@
      </widget>
     </item>
     <item>
-     <widget class="QCheckBox" name="scopecheck">
-      <property name="text">
-       <string>Check scope on connection</string>
-      </property>
-     </widget>
-    </item>
-    <item>
      <widget class="QCheckBox" name="startview">
       <property name="text">
        <string>Android view at startup</string>
