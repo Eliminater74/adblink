@@ -65,6 +65,7 @@ DeviceRecord queryDeviceRecord(const QString& description);
 private slots:
 
 
+
     bool validateIPAddress(const QString& ipAddress);
 
     bool renameColumn(const QString& oldColumnName, const QString& newColumnName);

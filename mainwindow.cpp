@@ -352,7 +352,7 @@
     ui->stopADB->setShortcut(QKeySequence("Ctrl+Z"));
     new QShortcut (QKeySequence("Ctrl+O"), this, SLOT(on_actionSend_text_triggered()));
 
-// connections
+// myconnections
 
  // grid1    
     connect(ui->fmButton, &QPushButton::clicked, this, &MainWindow::fmButton_clicked);
@@ -595,10 +595,102 @@
     //////////////////////////////////////////////
     bool MainWindow::isScoped()
     {
-        bool scoped;
-        scoped = getandroid() == 11 || getandroid() == 12;
-        return scoped;
+       // Test qDebug to ensure it's working
+       // Comment out after confirming output
+       // qDebug() << "Testing qDebug in isScoped";
+
+       // Validate getadb()
+       QString adbPath = getadb();
+       if (adbPath.isEmpty()) {
+            qDebug() << "Issue: getadb() returned empty path";
+            return false;
+       }
+
+       // Helper to run ADB commands
+       auto runAdbCommand = [adbPath](const QString& adbCommand) -> QString {
+           QString command = adbPath + " " + adbCommand;
+           QProcess process;
+           process.start(command);
+           if (!process.waitForFinished(5000)) {
+               qDebug() << "Issue: ADB command timed out:" << command;
+               return QString();
+           }
+           QString output = process.readAllStandardOutput().trimmed();
+           QString error = process.readAllStandardError().trimmed();
+           if (process.exitCode() != 0 || !error.isEmpty()) {
+               qDebug() << "Issue: ADB command failed:" << command << "Error:" << error;
+               return error.isEmpty() ? "Unknown error" : error;
+           }
+           return output;
+       };
+
+       // Get API level
+       QString apiOutput = runAdbCommand("shell getprop ro.build.version.sdk");
+       bool ok;
+       int apiLevel = apiOutput.toInt(&ok);
+       if (!ok || apiOutput.isEmpty()) {
+            qDebug() << "Issue: Invalid or empty API level output:" << apiOutput;
+            return false;
+       }
+       if (apiLevel < 29) {
+            qDebug() << "Issue: API level too low for scoped storage:" << apiLevel;
+            return false;
+       }
+
+       // Check for root access
+       QString whoami = runAdbCommand("shell whoami");
+       if (whoami.isEmpty()) {
+            qDebug() << "Issue: Failed to determine user (whoami)";
+            return false;
+       }
+       if (whoami.contains("root")) {
+            qDebug() << "Issue: Root access detected, scoped storage may be bypassed";
+            return false;
+       }
+
+       // Test storage access
+       bool restrictedAccess = false;
+       QString touchOutput = runAdbCommand("shell touch /sdcard/Android/data/org.xbmc.kodi/files/test.txt");
+       if (touchOutput.isEmpty() && !restrictedAccess) {
+            // Touch succeeded, clean up
+            runAdbCommand("shell rm /sdcard/Android/data/org.xbmc.kodi/files/test.txt");
+       } else {
+            restrictedAccess = touchOutput.contains("Permission denied", Qt::CaseInsensitive);
+            if (!restrictedAccess && !touchOutput.isEmpty()) {
+                 qDebug() << "Issue: Unexpected touch output for primary path:" << touchOutput;
+            }
+       }
+
+       // Additional test for another path
+       if (!restrictedAccess) {
+            touchOutput = runAdbCommand("shell touch /sdcard/DCIM/test.txt");
+            if (touchOutput.isEmpty()) {
+                 // Touch succeeded, clean up
+                 runAdbCommand("shell rm /sdcard/DCIM/test.txt");
+            } else {
+                 restrictedAccess = touchOutput.contains("Permission denied", Qt::CaseInsensitive);
+                 if (!restrictedAccess && !touchOutput.isEmpty()) {
+                    qDebug() << "Issue: Unexpected touch output for DCIM path:" << touchOutput;
+                 }
+            }
+       }
+
+       // Check filesystem permissions
+       QString lsOutput = runAdbCommand("shell ls -ld /sdcard/");
+       if (lsOutput.isEmpty()) {
+            qDebug() << "Issue: Failed to get /sdcard/ permissions";
+       } else {
+            bool permissiveFs = lsOutput.contains("rwxrwxrwx");
+            if (permissiveFs) {
+                 qDebug() << "Issue: Permissive /sdcard/ permissions, vendor may bypass scoped storage";
+                 restrictedAccess = false;
+            }
+       }
+
+       return (apiLevel >= 30) || (apiLevel == 29 && restrictedAccess);
     }
+
+
 
 
 
@@ -4828,231 +4920,223 @@ void MainWindow::backupButton_clicked()
 /////////////////////////////////////////////
 
 void MainWindow::restoreButton_clicked() {
+    QString selectedDescription;
+    if (!validateDeviceSelection(selectedDescription)) {
+                                   return;
+    }
 
+    DeviceRecord device = queryDeviceRecord(selectedDescription);
 
-   QString selectedDescription;
-   if (!validateDeviceSelection(selectedDescription)) {
-      return;
-   }
+    if (!is_package(device.xbmcpackage)) {
+                                   QMessageBox::critical(this, "", device.xbmcpackage + " not installed");
+                                   return;
+    }
 
+    QString cstring;
+    QString command;
+    QString n_data_root;
+    QString mcpath;
+    QString xbmcpath;
+    QString kbase;
+    bool xbmc_env = false;
+    const QString adbPrefix = getadb() + " -s " + device.daddr + " ";
 
-   DeviceRecord device = queryDeviceRecord(selectedDescription);
+    // Check for xbmc_env.properties
+    cstring = adbPrefix + "shell ls /sdcard/xbmc_env.properties";
+    if (getreturncode(cstring)) {
+                                   cstring = adbPrefix + "shell cat /sdcard/xbmc_env.properties";
+                                   command = getadbOutput(cstring);
+                                   command.replace(QRegExp("[\r\n]"), "");
 
+                                   int startIndex = command.indexOf("=") + 1;
+                                   int endIndex = command.indexOf(".kodi") + 5;
+                                   xbmcpath = command.mid(startIndex, endIndex - startIndex);
 
+                                   QMessageBox::StandardButton reply;
+                                   reply = QMessageBox::question(this, "xbmc properties", "xbmc_env.properties file found on " + device.daddr + ".\nUse its values?",
+                                                                 QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+                                   if (reply == QMessageBox::Yes) {
+                  xbmc_env = true;
+                  mcpath = xbmcpath;
+                                   } else if (reply == QMessageBox::No) {
+                  xbmc_env = false;
+                                   } else if (reply == QMessageBox::Cancel) {
+                  return;
+                                   }
+    }
 
-   if (!is_package(device.xbmcpackage)) {
-      QMessageBox::critical(this, "", device.xbmcpackage + " not installed");
-      return;
-   }
+    // Check if Kodi is running
+    cstring = adbPrefix + "shell ps | grep " + device.xbmcpackage;
+    command = getadbOutput(cstring);
+    if (command.contains(device.xbmcpackage)) {
+                                   QMessageBox::StandardButton reply;
+                                   reply = QMessageBox::question(this, "Stop Kodi", "Cannot restore while Kodi is running on " + device.daddr + ".\n Stop " + device.xbmcpackage + "?",
+                                                                 QMessageBox::Yes | QMessageBox::No);
+                                   if (reply == QMessageBox::Yes) {
+                  cstring = adbPrefix + "shell am force-stop " + device.xbmcpackage;
+                  command = getadbOutput(cstring);
+                  logfile(device.daddr + ": " + command);
+                                   } else {
+                  logfile(device.daddr + ": " + device.xbmcpackage + " running. Restore failed");
+                  return;
+                                   }
+    }
 
-   QString cstring;
-   QString command;
-   QString n_data_root;
-   QString mcpath;
-   QString xbmcpath;
-   QString kbase;
-   bool xbmc_env = false;
+    // Determine storage root and path if no xbmc_env.properties
+    if (!xbmc_env) {
+                                   cstring = adbPrefix + "shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
+                                   QString storageOutput = getadbOutput(cstring);
+                                   QStringList storageList = storageOutput.split('\n');
 
-   // Check for xbmc_env.properties
-   cstring = getadb() + " shell ls /sdcard/xbmc_env.properties";
-   if (getreturncode(cstring)) {
-      cstring = getadb() + " shell cat /sdcard/xbmc_env.properties";
-      command = getadbOutput(cstring);
-      command.replace(QRegExp("[\r\n]"), "");
-
-      int startIndex = command.indexOf("=") + 1;
-      int endIndex = command.indexOf(".kodi") + 5;
-      xbmcpath = command.mid(startIndex, endIndex - startIndex);
-
-      QMessageBox::StandardButton reply;
-      reply = QMessageBox::question(this, "xbmc properties", "xbmc_env.properties file found.\nUse its values?",
-                                    QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-      if (reply == QMessageBox::Yes) {
-          xbmc_env = true;
-          mcpath = xbmcpath;
-      } else if (reply == QMessageBox::No) {
-          xbmc_env = false;
-      } else if (reply == QMessageBox::Cancel) {
-          return;
-      }
-   }
-
-   // Check if Kodi is running
-   cstring = getadb() + " shell ps | grep " + device.xbmcpackage;
-   command = getadbOutput(cstring);
-   if (command.contains(device.xbmcpackage)) {
-      QMessageBox::StandardButton reply;
-      reply = QMessageBox::question(this, "Stop Kodi", "Cannot restore while Kodi is running.\n Stop " + device.xbmcpackage + " on device?",
-                                    QMessageBox::Yes | QMessageBox::No);
-      if (reply == QMessageBox::Yes) {
-          cstring = getadb() + " shell am force-stop " + device.xbmcpackage;
-          command = getadbOutput(cstring);
-          logfile(command);
-      } else {
-          logfile(device.xbmcpackage + " running. Restore failed");
-          return;
-      }
-   }
-
-   // Determine storage root and path if no xbmc_env.properties
-   if (!xbmc_env) {
-      cstring = getadb() + " shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
-      QString s = getadbOutput(cstring);
-      QStringList list = s.split('\n');
-
-      for (int i = 0; i < list.size(); i++) {
-          list[i].remove('\r');
-          list[i].remove('\n');
-          if (list[i] == "Android" ||
-              list[i] == "Permission denied" ||
-              list[i] == "/storage/emulated" ||
-              list[i] == "/storage" ||
-              list[i] == "/storage/self" ||
-              list[i] == NULL) {
-                    list.removeAt(i);
+                                   for (int i = 0; i < storageList.size(); i++) {
+                  storageList[i].remove('\r');
+                  storageList[i].remove('\n');
+                  if (storageList[i] == "Android" ||
+                      storageList[i] == "Permission denied" ||
+                      storageList[i] == "/storage/emulated" ||
+                      storageList[i] == "/storage" ||
+                      storageList[i] == "/storage/self" ||
+                      storageList[i].isEmpty()) {
+                    storageList.removeAt(i);
                     i--;
-          }
-      }
+                  }
+                                   }
 
-      list.insert(0, "/sdcard");
+                                   storageList.insert(0, "/sdcard");
 
-      if (list.count() > 1) {
-          restDialog dialog(this);
-          dialog.setWindowModality(Qt::WindowModal);
-          dialog.setWindowTitle("Restore");
-          dialog.setadb_restore(list);
-          if (dialog.exec() == QDialog::Accepted) {
+                                   if (storageList.count() > 1) {
+                  restDialog dialog(this);
+                  dialog.setWindowModality(Qt::WindowModal);
+                  dialog.setWindowTitle("Restore for " + device.daddr);
+                  dialog.setadb_restore(storageList);
+                  if (dialog.exec() == QDialog::Accepted) {
                     n_data_root = dialog.restore_data_root();
-          } else {
+                  } else {
                     return;
-          }
-      }
+                  }
+                                   }
 
-      if (n_data_root.isEmpty()) {
-          n_data_root = "/sdcard";
-      }
+                                   if (n_data_root.isEmpty()) {
+                  n_data_root = "/sdcard";
+                                   }
 
-      if (!n_data_root.startsWith("/")) {
-          n_data_root.prepend("/");
-      }
-      if (!n_data_root.endsWith("/")) {
-          n_data_root.append("/");
-      }
+                                   if (!n_data_root.startsWith("/")) {
+                  n_data_root.prepend("/");
+                                   }
+                                   if (!n_data_root.endsWith("/")) {
+                  n_data_root.append("/");
+                                   }
 
-      // Path logic with wsa and scoped
-      if (device.wsa) {
-          mcpath = n_data_root + "wsa_data/" + device.xbmcpackage;
-          kbase = n_data_root + "wsa_data/";
-      } else if (device.scoped) {
-          mcpath = n_data_root + "kodi_data/" + device.xbmcpackage;
-          kbase = n_data_root + "kodi_data/";
-          cstring = getadb() + " shell appops set --uid " + device.xbmcpackage + " MANAGE_EXTERNAL_STORAGE allow";
-          if (!getreturncode(cstring)) {
-                    QMessageBox::critical(this, "", "Error setting Kodi permissions");
+                                   // Path logic for scoped or standard Android
+                                   if (isScoped()) {
+                  kbase = n_data_root + "kodi_data/";
+                  mcpath = kbase + device.xbmcpackage;
+                  // Create kodi_data area
+                  cstring = adbPrefix + "shell mkdir -p " + kbase;
+                  command = getadbOutput(cstring);
+                  logfile(device.daddr + ": Creating kodi_data: " + command);
+                  if (command.contains("No such file or directory")) {
+                    QMessageBox::critical(this, "", "Failed to create kodi_data directory on " + device.daddr);
+                    logfile(device.daddr + ": Error creating kodi_data: " + command);
                     return;
-          }
-      } else {
-          mcpath = n_data_root + "Android/data/" + device.xbmcpackage;
-          kbase = n_data_root + "Android/data/";
-      }
-   }
+                  }
+                                   } else {
+                  mcpath = n_data_root + "Android/data/" + device.xbmcpackage;
+                  kbase = n_data_root + "Android/data/";
+                                   }
+    }
 
-   // Select backup directory
-   QString backup = readBackup(databasedir);
-   QDir backupDir(backup);
-   QString dir = QFileDialog::getExistingDirectory(this, tr("Choose Backup Folder"),
-                                                   backupDir.absolutePath(),
-                                                   QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-   if (dir.isEmpty()) {
-      return;
-   }
+    // Select backup directory
+    QString backup = readBackup(databasedir);
+    QDir backupDir(backup);
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Choose Backup Folder for ") + device.daddr,
+                                                    backupDir.absolutePath(),
+                                                    QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    if (dir.isEmpty()) {
+                                   return;
+    }
 
-   // Validate backup
-   if (!QDir(dir + "/userdata").exists()) {
-      QMessageBox::critical(this, "", "Invalid backup. No userdata folder.");
-      return;
-   }
-   if (!QDir(dir + "/addons").exists()) {
-      QMessageBox::critical(this, "", "Invalid backup. addons folder not found.");
-      return;
-   }
+    // Validate backup
+    if (!QDir(dir + "/userdata").exists()) {
+                                   QMessageBox::critical(this, "", "Invalid backup for " + device.daddr + ". No userdata folder.");
+                                   return;
+    }
+    if (!QDir(dir + "/addons").exists()) {
+                                   QMessageBox::critical(this, "", "Invalid backup for " + device.daddr + ". addons folder not found.");
+                                   return;
+    }
 
-   // Confirm restore
-   QMessageBox::StandardButton reply;
-   reply = QMessageBox::question(this, "Restore", "Restore this backup? This will overwrite existing Kodi data.",
-                                 QMessageBox::Yes | QMessageBox::No);
-   if (reply == QMessageBox::No) {
-      return;
-   }
+    // Confirm restore
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Restore", "Restore this backup to " + device.daddr + "? This will overwrite existing Kodi data.",
+                                  QMessageBox::Yes | QMessageBox::No);
+    if (reply == QMessageBox::No) {
+                                   return;
+    }
 
-   logfile("Restoring Kodi: "+device.daddr);
+    logfile("Restoring Kodi: " + device.daddr);
 
+    cstring = adbPrefix + "shell rm -r " + mcpath;
+    command = RunLongProcess(cstring, "preparing target for " + device.daddr);
+    logfile(device.daddr + ": " + command);
 
-   cstring = getadb() + " shell rm -r " + mcpath;
-   command = RunLongProcess(cstring, "preparing target");
-   logfile(command);
+    cstring = adbPrefix + "shell ls " + mcpath;
+    command = getadbOutput(cstring);
 
-   cstring = getadb() + " shell ls " + mcpath;
-   command = getadbOutput(cstring);
+    if (command.contains("No such file or directory")) {
+                                   cstring = adbPrefix + "shell mkdir -p " + mcpath + "/files/.kodi";
+                                   command = getadbOutput(cstring);
+                                   logfile(device.daddr + ": " + command);
+                                   QString errorOutput = command;
+                                   cstring = adbPrefix + "shell ls " + mcpath + "/files/.kodi";
+                                   command = getadbOutput(cstring);
 
-   if (command.contains("No such file or directory")) {
-      cstring = getadb() + " shell mkdir -p " + mcpath + "/files/.kodi";
-      command = getadbOutput(cstring);
-      logfile(command);
-      QString errorp = command;
-      cstring = getadb() + " shell ls " + mcpath + "/files/.kodi";
-      command = getadbOutput(cstring);
+                                   if (command.contains("No such file or directory")) {
+                  QMessageBox::critical(this, "", "Error creating restore point on " + device.daddr);
+                  logfile(device.daddr + ": Restore error: " + errorOutput);
+                  return;
+                                   }
+    }
 
-      if (command.contains("No such file or directory")) {
-          QMessageBox::critical(this, "", "Error creating restore point");
-          logfile("Restore error: " + errorp);
-          return;
-      }
-   }
+    dir = dir + "/.";
 
+    cstring = adbPrefix + "push \"" + dir + "\" " + mcpath + "/files/.kodi/";
+    command = RunLongProcess(cstring, "restore running for " + device.daddr);
+    logfile(device.daddr + ": Restore: " + cstring);
 
-   dir = dir + "/.";
+    // Check restore success
+    if (command.contains("bytes")) {
+                                   cstring = adbPrefix + "shell rm /sdcard/xbmc_env.properties";
+                                   command = getadbOutput(cstring);
 
+                                   // Always create xbmc_env.properties for scoped devices
+                                   if (isScoped()) {
+                  cstring = adbPrefix + "shell echo xbmc.data=" + mcpath + "/files > /sdcard/xbmc_env.properties";
+                  command = getadbOutput(cstring);
+                  logfile(device.daddr + ": create /sdcard/xbmc_env.properties for scoped device");
+                  logfile(device.daddr + ": " + command);
+                  if (command.contains("No such file or directory") || !command.isEmpty()) {
+                    QMessageBox::critical(this, "", "Failed to create xbmc_env.properties on " + device.daddr);
+                    logfile(device.daddr + ": Error creating xbmc_env.properties: " + command);
+                    return;
+                  }
+                                   } else if (n_data_root != "/sdcard/") {
+                  cstring = adbPrefix + "shell echo xbmc.data=" + mcpath + "/files > /sdcard/xbmc_env.properties";
+                  command = getadbOutput(cstring);
+                  logfile(device.daddr + ": create /sdcard/xbmc_env.properties");
+                  logfile(device.daddr + ": " + command);
+                                   }
 
+                                   writeBackup(dir);
+                                   QMessageBox::information(this, "", "Restore complete for " + device.daddr);
+    } else {
+                                   QMessageBox::critical(this, "", "Restore failed for " + device.daddr + ". See log.");
+                                   logfile(device.daddr + ": " + cstring);
+                                   logfile(device.daddr + ": " + command);
+    }
 
-   command = getadbOutput(cstring);
-
-  cstring = getadb() + " push \"" + dir + "\" " + mcpath + "/files/.kodi/";
-
-   command = RunLongProcess(cstring, "restore running");
-   logfile("Restore: " + cstring);
-
-   // Check restore success
-   if (command.contains("bytes")) {
-      cstring = getadb() + " shell rm /sdcard/xbmc_env.properties";
-      command = getadbOutput(cstring);
-
-      if (device.scoped) {
-          cstring = getadb() + " shell echo xbmc.data=" + mcpath + "/files > /sdcard/xbmc_env.properties";
-          command = getadbOutput(cstring);
-          logfile("create /sdcard/xbmc_env.properties");
-          logfile(command);
-      } else {
-          if (n_data_root != "/sdcard/") {
-                    cstring = getadb() + " shell echo xbmc.data=" + mcpath + "/files > /sdcard/xbmc_env.properties";
-                    command = getadbOutput(cstring);
-                    logfile("create /sdcard/xbmc_env.properties");
-                    logfile(command);
-          }
-      }
-
-      writeBackup(dir);
-      QMessageBox::information(this, "", "Restore complete");
-   } else {
-      QMessageBox::critical(this, "", "Restore Failed. See log.");
-      logfile(cstring);
-      logfile(command);
-   }
-
-   logfile(device.daddr+" restore complete");
+    logfile(device.daddr + " restore complete");
 }
-
-
 
 
 //////////////////////////////////////////////
