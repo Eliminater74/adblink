@@ -1151,11 +1151,11 @@
         bool startview = obj["startview"].toBool();
 
         if (startview) {
-            ui->stackedWidget->setCurrentIndex(1);
-            ui->menuKodi->menuAction()->setVisible(false);
-        } else {
             ui->stackedWidget->setCurrentIndex(0);
             ui->menuKodi->menuAction()->setVisible(true);
+        } else {
+            ui->stackedWidget->setCurrentIndex(1);
+            ui->menuKodi->menuAction()->setVisible(false);
         }
 
         if (checkversion) {

@@ -169,7 +169,7 @@
     <item>
      <widget class="QCheckBox" name="startview">
       <property name="text">
-       <string>Android view at startup</string>
+       <string>Kodi view at startup</string>
       </property>
      </widget>
     </item>
