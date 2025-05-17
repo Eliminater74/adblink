@@ -2988,7 +2988,7 @@
         }
     }
 
-/*
+
     QString MainWindow::RunLongProcess(QString cstring, QString jobname)
     {
         ui->progressBar->setHidden(false);
@@ -3027,7 +3027,7 @@
         return command;
     }
 
- */
+ /*
     ///////////////////////////////////////////////
     QString MainWindow::RunLongProcess(QString cstring, QString jobname)
     {
@@ -3071,6 +3071,7 @@
            ui->progressBar->setHidden(true);
            ui->progressBar->setValue(0);
            ui->server_running->setText("");
+           ui->listRunningJobs->clear();
          }
 
          serverlabel();
@@ -3079,7 +3080,7 @@
     }
 
 
-
+*/
     ////////////////////////////////////////////////////////
 
     void MainWindow::on_actionMount_system_RO_triggered()
@@ -4984,9 +4985,9 @@ void MainWindow::restoreButton_clicked() {
       return;
    }
 
-   logfile("Restoring Android Kodi");
+   logfile("Restoring Kodi: "+device.daddr);
 
-   // Prepare target directory
+
    cstring = getadb() + " shell rm -r " + mcpath;
    command = RunLongProcess(cstring, "preparing target");
    logfile(command);
@@ -5009,10 +5010,9 @@ void MainWindow::restoreButton_clicked() {
       }
    }
 
-   // Perform restore
+
    dir = dir + "/.";
 
-   //  cstring = getadb() + " push \"" + dir + "\" " + mcpath + "/files/.kodi/";
 
 
    command = getadbOutput(cstring);
@@ -5049,7 +5049,7 @@ void MainWindow::restoreButton_clicked() {
       logfile(command);
    }
 
-   logfile("Restore complete");
+   logfile(device.daddr+" restore complete");
 }
 
 
