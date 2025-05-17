@@ -1,10 +1,10 @@
-
 #include "logfile.h"
-#include <QMessageBox>
 #include <QFile>
 #include <QTextStream>
-  #include <QDir>
+#include <QDir>
 #include <QtGlobal>
+#include <QMutex>
+#include <QDebug> // Added to fix QDebug incomplete type error
 
 #ifdef Q_OS_WIN
 const QString databasedir = QDir::homePath() + "/AppData/Roaming/.jocala/";
@@ -14,14 +14,16 @@ const QString databasedir = QDir::homePath() + "/.jocala/";
 
 void logfile(const QString& line)
 {
-   QFile file(databasedir + "adblink.log");
-   if (!file.open(QFile::WriteOnly | QFile::Text | QFile::Append))
-   {
-       QMessageBox::critical(nullptr, "", "Can't create logfile!\n", QMessageBox::Cancel);
-       return;
-   }
+    static QMutex mutex;
+    QMutexLocker locker(&mutex);
 
-   QTextStream out(&file);
-   out << line << endl;
-   file.close();
+    QFile file(databasedir + "adblink.log");
+    if (!file.open(QFile::WriteOnly | QFile::Text | QFile::Append)) {
+        qWarning() << "Can't create logfile:" << databasedir + "adblink.log";
+        return;
+    }
+
+    QTextStream out(&file);
+    out << line << endl;
+    file.close();
 }

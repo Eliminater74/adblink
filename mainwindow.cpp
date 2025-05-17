@@ -186,7 +186,7 @@
          ui->statusBar->addPermanentWidget(ui->server_running);
          ui->statusBar->addPermanentWidget(ui->progressBar);
          ui->progressBar->setHidden(true);
-         ui->listRunningJobs->setHidden(true);
+//         ui->listRunningJobs->setHidden(true);
 
 
          QPixmap pix(":/assets/donatel.png");
@@ -2745,7 +2745,7 @@
                 if (!startstop)
                 {
                   QJsonObject obj;
-                  obj["startapp"] = "org.xbmc.kodi/org.xbmc.kodi.Xplash";
+                  obj["startapp"] = "org.xbmc.kodi/org.xbmc.kodi.Splash";
                   QJsonDocument doc(obj);
                   QFile file(databasedir+"startapp.json");
                   file.open(QIODevice::WriteOnly);
@@ -2988,7 +2988,46 @@
         }
     }
 
+/*
+    QString MainWindow::RunLongProcess(QString cstring, QString jobname)
+    {
+        ui->progressBar->setHidden(false);
+        ui->progressBar->setValue(0);
+        QString command;
+        QString s = jobname;
+        RunProcessList << s;
+        ui->server_running->setText(s);
 
+        int tsvalue = 4000;
+
+        QTimer *timer = new QTimer(this);
+        connect(timer, SIGNAL(timeout()), this, SLOT(TimerEvent()));
+        timer->start(tsvalue);
+
+        command = getadbOutput(cstring);
+
+        RunProcessList.removeAll(s);
+
+        if (RunProcessList.count() > 0)
+        {
+           //activityIcon(true);
+           ui->progressBar->setHidden(false);
+           ui->progressBar->setValue(0);
+        }
+        else
+        {
+           //activityIcon(false);
+           ui->progressBar->setHidden(true);
+           ui->progressBar->setValue(0);
+           ui->server_running->setText("");
+        }
+
+        serverlabel();
+
+        return command;
+    }
+
+ */
     ///////////////////////////////////////////////
     QString MainWindow::RunLongProcess(QString cstring, QString jobname)
     {
@@ -3016,19 +3055,19 @@
 
        for (QList<QString>::iterator it = RunProcessList.begin(); it != RunProcessList.end(); ++it) {
          QString current = *it;
-         ui->listRunningJobs->addItem(current);
+          ui->listRunningJobs->addItem(current);
        }
 
 
 
 
       if (RunProcessList.count() > 0 )
-        {  //activityIcon(true);
+        {
           ui->progressBar->setHidden(false);
           ui->progressBar->setValue(0);
          }
       else
-        {  //activityIcon(false);
+        {
            ui->progressBar->setHidden(true);
            ui->progressBar->setValue(0);
            ui->server_running->setText("");
@@ -5320,10 +5359,13 @@ void MainWindow::startapp_clicked()
     else
      startstop = false;
 
+
+ //   shell am start -n org.xbmc.kodi/org.xbmc.kodi.Splash
+
     if (!startstop)
     {
      QJsonObject obj;
-     obj["startapp"] = "org.xbmc.kodi/org.xbmc.kodi.Xplash";
+     obj["startapp"] = "org.xbmc.kodi/org.xbmc.kodi.Splash";
      QJsonDocument doc(obj);
      QFile file(databasedir+"startapp.json");
      file.open(QIODevice::WriteOnly);
