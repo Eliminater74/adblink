@@ -66,6 +66,12 @@ private slots:
 
 
 
+    void connections();
+
+     void buttonsetup();
+
+    void gridsetup();
+
     bool validateIPAddress(const QString& ipAddress);
 
     bool renameColumn(const QString& oldColumnName, const QString& newColumnName);
