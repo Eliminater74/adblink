@@ -167,6 +167,7 @@ private slots:
 
    QString RunLongProcess(QString cstring, QString jobname);
 
+   QString readDonationValue();
 
 
    void usbbuttons(bool isusb);
@@ -366,8 +367,9 @@ private slots:
     QNetworkAccessManager *m_networkManager;
     usbfileDialog *fmdialog;
     QStringList RunProcessList;
-
-
+    QPushButton* setupDonateButton(QWidget* parent, int x, int y);
+    QPushButton* donateButton;
+    void setDonateButtonActive(bool active);
 
 };
 

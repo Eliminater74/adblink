@@ -6,7 +6,11 @@ adb updated to Version 36.0.0-13206524
 
 adblink help updated for v6.4
 
-adb shell now has full automatic access to
+adblink preferences has a text field for donation
+code. Contributors can enter a code that will hide
+donation graphics and links.
+
+adb shell now has automatic access to
 busybox, adding a huge array of *nix commands to
 the Android command-line.
 

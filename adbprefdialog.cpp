@@ -157,6 +157,10 @@ void adbprefDialog::setdownloaddir(const QString &ddir)
 }
 
 
+void adbprefDialog::setdonation(const QString &donation)
+{
+    ui->donation->setText(donation);
+}
 
 
 
@@ -218,11 +222,14 @@ bool adbprefDialog::startview() {
    return ui->startview->isChecked();
 }
 
+QString adbprefDialog::donation() {
+   return ui->donation->text();
+}
+
 
 QString adbprefDialog::downloaddir() {
    return ui->dfilepath->text();
 }
-
 
 
 QString adbprefDialog::installdir() {
@@ -233,7 +240,6 @@ QString adbprefDialog::installdir() {
 QString adbprefDialog::backupdir() {
    return ui->bfilepath->text();
 }
-
 
 
 
@@ -313,3 +319,12 @@ void adbprefDialog::changelog()
 
 }
 
+void adbprefDialog::accept() {
+    QString donationText = ui->donation->text();
+    if (!donationText.isEmpty() && donationText != "jocala.com") {
+        ui->donation->clear();
+        QMessageBox::critical(this, "Error", "Invalid donation code", QMessageBox::Ok);
+        return; // Do not accept, keep dialog open
+    }
+    QDialog::accept(); // Accept if validation passes
+}

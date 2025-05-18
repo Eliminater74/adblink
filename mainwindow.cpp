@@ -185,13 +185,13 @@
          ui->statusBar->addPermanentWidget(ui->progressBar);
          ui->progressBar->setHidden(true);
 
-
+/*
          QPixmap pix(":/assets/donatel.png");
          QIcon icon(pix);
          ui->donate->setIcon(icon);
          ui->donate->setText("");
          ui->donate->setIconSize(pix.size());
-
+*/
 
 
          ui->server_running->setText(adbstr2);
@@ -285,7 +285,7 @@
                      obj["download"] = QDir::homePath();
                      obj["install"] = QDir::homePath();
                      obj["backup"] = QDir::homePath();
-
+                     obj["donation"] = "";
 
                      QJsonDocument doc(obj);
 
@@ -307,9 +307,15 @@
 
         }
 
-
+        setFixedSize(575,370);
         buttonsetup();
         gridsetup();
+        setupDonateButton(ui->centralWidget, 140, 304);
+
+        QString donation = readDonationValue();
+        setDonateButtonActive(donation != "jocala.com");
+
+
         connections();
         loadDeviceTable();
         do_versioncheck();
@@ -447,9 +453,7 @@
     }
 
 
-
     void MainWindow::gridsetup()
-
     {
 
          QWidget* gridWidget1 = new QWidget();
@@ -539,8 +543,70 @@
          // --------- Show the first grid ---------
          ui->stackedWidget->setCurrentIndex(0);
 
+
   }
 
+  //////////////////////////////////////////////
+
+  QPushButton* MainWindow::setupDonateButton(QWidget* parent, int x, int y) {
+         donateButton = new QPushButton(parent); // Assign to member variable
+         QPixmap pix(":/assets/donatel.png");
+         if (pix.isNull()) {
+      qDebug() << "Error: Failed to load :/assets/donatel.png";
+      donateButton->setText("Donate");
+         } else {
+      qDebug() << "Pixmap size:" << pix.size();
+      QIcon icon(pix);
+      donateButton->setIcon(icon);
+      donateButton->setText("");
+      donateButton->setIconSize(QSize(300, 32));
+         }
+         donateButton->setGeometry(x, y, 300, 32); // Use x, y parameters
+         donateButton->setStyleSheet(
+             "QPushButton {"
+             "   border: none;"
+             "   background: transparent;"
+             "   padding: 0;"
+             "}"
+             "QPushButton:hover {"
+             "   background: rgba(200, 200, 200, 50);"
+             "}"
+             );
+         if (QMetaObject::checkConnectArgs(SIGNAL(clicked()), SLOT(on_donate_clicked()))) {
+      connect(donateButton, &QPushButton::clicked, this, &MainWindow::on_donate_clicked);
+         } else {
+      qDebug() << "Warning: on_donate_clicked slot not found";
+         }
+
+         return donateButton;
+    }
+
+    void MainWindow::setDonateButtonActive(bool active) {
+         if (donateButton) {
+      donateButton->setVisible(active);
+      donateButton->setEnabled(active);
+         } else {
+      qDebug() << "Error: donateButton is not initialized";
+         }
+    }
+
+
+
+    QString MainWindow::readDonationValue() {
+         QJsonObject obj;
+         QJsonDocument doc;
+         QFile file(databasedir + "adblink.json");
+
+         if (file.open(QIODevice::ReadOnly)) {
+      doc = QJsonDocument::fromJson(file.readAll());
+      obj = doc.object();
+      file.close();
+      return obj["donation"].toString();
+         } else {
+      qDebug() << "Error: Could not open adblink.json for reading";
+      return QString(); // Return empty string on error
+         }
+    }
 
     /////////////////////////////////////////////////////
     void MainWindow::TimerEvent()
@@ -1646,12 +1712,28 @@
     /////////////////////////////////////////////////////////////////////////
     void MainWindow::on_actionAbout_triggered()
     {
-        Dialog2 dialog2(this);
-        dialog2.setWindowModality(Qt::WindowModal);
-        dialog2.setaLabel(program+" "+version);
-        dialog2.exec();
-    }
+             // Read donation value from adblink.json
+             QString donation;
+             QFile file(databasedir + "adblink.json");
+             if (file.open(QIODevice::ReadOnly)) {
+            QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
+            if (!doc.isNull()) {
+                              QJsonObject obj = doc.object();
+                              donation = obj["donation"].toString();
+            } else {
+                              qDebug() << "Error: Invalid JSON in adblink.json";
+            }
+            file.close();
+             } else {
+            qDebug() << "Error: Could not open adblink.json at" << databasedir;
+             }
 
+             // Create Dialog2 and pass the donation value
+             Dialog2 dialog2(this, donation);
+             dialog2.setWindowModality(Qt::WindowModal);
+             dialog2.setaLabel(program + " " + version);
+             dialog2.exec();
+    }
 
     //////////////////////////////////////////////
     void MainWindow::on_actionHelp_triggered()
@@ -3371,6 +3453,7 @@
          QString download = obj["download"].toString();
          QString install = obj["install"].toString();
          QString backup = obj["backup"].toString();
+         QString donation = obj["donation"].toString();
 
          bool checkversion = doc.object()["checkversion"].toBool();
          bool scrcpy = doc.object()["scrcpy"].toBool();
@@ -3407,6 +3490,8 @@
          dialog.setdownloaddir(download);
          dialog.setinstalldir(install);
          dialog.setbackupdir(backup);
+          dialog.setdonation(donation);
+
 
          dialog.setversionLabel(version);
 
@@ -3428,7 +3513,7 @@
              obj["startview"] = dialog.startview();
 
 
-
+             obj["donation"] = dialog.donation();
              obj["download"] = dialog.downloaddir();
              obj["install"] = dialog.installdir();
              obj["backup"] = dialog.backupdir();
@@ -3440,6 +3525,8 @@
              file.write(doc.toJson());
              file.close();
 
+
+              setDonateButtonActive(dialog.donation() != "jocala.com");
 
          }
     }

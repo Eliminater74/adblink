@@ -11,6 +11,10 @@ class adbprefDialog : public QDialog
 {
     Q_OBJECT
 
+protected:
+    void accept() override;
+
+
 public:
     explicit adbprefDialog(QWidget *parent = 0);
     ~adbprefDialog();
@@ -31,6 +35,8 @@ public:
     void setversionLabel(const QString &versiontext);
 
     void setdownloaddir(const QString &ddir);
+    void setdonation(const QString &donation);
+
 
 void setinstalldir(const QString &idir);
 void setbackupdir(const QString &bdir);
@@ -38,9 +44,7 @@ void setbackupdir(const QString &bdir);
 
 
 bool versioncheck();
-
 bool scrcpyargs();
-
 bool startview();
 
 QString downloaddir();
@@ -52,9 +56,11 @@ QString linterm();
 QString macterm();
 QString winterm();
 bool msgboxtype();
-
+QString donation();
 
 private slots:
+
+
     void on_checkButton_clicked();
     void onRequestCompleted();
 
@@ -63,10 +69,10 @@ private slots:
     QString strip2 (QString str);
 
 
-
     void on_installButton_clicked();
 
     void on_backupButton_clicked();
+
 
 
 private:
