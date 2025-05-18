@@ -47,8 +47,10 @@ Dialog2::Dialog2(QWidget *parent, const QString &donation) :
     ui->alabel->move(10, 20);
     ui->linkLabel->move(10, 50);
 
-     ui->thankLabel->move(10, 130);
-     ui->donate->move(100, 130);    // Middle-lower, hidden if donation
+     ui->thankLabel->move(10, 100);
+     ui->donate->move(100, 100);
+     ui->thankLabel2->move(25, 150);
+
 
      ui->pushButton->move(110, 240); // Below donate
 
@@ -57,18 +59,14 @@ Dialog2::Dialog2(QWidget *parent, const QString &donation) :
         ui->donate->setVisible(false);
         ui->thankLabel->setText("Thanks for your donation!");
         ui->thankLabel->setVisible(true);
+        ui->thankLabel2->setVisible(false);
     } else {
         ui->donate->setVisible(true);
         ui->thankLabel->setVisible(false);
+        ui->thankLabel2->setVisible(true);
     }
 
-    // Debug: Log widget positions
-    qDebug() << "Dialog size:" << size();
-    qDebug() << "alabel pos:" << ui->alabel->pos();
-    qDebug() << "thankLabel pos:" << ui->thankLabel->pos();
-    qDebug() << "linkLabel pos:" << ui->linkLabel->pos();
-    qDebug() << "Donate button pos:" << ui->donate->pos();
-    qDebug() << "Close button pos:" << ui->pushButton->pos();
+
 }
 
 Dialog2::~Dialog2()
