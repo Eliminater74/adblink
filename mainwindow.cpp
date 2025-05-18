@@ -4703,8 +4703,8 @@ void MainWindow::writeInstall (QString install) {
 
 }
 
+/////////////////////////////////////////////
 
-////////////////////////////////////////////
 void MainWindow::backupButton_clicked()
 {
     QString cstring;
@@ -4715,7 +4715,6 @@ void MainWindow::backupButton_clicked()
     QString editport;
     QString port;
 
-
     QString selectedDescription;
     if (!validateDeviceSelection(selectedDescription)) {
                                    return;
@@ -4723,31 +4722,26 @@ void MainWindow::backupButton_clicked()
 
     DeviceRecord device = queryDeviceRecord(selectedDescription);
 
-
-
     if (!is_package(device.xbmcpackage)) {
                                    QMessageBox::critical(this, "", device.xbmcpackage + " not installed");
+                                   logfile(device.daddr + ": Error: " + device.xbmcpackage + " not installed"); // Log error
                                    return;
     }
 
     // Use databasedir (unchanged from original)
     QString backup = readBackup(databasedir);
 
-
-
     if (!device.isusb) {
-
                                    if (device.port.isEmpty())
                   port = "5555";
-
                                    editport = ":" + port;
-
     }
 
-    cstring = getadb() + " shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
+    const QString adbPrefix = getadb() + " "; // Define adbPrefix for all ADB commands
 
-    // cstring = getadbpath() + device.daddr + editport + " shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
+    logfile("Starting backup for " + device.daddr); // Log start
 
+    cstring = adbPrefix + "shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
     QString s = getadbOutput(cstring);
     QStringList list = s.split('\n');
 
@@ -4759,7 +4753,7 @@ void MainWindow::backupButton_clicked()
                                        list[i] == "/storage/emulated" ||
                                        list[i] == "/storage" ||
                                        list[i] == "/storage/self" ||
-                                       list[i] == NULL) {
+                                       list[i].isEmpty()) { // Replaced NULL with isEmpty()
                   list.removeAt(i);
                   i--;
                                    }
@@ -4771,7 +4765,7 @@ void MainWindow::backupButton_clicked()
     if (list.count() > 1) {
                                    restDialog dialog(this);
                                    dialog.setWindowModality(Qt::WindowModal);
-                                   dialog.setWindowTitle("Backup");
+                                   dialog.setWindowTitle("Backup for " + device.daddr); // Added device.daddr
                                    dialog.setadb_restore(list);
                                    if (dialog.exec() == QDialog::Accepted) {
                   n_data_root = dialog.restore_data_root();
@@ -4787,7 +4781,7 @@ void MainWindow::backupButton_clicked()
                                    n_data_root.append("/");
     }
 
-    if (device.scoped) {
+    if (isScoped()) { // Replaced device.scoped with isScoped()
                                    mcpath = n_data_root + "kodi_data/" + device.xbmcpackage;
                                    kbase = n_data_root + "kodi_data/";
     } else {
@@ -4795,48 +4789,45 @@ void MainWindow::backupButton_clicked()
                                    kbase = n_data_root + "Android/data/";
     }
 
-    cstring = getadb() + " shell ls " + mcpath + "/files/.kodi";
+    cstring = adbPrefix + "shell ls " + mcpath + "/files/.kodi";
     if (!getreturncode(cstring)) {
                                    QMessageBox::critical(this, "", "Kodi's files not found at " + mcpath);
-                                   logfile("Backup: kodi's files not found at " + mcpath);
+                                   logfile(device.daddr + ": Error: Kodi's files not found at " + mcpath); // Log error with device.daddr
                                    return;
     }
 
     QDir backupDir(backup);
-    QString dir = QFileDialog::getExistingDirectory(this, "Choose Backup Destination",
+    QString dir = QFileDialog::getExistingDirectory(this, "Choose Backup Destination for " + device.daddr, // Added device.daddr
                                                     backupDir.absolutePath(),
                                                     QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 
     if (!dir.isEmpty()) {
                                    QMessageBox::StandardButton reply;
-                                   reply = QMessageBox::question(this, "Backup", "backup to " + dir,
+                                   reply = QMessageBox::question(this, "Backup", "Backup to " + dir + " for " + device.daddr + "?", // Added device.daddr
                                                                  QMessageBox::Yes | QMessageBox::No);
                                    if (reply == QMessageBox::Yes) {
-                  logfile("backup function started");
                   mcpath = mcpath + "/";
                   dir = dir + "/";
                   if (os == 1) {
                     dir.replace("/", "\\");
                   }
 
-                  cstring = getadb() + " pull " + mcpath + "files/.kodi/. " + '"' + dir + '"';
-                  logfile(cstring);
-
+                  cstring = adbPrefix + "pull " + mcpath + "files/.kodi/. " + '"' + dir + '"';
                   command = RunLongProcess(cstring, "backup running");
-                  logfile("backup: " + cstring);
 
-                  if (QDir(dir + "userdata").exists()) {
+                  if (QDir(dir + "userdata").exists()) { // Preserved original validation
                     writeBackup(dir);
-                    QMessageBox::information(this, "", "Backup complete");
+                    QMessageBox::information(this, "", "Backup complete for " + device.daddr); // Added device.daddr
+                    logfile("Backup completed successfully for " + device.daddr); // Log success
                   } else {
-                    logfile("backup: " + command);
-                    QMessageBox::critical(this, "", "Backup Failed. See Log.");
+                    QMessageBox::critical(this, "", "Backup failed for " + device.daddr + ". See log."); // Added device.daddr
+                    logfile(device.daddr + ": Error: Backup failed: " + command); // Log error
                     return;
                   }
                                    }
+    } else {
+                                   logfile(device.daddr + ": Error: No backup destination selected"); // Log error
     }
-
-    logfile("Backup complete");
 }
 
 /////////////////////////////////////////////
