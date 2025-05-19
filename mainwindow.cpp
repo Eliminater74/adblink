@@ -185,13 +185,6 @@
          ui->statusBar->addPermanentWidget(ui->progressBar);
          ui->progressBar->setHidden(true);
 
-/*
-         QPixmap pix(":/assets/donatel.png");
-         QIcon icon(pix);
-         ui->donate->setIcon(icon);
-         ui->donate->setText("");
-         ui->donate->setIconSize(pix.size());
-*/
 
 
          ui->server_running->setText(adbstr2);
@@ -307,10 +300,10 @@
 
         }
 
-        setFixedSize(575,370);
+        setFixedSize(575,390);
         buttonsetup();
         gridsetup();
-        setupDonateButton(ui->centralWidget, 140, 304);
+        setupDonateButton(ui->centralWidget, 132, 308);
 
         QString donation = readDonationValue();
         setDonateButtonActive(donation != "jocala.com");
@@ -332,59 +325,6 @@
 
 
     }
-
-
-/////////////////////////////////////////////////////
-
- void MainWindow::connections()
-    {
-         // grid 1
-         connect(ui->fmButton, &QPushButton::clicked, this, &MainWindow::fmButton_clicked);
-         connect(ui->adbshellButton1, &QPushButton::clicked, this, &MainWindow::adbshellButton_clicked);
-         connect(ui->backupButton, &QPushButton::clicked, this, &MainWindow::backupButton_clicked);
-         connect(ui->restoreButton, &QPushButton::clicked, this, &MainWindow::restoreButton_clicked);
-         connect(ui->sideload_Button, &QPushButton::clicked, this, &MainWindow::sideload_Button_clicked);
-         connect(ui->uninstall_Button, &QPushButton::clicked, this, &MainWindow::uninstall_Button_clicked);
-         connect(ui->mvdataButton, &QPushButton::clicked, this, &MainWindow::mvdataButton_clicked);
-         connect(ui->pushTimers, &QPushButton::clicked, this, &MainWindow::pushTimers_clicked);
-         connect(ui->screencap1, &QPushButton::clicked, this, &MainWindow::screenCap);
-         connect(ui->stopADB, &QPushButton::clicked, this, &MainWindow::killServer_clicked);
-         connect(ui->scpyButton, &QPushButton::clicked, this, &MainWindow::scpyButton_clicked);
-         connect(ui->cacheButton, &QPushButton::clicked, this, &MainWindow::cacheButton_clicked);
-         connect(ui->doConsole, &QPushButton::clicked, this, &MainWindow::doConsole_clicked);
-         connect(ui->keypadButton, &QPushButton::clicked, this, &MainWindow::keypadButton_clicked);
-         connect(ui->startapp, &QPushButton::clicked, this, &MainWindow::startapp_clicked);
-         connect(ui->stopapp, &QPushButton::clicked, this, &MainWindow::stopapp_clicked);
-
-         // grid2
-         connect(ui->fmButton_2, &QPushButton::clicked, this, &MainWindow::fmButton_clicked);
-         connect(ui->sideload_Button_2, &QPushButton::clicked, this, &MainWindow::sideload_Button_clicked);
-         connect(ui->uninstall_Button_2, &QPushButton::clicked, this, &MainWindow::uninstall_Button_clicked);
-         connect(ui->infoButton, &QPushButton::clicked, this, &MainWindow::on_actionArchitecture_triggered);
-         connect(ui->screencap2, &QPushButton::clicked, this, &MainWindow::screenCap);
-         connect(ui->stopADB2, &QPushButton::clicked, this, &MainWindow::killServer_clicked);
-         connect(ui->startapp_2, &QPushButton::clicked, this, &MainWindow::startapp_clicked);
-         connect(ui->stopapp_2, &QPushButton::clicked, this, &MainWindow::stopapp_clicked);
-         connect(ui->adbshellButton_2, &QPushButton::clicked, this, &MainWindow::adbshellButton_clicked);
-         connect(ui->doConsole_2, &QPushButton::clicked, this, &MainWindow::doConsole_clicked);
-         connect(ui->textButton, &QPushButton::clicked, this, &MainWindow::on_actionSend_text_triggered);
-         connect(ui->scpyButton_2, &QPushButton::clicked, this, &MainWindow::scpyButton_clicked);
-
-
-         // adbconnect/edit
-         connect(ui->connButton, &QPushButton::clicked, this, &MainWindow::connButton_clicked);
-         connect(ui->disButton, &QPushButton::clicked, this, &MainWindow::disButton_clicked);
-         connect(ui->newRecordButton, &QPushButton::clicked, this, [this]() {dataentry(true);});
-         connect(ui->editRecordButton, &QPushButton::clicked, this, [this]() {dataentry(false);});
-         connect(ui->delRecordButton, &QPushButton::clicked, this, &MainWindow::delRecordButton_clicked);
-         connect(ui->clearAdhocButton, &QPushButton::clicked, this, &MainWindow::on_clearAdhocButton_clicked);
-
-         // devices
-         connect(ui->deviceTable, &QTableWidget::doubleClicked, this, &MainWindow::fmButton_clicked);
-
-    }
-
-
 
 
 
@@ -452,6 +392,7 @@
 
     }
 
+///////////////////////////////////////////
 
     void MainWindow::gridsetup()
     {
@@ -4791,6 +4732,7 @@ void MainWindow::writeInstall (QString install) {
 
 void MainWindow::backupButton_clicked()
 {
+
     QString cstring;
     QString command;
     QString mcpath;
@@ -4913,6 +4855,7 @@ void MainWindow::backupButton_clicked()
                                    logfile(device.daddr + ": Error: No backup destination selected"); // Log error
     }
 }
+
 
 /////////////////////////////////////////////
 
@@ -7577,6 +7520,58 @@ void MainWindow::on_Erase_adbLink_database_triggered()
    }
 }
 
+
+
+
+
+/////////////////////////////////////////////////////
+
+void MainWindow::connections()
+{
+   // grid 1
+   connect(ui->fmButton, &QPushButton::clicked, this, &MainWindow::fmButton_clicked);
+   connect(ui->adbshellButton1, &QPushButton::clicked, this, &MainWindow::adbshellButton_clicked);
+   connect(ui->backupButton, &QPushButton::clicked, this, &MainWindow::backupButton_clicked);
+   connect(ui->restoreButton, &QPushButton::clicked, this, &MainWindow::restoreButton_clicked);
+   connect(ui->sideload_Button, &QPushButton::clicked, this, &MainWindow::sideload_Button_clicked);
+   connect(ui->uninstall_Button, &QPushButton::clicked, this, &MainWindow::uninstall_Button_clicked);
+   connect(ui->mvdataButton, &QPushButton::clicked, this, &MainWindow::mvdataButton_clicked);
+   connect(ui->pushTimers, &QPushButton::clicked, this, &MainWindow::pushTimers_clicked);
+   connect(ui->screencap1, &QPushButton::clicked, this, &MainWindow::screenCap);
+   connect(ui->stopADB, &QPushButton::clicked, this, &MainWindow::killServer_clicked);
+   connect(ui->scpyButton, &QPushButton::clicked, this, &MainWindow::scpyButton_clicked);
+   connect(ui->cacheButton, &QPushButton::clicked, this, &MainWindow::cacheButton_clicked);
+   connect(ui->doConsole, &QPushButton::clicked, this, &MainWindow::doConsole_clicked);
+   connect(ui->keypadButton, &QPushButton::clicked, this, &MainWindow::keypadButton_clicked);
+   connect(ui->startapp, &QPushButton::clicked, this, &MainWindow::startapp_clicked);
+   connect(ui->stopapp, &QPushButton::clicked, this, &MainWindow::stopapp_clicked);
+
+   // grid2
+   connect(ui->fmButton_2, &QPushButton::clicked, this, &MainWindow::fmButton_clicked);
+   connect(ui->sideload_Button_2, &QPushButton::clicked, this, &MainWindow::sideload_Button_clicked);
+   connect(ui->uninstall_Button_2, &QPushButton::clicked, this, &MainWindow::uninstall_Button_clicked);
+   connect(ui->infoButton, &QPushButton::clicked, this, &MainWindow::on_actionArchitecture_triggered);
+   connect(ui->screencap2, &QPushButton::clicked, this, &MainWindow::screenCap);
+   connect(ui->stopADB2, &QPushButton::clicked, this, &MainWindow::killServer_clicked);
+   connect(ui->startapp_2, &QPushButton::clicked, this, &MainWindow::startapp_clicked);
+   connect(ui->stopapp_2, &QPushButton::clicked, this, &MainWindow::stopapp_clicked);
+   connect(ui->adbshellButton_2, &QPushButton::clicked, this, &MainWindow::adbshellButton_clicked);
+   connect(ui->doConsole_2, &QPushButton::clicked, this, &MainWindow::doConsole_clicked);
+   connect(ui->textButton, &QPushButton::clicked, this, &MainWindow::on_actionSend_text_triggered);
+   connect(ui->scpyButton_2, &QPushButton::clicked, this, &MainWindow::scpyButton_clicked);
+
+   // adbconnect/edit
+   connect(ui->connButton, &QPushButton::clicked, this, &MainWindow::connButton_clicked);
+   connect(ui->disButton, &QPushButton::clicked, this, &MainWindow::disButton_clicked);
+   connect(ui->newRecordButton, &QPushButton::clicked, this, [this]() {dataentry(true);});
+   connect(ui->editRecordButton, &QPushButton::clicked, this, [this]() {dataentry(false);});
+   connect(ui->delRecordButton, &QPushButton::clicked, this, &MainWindow::delRecordButton_clicked);
+   connect(ui->clearAdhocButton, &QPushButton::clicked, this, &MainWindow::on_clearAdhocButton_clicked);
+
+   // devices
+   connect(ui->deviceTable, &QTableWidget::doubleClicked, this, &MainWindow::fmButton_clicked);
+
+}
 
 
 

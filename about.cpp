@@ -18,10 +18,12 @@ Dialog2::Dialog2(QWidget *parent, const QString &donation) :
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     // Set fixed size for the dialog (client area)
-    setFixedSize(300, 300);
+    setFixedSize(300, 250);
 
     // Disable the layout to allow manual positioning
-    setLayout(nullptr);
+    setLayout
+
+        (nullptr);
 
     // Center-align labels
     ui->alabel->setAlignment(Qt::AlignCenter);
@@ -34,11 +36,17 @@ Dialog2::Dialog2(QWidget *parent, const QString &donation) :
     ui->linkLabel->setFixedSize(280, 50);
 
     // Set up the donate button icon and size
-    QPixmap pix(":/assets/donate.png");
+    QPixmap pix(":/assets/donate.png"); // 147x47
     QIcon icon(pix);
     ui->donate->setIcon(icon);
-    ui->donate->setIconSize(pix.size());
-    ui->donate->setFixedSize(pix.size().boundedTo(QSize(100, 40)));
+
+    // Scale the icon to fit within the button, preserving aspect ratio
+    QSize scaledSize = pix.scaled(90, 36, Qt::KeepAspectRatio).size(); // Approx. 90x29
+    ui->donate->setIconSize(scaledSize);
+    ui->donate->setFixedSize(QSize(100, 40)); // Enough room for icon + margins
+
+    // Reduce button margins to maximize icon space
+    ui->donate->setStyleSheet("QPushButton { margin: 2px; padding: 2px; }");
 
     // Set fixed size for close button
     ui->pushButton->setFixedSize(80, 30);
@@ -46,15 +54,12 @@ Dialog2::Dialog2(QWidget *parent, const QString &donation) :
     // Manually position all widgets
     ui->alabel->move(10, 20);
     ui->linkLabel->move(10, 50);
+    ui->thankLabel->move(10, 100);
+    ui->donate->move((300 - 100) / 2, 100);
+    ui->thankLabel2->move(40, 150);
+    ui->pushButton->move(110, 200);
 
-     ui->thankLabel->move(10, 100);
-     ui->donate->move(100, 100);
-     ui->thankLabel2->move(25, 150);
 
-
-     ui->pushButton->move(110, 240); // Below donate
-
-    // Configure UI based on donation value
     if (donation == "jocala.com") {
         ui->donate->setVisible(false);
         ui->thankLabel->setText("Thanks for your donation!");
@@ -63,6 +68,7 @@ Dialog2::Dialog2(QWidget *parent, const QString &donation) :
     } else {
         ui->donate->setVisible(true);
         ui->thankLabel->setVisible(false);
+        ui->thankLabel2->setText("Donations fund adblink's development!");
         ui->thankLabel2->setVisible(true);
     }
 
