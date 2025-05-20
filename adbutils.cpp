@@ -6,6 +6,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QFile>
+#include "getlocaladb.h"
 
 QString getadbpath()
 {
@@ -21,6 +22,8 @@ QString getadbpath()
     adbPath += ".exe"; // Windows-specific
 #endif
     adbPath = QDir::cleanPath(adbPath);
+
+  /*
 
     // Check if adblink.json exists
     if (QFileInfo::exists(databasedir + "/adblink.json")) {
@@ -45,6 +48,10 @@ QString getadbpath()
             }
         }
     }
+*/
+
+    if (getlocaladb() != "")
+        adbPath=getlocaladb();
 
     return adbPath;
 }

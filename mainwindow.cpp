@@ -27,6 +27,7 @@
     #include "logfile.h"
     #include "setpdialog.h"
     #include "adbutils.h"
+    #include "getlocaladb.h"
 
     #ifdef __WIN32__
       #include "windows.h"
@@ -305,6 +306,7 @@
 
         QString donation = readDonationValue();
         setDonateButtonActive(donation != "jocala.com");
+
 
 
         connections();
@@ -3973,27 +3975,12 @@
            QString dropdown = obj["dropdown"].toString();
            int mcheck=dropdown.toInt();
 
-           // set PATH=%PATH%;C:\xampp\php
+
 
            logfile("detaching console process");
 
             QString cstring = "";
             QString command ="";
-
-
-
-            bool hasValidLocalAdb = false;
-            if (QFileInfo::exists(databasedir + "/adblink.json")) {
-           QFile file(databasedir + "/adblink.json");
-           if (file.open(QIODevice::ReadOnly)) {
-                    QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
-                    file.close();
-                    if (doc.isObject()) {
-             QJsonObject obj = doc.object();
-             hasValidLocalAdb = obj.contains("localadb") && !obj["localadb"].toString().isEmpty();
-                    }
-                 }
-            }
 
 
 
@@ -4016,8 +4003,7 @@
                        QTextStream out(&file);
 
                       out  <<  "echo off"  << endl;
-
-                        if(!hasValidLocalAdb)
+                      if(getlocaladb() == "")
                           out  << "set PATH=%PATH%;"+adbfiles+";"<< endl;
 
 
@@ -4025,11 +4011,6 @@
                        file.flush();
                        file.close();
 
-
-     //  if (mcheck == 0)
-       //    QProcess::startDetached("cmd.exe", {"/k", commstr});
-      // else
-      //     QProcess::startDetached("wt -d c:\\ cmd /k "+commstr);
 
                        QProcess::startDetached("cmd.exe", QStringList() << "/c" << "start" << ""  << commstr);
 
@@ -4066,7 +4047,7 @@
                        out  << "#!/bin/sh" << endl;
 
 
-                     if(!hasValidLocalAdb)
+                     if(getlocaladb() == "")
                         out  << "export PATH="+pathdir+":$PATH" << endl;
 
 
@@ -4172,19 +4153,6 @@
 
 
 
-              bool hasValidLocalAdb = false;
-              if (QFileInfo::exists(databasedir + "/adblink.json")) {
-                 QFile file(databasedir + "/adblink.json");
-                 if (file.open(QIODevice::ReadOnly)) {
-                    QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
-                    file.close();
-                    if (doc.isObject()) {
-             QJsonObject obj = doc.object();
-             hasValidLocalAdb = obj.contains("localadb") && !obj["localadb"].toString().isEmpty();
-                    }
-                 }
-              }
-
 
 
 
@@ -4212,7 +4180,7 @@
 
                  QTextStream out(&file);
 
-                 qDebug() << getadbpath();
+
 
                   out << "#!/bin/sh" << endl;
                    cstring = getadbpath() + " -s " + daddr + " shell -t \"export PATH=\\$PATH:/data/local/tmp/adblink; sh -i\"";
@@ -4640,7 +4608,7 @@
 
   out << "echo off" << endl;
 
-  if (!hasValidLocalAdb)
+  if (getlocaladb() == "")
      out << "set PATH=%PATH%;" + adbfiles + ";" << endl;
 
   out << "adb.exe -s " + daddr + " shell -t \"export PATH=\\$PATH:/data/local/tmp/adblink; export PS1=\\$HOSTNAME:\\$PWD\\$\\ ; sh -i\"" << endl;

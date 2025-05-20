@@ -19,6 +19,7 @@ SOURCES += main.cpp\
     deviceinfodialog.cpp \
     dragdialog.cpp \
     getadbdata.cpp \
+    getlocaladb.cpp \
     getreturncode.cpp \
     logfile.cpp \
     mainwindow.cpp \
@@ -62,6 +63,7 @@ HEADERS  += mainwindow.h \
     devicerecord.h \
     dragdialog.h \
     getadbdata.h \
+    getlocaladb.h \
     getreturncode.h \
     helpdialog.h \
     logfile.h \
