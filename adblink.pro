@@ -149,3 +149,9 @@ QMAKE_CXXFLAGS += -Wno-deprecated-declarations
 CONFIG+=sdk_no_version_check
 
 OTHER_FILES +=
+
+qmake
+
+INCLUDEPATH += /Users/jeff/qtbuild
+
+
