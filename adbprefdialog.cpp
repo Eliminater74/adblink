@@ -12,6 +12,9 @@
 #include <QDir>
 #include <QDialogButtonBox>
 #include <QAbstractButton>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QFileInfo>
 
 #ifdef Q_OS_LINUX
  int osp=0;
@@ -28,15 +31,37 @@ int osp=2;
      m_networkManager(new QNetworkAccessManager(this))
  {
      ui->setupUi(this);
-     this->setFixedHeight(360);
-     this->setFixedWidth(550);
+     this->setFixedHeight(415);
+     this->setFixedWidth(310);
+
+
+#ifdef Q_OS_LINUX
+     ui->linTerm->move(10, 150);
+     ui->macTerm->setVisible(false);
+     ui->macTerm->setEnabled(false);
+#elif defined(Q_OS_WIN)
+     ui->macTerm->setVisible(false);
+     ui->macTerm->setEnabled(false);
+     ui->linTerm->setVisible(false);
+     ui->linTerm->setEnabled(false);
+#elif defined(Q_OS_MAC)
+     ui->macTerm->move(10, 150);
+     ui->linTerm->setVisible(false);
+     ui->linTerm->setEnabled(false);
+#endif
+
+
+
+
 
  }
 
-adbprefDialog::~adbprefDialog()
-{
-    delete ui;
-}
+ adbprefDialog::~adbprefDialog()
+ {
+     delete ui;
+ }
+
+
 
 void adbprefDialog::on_checkButton_clicked()
 {
@@ -157,6 +182,14 @@ void adbprefDialog::setdownloaddir(const QString &ddir)
 }
 
 
+
+void adbprefDialog::setlocaladb(const QString &localadb)
+{
+    ui->localadb->setText(localadb);
+}
+
+
+
 void adbprefDialog::setdonation(const QString &donation)
 {
     ui->donation->setText(donation);
@@ -241,6 +274,10 @@ QString adbprefDialog::backupdir() {
    return ui->bfilepath->text();
 }
 
+
+QString adbprefDialog::localadb() {
+   return ui->localadb->text();
+}
 
 
 QString adbprefDialog::linterm() {
@@ -328,3 +365,74 @@ void adbprefDialog::accept() {
     }
     QDialog::accept(); // Accept if validation passes
 }
+
+void adbprefDialog::on_adbButton_clicked()
+{
+    QString result = selectAdbDirectory();
+    if (!result.isEmpty()) {
+        ui->localadb->setText(result);
+    } else {
+        qDebug() << "No valid ADB directory selected";
+    }
+}
+
+
+
+// Member function to select ADB directory
+QString adbprefDialog::selectAdbDirectory() {
+    // Determine starting directory
+    QString startPath = QDir::homePath(); // Default to home directory
+#ifdef Q_OS_MAC
+    startPath = "/"; // Start at root on macOS to access /usr/local/
+#elif defined(Q_OS_WIN)
+    startPath = QDir::homePath(); // Use home directory on Windows
+#else
+    startPath = QDir::rootPath(); // Use root (/) on Linux/other Unix-like systems
+#endif
+
+    // Create QFileDialog with non-native dialog
+    QFileDialog dialog(this, tr("Select ADB or Directory"), startPath);
+    dialog.setFileMode(QFileDialog::ExistingFile); // Allow selecting a file
+    dialog.setOption(QFileDialog::DontResolveSymlinks, true);
+    dialog.setOption(QFileDialog::DontUseNativeDialog, true); // Force Qt dialog
+
+    // Show all files and directories, including hidden
+    dialog.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden);
+    dialog.setOption(QFileDialog::ReadOnly, true);
+    dialog.setViewMode(QFileDialog::List);
+
+    // Show dialog and get selected file or directory
+    QString selectedPath;
+    if (dialog.exec()) {
+        selectedPath = dialog.selectedFiles().value(0);
+    }
+
+    // Check if user canceled the dialog
+    if (selectedPath.isEmpty()) {
+        return QString();
+    }
+
+    // Get the directory containing the selected file
+    QFileInfo fileInfo(selectedPath);
+    QString dirPath = fileInfo.isDir() ? selectedPath : fileInfo.absolutePath();
+
+    // Use native separators for the path
+    dirPath = QDir::toNativeSeparators(dirPath);
+
+    // Check for adb or adb.exe in the directory
+    QFileInfo adbFile(dirPath + QDir::separator() + "adb");
+    QFileInfo adbExeFile(dirPath + QDir::separator() + "adb.exe");
+
+    if (!adbFile.exists() && !adbExeFile.exists()) {
+        QMessageBox::warning(
+            this,
+            tr("Invalid Directory"),
+            tr("The selected directory does not contain 'adb' or 'adb.exe'.")
+            );
+        return QString();
+    }
+
+    // Return the valid directory path
+    return dirPath;
+}
+

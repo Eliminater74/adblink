@@ -264,12 +264,7 @@
 
            if (!QFileInfo::exists(databasedir+"/adblink.json"))
              {
-
-
-
                      QJsonObject obj;
-
-
 
                      obj["checkversion"] = true;
                      obj["scrcpy"] = true;
@@ -279,6 +274,9 @@
                      obj["install"] = QDir::homePath();
                      obj["backup"] = QDir::homePath();
                      obj["donation"] = "";
+                     obj["localadb"] = "";
+                     obj["stopapp"] = "org.xbmc.kodi";
+                     obj["startapp"] = "org.xbmc.kodi/org.xbmc.kodi.Splash";
 
                      QJsonDocument doc(obj);
 
@@ -326,6 +324,7 @@
 
     }
 
+/////////////////////////////////
 
 
     void MainWindow::buttonsetup()
@@ -496,7 +495,6 @@
       qDebug() << "Error: Failed to load :/assets/donatel.png";
       donateButton->setText("Donate");
          } else {
-      qDebug() << "Pixmap size:" << pix.size();
       QIcon icon(pix);
       donateButton->setIcon(icon);
       donateButton->setText("");
@@ -2497,85 +2495,7 @@
 
     }
 
-    /////////////////////////////////////////////
 
-     void MainWindow::stopapp_clicked()
-
-    {
-
-        QString selectedDescription;
-        if (!validateDeviceSelection(selectedDescription)) {
-            return;
-        }
-
-        DeviceRecord device = queryDeviceRecord(selectedDescription);
-
-        if (device.ostype != "0") {
-            QMessageBox::critical(this, "Unavailable", "Android devices only.");
-            return;
-        }
-
-        bool startstop;
-
-        QString stopapp;
-
-        if (QFileInfo::exists(databasedir+"/stopapp.json"))
-            startstop = true;
-        else
-            startstop = false;
-
-        if (!startstop)
-        {
-
-
-
-            QJsonObject obj;
-            obj["stopapp"] = "org.xbmc.kodi";
-            QJsonDocument doc(obj);
-            QFile file(databasedir+"stopapp.json");
-            file.open(QIODevice::WriteOnly);
-            file.write(doc.toJson());
-            file.close();
-
-
-        }
-
-
-
-        QJsonObject obj;
-        QJsonDocument doc(obj);
-        QFile file(databasedir+"stopapp.json");
-        file.open(QIODevice::ReadOnly);
-        doc = QJsonDocument::fromJson(file.readAll());
-        obj = doc.object();
-        stopapp=obj["stopapp"].toString();
-        file.close();
-
-
-        forcequitDialog dialog(false,stopapp,this);
-        dialog.setWindowModality(Qt::WindowModal);
-
-        if(dialog.exec() == QDialog::Accepted)
-        {
-
-
-            QString cstring = getadb() + " shell am force-stop "+dialog.packagename();
-            QString command=getadbOutput(cstring);
-            logfile(cstring);
-            logfile(command);
-
-            QJsonObject obj;
-            obj["stopapp"] = dialog.packagename();
-            QJsonDocument doc(obj);
-            QFile file(databasedir+"stopapp.json");
-            file.open(QIODevice::WriteOnly);
-            file.write(doc.toJson());
-            file.close();
-
-        }
-
-
-    }
 
     ///////////////////////////////////////////////
     bool MainWindow::is_busybox()
@@ -3395,6 +3315,8 @@
          QString install = obj["install"].toString();
          QString backup = obj["backup"].toString();
          QString donation = obj["donation"].toString();
+         QString localadb = obj["localadb"].toString();
+
 
          bool checkversion = doc.object()["checkversion"].toBool();
          bool scrcpy = doc.object()["scrcpy"].toBool();
@@ -3429,6 +3351,7 @@
          dialog.setwinterm(dropdown.toInt());
 
          dialog.setdownloaddir(download);
+         dialog.setlocaladb(localadb);
          dialog.setinstalldir(install);
          dialog.setbackupdir(backup);
           dialog.setdonation(donation);
@@ -3458,6 +3381,8 @@
              obj["download"] = dialog.downloaddir();
              obj["install"] = dialog.installdir();
              obj["backup"] = dialog.backupdir();
+             obj["localadb"] = dialog.localadb();
+
 
              QJsonDocument doc(obj);
 
@@ -4057,6 +3982,19 @@
 
 
 
+            bool hasValidLocalAdb = false;
+            if (QFileInfo::exists(databasedir + "/adblink.json")) {
+           QFile file(databasedir + "/adblink.json");
+           if (file.open(QIODevice::ReadOnly)) {
+                    QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
+                    file.close();
+                    if (doc.isObject()) {
+             QJsonObject obj = doc.object();
+             hasValidLocalAdb = obj.contains("localadb") && !obj["localadb"].toString().isEmpty();
+                    }
+                 }
+            }
+
 
 
             if (os == 1)
@@ -4077,9 +4015,10 @@
 
                        QTextStream out(&file);
 
-                       out  <<  "echo off"  << endl;
+                      out  <<  "echo off"  << endl;
 
-                       out  << "set PATH=%PATH%;"+adbfiles+";"<< endl;
+                        if(!hasValidLocalAdb)
+                          out  << "set PATH=%PATH%;"+adbfiles+";"<< endl;
 
 
 
@@ -4125,8 +4064,14 @@
 
                       QTextStream out(&file);
                        out  << "#!/bin/sh" << endl;
-                       out  << "export PATH="+pathdir+":$PATH" << endl;
-                       out  << "/bin/sh" << endl;
+
+
+                     if(!hasValidLocalAdb)
+                        out  << "export PATH="+pathdir+":$PATH" << endl;
+
+
+
+                     out  << "/bin/sh" << endl;
 
 
                       file.flush();
@@ -4211,8 +4156,7 @@
                  daddr = device.daddr;
               } else {
                  port = device.port.isEmpty() ? "5555" : device.port;
-                 daddr = device.daddr + ":" + port;
-              }
+                 daddr = device.daddr + ":" + port; }
 
 
 
@@ -4228,6 +4172,18 @@
 
 
 
+              bool hasValidLocalAdb = false;
+              if (QFileInfo::exists(databasedir + "/adblink.json")) {
+                 QFile file(databasedir + "/adblink.json");
+                 if (file.open(QIODevice::ReadOnly)) {
+                    QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
+                    file.close();
+                    if (doc.isObject()) {
+             QJsonObject obj = doc.object();
+             hasValidLocalAdb = obj.contains("localadb") && !obj["localadb"].toString().isEmpty();
+                    }
+                 }
+              }
 
 
 
@@ -4256,12 +4212,11 @@
 
                  QTextStream out(&file);
 
-                 out << "#!/bin/sh" << endl;
+                 qDebug() << getadbpath();
 
-
-
-                    cstring = getadbpath() + " -s " + daddr + " shell -t \"export PATH=\\$PATH:/data/local/tmp/adblink; sh -i\"";
-                    out << cstring << endl;
+                  out << "#!/bin/sh" << endl;
+                   cstring = getadbpath() + " -s " + daddr + " shell -t \"export PATH=\\$PATH:/data/local/tmp/adblink; sh -i\"";
+                   out << cstring << endl;
 
 
 
@@ -4628,6 +4583,8 @@
   return backup;
 }
 
+
+///////////////////////////////
  void MainWindow::dos_shell()
  {
   QString sernum = "";
@@ -4638,6 +4595,25 @@
   if (!validateDeviceSelection(selectedDescription)) {
                  return;
   }
+
+
+  bool hasValidLocalAdb = false;
+  if (QFileInfo::exists(databasedir + "/adblink.json")) {
+                 QFile file(databasedir + "/adblink.json");
+                 if (file.open(QIODevice::ReadOnly)) {
+                    QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
+                    file.close();
+                    if (doc.isObject()) {
+                    QJsonObject obj = doc.object();
+                    hasValidLocalAdb = obj.contains("localadb") && !obj["localadb"].toString().isEmpty();
+                    }
+                 }
+  }
+
+
+
+
+
 
   DeviceRecord device = queryDeviceRecord(selectedDescription);
 
@@ -4664,7 +4640,9 @@
 
   out << "echo off" << endl;
 
-  out << "set PATH=%PATH%;" + adbfiles + ";" << endl;
+  if (!hasValidLocalAdb)
+     out << "set PATH=%PATH%;" + adbfiles + ";" << endl;
+
   out << "adb.exe -s " + daddr + " shell -t \"export PATH=\\$PATH:/data/local/tmp/adblink; export PS1=\\$HOSTNAME:\\$PWD\\$\\ ; sh -i\"" << endl;
 
 
@@ -4763,7 +4741,9 @@ void MainWindow::backupButton_clicked()
                                    editport = ":" + port;
     }
 
-    const QString adbPrefix = getadb() + " "; // Define adbPrefix for all ADB commands
+    const QString adbPrefix = getadb() + " ";
+
+
 
     logfile("Starting backup for " + device.daddr); // Log start
 
@@ -5357,81 +5337,6 @@ QString MainWindow::checkslash(QString qpath)
      qpath.append("/") ;
 
     return qpath;
-}
-
-
-void MainWindow::startapp_clicked()
-
-{
-
-    QString selectedDescription;
-    if (!validateDeviceSelection(selectedDescription)) {
-     return;
-    }
-
-    DeviceRecord device = queryDeviceRecord(selectedDescription);
-
-
-
-    bool startstop;
-    QString startapp;
-
-
-    if (QFileInfo::exists(databasedir+"/startapp.json"))
-     startstop = true;
-    else
-     startstop = false;
-
-
- //   shell am start -n org.xbmc.kodi/org.xbmc.kodi.Splash
-
-    if (!startstop)
-    {
-     QJsonObject obj;
-     obj["startapp"] = "org.xbmc.kodi/org.xbmc.kodi.Splash";
-     QJsonDocument doc(obj);
-     QFile file(databasedir+"startapp.json");
-     file.open(QIODevice::WriteOnly);
-     file.write(doc.toJson());
-     file.close();
-    }
-
-
-
-    QJsonObject obj;
-    QJsonDocument doc(obj);
-    QFile file(databasedir+"startapp.json");
-    file.open(QIODevice::ReadOnly);
-    doc = QJsonDocument::fromJson(file.readAll());
-    obj = doc.object();
-    startapp=obj["startapp"].toString();
-    file.close();
-
-
-
-    forcequitDialog dialog(true,startapp, this);
-    dialog.setWindowModality(Qt::WindowModal);
-
-
-    if(dialog.exec() == QDialog::Accepted)
-    {
-
-     QString cstring = getadb() + " shell am start -n "+dialog.packagename();
-     QString command=getadbOutput(cstring);
-     logfile(cstring);
-     logfile(command);
-
-     QJsonObject obj;
-     obj["startapp"] = dialog.packagename();
-     QJsonDocument doc(obj);
-     QFile file(databasedir+"startapp.json");
-     file.open(QIODevice::WriteOnly);
-     file.write(doc.toJson());
-     file.close();
-
-    }
-
-
 }
 
 
@@ -7521,8 +7426,141 @@ void MainWindow::on_Erase_adbLink_database_triggered()
 }
 
 
+//////////////////////////////////////////
 
+void MainWindow::stopapp_clicked()
+{
+   QString selectedDescription;
+   if (!validateDeviceSelection(selectedDescription)) {
+                      return;
+   }
 
+   DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+   QString jsonPath = QDir(databasedir).filePath("adblink.json");
+   QString stopapp = "org.xbmc.kodi"; // Default
+   QJsonObject jsonObj;
+
+   // Read existing JSON to preserve all fields
+   QFile file(jsonPath);
+   if (file.exists()) {
+                      if (!file.open(QIODevice::ReadOnly)) {
+                          QMessageBox::critical(this, "Error", "Cannot read adblink.json.");
+                          return;
+                      }
+                      QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
+                      file.close();
+                      if (doc.isObject()) {
+                          jsonObj = doc.object();
+                          if (jsonObj.contains("stopapp")) {
+               stopapp = jsonObj["stopapp"].toString();
+                          }
+                      } else {
+                          qWarning() << "Invalid JSON in adblink.json";
+                      }
+   }
+
+   forcequitDialog dialog(false, stopapp, this);
+   dialog.setWindowModality(Qt::WindowModal);
+   if (dialog.exec() != QDialog::Accepted) {
+                      return;
+   }
+
+   QString package = dialog.packagename();
+   if (package.isEmpty()) {
+                      QMessageBox::critical(this, "Error", "Invalid package name.");
+                      return;
+   }
+
+   QString cstring = getadb() + " shell am force-stop " + package;
+   QString command = getadbOutput(cstring);
+   if (command.contains("error", Qt::CaseInsensitive)) {
+                      qWarning() << "ADB command failed: " << command;
+                      QMessageBox::warning(this, "Warning", "Failed to stop application.");
+   }
+   logfile(cstring);
+   logfile(command);
+
+   // Update JSON only if stopapp changed
+   if (stopapp != package) {
+                      jsonObj["stopapp"] = package;
+                      if (!file.open(QIODevice::WriteOnly)) {
+                          qWarning() << "Cannot write to adblink.json";
+                          QMessageBox::critical(this, "Error", "Cannot save configuration.");
+                          return;
+                      }
+                      file.write(QJsonDocument(jsonObj).toJson());
+                      file.close();
+   }
+}
+
+/////////////////////////////////////////
+
+void MainWindow::startapp_clicked()
+{
+   QString selectedDescription;
+   if (!validateDeviceSelection(selectedDescription)) {
+                      return;
+   }
+
+   DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+   QString jsonPath = QDir(databasedir).filePath("adblink.json");
+   QString startapp = "org.xbmc.kodi/org.xbmc.kodi.Splash"; // Default
+   QJsonObject jsonObj;
+
+   // Read existing JSON to preserve all fields
+   QFile file(jsonPath);
+   if (file.exists()) {
+                      if (!file.open(QIODevice::ReadOnly)) {
+                          QMessageBox::critical(this, "Error", "Cannot read adblink.json.");
+                          return;
+                      }
+                      QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
+                      file.close();
+                      if (doc.isObject()) {
+                          jsonObj = doc.object();
+                          if (jsonObj.contains("startapp")) {
+               startapp = jsonObj["startapp"].toString();
+                          }
+                      } else {
+                          qWarning() << "Invalid JSON in adblink.json";
+                      }
+   }
+
+   forcequitDialog dialog(true, startapp, this);
+   dialog.setWindowModality(Qt::WindowModal);
+   if (dialog.exec() != QDialog::Accepted) {
+                      return;
+   }
+
+   QString package = dialog.packagename();
+   if (package.isEmpty()) {
+                      QMessageBox::critical(this, "Error", "Invalid package name.");
+                      return;
+   }
+
+   QString cstring = getadb() + " shell am start -n " + package;
+   QString command = getadbOutput(cstring);
+   if (command.contains("error", Qt::CaseInsensitive)) {
+                      qWarning() << "ADB command failed: " << command;
+                      QMessageBox::warning(this, "Warning", "Failed to start application.");
+   }
+   logfile(cstring);
+   logfile(command);
+
+   // Update JSON only if startapp changed
+   if (startapp != package) {
+                      jsonObj["startapp"] = package;
+                      if (!file.open(QIODevice::WriteOnly)) {
+                          qWarning() << "Cannot write to adblink.json";
+                          QMessageBox::critical(this, "Error", "Cannot save configuration.");
+                          return;
+                      }
+                      file.write(QJsonDocument(jsonObj).toJson());
+                      file.close();
+   }
+}
 
 /////////////////////////////////////////////////////
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>550</width>
-    <height>359</height>
+    <width>308</width>
+    <height>417</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -73,116 +73,233 @@
     </property>
    </item>
   </widget>
-  <widget class="QWidget" name="adbprefdialog_layoutWidget_3">
+  <widget class="QComboBox" name="linTerm">
    <property name="geometry">
     <rect>
-     <x>270</x>
-     <y>20</y>
-     <width>226</width>
-     <height>91</height>
+     <x>350</x>
+     <y>70</y>
+     <width>160</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>160</width>
+     <height>32</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>160</width>
+     <height>32</height>
+    </size>
+   </property>
+   <item>
+    <property name="text">
+     <string>Gnome Terminal</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>XFCE4 Terminal</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>KDE Konsole</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>190</y>
+     <width>257</width>
+     <height>138</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0" colspan="2">
-     <widget class="QLabel" name="label_2">
+    <item row="0" column="0">
+     <widget class="QPushButton" name="downloadButton">
+      <property name="minimumSize">
+       <size>
+        <width>110</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>110</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Default folder for pulled files&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
       <property name="text">
-       <string>Terminal Selection</string>
+       <string>Pull</string>
+      </property>
+      <property name="autoDefault">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="dfilepath">
+      <property name="minimumSize">
+       <size>
+        <width>125</width>
+        <height>21</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>125</width>
+        <height>21</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Default location for pulled files. This can be overridden via the device record.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </item>
     <item row="1" column="0">
-     <widget class="QLabel" name="versionLabel_2">
+     <widget class="QPushButton" name="installButton">
       <property name="minimumSize">
        <size>
-        <width>60</width>
-        <height>16</height>
+        <width>110</width>
+        <height>32</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>60</width>
-        <height>16</height>
+        <width>110</width>
+        <height>32</height>
        </size>
       </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Default folder for APK files&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
       <property name="text">
-       <string>macOS</string>
+       <string>Install</string>
+      </property>
+      <property name="autoDefault">
+       <bool>false</bool>
       </property>
      </widget>
     </item>
     <item row="1" column="1">
-     <widget class="QComboBox" name="macTerm">
+     <widget class="QLineEdit" name="ifilepath">
       <property name="minimumSize">
        <size>
-        <width>160</width>
-        <height>32</height>
+        <width>125</width>
+        <height>21</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>160</width>
-        <height>32</height>
+        <width>125</width>
+        <height>21</height>
        </size>
       </property>
-      <item>
-       <property name="text">
-        <string>macOS Terminal</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>iTerm2 Terminal</string>
-       </property>
-      </item>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Default location for APK files&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
      </widget>
     </item>
     <item row="2" column="0">
-     <widget class="QLabel" name="versionLabel_3">
+     <widget class="QPushButton" name="backupButton">
       <property name="minimumSize">
        <size>
-        <width>60</width>
-        <height>16</height>
+        <width>110</width>
+        <height>32</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>60</width>
-        <height>16</height>
+        <width>110</width>
+        <height>32</height>
        </size>
       </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Default folder for backup sets&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
       <property name="text">
-       <string>Linux</string>
+       <string>Backup</string>
+      </property>
+      <property name="autoDefault">
+       <bool>false</bool>
       </property>
      </widget>
     </item>
     <item row="2" column="1">
-     <widget class="QComboBox" name="linTerm">
+     <widget class="QLineEdit" name="bfilepath">
       <property name="minimumSize">
        <size>
-        <width>160</width>
+        <width>125</width>
+        <height>21</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>125</width>
+        <height>21</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Default location for backups&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QPushButton" name="adbButton">
+      <property name="minimumSize">
+       <size>
+        <width>110</width>
         <height>32</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>160</width>
+        <width>110</width>
         <height>32</height>
        </size>
       </property>
-      <item>
-       <property name="text">
-        <string>Gnome Terminal</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>XFCE4 Terminal</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>KDE Konsole</string>
-       </property>
-      </item>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Custom ADB. Leave this field blank to use adblink's included adb&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string>External ADB</string>
+      </property>
+      <property name="autoDefault">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QLineEdit" name="localadb">
+      <property name="minimumSize">
+       <size>
+        <width>125</width>
+        <height>21</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>125</width>
+        <height>21</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Custom ADB. Leave this field blank to use adblink's included adb&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="placeholderText">
+       <string>/path/to/adb</string>
+      </property>
      </widget>
     </item>
    </layout>
@@ -190,35 +307,123 @@
   <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
-     <x>80</x>
-     <y>310</y>
-     <width>330</width>
-     <height>32</height>
+     <x>10</x>
+     <y>120</y>
+     <width>197</width>
+     <height>23</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="QPushButton" name="checkButton">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Donation code</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="donation">
       <property name="minimumSize">
        <size>
-        <width>150</width>
-        <height>32</height>
+        <width>100</width>
+        <height>21</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>150</width>
-        <height>32</height>
+        <width>100</width>
+        <height>21</height>
        </size>
       </property>
-      <property name="text">
-       <string>Check for Updates</string>
-      </property>
-      <property name="autoDefault">
-       <bool>false</bool>
+      <property name="placeholderText">
+       <string/>
       </property>
      </widget>
     </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>22</y>
+     <width>235</width>
+     <height>84</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QLabel" name="versionLabel">
+      <property name="text">
+       <string>Program version</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="versioncheck">
+      <property name="text">
+       <string>Check for updates at program start</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="scrcpyargs">
+      <property name="text">
+       <string>Ask for Scrcpy arguments</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="startview">
+      <property name="text">
+       <string>Kodi view at startup</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QComboBox" name="macTerm">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>152</y>
+     <width>160</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>160</width>
+     <height>32</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>160</width>
+     <height>32</height>
+    </size>
+   </property>
+   <item>
+    <property name="text">
+     <string>macOS Terminal</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>iTerm2 Terminal</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>21</x>
+     <y>370</y>
+     <width>255</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item>
      <widget class="QPushButton" name="cancelButton">
       <property name="minimumSize">
@@ -235,6 +440,28 @@
       </property>
       <property name="text">
        <string>Cancel</string>
+      </property>
+      <property name="autoDefault">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="checkButton">
+      <property name="minimumSize">
+       <size>
+        <width>75</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>75</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Updates</string>
       </property>
       <property name="autoDefault">
        <bool>false</bool>
@@ -262,212 +489,6 @@
        <bool>false</bool>
       </property>
      </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>20</y>
-     <width>239</width>
-     <height>259</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout_2">
-    <item>
-     <widget class="QLabel" name="versionLabel">
-      <property name="text">
-       <string>Program version</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="QCheckBox" name="versioncheck">
-        <property name="text">
-         <string>Check for updates at program start</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="scrcpyargs">
-        <property name="text">
-         <string>Ask for Scrcpy arguments</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="startview">
-        <property name="text">
-         <string>Kodi view at startup</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="QLineEdit" name="donation">
-      <property name="minimumSize">
-       <size>
-        <width>100</width>
-        <height>21</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>100</width>
-        <height>21</height>
-       </size>
-      </property>
-      <property name="placeholderText">
-       <string>Donation code</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
-       <widget class="QLabel" name="directoriesLabel">
-        <property name="text">
-         <string>Default folders</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QPushButton" name="downloadButton">
-        <property name="minimumSize">
-         <size>
-          <width>90</width>
-          <height>32</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>90</width>
-          <height>32</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Default folder for pulled files&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-        <property name="text">
-         <string>Pull</string>
-        </property>
-        <property name="autoDefault">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLineEdit" name="dfilepath">
-        <property name="minimumSize">
-         <size>
-          <width>125</width>
-          <height>21</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>125</width>
-          <height>21</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Pulled files are put in this folder</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QPushButton" name="installButton">
-        <property name="minimumSize">
-         <size>
-          <width>90</width>
-          <height>32</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>90</width>
-          <height>32</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Default folder for APK files&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-        <property name="text">
-         <string>Install</string>
-        </property>
-        <property name="autoDefault">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QLineEdit" name="ifilepath">
-        <property name="minimumSize">
-         <size>
-          <width>125</width>
-          <height>21</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>125</width>
-          <height>21</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Pulled files are put in this folder</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QPushButton" name="backupButton">
-        <property name="minimumSize">
-         <size>
-          <width>90</width>
-          <height>32</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>90</width>
-          <height>32</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Default folder for backup sets&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-        <property name="text">
-         <string>Backup</string>
-        </property>
-        <property name="autoDefault">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QLineEdit" name="bfilepath">
-        <property name="minimumSize">
-         <size>
-          <width>125</width>
-          <height>21</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>125</width>
-          <height>21</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Pulled files are put in this folder</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
     </item>
    </layout>
   </widget>

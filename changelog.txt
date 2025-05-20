@@ -1,8 +1,13 @@
+NOTE: Check scrcpy prior to build/release
+
 XX/XX/25
 
 Version 6.4
 
-adb updated to Version 36.0.0-13206524
+adblink  adb updated to Version 36.0.0-13206524
+
+A locally installed adb binary can be used, 
+overriding adblink's included adb binary
 
 adblink help updated for v6.4
 

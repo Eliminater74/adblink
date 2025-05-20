@@ -27,6 +27,7 @@ public:
 
      void setstartview(const bool &startview);
 
+     QString selectAdbDirectory();
 
     void setmacterm(int macterm);
     void setlinterm(int linterm);
@@ -35,6 +36,8 @@ public:
     void setversionLabel(const QString &versiontext);
 
     void setdownloaddir(const QString &ddir);
+    void setlocaladb(const QString &localadb);
+
     void setdonation(const QString &donation);
 
 
@@ -48,6 +51,7 @@ bool scrcpyargs();
 bool startview();
 
 QString downloaddir();
+QString localadb();
 QString installdir();
 QString backupdir();
 
@@ -74,6 +78,8 @@ private slots:
     void on_backupButton_clicked();
 
 
+
+    void on_adbButton_clicked();
 
 private:
 
