@@ -214,11 +214,6 @@ private slots:
     bool isConnectedToNetwork();
 
 
-
-    void on_actionRecovery_triggered();
-
-
-
     void on_donate_clicked();
 
    void do_versioncheck();
@@ -296,7 +291,7 @@ private slots:
 
   void on_clearAdhocButton_clicked();
 
-  void on_actionReboot_bootloader_triggered();
+
 
   void on_actionPreferences_triggered();
 

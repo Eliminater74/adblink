@@ -152,6 +152,6 @@ OTHER_FILES +=
 
 qmake
 
-INCLUDEPATH += /Users/jeff/qtbuild
+INCLUDEPATH += $$HOME/qtbuild
 
 

@@ -1847,7 +1847,7 @@
 
     }
 
-
+/*
 
     //////////////////////////////////////////
 
@@ -1920,7 +1920,7 @@
     }
 
 
-
+*/
 
 
     /////////////////////////////////////////
@@ -2828,8 +2828,6 @@
          bool iskodi;
 
          busybox_permissions();
-
-
          fmdaddr = device.daddr;
 
 
@@ -2948,6 +2946,8 @@
         }
     }
 
+ ////////////////////////////////////////////////////////////
+
 
     QString MainWindow::RunLongProcess(QString cstring, QString jobname)
     {
@@ -2987,61 +2987,7 @@
         return command;
     }
 
- /*
-    ///////////////////////////////////////////////
-    QString MainWindow::RunLongProcess(QString cstring, QString jobname)
-    {
-
-    ui->progressBar->setHidden(false);
-    ui->progressBar->setValue(0);
-    QString command;
-    QString s = jobname;
-    RunProcessList << s;
-    ui->listRunningJobs->addItem(s);
-    ui->server_running->setText(s);
-
-    int tsvalue = 4000;
-
-    QTimer *timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(TimerEvent()));
-    timer->start(tsvalue);
-
-     command=getadbOutput(cstring);
-
-     RunProcessList.removeAll(s);
-
-       ui->listRunningJobs->clear();
-
-
-       for (QList<QString>::iterator it = RunProcessList.begin(); it != RunProcessList.end(); ++it) {
-         QString current = *it;
-          ui->listRunningJobs->addItem(current);
-       }
-
-
-
-
-      if (RunProcessList.count() > 0 )
-        {
-          ui->progressBar->setHidden(false);
-          ui->progressBar->setValue(0);
-         }
-      else
-        {
-           ui->progressBar->setHidden(true);
-           ui->progressBar->setValue(0);
-           ui->server_running->setText("");
-           ui->listRunningJobs->clear();
-         }
-
-         serverlabel();
-
-         return command;
-    }
-
-
-*/
-    ////////////////////////////////////////////////////////
+   ////////////////////////////////////////////////////////
 
     void MainWindow::on_actionMount_system_RO_triggered()
     {
@@ -4563,22 +4509,6 @@
   if (!validateDeviceSelection(selectedDescription)) {
                  return;
   }
-
-
-  bool hasValidLocalAdb = false;
-  if (QFileInfo::exists(databasedir + "/adblink.json")) {
-                 QFile file(databasedir + "/adblink.json");
-                 if (file.open(QIODevice::ReadOnly)) {
-                    QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
-                    file.close();
-                    if (doc.isObject()) {
-                    QJsonObject obj = doc.object();
-                    hasValidLocalAdb = obj.contains("localadb") && !obj["localadb"].toString().isEmpty();
-                    }
-                 }
-  }
-
-
 
 
 
