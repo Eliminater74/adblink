@@ -16,6 +16,7 @@ TEMPLATE = app
 SOURCES += main.cpp\
     adbutils.cpp \
     connectadb.cpp \
+    customlistwidget.cpp \
     deviceinfodialog.cpp \
     dragdialog.cpp \
     getadbdata.cpp \
@@ -59,6 +60,7 @@ HEADERS  += mainwindow.h \
     about.h \
     adbutils.h \
     connectadb.h \
+    customlistwidget.h \
     deviceinfodialog.h \
     devicerecord.h \
     dragdialog.h \

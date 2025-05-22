@@ -164,7 +164,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QListWidget" name="usblistWidget1">
+      <widget class="CustomListWidget" name="usblistWidget1">
        <property name="enabled">
         <bool>true</bool>
        </property>
@@ -192,7 +192,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QListWidget" name="usblistWidget2">
+      <widget class="CustomListWidget" name="usblistWidget2">
        <property name="minimumSize">
         <size>
          <width>221</width>
@@ -464,6 +464,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CustomListWidget</class>
+   <extends>QListWidget</extends>
+   <header location="global">customlistwidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

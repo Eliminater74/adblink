@@ -1,11 +1,9 @@
 #include "usbfiledialog.h"
-// #include "pushfiledialog.h"
 #include "ui_usbfiledialog.h"
 #include "editordialog.h"
 #include "dragdialog.h"
 #include "logfile.h"
 #include "getadbdata.h"
-#include "adbutils.h"
 #include <QProcess>
 #include <QFile>
 #include <QString>
@@ -21,7 +19,7 @@
 #include <QTimer>
 #include <QStatusBar>
 #include <QFileSystemModel>
-
+#include <QApplication>
 
 #ifdef Q_OS_LINUX
  int ost1=0;
@@ -38,55 +36,114 @@ QString quote1="\"'";
 QString quote2="'\"";
 bool do_oldfm=false;
 
-///////////////////////////////////////////////////////
+
+#include "usbfiledialog.h"
+#include "ui_usbfiledialog.h"
+#include "customlistwidget.h" // Ensure this is included
+#include <QDir>
+
+
+#include "usbfiledialog.h"
+#include "ui_usbfiledialog.h"
+#include "customlistwidget.h"
+#include <QDir>
+#include <QApplication>
+#include <QDebug>
+
+#include "usbfiledialog.h"
+#include "ui_usbfiledialog.h"
+#include "customlistwidget.h"
+#include <QDir>
+#include <QApplication>
+#include <QDebug>
+#include "usbfiledialog.h"
+#include "ui_usbfiledialog.h"
+#include "customlistwidget.h"
+#include <QDir>
+#include <QApplication>
+#include <QDebug>
+
 usbfileDialog::usbfileDialog(bool iskodi, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::usbfileDialog)
 {
-
     ui->setupUi(this);
 
+    // Initialize directories if empty
+    if (current_directory1.isEmpty()) current_directory1 = "/sdcard/";
+    if (current_directory2.isEmpty()) current_directory2 = "/sdcard/";
+    qDebug() << "Constructor: initializing current_directory1:" << current_directory1
+             << "current_directory2:" << current_directory2;
 
+    // Set currentDirectory property for drag-and-drop
+    ui->usblistWidget1->setProperty("currentDirectory", current_directory1);
+    ui->usblistWidget2->setProperty("currentDirectory", current_directory2);
+    qDebug() << "Constructor: set currentDirectory for usblistWidget1:" << ui->usblistWidget1->property("currentDirectory").toString()
+             << "usblistWidget2:" << ui->usblistWidget2->property("currentDirectory").toString();
 
+    // Ensure drag-and-drop properties
+    ui->usblistWidget1->setDragEnabled(true);
+    ui->usblistWidget1->setAcceptDrops(true);
+    ui->usblistWidget1->setDragDropMode(QAbstractItemView::DragDrop);
+    ui->usblistWidget2->setDragEnabled(true);
+    ui->usblistWidget2->setAcceptDrops(true);
+    ui->usblistWidget2->setDragDropMode(QAbstractItemView::DragDrop);
+    qDebug() << "usblistWidget1 dragEnabled:" << ui->usblistWidget1->dragEnabled()
+             << "acceptDrops:" << ui->usblistWidget1->acceptDrops()
+             << "dragDropMode:" << ui->usblistWidget1->dragDropMode();
+    qDebug() << "usblistWidget2 dragEnabled:" << ui->usblistWidget2->dragEnabled()
+             << "acceptDrops:" << ui->usblistWidget2->acceptDrops()
+             << "dragDropMode:" << ui->usblistWidget2->dragDropMode();
 
-  if (ost1==1)
-  {   ufdlogfiledir= QDir::homePath()+"/AppData/Roaming/.jocala/";
-      tmpdir1= QDir::homePath()+"/AppData/Roaming/.jocala/scripts/";
-  }
+    // Log existing items
+    qDebug() << "usblistWidget1 initial item count:" << ui->usblistWidget1->count();
+    for (int i = 0; i < ui->usblistWidget1->count(); ++i) {
+        qDebug() << "usblistWidget1 item" << i << ":" << ui->usblistWidget1->item(i)->text()
+                 << "flags:" << ui->usblistWidget1->item(i)->flags()
+                 << "dragEnabled:" << (ui->usblistWidget1->item(i)->flags() & Qt::ItemIsDragEnabled);
+    }
+    qDebug() << "usblistWidget2 initial item count:" << ui->usblistWidget2->count();
+    for (int i = 0; i < ui->usblistWidget2->count(); ++i) {
+        qDebug() << "usblistWidget2 item" << i << ":" << ui->usblistWidget2->item(i)->text()
+                 << "flags:" << ui->usblistWidget2->item(i)->flags()
+                 << "dragEnabled:" << (ui->usblistWidget2->item(i)->flags() & Qt::ItemIsDragEnabled);
+    }
 
-  else
-  {
-      ufdlogfiledir = QDir::homePath()+"/.jocala/";
-      tmpdir1= QDir::homePath()+"/.jocala/scripts/";
-  }
+    if (ost1 == 1)
+    {
+        ufdlogfiledir = QDir::homePath() + "/AppData/Roaming/.jocala/";
+        tmpdir1 = QDir::homePath() + "/AppData/Roaming/.jocala/scripts/";
+    }
+    else
+    {
+        ufdlogfiledir = QDir::homePath() + "/.jocala/";
+        tmpdir1 = QDir::homePath() + "/.jocala/scripts/";
+    }
 
+    ui->kodiDirs->clear();
+    ui->kodiDirs->addItem("sdcard");
+    ui->kodiDirs->addItem("storage");
+    ui->kodiDirs->addItem("data/local/tmp");
 
-  ui->kodiDirs->clear();
+    if (iskodi)
+    {
+        ui->kodiDirs->addItem("kodi");
+        ui->kodiDirs->addItem("userdata");
+        ui->kodiDirs->addItem("addons");
+    }
 
-  ui->kodiDirs->addItem("sdcard");
-  ui->kodiDirs->addItem("storage");
-  ui->kodiDirs->addItem("data/local/tmp");
+    ui->usbprogressBar->setHidden(true);
+    ui->usbprogressBar->setValue(0);
 
-  if (iskodi )
-  {
-    ui->kodiDirs->addItem("kodi");
-    ui->kodiDirs->addItem("userdata");
-    ui->kodiDirs->addItem("addons");
-  }
+    // Connect existing signals
+    connect(ui->usblistWidget1, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(assignWindow1()));
+    connect(ui->usblistWidget2, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(assignWindow2()));
 
-
-
-
-   ui->usbprogressBar->setHidden(true);
-   ui->usbprogressBar->setValue(0);
-
-   connect(ui->usblistWidget1, SIGNAL(itemClicked(QListWidgetItem*)), SLOT( assignWindow1()   ));
-   connect(ui->usblistWidget2, SIGNAL(itemClicked(QListWidgetItem*)), SLOT( assignWindow2()   ));
-
-
-
+    // Connect filesDropped signals for drag-and-drop
+    connect(static_cast<CustomListWidget *>(ui->usblistWidget1), &CustomListWidget::filesDropped, this, &usbfileDialog::handleFilesDropped);
+    connect(static_cast<CustomListWidget *>(ui->usblistWidget2), &CustomListWidget::filesDropped, this, &usbfileDialog::handleFilesDropped);
+    qDebug() << "Connected filesDropped signals";
 }
-
 usbfileDialog::~usbfileDialog()
 {
     delete ui;
@@ -1365,385 +1422,160 @@ else
 }
 
 
-
-
-
-///////////////////////////////////////////////////////////////////////////
-
-void usbfileDialog::setPath1(QString currentdir) {
-
-
-
-   if (checkRoot())
-       rootShell = " shell su -c ";
-   else
-       rootShell = " shell ";
-
-
-    current_directory1=currentdir;
-    previous_directory1=currentdir.left(currentdir.lastIndexOf("/"));
-
-    if (previous_directory1.isEmpty())
-        previous_directory1=current_directory1;
-
-     current_directory1=fix_directory(current_directory1);
-     previous_directory1=fix_directory(previous_directory1);
-
-     currentdir.replace(" ", "\\ ");
-     currentdir.replace("'", "\\'");
-
-
-     QString string1=adb21+ rootShell +"/data/local/tmp/adblink/busybox find "+'"'+currentdir+'"'+" -type d -maxdepth 1";
-     QString command=getadbOutput(string1);
-     QStringList stringlist1=command.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
-
-    stringlist1.sort();
-
-    QString string2=adb21+ rootShell +"/data/local/tmp/adblink/busybox find "+'"'+currentdir+'"'+" -type l -maxdepth 1";
-    command=getadbOutput(string2);
-    QStringList stringlist2=command.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
-
-    stringlist2.sort();
-
-    QString string3=adb21+ rootShell +"/data/local/tmp/adblink/busybox find "+'"'+currentdir+'"'+" -type f -maxdepth 1";
-    command=getadbOutput(string3);
-    QStringList stringlist3=command.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
-
-    stringlist3.sort();
-
-    QStringList stringlist4 = stringlist1 + stringlist2 + stringlist3;
-
-   stringlist4.removeFirst();
-
-   ui->usblistWidget1->clear();
-
-
-for (QStringList::const_iterator it = stringlist4.begin();
-        it != stringlist4.end(); ++it)
-       {
-        currentitem1 = *it;
-        // qDebug()  << current ;
-
-        if(  (!currentitem1.contains("Permission"))
-            && (!currentitem1.contains("denied"))
-            && (!currentitem1.contains("emulated"))
-            && (!currentitem1.contains(":"))
-            && (!currentitem1.isEmpty() ) )
-            {
-             ui->usblistWidget1->addItem(currentitem1);
-            }
-        }
-
-QListWidgetItem *newItem = new QListWidgetItem;
-newItem->setText("..");
-ui->usblistWidget1->insertItem(0, newItem);
-
-
-}
-
-
-///////////////////////////////////////////////////////////////////////////
-
-void usbfileDialog::setPath2(QString currentdir) {
-
-
-
-      if (checkRoot())
-          rootShell = " shell su -c ";
-      else
-          rootShell = " shell ";
-
-
-
-    current_directory2=currentdir;
-    previous_directory2=currentdir.left(currentdir.lastIndexOf("/"));
-
-    if (previous_directory2.isEmpty())
-        previous_directory2=current_directory2;
-
-     current_directory2=fix_directory(current_directory2);
-     previous_directory2=fix_directory(previous_directory2);
-
-     currentdir.replace(" ", "\\ ");
-     currentdir.replace("'", "\\'");
-
-    QString string1=adb21+ rootShell +"/data/local/tmp/adblink/busybox find "+'"'+currentdir+'"'+" -type d -maxdepth 1";
-    QString command=getadbOutput(string1);
-    QStringList stringlist1=command.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
-
-    stringlist1.sort();
-
-
-    QString string2=adb21+ rootShell +"/data/local/tmp/adblink/busybox find "+'"'+currentdir+'"'+" -type l -maxdepth 1";
-    command=getadbOutput(string2);
-    QStringList stringlist2=command.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
-
-
-    stringlist2.sort();
-
-    QString string3=adb21+ rootShell  +"/data/local/tmp/adblink/busybox find "+'"'+currentdir+'"'+" -type f -maxdepth 1";
-    command=getadbOutput(string3);
-    QStringList stringlist3=command.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
-
-
-    stringlist3.sort();
-
-    QStringList stringlist4 = stringlist1 + stringlist2 + stringlist3;
-
-   stringlist4.removeFirst();
-
-   ui->usblistWidget2->clear();
-
-
-for (QStringList::const_iterator it = stringlist4.begin();
-        it != stringlist4.end(); ++it)
-       {
-        currentitem2 = *it;
-        // qDebug()  << current ;
-
-        if(  (!currentitem2.contains("Permission"))
-            && (!currentitem2.contains("denied"))
-            && (!currentitem2.contains("emulated"))
-            && (!currentitem2.contains(":"))
-            && (!currentitem2.isEmpty() ) )
-            {
-             ui->usblistWidget2->addItem(currentitem2);
-            }
-
-
-
-
-}
-
-QListWidgetItem *newItem = new QListWidgetItem;
-newItem->setText("..");
-ui->usblistWidget2->insertItem(0, newItem);
-
-
-}
-
-
-
-/*
-
-////////////////////////////////////////////////////////
-void usbfileDialog::editfile(QString fileName, QString xpath)
+void usbfileDialog::setPath1(QString currentdir)
 {
+qDebug() << "setPath1 called with:" << currentdir;
 
+if (checkRoot())
+    rootShell = " shell su -c ";
+else
+    rootShell = " shell ";
 
-    QString tempfile1;
-    QString tempfile2;
-    QString rootfile;
-    QString backfile;
-    QString cstring;
-    QString command;
-    bool doroot=false;
+current_directory1 = currentdir;
+previous_directory1 = currentdir.left(currentdir.lastIndexOf("/"));
 
-QString tmpdir=" /data/local/tmp/";
+if (previous_directory1.isEmpty())
+    previous_directory1 = current_directory1;
 
+current_directory1 = fix_directory(current_directory1);
+previous_directory1 = fix_directory(previous_directory1);
 
-   cstring = adb21+rootShell+" if test -d "+fileName+ "; then echo 'true'; fi";
+// Set currentDirectory property
+ui->usblistWidget1->setProperty("currentDirectory", current_directory1);
+qDebug() << "usblistWidget1 currentDirectory set to:" << ui->usblistWidget1->property("currentDirectory").toString();
 
-   command=getadbOutput(cstring);
+currentdir.replace(" ", "\\ ");
+currentdir.replace("'", "\\'");
 
-    if (command.contains("true"))
+QString string1 = adb21 + rootShell + "/data/local/tmp/adblink/busybox find " + '"' + currentdir + '"' + " -type d -maxdepth 1";
+QString command = getadbOutput(string1);
+QStringList stringlist1 = command.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
+
+stringlist1.sort();
+
+QString string2 = adb21 + rootShell + "/data/local/tmp/adblink/busybox find " + '"' + currentdir + '"' + " -type l -maxdepth 1";
+command = getadbOutput(string2);
+QStringList stringlist2 = command.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
+
+stringlist2.sort();
+
+QString string3 = adb21 + rootShell + "/data/local/tmp/adblink/busybox find " + '"' + currentdir + '"' + " -type f -maxdepth 1";
+command = getadbOutput(string3);
+QStringList stringlist3 = command.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
+
+stringlist3.sort();
+
+QStringList stringlist4 = stringlist1 + stringlist2 + stringlist3;
+
+stringlist4.removeFirst();
+
+ui->usblistWidget1->clear();
+
+for (QStringList::const_iterator it = stringlist4.begin(); it != stringlist4.end(); ++it)
+{
+    currentitem1 = *it;
+    if (!currentitem1.contains("Permission")
+        && !currentitem1.contains("denied")
+        && !currentitem1.contains("emulated")
+        && !currentitem1.contains(":")
+        && !currentitem1.isEmpty())
     {
-        
-          QMessageBox::critical(this,"","Can't edit directory "+fileName);
-         return;
+                              QListWidgetItem *item = new QListWidgetItem(currentitem1);
+                              item->setFlags(item->flags() | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+                              ui->usblistWidget1->addItem(item);
+                              qDebug() << "Added item to usblistWidget1:" << currentitem1 << "flags:" << item->flags()
+                                       << "dragEnabled:" << (item->flags() & Qt::ItemIsDragEnabled);
     }
+}
 
-     QString filename(fileName.mid(fileName.lastIndexOf("/")+1,fileName.length()));
+QListWidgetItem *newItem = new QListWidgetItem;
+newItem->setText("..");
+newItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled); // Exclude drag for ".."
+ui->usblistWidget1->insertItem(0, newItem);
+qDebug() << "Added .. item to usblistWidget1, flags:" << newItem->flags()
+         << "dragEnabled:" << (newItem->flags() & Qt::ItemIsDragEnabled);
 
+qDebug() << "usblistWidget1 item count after setPath1:" << ui->usblistWidget1->count();
+}
 
 
+void usbfileDialog::setPath2(QString currentdir)
+{
+qDebug() << "setPath2 called with:" << currentdir;
 
-             cstring = adb21 + " pull "+'"'+fileName+'"'+" "+'"'+tmpdir1+'"'+"/"+filename;
+if (checkRoot())
+    rootShell = " shell su -c ";
+else
+    rootShell = " shell ";
 
+current_directory2 = currentdir;
+previous_directory2 = currentdir.left(currentdir.lastIndexOf("/"));
 
+if (previous_directory2.isEmpty())
+    previous_directory2 = current_directory2;
 
-              command=getadbOutput(cstring);
+current_directory2 = fix_directory(current_directory2);
+previous_directory2 = fix_directory(previous_directory2);
 
+// Set currentDirectory property
+ui->usblistWidget2->setProperty("currentDirectory", current_directory2);
+qDebug() << "usblistWidget2 currentDirectory set to:" << ui->usblistWidget2->property("currentDirectory").toString();
 
+currentdir.replace(" ", "\\ ");
+currentdir.replace("'", "\\'");
 
+QString string1 = adb21 + rootShell + "/data/local/tmp/adblink/busybox find " + '"' + currentdir + '"' + " -type d -maxdepth 1";
+QString command = getadbOutput(string1);
+QStringList stringlist1 = command.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
 
-             if (!command.contains("bytes"))
-              {
-                 logfile("edit failed");
-                 logfile(command);
-                 QMessageBox::critical(
-                             this,
-                            "",
-                             "Edit failed "+command);
-                 return;
-             }
+stringlist1.sort();
 
+QString string2 = adb21 + rootShell + "/data/local/tmp/adblink/busybox find " + '"' + currentdir + '"' + " -type l -maxdepth 1";
+command = getadbOutput(string2);
+QStringList stringlist2 = command.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
 
+stringlist2.sort();
 
-             QFile file1(tmpdir1+filename);
+QString string3 = adb21 + rootShell + "/data/local/tmp/adblink/busybox find " + '"' + currentdir + '"' + " -type f -maxdepth 1";
+command = getadbOutput(string3);
+QStringList stringlist3 = command.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
 
-             if(!file1.open(QIODevice::ReadOnly | QIODevice::Text))
-                 return;
+stringlist3.sort();
 
-             QString xmlfile = file1.readAll();
-             editorDialog dialog;
-             dialog.seteditor(xmlfile);
-             dialog.setfilename(filename);
+QStringList stringlist4 = stringlist1 + stringlist2 + stringlist3;
 
-             rootfile=filename;
-             backfile=filename+".bak";
+stringlist4.removeFirst();
 
-             tempfile1 = tmpdir1+filename;
-             tempfile2 = tmpdir1+filename+".bak";
+ui->usblistWidget2->clear();
 
+for (QStringList::const_iterator it = stringlist4.begin(); it != stringlist4.end(); ++it)
+{
+    currentitem2 = *it;
+    if (!currentitem2.contains("Permission")
+        && !currentitem2.contains("denied")
+        && !currentitem2.contains("emulated")
+        && !currentitem2.contains(":")
+        && !currentitem2.isEmpty())
+    {
+                              QListWidgetItem *item = new QListWidgetItem(currentitem2);
+                              item->setFlags(item->flags() | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+                              ui->usblistWidget2->addItem(item);
+                              qDebug() << "Added item to usblistWidget2:" << currentitem2 << "flags:" << item->flags()
+                                       << "dragEnabled:" << (item->flags() & Qt::ItemIsDragEnabled);
+    }
+}
 
+QListWidgetItem *newItem = new QListWidgetItem;
+newItem->setText("..");
+newItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled); // Exclude drag for ".."
+ui->usblistWidget2->insertItem(0, newItem);
+qDebug() << "Added .. item to usblistWidget2, flags:" << newItem->flags()
+         << "dragEnabled:" << (newItem->flags() & Qt::ItemIsDragEnabled);
 
+qDebug() << "usblistWidget2 item count after setPath2:" << ui->usblistWidget2->count();
+}
 
-              dialog.setModal(true);
-
-              if(dialog.exec() == QDialog::Accepted)
-                {
-
-
-                  QMessageBox::StandardButton reply;
-                    reply = QMessageBox::question(this, "Save","Save "+ fileName+"?",
-                        QMessageBox::Yes|QMessageBox::No);
-                    if (reply == QMessageBox::No)
-                      return;
-
-
-
-
- if (checkRoot())
-    doroot=true;
-
-                    xmlfile = dialog.xmlfile();
-
-
-                   QFile::copy(tempfile1, tempfile2);
-                   QFile caFile( tempfile1);
-                   caFile.open(QIODevice::WriteOnly | QIODevice::Text);
-                   QTextStream outStream(&caFile);
-                   outStream << xmlfile;
-                   caFile.close();
-
-                   if(!doroot)
-                   {
-                       cstring = adb21 + " push "+'"'+tempfile1+'"'+ " "+xpath;
-                       logfile(cstring);
-                       command=getadbOutput(cstring);
-                       logfile(command);
-
-                       cstring = adb21 + " push "+'"'+tempfile2+'"'+ " "+xpath;
-                       logfile(cstring);
-                       command=getadbOutput(cstring);
-                       logfile(command);
-
-                   }
-
-                   else
-
-                   {
-                        cstring =  adb21 + " push "+tempfile1+" "+tmpdir;
-                       logfile(cstring);
-                        command=getadbOutput(cstring);
-                        logfile(command);
-
-                        cstring =  adb21 + " push "+tempfile2+" "+tmpdir;
-                        logfile(cstring);
-                        command=getadbOutput(cstring);
-                        logfile(command);
-
-                    //     cstring =  adb21 + rootShell+ " cp -r "+tmpdir+backfile+" "+xpath;
-
-
-                        file1.close();
-
-                        QFile file2 (tempfile1 );
-                        file2.remove();
-
-                        QFile file3 (tempfile2);
-                        file3.remove();
-
-
-                       //
-
-
-                        // qDebug() << cstring << "\n" << command; return;
-
-
-
-                        if (command.contains("bytes"))
-                         {
-                             cstring =  adb21 + rootShell+ " chmod 0644 "+tmpdir+backfile;
-                             logfile(cstring);
-                             command=getadbOutput(cstring);
-                           //  qDebug() << cstring << "\n" << command;
-                            cstring =  adb21 + rootShell+ " cp -r "+tmpdir+backfile+" "+xpath;
-                            logfile(cstring);
-                            command=getadbOutput(cstring);
-                          qDebug() << cstring << "\n" << command;
-                            logfile(command);
-
-                            if (command.isEmpty())
-                            {
-                            cstring =  adb21 + rootShell+ " rm -r "+tmpdir+backfile;
-                           logfile(cstring);
-                            command=getadbOutput(cstring);
-                            logfile(command);
-                            }
-
-                        }
-
-                   }
-
-  }
-
-
-
-
-                else
-                {
-                    cstring =  adb21 + rootShell + " push "+tempfile2+" "+tmpdir;
-                    command=getadbOutput(cstring);
-                    logfile(command);
-
-                    if (command.contains("bytes"))
-                     {
-                        cstring =  adb21 + rootShell+ " chmod 0644 "+tmpdir+rootfile;
-                        logfile(cstring);
-                        command=getadbOutput(cstring);
-                        cstring =  adb21 + rootShell+ " cp -r "+tmpdir+rootfile+" "+xpath;
-                        logfile(cstring);
-                        command=getadbOutput(cstring);
-                        logfile(command);
-
-                        if (command.isEmpty())
-                        {
-                        cstring =  adb21 + rootShell+ " rm -r "+tmpdir+rootfile;
-                        logfile(cstring);
-                        command=getadbOutput(cstring);
-                        logfile(command);
-                        }
-
-
-                    }
-
-
-
-
-  }
-
-
-
-
-
-
-
- }
-
-
-*/
+///////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////
 
@@ -1924,6 +1756,89 @@ void usbfileDialog::usbTimerEvent()
 }
 
 
+void usbfileDialog::gather_push()
+{
+
+
+  //  if (!check_devices() )
+  //       return;
+
+  //   bool installer=false;
+
+  // QStringList filenames = QFileDialog::getOpenFileNames(this,tr("APK files"),QDir::currentPath(),tr("APK files (*.apk);;All files (*.*)") );
+
+
+
+  bool doroot=false;
+  QString xpath;
+
+
+  if (hasfocus)
+         xpath=current_directory1;
+  else
+         xpath=current_directory2;
+
+  cstring =  adb21 + " shell ls "+xpath;
+  QString command=getadbOutput(cstring);
+
+  if (command.contains("Permission denied"))
+         doroot=true;
+
+  if (xpath.contains("/system/"))
+         doroot=true;
+
+
+
+  QFileDialog fileDialog;
+  fileDialog.setOption(QFileDialog::DontUseNativeDialog);
+
+  QStringList filenames = fileDialog.getOpenFileNames();
+
+  // QStringList filenames = QFileDialog::getOpenFileNames();
+
+
+  //  QStringList filenames =  QFileDialog::DontUseNativeDialog();
+
+  if( !filenames.isEmpty() )
+  {
+
+
+         // qDebug() << filenames;
+         return;
+
+         QMessageBox::StandardButton reply;
+         reply = QMessageBox::question(this, "Push", "Push files?",
+                                       QMessageBox::Yes|QMessageBox::No);
+         if (reply == QMessageBox::Yes)
+         {
+
+
+             if(doroot)
+                                 rootpush(filenames);
+             else
+                                 userpush(filenames);
+
+         }
+
+
+
+         //          if (installer)
+         //          {
+
+         //             QMessageBox::information(this,"","Files pushed.\nSee log for details.");
+
+
+         //        }
+
+
+  }
+
+
+
+}
+
+
+
 ///////////////////////////////////////////////
 
 void usbfileDialog::on_copyButton_clicked()
@@ -1945,293 +1860,353 @@ void usbfileDialog::on_copyButton_clicked()
 
 
 
-
-
-  ///////////////////////////////////////////////
-
   void usbfileDialog::do_copy(int opcode)
   {
 
-      QStringList mstringlist;
-      QString fileName;
-      QString command;
-      QString cstring;
-      QString workingdir;
-      QString optext;
-      int error=0;
+       QStringList mstringlist;
+       QString fileName;
+       QString command;
+       QString cstring;
+       QString workingdir;
+       QString optext;
+       int error=0;
 
 
-    if(opcode==0)
-        optext="Copy";
-    else
-        optext="Move";
+       if(opcode==0)
+         optext="Copy";
+       else
+         optext="Move";
 
 
-  if (hasfocus)
-  {
-
-      if( ui->usblistWidget1->selectedItems().count() >= 1 )
+       if (hasfocus)
        {
 
+         if( ui->usblistWidget1->selectedItems().count() >= 1 )
+         {
 
-          foreach( QListWidgetItem *item, ui->usblistWidget1->selectedItems() )
+
+             foreach( QListWidgetItem *item, ui->usblistWidget1->selectedItems() )
              {
-                  if (item->text() == "..")
+                                 if (item->text() == "..")
                   return;
-                  else
-                 mstringlist << item->text();
+                                 else
+                  mstringlist << item->text();
              }
 
 
 
 
-          current_directory1 = mstringlist.at(0);
-         current_directory1= current_directory1.left( current_directory1.lastIndexOf("/"));
+             current_directory1 = mstringlist.at(0);
+             current_directory1= current_directory1.left( current_directory1.lastIndexOf("/"));
 
-          if(! current_directory1.endsWith("/"))
-              current_directory1.append("/") ;
+             if(! current_directory1.endsWith("/"))
+                                 current_directory1.append("/") ;
 
-          workingdir=current_directory2;
+             workingdir=current_directory2;
 
-      }
-  }
-  else
+         }
+       }
+       else
 
-      if( ui->usblistWidget2->selectedItems().count() >= 1 )
+       if( ui->usblistWidget2->selectedItems().count() >= 1 )
        {
-          foreach( QListWidgetItem *item, ui->usblistWidget2->selectedItems() )
-             {
+         foreach( QListWidgetItem *item, ui->usblistWidget2->selectedItems() )
+         {
 
-              if (item->text() == "..")
-                  return;
-              else
-             mstringlist << item->text();
+             if (item->text() == "..")
+                                 return;
+             else
+                                 mstringlist << item->text();
          }
 
-          current_directory2 = mstringlist.at(0);
-          current_directory2= current_directory2.left( current_directory2.lastIndexOf("/"));
+         current_directory2 = mstringlist.at(0);
+         current_directory2= current_directory2.left( current_directory2.lastIndexOf("/"));
 
-           if(!current_directory2.endsWith("/"))
-               current_directory2.append("/") ;
+         if(!current_directory2.endsWith("/"))
+             current_directory2.append("/") ;
 
-           workingdir=current_directory1;
-      }
+         workingdir=current_directory1;
+       }
 
 
 
 
-  if (mstringlist.count() < 1)
-      return;
-
-
-  if (checkRoot())
-    {
-      if ((fileName.contains(" ")) || (workingdir.contains(" ")))
-       {
-          QMessageBox::critical(this,"","Embedded spaces. See File Manager help");
-          return;
-      }
-
-  }
-
-
-
-    QMessageBox::StandardButton reply3;
-        reply3 = QMessageBox::question(this, "", optext+" item(s)?",
-                                      QMessageBox::Yes|QMessageBox::No);
-        if (reply3 == QMessageBox::No)
-            return;
-
-
-
-
-  logfile(optext + " files");
-  logfile("----------");
-
-
-          for (QStringList::iterator it = mstringlist.begin();
-              it != mstringlist.end(); ++it)
-           {
-              fileName = *it;
-
-
-
-
-              if (opcode==0)
-              cstring = adb21 + rootShell + " cp -R "+quote1+fileName+quote2 + " "+quote1+workingdir+quote2;
-              else
-              cstring = adb21 + rootShell + " mv "+quote1+fileName+quote2 + " "+quote1+workingdir+quote2;
-
-              logfile(cstring);
-
-
-       command=RunLongProcess_ufd(cstring);
-
-             if (!command.isEmpty())
-                {
-
-                 logfile(command);
-                   logfile( optext+" failed");
-                   QMessageBox::critical(this,"",fileName+" "+optext+ " failed");
-                   error=error+1;
-                 }
-
-                   else
-                    {
-                      logfile(command);
-                      logfile(fileName+" "+optext+" succeeded");
-                      }
-
-
-  }
-
-
-
-    if (error>0)
-      QMessageBox::critical(this,"",optext+ "(s) failed. See log.");
-
-
-    if (checkRoot())
-      {
-        current_directory1.replace(" ", "\\ ");
-        current_directory2.replace(" ", "\\ ");
-     }
-
-    setPath1(current_directory1);
-    setPath2(current_directory2);
-
-
-  }
-
-
-/*
-
-
-
-    if (hasfocus)
-     xpath=current_directory1;
-    else
-     xpath=current_directory2;
-
-    cstring =  adb21 + " shell ls "+xpath;
-    QString command=getadbOutput(cstring);
-
-    if (command.contains("Permission denied"))
-             doroot=true;
-
-     if (xpath.contains("/system/"))
-         doroot=true;
-
-
-     if(doroot)
-         rootpush(filenames);
-       else
-        userpush(filenames);
-
-
-*/
-
-void usbfileDialog::gather_push()
-{
-
-
-    //  if (!check_devices() )
-   //       return;
-
-    //   bool installer=false;
-
-      // QStringList filenames = QFileDialog::getOpenFileNames(this,tr("APK files"),QDir::currentPath(),tr("APK files (*.apk);;All files (*.*)") );
-
-
-
-       bool doroot=false;
-       QString xpath;
-
-
-       if (hasfocus)
-        xpath=current_directory1;
-       else
-        xpath=current_directory2;
-
-       cstring =  adb21 + " shell ls "+xpath;
-       QString command=getadbOutput(cstring);
-
-       if (command.contains("Permission denied"))
-                doroot=true;
-
-        if (xpath.contains("/system/"))
-            doroot=true;
-
-
-
-       QFileDialog fileDialog;
-       fileDialog.setOption(QFileDialog::DontUseNativeDialog);
-
-        QStringList filenames = fileDialog.getOpenFileNames();
-
-       // QStringList filenames = QFileDialog::getOpenFileNames();
-
-
-      //  QStringList filenames =  QFileDialog::DontUseNativeDialog();
-
-      if( !filenames.isEmpty() )
-      {
-
-
-        // qDebug() << filenames;
+       if (mstringlist.count() < 1)
          return;
 
-          QMessageBox::StandardButton reply;
-            reply = QMessageBox::question(this, "Push", "Push files?",
-                                          QMessageBox::Yes|QMessageBox::No);
-            if (reply == QMessageBox::Yes)
-            {
+
+       if (checkRoot())
+       {
+         if ((fileName.contains(" ")) || (workingdir.contains(" ")))
+         {
+             QMessageBox::critical(this,"","Embedded spaces. See File Manager help");
+             return;
+         }
+
+       }
 
 
-                if(doroot)
-                    rootpush(filenames);
-                  else
-                   userpush(filenames);
 
+       QMessageBox::StandardButton reply3;
+       reply3 = QMessageBox::question(this, "", optext+" item(s)?",
+                                      QMessageBox::Yes|QMessageBox::No);
+       if (reply3 == QMessageBox::No)
+         return;
+
+
+
+
+       logfile(optext + " files");
+       logfile("----------");
+
+
+       for (QStringList::iterator it = mstringlist.begin();
+            it != mstringlist.end(); ++it)
+       {
+         fileName = *it;
+
+
+
+
+         if (opcode==0)
+             cstring = adb21 + rootShell + " cp -R "+quote1+fileName+quote2 + " "+quote1+workingdir+quote2;
+         else
+             cstring = adb21 + rootShell + " mv "+quote1+fileName+quote2 + " "+quote1+workingdir+quote2;
+
+         logfile(cstring);
+
+
+         command=RunLongProcess_ufd(cstring);
+
+         if (!command.isEmpty())
+         {
+
+             logfile(command);
+             logfile( optext+" failed");
+             QMessageBox::critical(this,"",fileName+" "+optext+ " failed");
+             error=error+1;
+         }
+
+         else
+         {
+             logfile(command);
+             logfile(fileName+" "+optext+" succeeded");
+         }
+
+
+       }
+
+
+
+       if (error>0)
+         QMessageBox::critical(this,"",optext+ "(s) failed. See log.");
+
+
+       if (checkRoot())
+       {
+         current_directory1.replace(" ", "\\ ");
+         current_directory2.replace(" ", "\\ ");
+       }
+
+       setPath1(current_directory1);
+       setPath2(current_directory2);
+
+
+  }
+
+
+////////////////////////////////////////////
+
+
+  void usbfileDialog::do_xcopy(int opcode)
+  {
+       qDebug() << "do_copy function entered with opcode:" << opcode;
+       qDebug() << "hasfocus:" << hasfocus << "current_directory1:" << current_directory1 << "current_directory2:" << current_directory2;
+
+       QStringList mstringlist;
+       QString fileName;
+       QString command;
+       QString cstring;
+       QString workingdir;
+       QString optext;
+       int error = 0;
+
+       if (opcode == 0)
+         optext = "Copy";
+       else
+         optext = "Move";
+
+       // Get selected items from source widget
+       if (hasfocus) {
+         qDebug() << "Source: usblistWidget2, Target: usblistWidget1";
+         if (ui->usblistWidget2->selectedItems().count() >= 1) {
+             foreach (QListWidgetItem *item, ui->usblistWidget2->selectedItems()) {
+                                 if (item->text() == "..") {
+                  qDebug() << "Skipping .. item";
+                  continue;
+                                 }
+                                 mstringlist << item->text();
+             }
+             workingdir = current_directory1; // Target is usblistWidget1
+         }
+       } else {
+         qDebug() << "Source: usblistWidget1, Target: usblistWidget2";
+         if (ui->usblistWidget1->selectedItems().count() >= 1) {
+             foreach (QListWidgetItem *item, ui->usblistWidget1->selectedItems()) {
+                                 if (item->text() == "..") {
+                  qDebug() << "Skipping .. item";
+                  continue;
+                                 }
+                                 mstringlist << item->text();
+             }
+             workingdir = current_directory2; // Target is usblistWidget2
+         }
+       }
+
+       qDebug() << "mstringlist:" << mstringlist;
+       qDebug() << "usblistWidget1 selected items:" << ui->usblistWidget1->selectedItems().size();
+       for (const auto *item : ui->usblistWidget1->selectedItems()) {
+         qDebug() << "usblistWidget1 selected:" << item->text();
+       }
+       qDebug() << "usblistWidget2 selected items:" << ui->usblistWidget2->selectedItems().size();
+       for (const auto *item : ui->usblistWidget2->selectedItems()) {
+         qDebug() << "usblistWidget2 selected:" << item->text();
+       }
+
+       if (mstringlist.count() < 1) {
+         qDebug() << "No valid files selected, exiting do_copy";
+         return;
+       }
+
+       // Check for spaces in root mode
+       if (checkRoot()) {
+         for (const QString &file : mstringlist) {
+             if (file.contains(" ") || workingdir.contains(" ")) {
+                                 qDebug() << "Embedded spaces detected in file:" << file << "or workingdir:" << workingdir;
+                                 QMessageBox::critical(this, "", "Embedded spaces. See File Manager help");
+                                 return;
+             }
+         }
+       }
+
+       // Confirm operation
+       QMessageBox::StandardButton reply3;
+       reply3 = QMessageBox::question(this, "", optext + " item(s)?", QMessageBox::Yes | QMessageBox::No);
+       if (reply3 == QMessageBox::No) {
+         qDebug() << "User cancelled operation";
+         return;
+       }
+
+       logfile(optext + " files");
+       logfile("----------");
+
+       // Execute adb commands
+       for (QStringList::iterator it = mstringlist.begin(); it != mstringlist.end(); ++it) {
+         fileName = *it;
+         qDebug() << "Processing file:" << fileName;
+
+         if (opcode == 0)
+             cstring = adb21 + rootShell + " cp -R " + quote1 + fileName + quote2 + " " + quote1 + workingdir + quote2;
+         else
+             cstring = adb21 + rootShell + " mv " + quote1 + fileName + quote2 + " " + quote1 + workingdir + quote2;
+
+         qDebug() << "adb command:" << cstring;
+         logfile(cstring);
+
+         command = RunLongProcess_ufd(cstring);
+
+         if (!command.isEmpty()) {
+             qDebug() << "adb result:" << command << "error: " + optext + " failed";
+             logfile(command);
+             logfile(optext + " failed");
+             QMessageBox::critical(this, "", fileName + " " + optext + " failed");
+             error = error + 1;
+         } else {
+             qDebug() << "adb result: success";
+             logfile(fileName + " " + optext + " succeeded");
+         }
+       }
+
+       if (error > 0) {
+         qDebug() << optext + " errors occurred";
+         QMessageBox::critical(this, "", optext + "(s) failed. See log.");
+       }
+
+       // Refresh widgets
+       qDebug() << "Refreshing widgets with current_directory1:" << current_directory1 << "current_directory2:" << current_directory2;
+       setPath1(current_directory1);
+       setPath2(current_directory2);
+
+       qDebug() << "do_xopy completed";
+  }
+
+  ///////////////////////////////////////////////
+
+void usbfileDialog::handleFilesDropped(const QStringList &fileNames, const QString &targetDir)
+{
+      qDebug() << "handleFilesDropped called with fileNames:" << fileNames << "targetDir:" << targetDir;
+      bool droppedOnWidget1 = (targetDir == current_directory1);
+      hasfocus = droppedOnWidget1;
+
+      QStringList mstringlist;
+      for (const QString &fileName : fileNames) {
+            if (fileName != "..") {
+                  mstringlist << fileName;
             }
+      }
+      qDebug() << "mstringlist:" << mstringlist;
 
-
-
-  //          if (installer)
-  //          {
-
-   //             QMessageBox::information(this,"","Files pushed.\nSee log for details.");
-
-
-    //        }
-
-
+      if (mstringlist.isEmpty()) {
+            qDebug() << "No valid files to copy/move";
+            return;
       }
 
+      // Update directories and select the dragged item
+      if (droppedOnWidget1) {
+            current_directory1 = targetDir;
+            current_directory2 = mstringlist.first().left(mstringlist.first().lastIndexOf("/"));
+            if (!current_directory2.endsWith("/"))
+                  current_directory2.append("/");
+            // Select the item in usblistWidget2 (source)
+            ui->usblistWidget2->clearSelection();
+            for (int i = 0; i < ui->usblistWidget2->count(); ++i) {
+                  if (ui->usblistWidget2->item(i)->text() == mstringlist.first()) {
+                   ui->usblistWidget2->setCurrentItem(ui->usblistWidget2->item(i));
+                   ui->usblistWidget2->item(i)->setSelected(true);
+                   qDebug() << "Selected item in usblistWidget2:" << mstringlist.first();
+                   break;
+                  }
+            }
+      } else {
+            current_directory2 = targetDir;
+            current_directory1 = mstringlist.first().left(mstringlist.first().lastIndexOf("/"));
+            if (!current_directory1.endsWith("/"))
+                  current_directory1.append("/");
+            // Select the item in usblistWidget1 (source)
+            ui->usblistWidget1->clearSelection();
+            for (int i = 0; i < ui->usblistWidget1->count(); ++i) {
+                  if (ui->usblistWidget1->item(i)->text() == mstringlist.first()) {
+                   ui->usblistWidget1->setCurrentItem(ui->usblistWidget1->item(i));
+                   ui->usblistWidget1->item(i)->setSelected(true);
+                   qDebug() << "Selected item in usblistWidget1:" << mstringlist.first();
+                   break;
+                  }
+            }
+      }
+      qDebug() << "Updated directories: current_directory1:" << current_directory1 << "current_directory2:" << current_directory2;
+      qDebug() << "hasfocus:" << hasfocus;
+      qDebug() << "usblistWidget1 selected items:" << ui->usblistWidget1->selectedItems().size();
+      for (const auto *item : ui->usblistWidget1->selectedItems()) {
+            qDebug() << "usblistWidget1 selected:" << item->text();
+      }
+      qDebug() << "usblistWidget2 selected items:" << ui->usblistWidget2->selectedItems().size();
+      for (const auto *item : ui->usblistWidget2->selectedItems()) {
+            qDebug() << "usblistWidget2 selected:" << item->text();
+      }
 
-
+      // Call do_copy with opcode 0 (copy) or 1 (move)
+      int opcode = (QApplication::keyboardModifiers() & Qt::ShiftModifier) ? 1 : 0;
+      qDebug() << "Calling do_copy with opcode:" << opcode;
+      do_xcopy(opcode);
+      qDebug() << "do_xcopy completed in handleFilesDropped";
 }
-
-/*
-
-#include <QtGui>
-
-int main(int argc, char *argv[])
-{
-    QApplication a(argc, argv);
-    QFileDialog w;
-    w.setFileMode(QFileDialog::DirectoryOnly);
-    w.setOption(QFileDialog::DontUseNativeDialog,true);
-    QListView *l = w.findChild<QListView*>("listView");
-    if (l) {
-         l->setSelectionMode(QAbstractItemView::MultiSelection);
-     }
-    QTreeView *t = w.findChild<QTreeView*>();
-     if (t) {
-       t->setSelectionMode(QAbstractItemView::MultiSelection);
-   }
-   return w.exec();
-}
-
-*/
-

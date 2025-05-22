@@ -2,14 +2,13 @@
 #define USBFILEDIALOG_H
 #include <QMessageBox>
 #include <QDialog>
+#include "customlistwidget.h"
 
 namespace Ui {
 class usbfileDialog;
-
 }
 
 class usbfileDialog : public QDialog
-
 {
     Q_OBJECT
 
@@ -18,68 +17,34 @@ public:
     ~usbfileDialog();
 
 public:
+    // void fmactivityIcon(bool value);
 
-
- // void fmactivityIcon(bool value);
-
-void set1FileList(QStringList zstringlist);
-
-void set2FileList(QStringList zstringlist);
-
-void setData(const QString &labelText);
-
-void setADB(const QString &adbdata);
-
-
-
-void setPath1(QString currentdir);
-
-void setPath2(QString currentdir);
-
-void setadbdir(QString adbdir);
-
-void setMode(const int &modenum);
-
-void setPackagename(const QString &packagename);
-
-void setkodiPath(const QString &kodipath);
-
-void editfile(QString fileName, QString xpath);
-
-QString RunProcess_ufd(QString cstring);
-
-QString RunLongProcess_ufd(QString cstring);
-
-
-void do_copy(int opcode);
-
-
-void setPulldir(const QString &pullstr);
-
-
-
-void setAdbdir(const QString &adbstr);
-void setuProgram(const QString &fprogram);
-
-
-void setdisableroot(const bool &disableroot);
-
-void setoldfm(const bool &oldfm);
-
-bool checkRoot();
-
-   QString binfileName();
-
-
+ //   void set1FileList(QStringList zstringlist);
+ //   void set2FileList(QStringList zstringlist);
+    void setData(const QString &labelText);
+    void setADB(const QString &adbdata);
+    void setPath1(QString currentdir);
+    void setPath2(QString currentdir);
+    void setadbdir(QString adbdir);
+    void setMode(const int &modenum);
+    void setPackagename(const QString &packagename);
+    void setkodiPath(const QString &kodipath);
+    void editfile(QString fileName, QString xpath);
+    QString RunProcess_ufd(QString cstring);
+    QString RunLongProcess_ufd(QString cstring);
+    void do_copy(int opcode);
+     void do_xcopy(int opcode);
+    void setPulldir(const QString &pullstr);
+    void setAdbdir(const QString &adbstr);
+    void setuProgram(const QString &fprogram);
+    void setdisableroot(const bool &disableroot);
+    void setoldfm(const bool &oldfm);
+    bool checkRoot();
+    QString binfileName();
     QString mcpath;
-
-   void setTitle(QString text);
-
+    void setTitle(QString text);
     QString buffer;
-
     Ui::usbfileDialog *ui;
-
-
     QString tmpdir1;
     QString tmpstr1;
     QString commstr1;
@@ -97,53 +62,32 @@ bool checkRoot();
     QString current_directory1;
     QString rootShell;
 
-
-
 private slots:
-
-
-
     void on_usblistWidget1_doubleClicked(const QModelIndex &index);
     void on_usblistWidget2_doubleClicked(const QModelIndex &index);
-
     QString fix_directory(QString dirname);
-     bool is_directory(QString fdirectory);
-
-
+    bool is_directory(QString fdirectory);
     void rootpush(QStringList filenames);
     void userpush(QStringList filenames);
-
-
-
     void on_pullButton_clicked();
     void on_copyButton_clicked();
     void on_delButton_clicked();
     void on_editButton_clicked();
-
     void on_moveButton_clicked();
     void on_resetButton_clicked();
     void on_goButton_clicked();
     void on_clearButton_clicked();
-
     void on_mkdirButton_clicked();
     void on_renameButton_clicked();
     void on_customdir_returnPressed();
-
-void assignWindow1();
-void assignWindow2();
-void usbTimerEvent();
-
-
-
-void gather_push();
-
-
-void on_pushfilesButton_clicked();
-
-
+    void assignWindow1();
+    void assignWindow2();
+    void usbTimerEvent();
+    void gather_push();
+    void on_pushfilesButton_clicked();
+    void handleFilesDropped(const QStringList &fileNames, const QString &targetDir); // NEW: Slot for drop event
 
 };
-
 
 extern int ost1;
 extern bool hasfocus;
