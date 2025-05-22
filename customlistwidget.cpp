@@ -12,8 +12,10 @@ CustomListWidget::CustomListWidget(QWidget *parent) : QListWidget(parent)
     setDragEnabled(true);
     setAcceptDrops(true);
     setDragDropMode(QAbstractItemView::DragDrop);
+    setSelectionMode(QAbstractItemView::MultiSelection); // Ensure multiple selections
     qDebug() << "CustomListWidget instantiated for" << this << "dragEnabled:" << dragEnabled()
-             << "acceptDrops:" << acceptDrops() << "dragDropMode:" << dragDropMode();
+             << "acceptDrops:" << acceptDrops() << "dragDropMode:" << dragDropMode()
+             << "selectionMode:" << selectionMode();
 }
 
 void CustomListWidget::mousePressEvent(QMouseEvent *event)
@@ -60,14 +62,16 @@ void CustomListWidget::dropEvent(QDropEvent *event)
     if (event->mimeData()->hasFormat("application/x-qabstractitemmodeldatalist")) {
         QByteArray modelData = event->mimeData()->data("application/x-qabstractitemmodeldatalist");
         QDataStream stream(&modelData, QIODevice::ReadOnly);
+        QSet<int> processedRows; // Track processed rows to avoid duplicates
         while (!stream.atEnd()) {
             int row, col;
             QMap<int, QVariant> roleDataMap;
             stream >> row >> col >> roleDataMap;
-            if (roleDataMap.contains(Qt::DisplayRole)) {
+            if (roleDataMap.contains(Qt::DisplayRole) && !processedRows.contains(row)) {
                 QString fileName = roleDataMap[Qt::DisplayRole].toString();
                 if (fileName != "..") {
                     fileNames << fileName;
+                    processedRows.insert(row); // Mark row as processed
                 }
             }
         }

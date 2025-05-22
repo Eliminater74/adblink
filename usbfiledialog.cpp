@@ -2016,12 +2016,9 @@ void usbfileDialog::on_copyButton_clicked()
 
 
 ////////////////////////////////////////////
-
-
-  void usbfileDialog::do_xcopy(int opcode)
+  void usbfileDialog::do_xcopy(int /*opcode*/)
   {
-       qDebug() << "do_copy function entered with opcode:" << opcode;
-       qDebug() << "hasfocus:" << hasfocus << "current_directory1:" << current_directory1 << "current_directory2:" << current_directory2;
+       qDebug() << "do_xcopy function entered";
 
        QStringList mstringlist;
        QString fileName;
@@ -2030,11 +2027,7 @@ void usbfileDialog::on_copyButton_clicked()
        QString workingdir;
        QString optext;
        int error = 0;
-
-       if (opcode == 0)
-         optext = "Copy";
-       else
-         optext = "Move";
+       int opcode = 0; // Default, will be set by dialog
 
        // Get selected items from source widget
        if (hasfocus) {
@@ -2074,7 +2067,7 @@ void usbfileDialog::on_copyButton_clicked()
        }
 
        if (mstringlist.count() < 1) {
-         qDebug() << "No valid files selected, exiting do_copy";
+         qDebug() << "No valid files selected, exiting do_xcopy";
          return;
        }
 
@@ -2089,13 +2082,27 @@ void usbfileDialog::on_copyButton_clicked()
          }
        }
 
-       // Confirm operation
-       QMessageBox::StandardButton reply3;
-       reply3 = QMessageBox::question(this, "", optext + " item(s)?", QMessageBox::Yes | QMessageBox::No);
-       if (reply3 == QMessageBox::No) {
+       // Custom dialog with Move, Copy, Cancel
+       QMessageBox msgBox(this);
+       msgBox.setWindowTitle("");
+       msgBox.setText("Choose operation for " + QString::number(mstringlist.count()) + " item(s):");
+       QAbstractButton *moveButton = msgBox.addButton("Move", QMessageBox::ActionRole);
+       QAbstractButton *copyButton = msgBox.addButton("Copy", QMessageBox::ActionRole);
+       QAbstractButton *cancelButton = msgBox.addButton("Cancel", QMessageBox::RejectRole);
+       msgBox.exec();
+
+       if (msgBox.clickedButton() == cancelButton) {
          qDebug() << "User cancelled operation";
          return;
+       } else if (msgBox.clickedButton() == copyButton) {
+         opcode = 0;
+         optext = "Copy";
+       } else if (msgBox.clickedButton() == moveButton) {
+         opcode = 1;
+         optext = "Move";
        }
+
+       qDebug() << "Selected operation:" << optext << "opcode:" << opcode;
 
        logfile(optext + " files");
        logfile("----------");
@@ -2137,76 +2144,77 @@ void usbfileDialog::on_copyButton_clicked()
        setPath1(current_directory1);
        setPath2(current_directory2);
 
-       qDebug() << "do_xopy completed";
-  }
+       qDebug() << "do_xcopy completed";
+  } // eof
 
   ///////////////////////////////////////////////
+  void usbfileDialog::handleFilesDropped(const QStringList &fileNames, const QString &targetDir)
+  {
+       qDebug() << "handleFilesDropped called with fileNames:" << fileNames << "targetDir:" << targetDir;
+       bool droppedOnWidget1 = (targetDir == current_directory1);
+       hasfocus = droppedOnWidget1;
 
-void usbfileDialog::handleFilesDropped(const QStringList &fileNames, const QString &targetDir)
-{
-      qDebug() << "handleFilesDropped called with fileNames:" << fileNames << "targetDir:" << targetDir;
-      bool droppedOnWidget1 = (targetDir == current_directory1);
-      hasfocus = droppedOnWidget1;
+       QStringList mstringlist;
+       for (const QString &fileName : fileNames) {
+         if (fileName != "..") {
+             mstringlist << fileName;
+         }
+       }
+       qDebug() << "mstringlist:" << mstringlist;
 
-      QStringList mstringlist;
-      for (const QString &fileName : fileNames) {
-            if (fileName != "..") {
-                  mstringlist << fileName;
-            }
-      }
-      qDebug() << "mstringlist:" << mstringlist;
+       if (mstringlist.isEmpty()) {
+         qDebug() << "No valid files to copy/move";
+         return;
+       }
 
-      if (mstringlist.isEmpty()) {
-            qDebug() << "No valid files to copy/move";
-            return;
-      }
+       // Update directories and select all dropped items
+       if (droppedOnWidget1) {
+         current_directory1 = targetDir;
+         // Use the first file's parent directory for current_directory2
+         current_directory2 = mstringlist.first().left(mstringlist.first().lastIndexOf("/"));
+         if (!current_directory2.endsWith("/"))
+             current_directory2.append("/");
+         // Select all dropped items in usblistWidget2 (source)
+         ui->usblistWidget2->clearSelection();
+         for (const QString &fileName : mstringlist) {
+             for (int i = 0; i < ui->usblistWidget2->count(); ++i) {
+                                 if (ui->usblistWidget2->item(i)->text() == fileName) {
+                  ui->usblistWidget2->item(i)->setSelected(true);
+                  qDebug() << "Selected item in usblistWidget2:" << fileName;
+                  break;
+                                 }
+             }
+         }
+       } else {
+         current_directory2 = targetDir;
+         current_directory1 = mstringlist.first().left(mstringlist.first().lastIndexOf("/"));
+         if (!current_directory1.endsWith("/"))
+             current_directory1.append("/");
+         // Select all dropped items in usblistWidget1 (source)
+         ui->usblistWidget1->clearSelection();
+         for (const QString &fileName : mstringlist) {
+             for (int i = 0; i < ui->usblistWidget1->count(); ++i) {
+                                 if (ui->usblistWidget1->item(i)->text() == fileName) {
+                  ui->usblistWidget1->item(i)->setSelected(true);
+                  qDebug() << "Selected item in usblistWidget1:" << fileName;
+                  break;
+                                 }
+             }
+         }
+       }
+       qDebug() << "Updated directories: current_directory1:" << current_directory1 << "current_directory2:" << current_directory2;
+       qDebug() << "hasfocus:" << hasfocus;
+       qDebug() << "usblistWidget1 selected items:" << ui->usblistWidget1->selectedItems().size();
+       for (const auto *item : ui->usblistWidget1->selectedItems()) {
+         qDebug() << "usblistWidget1 selected:" << item->text();
+       }
+       qDebug() << "usblistWidget2 selected items:" << ui->usblistWidget2->selectedItems().size();
+       for (const auto *item : ui->usblistWidget2->selectedItems()) {
+         qDebug() << "usblistWidget2 selected:" << item->text();
+       }
 
-      // Update directories and select the dragged item
-      if (droppedOnWidget1) {
-            current_directory1 = targetDir;
-            current_directory2 = mstringlist.first().left(mstringlist.first().lastIndexOf("/"));
-            if (!current_directory2.endsWith("/"))
-                  current_directory2.append("/");
-            // Select the item in usblistWidget2 (source)
-            ui->usblistWidget2->clearSelection();
-            for (int i = 0; i < ui->usblistWidget2->count(); ++i) {
-                  if (ui->usblistWidget2->item(i)->text() == mstringlist.first()) {
-                   ui->usblistWidget2->setCurrentItem(ui->usblistWidget2->item(i));
-                   ui->usblistWidget2->item(i)->setSelected(true);
-                   qDebug() << "Selected item in usblistWidget2:" << mstringlist.first();
-                   break;
-                  }
-            }
-      } else {
-            current_directory2 = targetDir;
-            current_directory1 = mstringlist.first().left(mstringlist.first().lastIndexOf("/"));
-            if (!current_directory1.endsWith("/"))
-                  current_directory1.append("/");
-            // Select the item in usblistWidget1 (source)
-            ui->usblistWidget1->clearSelection();
-            for (int i = 0; i < ui->usblistWidget1->count(); ++i) {
-                  if (ui->usblistWidget1->item(i)->text() == mstringlist.first()) {
-                   ui->usblistWidget1->setCurrentItem(ui->usblistWidget1->item(i));
-                   ui->usblistWidget1->item(i)->setSelected(true);
-                   qDebug() << "Selected item in usblistWidget1:" << mstringlist.first();
-                   break;
-                  }
-            }
-      }
-      qDebug() << "Updated directories: current_directory1:" << current_directory1 << "current_directory2:" << current_directory2;
-      qDebug() << "hasfocus:" << hasfocus;
-      qDebug() << "usblistWidget1 selected items:" << ui->usblistWidget1->selectedItems().size();
-      for (const auto *item : ui->usblistWidget1->selectedItems()) {
-            qDebug() << "usblistWidget1 selected:" << item->text();
-      }
-      qDebug() << "usblistWidget2 selected items:" << ui->usblistWidget2->selectedItems().size();
-      for (const auto *item : ui->usblistWidget2->selectedItems()) {
-            qDebug() << "usblistWidget2 selected:" << item->text();
-      }
-
-      // Call do_copy with opcode 0 (copy) or 1 (move)
-      int opcode = (QApplication::keyboardModifiers() & Qt::ShiftModifier) ? 1 : 0;
-      qDebug() << "Calling do_copy with opcode:" << opcode;
-      do_xcopy(opcode);
-      qDebug() << "do_xcopy completed in handleFilesDropped";
-}
+       // Call do_xcopy
+       qDebug() << "Calling do_xcopy";
+       do_xcopy(0); // Default opcode, overridden by dialog
+       qDebug() << "do_xcopy completed in handleFilesDropped";
+  } // eof
