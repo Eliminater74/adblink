@@ -6,6 +6,7 @@
 #include <QMouseEvent>
 #include <QDebug>
 #include <QDataStream>
+#include "usbfiledialog.h" // Added to access usbfileDialog
 
 CustomListWidget::CustomListWidget(QWidget *parent) : QListWidget(parent)
 {
@@ -16,6 +17,58 @@ CustomListWidget::CustomListWidget(QWidget *parent) : QListWidget(parent)
     qDebug() << "CustomListWidget instantiated for" << this << "dragEnabled:" << dragEnabled()
              << "acceptDrops:" << acceptDrops() << "dragDropMode:" << dragDropMode()
              << "selectionMode:" << selectionMode();
+
+    createContextMenu(); // Initialize context menu
+}
+
+void CustomListWidget::createContextMenu()
+{
+    contextMenu = new QMenu(this);
+    copyAction = new QAction("Copy", this);
+    moveAction = new QAction("Move", this);
+    renameAction = new QAction("Rename", this);
+    deleteAction = new QAction("Delete", this);
+    editAction = new QAction("Edit", this);
+
+    contextMenu->addAction(copyAction);
+    contextMenu->addAction(moveAction);
+    contextMenu->addAction(renameAction);
+    contextMenu->addAction(deleteAction);
+    contextMenu->addAction(editAction);
+
+    // Connect actions to usbfileDialog slots
+    usbfileDialog *parentDialog = qobject_cast<usbfileDialog*>(parent());
+    if (parentDialog) {
+        connect(copyAction, &QAction::triggered, parentDialog, &usbfileDialog::on_copyButton_clicked);
+        connect(moveAction, &QAction::triggered, parentDialog, &usbfileDialog::on_moveButton_clicked);
+        connect(renameAction, &QAction::triggered, parentDialog, &usbfileDialog::on_renameButton_clicked);
+        connect(deleteAction, &QAction::triggered, parentDialog, &usbfileDialog::on_delButton_clicked);
+        connect(editAction, &QAction::triggered, parentDialog, &usbfileDialog::on_editButton_clicked);
+        qDebug() << "Context menu actions connected to usbfileDialog slots";
+    } else {
+        qDebug() << "Warning: Parent is not a usbfileDialog, context menu actions not connected";
+    }
+}
+
+void CustomListWidget::contextMenuEvent(QContextMenuEvent *event)
+{
+    // Ensure at least one item is selected
+    if (selectedItems().isEmpty()) {
+        qDebug() << "No items selected, skipping context menu";
+        return;
+    }
+
+    // Enable/disable actions based on selection
+    bool singleSelection = selectedItems().count() == 1;
+    renameAction->setEnabled(singleSelection); // Rename only for single selection
+    editAction->setEnabled(singleSelection);  // Edit only for single selection
+    copyAction->setEnabled(true);
+    moveAction->setEnabled(true);
+    deleteAction->setEnabled(true);
+
+    // Show context menu at mouse position
+    qDebug() << "Showing context menu at position:" << event->globalPos();
+    contextMenu->exec(event->globalPos());
 }
 
 void CustomListWidget::mousePressEvent(QMouseEvent *event)
