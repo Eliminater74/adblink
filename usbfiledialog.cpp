@@ -142,8 +142,14 @@ usbfileDialog::usbfileDialog(bool iskodi, QWidget *parent) :
     // Connect filesDropped signals for drag-and-drop
     connect(static_cast<CustomListWidget *>(ui->usblistWidget1), &CustomListWidget::filesDropped, this, &usbfileDialog::handleFilesDropped);
     connect(static_cast<CustomListWidget *>(ui->usblistWidget2), &CustomListWidget::filesDropped, this, &usbfileDialog::handleFilesDropped);
-    qDebug() << "Connected filesDropped signals";
+
+    // Connect focusRequested signals for context menu
+    connect(static_cast<CustomListWidget *>(ui->usblistWidget1), &CustomListWidget::focusRequested, this, &usbfileDialog::assignWindow1);
+    connect(static_cast<CustomListWidget *>(ui->usblistWidget2), &CustomListWidget::focusRequested, this, &usbfileDialog::assignWindow2);
+
+    qDebug() << "Connected filesDropped and focusRequested signals";
 }
+
 usbfileDialog::~usbfileDialog()
 {
     delete ui;

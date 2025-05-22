@@ -6,19 +6,19 @@
 #include <QMouseEvent>
 #include <QDebug>
 #include <QDataStream>
-#include "usbfiledialog.h" // Added to access usbfileDialog
+#include "usbfiledialog.h"
 
 CustomListWidget::CustomListWidget(QWidget *parent) : QListWidget(parent)
 {
     setDragEnabled(true);
     setAcceptDrops(true);
     setDragDropMode(QAbstractItemView::DragDrop);
-    setSelectionMode(QAbstractItemView::MultiSelection); // Ensure multiple selections
+    setSelectionMode(QAbstractItemView::MultiSelection);
     qDebug() << "CustomListWidget instantiated for" << this << "dragEnabled:" << dragEnabled()
              << "acceptDrops:" << acceptDrops() << "dragDropMode:" << dragDropMode()
              << "selectionMode:" << selectionMode();
 
-    createContextMenu(); // Initialize context menu
+    createContextMenu();
 }
 
 void CustomListWidget::createContextMenu()
@@ -29,12 +29,19 @@ void CustomListWidget::createContextMenu()
     renameAction = new QAction("Rename", this);
     deleteAction = new QAction("Delete", this);
     editAction = new QAction("Edit", this);
+    mkdirAction = new QAction("New Directory", this);
+    pullAction = new QAction("Pull", this);
+    homeAction = new QAction("Home", this); // Added Home action
 
     contextMenu->addAction(copyAction);
     contextMenu->addAction(moveAction);
     contextMenu->addAction(renameAction);
     contextMenu->addAction(deleteAction);
     contextMenu->addAction(editAction);
+    contextMenu->addSeparator();
+    contextMenu->addAction(mkdirAction);
+    contextMenu->addAction(pullAction);
+    contextMenu->addAction(homeAction);
 
     // Connect actions to usbfileDialog slots
     usbfileDialog *parentDialog = qobject_cast<usbfileDialog*>(parent());
@@ -44,7 +51,10 @@ void CustomListWidget::createContextMenu()
         connect(renameAction, &QAction::triggered, parentDialog, &usbfileDialog::on_renameButton_clicked);
         connect(deleteAction, &QAction::triggered, parentDialog, &usbfileDialog::on_delButton_clicked);
         connect(editAction, &QAction::triggered, parentDialog, &usbfileDialog::on_editButton_clicked);
-        qDebug() << "Context menu actions connected to usbfileDialog slots";
+        connect(mkdirAction, &QAction::triggered, parentDialog, &usbfileDialog::on_mkdirButton_clicked);
+        connect(pullAction, &QAction::triggered, parentDialog, &usbfileDialog::on_pullButton_clicked);
+        connect(homeAction, &QAction::triggered, parentDialog, &usbfileDialog::on_resetButton_clicked);
+        qDebug() << "Context menu actions connected to usbfileDialog slots, including mkdir, pull, and home";
     } else {
         qDebug() << "Warning: Parent is not a usbfileDialog, context menu actions not connected";
     }
@@ -52,21 +62,18 @@ void CustomListWidget::createContextMenu()
 
 void CustomListWidget::contextMenuEvent(QContextMenuEvent *event)
 {
-    // Ensure at least one item is selected
-    if (selectedItems().isEmpty()) {
-        qDebug() << "No items selected, skipping context menu";
-        return;
-    }
+    emit focusRequested(); // Emit signal to set hasfocus
 
-    // Enable/disable actions based on selection
     bool singleSelection = selectedItems().count() == 1;
-    renameAction->setEnabled(singleSelection); // Rename only for single selection
-    editAction->setEnabled(singleSelection);  // Edit only for single selection
-    copyAction->setEnabled(true);
-    moveAction->setEnabled(true);
-    deleteAction->setEnabled(true);
+    renameAction->setEnabled(singleSelection);
+    editAction->setEnabled(singleSelection);
+    copyAction->setEnabled(!selectedItems().isEmpty());
+    moveAction->setEnabled(!selectedItems().isEmpty());
+    deleteAction->setEnabled(!selectedItems().isEmpty());
+    mkdirAction->setEnabled(true); // Always enabled
+    pullAction->setEnabled(!selectedItems().isEmpty()); // Enabled only with selection
+    homeAction->setEnabled(true); // Always enabled
 
-    // Show context menu at mouse position
     qDebug() << "Showing context menu at position:" << event->globalPos();
     contextMenu->exec(event->globalPos());
 }
@@ -115,7 +122,7 @@ void CustomListWidget::dropEvent(QDropEvent *event)
     if (event->mimeData()->hasFormat("application/x-qabstractitemmodeldatalist")) {
         QByteArray modelData = event->mimeData()->data("application/x-qabstractitemmodeldatalist");
         QDataStream stream(&modelData, QIODevice::ReadOnly);
-        QSet<int> processedRows; // Track processed rows to avoid duplicates
+        QSet<int> processedRows;
         while (!stream.atEnd()) {
             int row, col;
             QMap<int, QVariant> roleDataMap;
@@ -124,7 +131,7 @@ void CustomListWidget::dropEvent(QDropEvent *event)
                 QString fileName = roleDataMap[Qt::DisplayRole].toString();
                 if (fileName != "..") {
                     fileNames << fileName;
-                    processedRows.insert(row); // Mark row as processed
+                    processedRows.insert(row);
                 }
             }
         }

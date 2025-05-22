@@ -2,8 +2,8 @@
 #define CUSTOMLISTWIDGET_H
 
 #include <QListWidget>
-#include <QMenu> // Added for context menu
-#include <QAction> // Added for menu actions
+#include <QMenu>
+#include <QAction>
 
 class CustomListWidget : public QListWidget
 {
@@ -13,23 +13,26 @@ public:
 
 signals:
     void filesDropped(const QStringList &fileNames, const QString &targetDir);
+    void focusRequested(); // For setting hasfocus
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
     void dragEnterEvent(QDragEnterEvent *event) override;
     void dragMoveEvent(QDragMoveEvent *event) override;
     void dropEvent(QDropEvent *event) override;
-    void contextMenuEvent(QContextMenuEvent *event) override; // Added for context menu
+    void contextMenuEvent(QContextMenuEvent *event) override;
 
 private:
-    void createContextMenu(); // Added to initialize context menu
-    QMenu *contextMenu; // Added to store context menu
-    QAction *copyAction; // Added for copy action
-    QAction *moveAction; // Added for move action
-    QAction *renameAction; // Added for rename action
-    QAction *deleteAction; // Added for delete action
-    QAction *editAction; // Added for edit action
+    void createContextMenu();
+    QMenu *contextMenu;
+    QAction *copyAction;
+    QAction *moveAction;
+    QAction *renameAction;
+    QAction *deleteAction;
+    QAction *editAction;
+    QAction *mkdirAction;
+    QAction *pullAction;
+    QAction *homeAction; // Added for Home action
 };
 
 #endif // CUSTOMLISTWIDGET_H
-
