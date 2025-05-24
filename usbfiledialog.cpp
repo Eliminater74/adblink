@@ -63,6 +63,7 @@ bool do_oldfm=false;
 #include <QApplication>
 #include <QDebug>
 
+
 usbfileDialog::usbfileDialog(bool iskodi, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::usbfileDialog)
@@ -72,14 +73,10 @@ usbfileDialog::usbfileDialog(bool iskodi, QWidget *parent) :
     // Initialize directories if empty
     if (current_directory1.isEmpty()) current_directory1 = "/sdcard/";
     if (current_directory2.isEmpty()) current_directory2 = "/sdcard/";
-    qDebug() << "Constructor: initializing current_directory1:" << current_directory1
-             << "current_directory2:" << current_directory2;
 
     // Set currentDirectory property for drag-and-drop
     ui->usblistWidget1->setProperty("currentDirectory", current_directory1);
     ui->usblistWidget2->setProperty("currentDirectory", current_directory2);
-    qDebug() << "Constructor: set currentDirectory for usblistWidget1:" << ui->usblistWidget1->property("currentDirectory").toString()
-             << "usblistWidget2:" << ui->usblistWidget2->property("currentDirectory").toString();
 
     // Ensure drag-and-drop properties
     ui->usblistWidget1->setDragEnabled(true);
@@ -88,26 +85,6 @@ usbfileDialog::usbfileDialog(bool iskodi, QWidget *parent) :
     ui->usblistWidget2->setDragEnabled(true);
     ui->usblistWidget2->setAcceptDrops(true);
     ui->usblistWidget2->setDragDropMode(QAbstractItemView::DragDrop);
-    qDebug() << "usblistWidget1 dragEnabled:" << ui->usblistWidget1->dragEnabled()
-             << "acceptDrops:" << ui->usblistWidget1->acceptDrops()
-             << "dragDropMode:" << ui->usblistWidget1->dragDropMode();
-    qDebug() << "usblistWidget2 dragEnabled:" << ui->usblistWidget2->dragEnabled()
-             << "acceptDrops:" << ui->usblistWidget2->acceptDrops()
-             << "dragDropMode:" << ui->usblistWidget2->dragDropMode();
-
-    // Log existing items
-    qDebug() << "usblistWidget1 initial item count:" << ui->usblistWidget1->count();
-    for (int i = 0; i < ui->usblistWidget1->count(); ++i) {
-        qDebug() << "usblistWidget1 item" << i << ":" << ui->usblistWidget1->item(i)->text()
-                 << "flags:" << ui->usblistWidget1->item(i)->flags()
-                 << "dragEnabled:" << (ui->usblistWidget1->item(i)->flags() & Qt::ItemIsDragEnabled);
-    }
-    qDebug() << "usblistWidget2 initial item count:" << ui->usblistWidget2->count();
-    for (int i = 0; i < ui->usblistWidget2->count(); ++i) {
-        qDebug() << "usblistWidget2 item" << i << ":" << ui->usblistWidget2->item(i)->text()
-                 << "flags:" << ui->usblistWidget2->item(i)->flags()
-                 << "dragEnabled:" << (ui->usblistWidget2->item(i)->flags() & Qt::ItemIsDragEnabled);
-    }
 
     if (ost1 == 1)
     {
@@ -139,15 +116,17 @@ usbfileDialog::usbfileDialog(bool iskodi, QWidget *parent) :
     connect(ui->usblistWidget1, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(assignWindow1()));
     connect(ui->usblistWidget2, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(assignWindow2()));
 
-    // Connect filesDropped signals for drag-and-drop
+    // Connect filesDropped signals for internal drag-and-drop
     connect(static_cast<CustomListWidget *>(ui->usblistWidget1), &CustomListWidget::filesDropped, this, &usbfileDialog::handleFilesDropped);
     connect(static_cast<CustomListWidget *>(ui->usblistWidget2), &CustomListWidget::filesDropped, this, &usbfileDialog::handleFilesDropped);
+
+    // Connect externalFilesDropped signals for desktop file drops
+    connect(static_cast<CustomListWidget *>(ui->usblistWidget1), &CustomListWidget::externalFilesDropped, this, &usbfileDialog::onExternalFilesDropped);
+    connect(static_cast<CustomListWidget *>(ui->usblistWidget2), &CustomListWidget::externalFilesDropped, this, &usbfileDialog::onExternalFilesDropped);
 
     // Connect focusRequested signals for context menu
     connect(static_cast<CustomListWidget *>(ui->usblistWidget1), &CustomListWidget::focusRequested, this, &usbfileDialog::assignWindow1);
     connect(static_cast<CustomListWidget *>(ui->usblistWidget2), &CustomListWidget::focusRequested, this, &usbfileDialog::assignWindow2);
-
-    qDebug() << "Connected filesDropped and focusRequested signals";
 }
 
 usbfileDialog::~usbfileDialog()
@@ -2224,3 +2203,29 @@ void usbfileDialog::on_copyButton_clicked()
        do_xcopy(0); // Default opcode, overridden by dialog
        qDebug() << "do_xcopy completed in handleFilesDropped";
   } // eof
+
+
+  void usbfileDialog::onExternalFilesDropped(const QStringList &filePaths, const QString &targetDir)
+  {
+       // Update focus and current directory based on the widget that received the drop
+       if (sender() == ui->usblistWidget1) {
+         current_directory1 = targetDir;
+         hasfocus = true;
+       } else if (sender() == ui->usblistWidget2) {
+         current_directory2 = targetDir;
+         hasfocus = false;
+       } else {
+         return;
+       }
+
+       if (filePaths.isEmpty()) {
+         return;
+       }
+
+       // Push files using existing logic
+       if (checkRoot()) {
+         rootpush(filePaths);
+       } else {
+         userpush(filePaths);
+       }
+  }

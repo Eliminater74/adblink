@@ -87,6 +87,7 @@ private slots:
     bool is_directory(QString fdirectory);
     void rootpush(QStringList filenames);
     void userpush(QStringList filenames);
+     void onExternalFilesDropped(const QStringList &filePaths, const QString &targetDir);
 
 };
 

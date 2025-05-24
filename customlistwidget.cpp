@@ -91,10 +91,13 @@ void CustomListWidget::mousePressEvent(QMouseEvent *event)
     QListWidget::mousePressEvent(event);
 }
 
+
+
 void CustomListWidget::dragEnterEvent(QDragEnterEvent *event)
 {
     qDebug() << "dragEnterEvent called, mimeData formats:" << event->mimeData()->formats();
-    if (event->mimeData()->hasFormat("application/x-qabstractitemmodeldatalist")) {
+    if (event->mimeData()->hasFormat("application/x-qabstractitemmodeldatalist") ||
+        event->mimeData()->hasFormat("text/uri-list")) {
         event->acceptProposedAction();
     } else {
         qDebug() << "dragEnterEvent ignored: no supported mime data";
@@ -105,7 +108,8 @@ void CustomListWidget::dragEnterEvent(QDragEnterEvent *event)
 void CustomListWidget::dragMoveEvent(QDragMoveEvent *event)
 {
     qDebug() << "dragMoveEvent called";
-    if (event->mimeData()->hasFormat("application/x-qabstractitemmodeldatalist")) {
+    if (event->mimeData()->hasFormat("application/x-qabstractitemmodeldatalist") ||
+        event->mimeData()->hasFormat("text/uri-list")) {
         event->acceptProposedAction();
     } else {
         event->ignore();
@@ -116,9 +120,11 @@ void CustomListWidget::dropEvent(QDropEvent *event)
 {
     qDebug() << "dropEvent called, mimeData formats:" << event->mimeData()->formats();
     QStringList fileNames;
+    QStringList filePaths; // For external files
     QString targetDir = property("currentDirectory").toString();
     qDebug() << "dropEvent: targetDir from currentDirectory:" << targetDir;
 
+    // Handle internal drag-and-drop (existing logic)
     if (event->mimeData()->hasFormat("application/x-qabstractitemmodeldatalist")) {
         QByteArray modelData = event->mimeData()->data("application/x-qabstractitemmodeldatalist");
         QDataStream stream(&modelData, QIODevice::ReadOnly);
@@ -137,14 +143,30 @@ void CustomListWidget::dropEvent(QDropEvent *event)
         }
         qDebug() << "Model mime data: fileNames:" << fileNames;
     }
+    // Handle external file drops (e.g., from desktop)
+    else if (event->mimeData()->hasFormat("text/uri-list")) {
+        QList<QUrl> urls = event->mimeData()->urls();
+        for (const QUrl &url : urls) {
+            if (url.isLocalFile()) {
+                filePaths << url.toLocalFile();
+            }
+        }
+        qDebug() << "External file paths dropped:" << filePaths;
+    }
 
+    // Process internal drag-and-drop
     if (!fileNames.isEmpty() && !targetDir.isEmpty()) {
-        qDebug() << "Drop event: fileNames:" << fileNames << "targetDir:" << targetDir;
+        qDebug() << "Drop event (internal): fileNames:" << fileNames << "targetDir:" << targetDir;
         emit filesDropped(fileNames, targetDir);
-        qDebug() << "Emitted filesDropped signal";
+        event->acceptProposedAction();
+    }
+    // Process external file drops
+    else if (!filePaths.isEmpty() && !targetDir.isEmpty()) {
+        qDebug() << "Drop event (external): filePaths:" << filePaths << "targetDir:" << targetDir;
+        emit externalFilesDropped(filePaths, targetDir); // New signal for external files
         event->acceptProposedAction();
     } else {
-        qDebug() << "Drop ignored: fileNames:" << fileNames << "targetDir:" << targetDir;
+        qDebug() << "Drop ignored: fileNames:" << fileNames << "filePaths:" << filePaths << "targetDir:" << targetDir;
         event->ignore();
     }
 }

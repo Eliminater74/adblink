@@ -13,6 +13,7 @@ public:
 
 signals:
     void filesDropped(const QStringList &fileNames, const QString &targetDir);
+    void externalFilesDropped(const QStringList &filePaths, const QString &targetDir); 
     void focusRequested(); // For setting hasfocus
 
 protected:
