@@ -1952,7 +1952,25 @@
              QString cstring = getadbpath() + " kill-server";
              QString command=getadbOutput(cstring);
              ui->server_running->setText(adbstr2);
-             loadDeviceTable();
+
+             for (int row = 0; row < ui->deviceTable->rowCount(); ++row) {
+
+            QTableWidgetItem* descItem = ui->deviceTable->item(row, 0);
+            if (!descItem) continue; // Skip if no item
+
+
+            bool isUsb = descItem->data(Qt::UserRole + 1).toBool();
+
+
+            QString status = isUsb ? "USB" : "Disconnected";
+            QTableWidgetItem* statusItem = new QTableWidgetItem(status);
+            ui->deviceTable->setItem(row, 2, statusItem);
+             }
+
+             ui->deviceTable->viewport()->update();
+
+
+
              return;
 
 
