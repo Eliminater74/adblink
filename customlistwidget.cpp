@@ -29,19 +29,22 @@ void CustomListWidget::createContextMenu()
     renameAction = new QAction("Rename", this);
     deleteAction = new QAction("Delete", this);
     editAction = new QAction("Edit", this);
-    mkdirAction = new QAction("New Directory", this);
+    mkdirAction = new QAction("Mkdir", this);
     pullAction = new QAction("Pull", this);
-    homeAction = new QAction("Home", this); // Added Home action
+    homeAction = new QAction("Home", this);
+     exitAction = new QAction("Close", this);
 
     contextMenu->addAction(copyAction);
     contextMenu->addAction(moveAction);
     contextMenu->addAction(renameAction);
     contextMenu->addAction(deleteAction);
     contextMenu->addAction(editAction);
-    contextMenu->addSeparator();
+
     contextMenu->addAction(mkdirAction);
     contextMenu->addAction(pullAction);
+     contextMenu->addSeparator();
     contextMenu->addAction(homeAction);
+     contextMenu->addAction(exitAction);
 
     // Connect actions to usbfileDialog slots
     usbfileDialog *parentDialog = qobject_cast<usbfileDialog*>(parent());
@@ -54,6 +57,8 @@ void CustomListWidget::createContextMenu()
         connect(mkdirAction, &QAction::triggered, parentDialog, &usbfileDialog::on_mkdirButton_clicked);
         connect(pullAction, &QAction::triggered, parentDialog, &usbfileDialog::on_pullButton_clicked);
         connect(homeAction, &QAction::triggered, parentDialog, &usbfileDialog::on_resetButton_clicked);
+        connect(exitAction, &QAction::triggered, parentDialog, &QDialog::close);
+
         qDebug() << "Context menu actions connected to usbfileDialog slots, including mkdir, pull, and home";
     } else {
         qDebug() << "Warning: Parent is not a usbfileDialog, context menu actions not connected";

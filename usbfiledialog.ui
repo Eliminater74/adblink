@@ -26,13 +26,6 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Directory</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QLineEdit" name="customdir">
        <property name="minimumSize">
         <size>
@@ -54,6 +47,9 @@
        </property>
        <property name="alignment">
         <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+       </property>
+       <property name="placeholderText">
+        <string>/path/to/directory</string>
        </property>
       </widget>
      </item>
@@ -225,35 +221,6 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QPushButton" name="cancelButton">
-       <property name="maximumSize">
-        <size>
-         <width>81</width>
-         <height>32</height>
-        </size>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Close File Manager&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="text">
-        <string>Quit</string>
-       </property>
-       <property name="autoDefault">
-        <bool>false</bool>
-       </property>
-       <property name="default">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
     <widget class="QProgressBar" name="usbprogressBar">
      <property name="value">
       <number>24</number>
@@ -270,22 +237,5 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>cancelButton</sender>
-   <signal>clicked()</signal>
-   <receiver>usbfileDialog</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>120</x>
-     <y>235</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>172</x>
-     <y>131</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

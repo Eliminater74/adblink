@@ -33,7 +33,8 @@ private:
     QAction *editAction;
     QAction *mkdirAction;
     QAction *pullAction;
-    QAction *homeAction; // Added for Home action
+    QAction *homeAction;
+    QAction *exitAction;
 };
 
 #endif // CUSTOMLISTWIDGET_H
