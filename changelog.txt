@@ -4,7 +4,7 @@ XX/XX/25
 
 Version 6.4
 
-adblink  adb updated to Version 36.0.0-13206524
+adblink adb updated to Version 36.0.0-13206524
 
 A locally installed adb binary can be used, 
 overriding adblink's included adb binary
@@ -19,9 +19,15 @@ adb shell now has automatic access to
 busybox, adding a huge array of *nix commands to
 the Android command-line.
 
+Drag and drop has been implemented
+throughout adblink's file manager.
+
+Most of the file manager buttons have been superseded
+by right-click actions.
+
 Merge of adblink (Kodi) & adblink2 (non-Kodi)
 is complete. adblink now offers two views, Kodi
-and Android.
+and Android. 
 
 adblink's  Kodi view offers Kodi functionality
 just as it has all along. 
@@ -30,7 +36,7 @@ Android view is for users who don't use Kodi but
 want all the other features adblink provides.
 
 Select startup view via preferences, switch
-views at will.
+views at will.The Kodi view is the default.
 
 Device selection has moved from a dropdown list
 to a scrollable table. The active device is
