@@ -36,6 +36,8 @@ QString quote1="\"'";
 QString quote2="'\"";
 bool do_oldfm=false;
 
+static const QString adbShell = " shell "; // At top of usbfiledialog.cpp
+
 
 #include "usbfiledialog.h"
 #include "ui_usbfiledialog.h"
@@ -396,7 +398,7 @@ void usbfileDialog::on_pullButton_clicked()
         }
 
         // Check if the file is a directory
-        cstring = adb21 + rootShell + " test -d " + fileName + " && echo true || echo false";
+        cstring = adb21 + adbShell + " test -d " + fileName + " && echo true || echo false";
         command = RunLongProcess_ufd(cstring);
 
         if (command.contains("true")) {
@@ -418,7 +420,7 @@ void usbfileDialog::on_pullButton_clicked()
 
         if (!command.contains("pulled")) {
             // Attempt to copy file to /data/local/tmp then re-attempt pull
-            cstring = adb21 + rootShell + " cp -R " + fileName + " /data/local/tmp";
+            cstring = adb21 + adbShell + " cp -R " + fileName + " /data/local/tmp";
             command = RunLongProcess_ufd(cstring);
 
             if (!command.isEmpty()) {
@@ -430,7 +432,7 @@ void usbfileDialog::on_pullButton_clicked()
 
             fname = "/data/local/tmp/" + fname;
 
-            cstring = adb21 + rootShell + " chmod -R 755 " + fname;
+            cstring = adb21 + adbShell + " chmod -R 755 " + fname;
             command = getadbOutput(cstring);
 
             if (dtest)
@@ -447,7 +449,7 @@ void usbfileDialog::on_pullButton_clicked()
                 error = error + 1;
             }
 
-            cstring = adb21 + rootShell + " rm -r " + fname;
+            cstring = adb21 + adbShell + " rm -r " + fname;
             command = getadbOutput(cstring);
         } else {
             logfile( "Destination: " + pulldir_ufd + "\n" + fileName); //  + " " + command
@@ -571,7 +573,7 @@ logfile("----------");
             }
 
 
-            cstring = adb21 + rootShell + " rm -r  " +quote1+fileName+quote2;
+            cstring = adb21 + adbShell + " rm -r  " +quote1+fileName+quote2;
 
             command=RunLongProcess_ufd(cstring);
 
@@ -874,11 +876,11 @@ void usbfileDialog::on_mkdirButton_clicked()
       }
 
         newdir=xpath+newdir;
-        QString cstring =  adb21 + rootShell +" mkdir -p "+ quote1+newdir+quote2;
+        QString cstring =  adb21 + adbShell +" mkdir -p "+ quote1+newdir+quote2;
 
 
 
-       // QString cstring =  adb21 + rootShell +" mkdir -p "+xpath + newdir;
+       // QString cstring =  adb21 + adbShell +" mkdir -p "+xpath + newdir;
 
        QString command=getadbOutput(cstring);
 
@@ -967,9 +969,9 @@ void usbfileDialog::on_renameButton_clicked()
             }
 
 
-          // QString cstring =  adb21 + rootShell + "mv "+  +'"'+oldname+'"' + " " +'"'+newname+'"';
+          // QString cstring =  adb21 + adbShell + "mv "+  +'"'+oldname+'"' + " " +'"'+newname+'"';
 
-          QString cstring = adb21 + rootShell + " mv "+quote1+oldname+quote2 + " "+quote1+newname+quote2;
+          QString cstring = adb21 + adbShell + " mv "+quote1+oldname+quote2 + " "+quote1+newname+quote2;
 
 
 
@@ -1024,13 +1026,7 @@ void usbfileDialog::rootpush(QStringList filenames)
   logfile("rootpush started");
 
 
-  if (checkRoot())
-      rootShell = " shell su -c ";
-  else
-      rootShell = " shell ";
 
- // qDebug() << rootShell;
-//  return;
 
     if(filenames.count() < 1)
     return;
@@ -1092,7 +1088,7 @@ QString destdir;
 
 
 
-                      cstring =  adb21 + rootShell+ " cp -R "+tmpstr+" "+xpath;
+                      cstring =  adb21 + adbShell+ " cp -R "+tmpstr+" "+xpath;
                       logfile(cstring);
                       command=RunLongProcess_ufd(cstring);
                       logfile(command);
@@ -1285,13 +1281,8 @@ void usbfileDialog::on_usblistWidget2_doubleClicked(const QModelIndex &index)
 
     }
 
-    // QString cstring = adb21+ " shell if test -d "+'"'+currentitem2+'"'+ "; then echo 'true'; fi";
 
-
-    if (checkRoot())
-       currentitem2.replace(" ", "\\ ");
-
-    QString cstring = adb21+rootShell + " [ -d " + quote1+currentitem2+ quote2 +" ] && echo 'true'";
+    QString cstring = adb21+adbShell + " [ -d " + quote1+currentitem2+ quote2 +" ] && echo 'true'";
 
 
 
@@ -1335,7 +1326,7 @@ void usbfileDialog::on_usblistWidget1_doubleClicked(const QModelIndex &index)
 
     }
 
-   // QString cstring = adb21+ rootShell + " if test -d "+'"'+currentitem1+'"'+ "; then echo 'true'; fi";
+   // QString cstring = adb21+ adbShell + " if test -d "+'"'+currentitem1+'"'+ "; then echo 'true'; fi";
 
 
    //  QString cstring = adb21+ " shell if test -d "+'"'+currentitem1+'"'+ "; then echo 'true'; fi";
@@ -1344,10 +1335,8 @@ void usbfileDialog::on_usblistWidget1_doubleClicked(const QModelIndex &index)
 
 
 
-    if (checkRoot())
-       currentitem1.replace(" ", "\\ ");
 
-    QString cstring = adb21+rootShell + " [ -d " + quote1+currentitem1+ quote2 +" ] && echo 'true'";
+    QString cstring = adb21+adbShell + " [ -d " + quote1+currentitem1+ quote2 +" ] && echo 'true'";
 
 
     QString command=getadbOutput(cstring);
@@ -1384,7 +1373,7 @@ bool usbfileDialog::is_directory(QString fdirectory)
 
 {
 
-QString string1=adb21 + rootShell +"/data/local/tmp/adblink/busybox find "+'"'+fdirectory+'"'+" -type d -maxdepth 0";
+QString string1=adb21 + adbShell +"/data/local/tmp/adblink/busybox find "+'"'+fdirectory+'"'+" -type d -maxdepth 0";
 QString command=getadbOutput(string1);
 
 
@@ -1401,12 +1390,8 @@ else
 
 void usbfileDialog::setPath1(QString currentdir)
 {
-qDebug() << "setPath1 called with:" << currentdir;
+// qDebug() << "setPath1 called with:" << currentdir;
 
-if (checkRoot())
-    rootShell = " shell su -c ";
-else
-    rootShell = " shell ";
 
 current_directory1 = currentdir;
 previous_directory1 = currentdir.left(currentdir.lastIndexOf("/"));
@@ -1424,19 +1409,19 @@ qDebug() << "usblistWidget1 currentDirectory set to:" << ui->usblistWidget1->pro
 currentdir.replace(" ", "\\ ");
 currentdir.replace("'", "\\'");
 
-QString string1 = adb21 + rootShell + "/data/local/tmp/adblink/busybox find " + '"' + currentdir + '"' + " -type d -maxdepth 1";
+QString string1 = adb21 + adbShell + "/data/local/tmp/adblink/busybox find " + '"' + currentdir + '"' + " -type d -maxdepth 1";
 QString command = getadbOutput(string1);
 QStringList stringlist1 = command.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
 
 stringlist1.sort();
 
-QString string2 = adb21 + rootShell + "/data/local/tmp/adblink/busybox find " + '"' + currentdir + '"' + " -type l -maxdepth 1";
+QString string2 = adb21 + adbShell + "/data/local/tmp/adblink/busybox find " + '"' + currentdir + '"' + " -type l -maxdepth 1";
 command = getadbOutput(string2);
 QStringList stringlist2 = command.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
 
 stringlist2.sort();
 
-QString string3 = adb21 + rootShell + "/data/local/tmp/adblink/busybox find " + '"' + currentdir + '"' + " -type f -maxdepth 1";
+QString string3 = adb21 + adbShell + "/data/local/tmp/adblink/busybox find " + '"' + currentdir + '"' + " -type f -maxdepth 1";
 command = getadbOutput(string3);
 QStringList stringlist3 = command.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
 
@@ -1480,10 +1465,6 @@ void usbfileDialog::setPath2(QString currentdir)
 {
 qDebug() << "setPath2 called with:" << currentdir;
 
-if (checkRoot())
-    rootShell = " shell su -c ";
-else
-    rootShell = " shell ";
 
 current_directory2 = currentdir;
 previous_directory2 = currentdir.left(currentdir.lastIndexOf("/"));
@@ -1501,19 +1482,19 @@ qDebug() << "usblistWidget2 currentDirectory set to:" << ui->usblistWidget2->pro
 currentdir.replace(" ", "\\ ");
 currentdir.replace("'", "\\'");
 
-QString string1 = adb21 + rootShell + "/data/local/tmp/adblink/busybox find " + '"' + currentdir + '"' + " -type d -maxdepth 1";
+QString string1 = adb21 + adbShell + "/data/local/tmp/adblink/busybox find " + '"' + currentdir + '"' + " -type d -maxdepth 1";
 QString command = getadbOutput(string1);
 QStringList stringlist1 = command.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
 
 stringlist1.sort();
 
-QString string2 = adb21 + rootShell + "/data/local/tmp/adblink/busybox find " + '"' + currentdir + '"' + " -type l -maxdepth 1";
+QString string2 = adb21 + adbShell + "/data/local/tmp/adblink/busybox find " + '"' + currentdir + '"' + " -type l -maxdepth 1";
 command = getadbOutput(string2);
 QStringList stringlist2 = command.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
 
 stringlist2.sort();
 
-QString string3 = adb21 + rootShell + "/data/local/tmp/adblink/busybox find " + '"' + currentdir + '"' + " -type f -maxdepth 1";
+QString string3 = adb21 + adbShell + "/data/local/tmp/adblink/busybox find " + '"' + currentdir + '"' + " -type f -maxdepth 1";
 command = getadbOutput(string3);
 QStringList stringlist3 = command.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
 
@@ -1568,7 +1549,7 @@ bool doroot = false;
 
 QString tmpdir = " /data/local/tmp/";
 
-cstring = adb21 + rootShell + " if test -d " + fileName + "; then echo 'true'; fi";
+cstring = adb21 + adbShell + " if test -d " + fileName + "; then echo 'true'; fi";
 command = getadbOutput(cstring);
 
 if (command.contains("true"))
@@ -1579,10 +1560,10 @@ if (command.contains("true"))
 
 QString filename(fileName.mid(fileName.lastIndexOf("/") + 1, fileName.length()));
 
-cstring =  adb21 + rootShell+ " cp "+fileName+" "+ tmpdir;
+cstring =  adb21 + adbShell+ " cp "+fileName+" "+ tmpdir;
 command = getadbOutput(cstring);
 
-cstring=adb21+rootShell+" chmod 777 " +tmpdir+filename;
+cstring=adb21+adbShell+" chmod 777 " +tmpdir+filename;
 command=getadbOutput(cstring);
 
 cstring = adb21 + " pull " +tmpdir+filename + " "+ tmpdir1 + "/" + filename;
@@ -1623,15 +1604,6 @@ if (dialog.exec() == QDialog::Accepted)
             if (reply == QMessageBox::No)
              return;
 
-            if (checkRoot())
-            {  doroot = true;
-               rootShell = " shell su -c ";}
-            else {
-              doroot = false;
-              rootShell = " shell ";
-            }
-
-
 
 
             xmlfile = dialog.xmlfile();
@@ -1665,18 +1637,18 @@ if (dialog.exec() == QDialog::Accepted)
              command = getadbOutput(cstring);
 
 
-             cstring =  adb21 + rootShell+ " cp "+tmpdir+rootfile+" "+xpath;
+             cstring =  adb21 + adbShell+ " cp "+tmpdir+rootfile+" "+xpath;
              command=getadbOutput(cstring);
 
 
-             cstring =  adb21 + rootShell+ " cp "+tmpdir+backfile+" "+xpath;
+             cstring =  adb21 + adbShell+ " cp "+tmpdir+backfile+" "+xpath;
              command=getadbOutput(cstring);
 
 
-             cstring =  adb21 + rootShell+ " rm "+tmpdir+rootfile;
+             cstring =  adb21 + adbShell+ " rm "+tmpdir+rootfile;
              command=getadbOutput(cstring);
 
-             cstring =  adb21 + rootShell+ " rm "+tmpdir+backfile;
+             cstring =  adb21 + adbShell+ " rm "+tmpdir+backfile;
              command=getadbOutput(cstring);
 
 
@@ -1946,9 +1918,9 @@ void usbfileDialog::on_copyButton_clicked()
 
 
          if (opcode==0)
-             cstring = adb21 + rootShell + " cp -R "+quote1+fileName+quote2 + " "+quote1+workingdir+quote2;
+             cstring = adb21 + adbShell + " cp -R "+quote1+fileName+quote2 + " "+quote1+workingdir+quote2;
          else
-             cstring = adb21 + rootShell + " mv "+quote1+fileName+quote2 + " "+quote1+workingdir+quote2;
+             cstring = adb21 + adbShell + " mv "+quote1+fileName+quote2 + " "+quote1+workingdir+quote2;
 
          logfile(cstring);
 
@@ -2090,9 +2062,9 @@ void usbfileDialog::on_copyButton_clicked()
          qDebug() << "Processing file:" << fileName;
 
          if (opcode == 0)
-             cstring = adb21 + rootShell + " cp -R " + quote1 + fileName + quote2 + " " + quote1 + workingdir + quote2;
+             cstring = adb21 + adbShell + " cp -R " + quote1 + fileName + quote2 + " " + quote1 + workingdir + quote2;
          else
-             cstring = adb21 + rootShell + " mv " + quote1 + fileName + quote2 + " " + quote1 + workingdir + quote2;
+             cstring = adb21 + adbShell + " mv " + quote1 + fileName + quote2 + " " + quote1 + workingdir + quote2;
 
          qDebug() << "adb command:" << cstring;
          logfile(cstring);

@@ -50,6 +50,7 @@ SOURCES += main.cpp\
     downloaddialog.cpp \
     setpdialog.cpp \
     sleepdialog.cpp \
+    adbstring.cpp \
     oculusdialog.cpp 
 
 
@@ -95,6 +96,7 @@ HEADERS  += mainwindow.h \
     version.h \
     setpdialog.h \
     detachableprocess.h \
+    adbstring.h \
     oculusdialog.h 
  
 
