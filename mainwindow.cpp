@@ -2931,7 +2931,6 @@
 
          fmdialog->setPath1("/sdcard/");
          fmdialog->setPath2("/sdcard/");
-         fmdialog->setdisableroot(device.disableroot);
          fmdialog->setuProgram(kp);
          fmdialog->setPulldir(fmpullpath);
          fmdialog->setAdbdir(apphome);
