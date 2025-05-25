@@ -71,7 +71,6 @@ public slots:
     void on_moveButton_clicked();
     void on_resetButton_clicked();
     void on_goButton_clicked();
-    void on_clearButton_clicked();
     void on_mkdirButton_clicked();
     void on_renameButton_clicked();
     void on_customdir_returnPressed();

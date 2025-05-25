@@ -44,9 +44,6 @@ selected by clicking the device's row in the
 table. Sort on any column.
 
 
-/////////
-
-
 
 03/03/25
 

@@ -992,14 +992,6 @@ void usbfileDialog::on_customdir_returnPressed()
 }
 
 
-////////////////////////////////////////////////
-
-void usbfileDialog::on_clearButton_clicked()
-{
-  ui->customdir->setText("");
-}
-
-
 
 /////////////////////////////////////////////////////
 
