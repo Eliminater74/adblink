@@ -1,5 +1,6 @@
 #include "usbfiledialog.h"
 #include "ui_usbfiledialog.h"
+#include "customlistwidget.h"
 #include "editordialog.h"
 #include "dragdialog.h"
 #include "logfile.h"
@@ -20,6 +21,7 @@
 #include <QStatusBar>
 #include <QFileSystemModel>
 #include <QApplication>
+#include <QDir>
 
 #ifdef Q_OS_LINUX
  int ost1=0;
@@ -37,33 +39,6 @@ QString quote2="'\"";
 bool do_oldfm=false;
 
 static const QString adbShell = " shell "; // At top of usbfiledialog.cpp
-
-
-#include "usbfiledialog.h"
-#include "ui_usbfiledialog.h"
-#include "customlistwidget.h" // Ensure this is included
-#include <QDir>
-
-
-#include "usbfiledialog.h"
-#include "ui_usbfiledialog.h"
-#include "customlistwidget.h"
-#include <QDir>
-#include <QApplication>
-#include <QDebug>
-
-#include "usbfiledialog.h"
-#include "ui_usbfiledialog.h"
-#include "customlistwidget.h"
-#include <QDir>
-#include <QApplication>
-#include <QDebug>
-#include "usbfiledialog.h"
-#include "ui_usbfiledialog.h"
-#include "customlistwidget.h"
-#include <QDir>
-#include <QApplication>
-#include <QDebug>
 
 
 usbfileDialog::usbfileDialog(bool iskodi, QWidget *parent) :
