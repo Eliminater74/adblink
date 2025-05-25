@@ -92,8 +92,8 @@
 
 
     const QString vqurl = "http://www.jocala.com/version.txt";
-    const QString adbstr1 = "ADB server on ";
-    const QString adbstr2 = "ADB server off ";
+    const QString serverOn = "ADB server on ";
+    const QString serverOff = "ADB server off ";
     const QString busypath="/data/local/tmp/adblink/";
     const QString tempdir = "/data/local/tmp/";
 
@@ -188,7 +188,7 @@
 
 
 
-         ui->server_running->setText(adbstr2);
+         ui->server_running->setText(serverOff);
 
 
 
@@ -291,11 +291,11 @@
 
         logfile("starting server");
         if (start_server())
-         { ui->server_running->setText(adbstr1);
+         { ui->server_running->setText(serverOn);
             }
 
         else
-        { ui->server_running->setText(adbstr2);
+        { ui->server_running->setText(serverOff);
 
         }
 
@@ -913,7 +913,7 @@
      QString cstring = getadbpath() + " kill-server";
      QString command=getadbOutput(cstring);
      logfile("server stopped");
-      ui->server_running->setText(adbstr2);
+      ui->server_running->setText(serverOff);
     }
 
 
@@ -1549,7 +1549,7 @@
                       }
 
                       if (isConnected) {
-                            ui->server_running->setText(adbstr1);
+                            ui->server_running->setText(serverOn);
                       }
     }
 
@@ -1951,7 +1951,7 @@
 
              QString cstring = getadbpath() + " kill-server";
              QString command=getadbOutput(cstring);
-             ui->server_running->setText(adbstr2);
+             ui->server_running->setText(serverOff);
 
              for (int row = 0; row < ui->deviceTable->rowCount(); ++row) {
 
@@ -7191,9 +7191,9 @@ void MainWindow::serverlabel()
            QString cstring = getadbpath() + " devices";
            QString command = getadbOutput(cstring);
            if (command.contains("List of devices"))
-                      ui->server_running->setText(adbstr1);
+                      ui->server_running->setText(serverOn);
            else
-                      ui->server_running->setText(adbstr2);
+                      ui->server_running->setText(serverOff);
 
 }
 
