@@ -17,6 +17,9 @@ public:
     ~usbfileDialog();
 
 public:
+    // void fmactivityIcon(bool value);
+    // void set1FileList(QStringList zstringlist);
+    // void set2FileList(QStringList zstringlist);
     void setData(const QString &labelText);
     void setADB(const QString &adbdata);
     void setPath1(QString currentdir);
@@ -33,6 +36,11 @@ public:
     void setPulldir(const QString &pullstr);
     void setAdbdir(const QString &adbstr);
     void setuProgram(const QString &fprogram);
+    void setdisableroot(const bool &disableroot);
+    void setoldfm(const bool &oldfm);
+    bool checkRoot();
+    QString binfileName();
+    QString mcpath;
     void setTitle(QString text);
     QString buffer;
     Ui::usbfileDialog *ui;
@@ -51,6 +59,7 @@ public:
     QString currentitem2;
     QString current_directory2;
     QString current_directory1;
+    QString rootShell;
 
 public slots:
     void on_usblistWidget1_doubleClicked(const QModelIndex &index);
@@ -62,6 +71,7 @@ public slots:
     void on_moveButton_clicked();
     void on_resetButton_clicked();
     void on_goButton_clicked();
+    void on_clearButton_clicked();
     void on_mkdirButton_clicked();
     void on_renameButton_clicked();
     void on_customdir_returnPressed();
@@ -75,13 +85,16 @@ public slots:
 private slots:
     QString fix_directory(QString dirname);
     bool is_directory(QString fdirectory);
+    void rootpush(QStringList filenames);
     void userpush(QStringList filenames);
-    void onExternalFilesDropped(const QStringList &filePaths, const QString &targetDir);
+     void onExternalFilesDropped(const QStringList &filePaths, const QString &targetDir);
+
 };
 
 extern int ost1;
 extern bool hasfocus;
 extern QString ufdlogfiledir;
+extern bool noroot;
 extern QString quote1;
 extern QString quote2;
 
