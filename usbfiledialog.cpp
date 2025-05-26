@@ -487,14 +487,14 @@ void usbfileDialog::on_delButton_clicked()
     int error=0;
 
 
-
+/*
     if (ui->usblistWidget1->selectedItems().count() >= 1 && ui->usblistWidget2->selectedItems().count() >= 1 )
        {
      QMessageBox::critical(this,"","select from one pane only");
      return;
 
     }
-
+*/
 
 
 
