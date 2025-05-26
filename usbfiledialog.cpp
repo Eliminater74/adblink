@@ -139,6 +139,11 @@ usbfileDialog::~usbfileDialog()
 
 bool usbfileDialog::checkRoot() {
 
+
+return false;
+
+/*
+ 
   if (noroot)
       return false;
 
@@ -156,6 +161,8 @@ bool usbfileDialog::checkRoot() {
     else
 
     return false;
+
+*/
 
 }
 
