@@ -1560,9 +1560,8 @@ qDebug() << "Added .. item to usblistWidget2, flags:" << newItem->flags()
 qDebug() << "usblistWidget2 item count after setPath2:" << ui->usblistWidget2->count();
 }
 
-///////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////
 
-///////////////////////////////////
 
 void usbfileDialog::editfile(QString fileName, QString xpath)
 {
@@ -1581,35 +1580,39 @@ command = getadbOutput(cstring);
 
 if (command.contains("true"))
 {
-            QMessageBox::critical(this, "", "Can't edit directory " + fileName);
-            return;
+    QMessageBox::critical(this, "", "Can't edit directory " + fileName);
+    return;
 }
 
 QString filename(fileName.mid(fileName.lastIndexOf("/") + 1, fileName.length()));
 
 cstring =  adb21 + rootShell+ " cp "+fileName+" "+ tmpdir;
 command = getadbOutput(cstring);
+logfile(cstring);
+logfile(command);
 
 cstring=adb21+rootShell+" chmod 777 " +tmpdir+filename;
 command=getadbOutput(cstring);
+logfile(cstring);
+logfile(command);
 
 cstring = adb21 + " pull " +tmpdir+filename + " "+ tmpdir1 + "/" + filename;
 command = getadbOutput(cstring);
-
-
+logfile(cstring);
+logfile(command);
 
 if (!command.contains("bytes"))
 {
-            logfile("edit failed");
-            logfile(command);
-            QMessageBox::critical(this, "", "Exit failed " + command);
-            return;
+    logfile("edit failed");
+    logfile(command);
+    QMessageBox::critical(this, "", "Edit failed xxx: "+command);
+    return;
 }
 
 QFile file1(tmpdir1 + filename);
 
 if (!file1.open(QIODevice::ReadOnly | QIODevice::Text))
-            return;
+    return;
 
 QString xmlfile = file1.readAll();
 editorDialog dialog;
@@ -1626,81 +1629,75 @@ dialog.setModal(true);
 
 if (dialog.exec() == QDialog::Accepted)
 {
-            QMessageBox::StandardButton reply;
-            reply = QMessageBox::question(this, "Save", "Save " + fileName + "?", QMessageBox::Yes | QMessageBox::No);
-            if (reply == QMessageBox::No)
-             return;
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Save", "Save " + fileName + "?", QMessageBox::Yes | QMessageBox::No);
+    if (reply == QMessageBox::No)
+                              return;
 
-            if (checkRoot())
-            {  doroot = true;
-               rootShell = " shell su -c ";}
-            else {
-              doroot = false;
-              rootShell = " shell ";
-            }
+    if (checkRoot())
+    {  doroot = true;
+                              rootShell = " shell su -c ";}
+    else {
+                              doroot = false;
+                              rootShell = " shell ";
+    }
 
+    doroot = false;
+    rootShell = " shell ";
 
+    xmlfile = dialog.xmlfile();
 
+    QFile::copy(tempfile1, tempfile2);
+    QFile caFile(tempfile1);
+    caFile.open(QIODevice::WriteOnly | QIODevice::Text);
+    QTextStream outStream(&caFile);
+    outStream << xmlfile;
+    caFile.close();
 
-            xmlfile = dialog.xmlfile();
+    if (!doroot)
+    {
+                              cstring = adb21 + " push " + tempfile1 +" " + xpath;
+                              command = getadbOutput(cstring);
 
-            QFile::copy(tempfile1, tempfile2);
-            QFile caFile(tempfile1);
-            caFile.open(QIODevice::WriteOnly | QIODevice::Text);
-            QTextStream outStream(&caFile);
-            outStream << xmlfile;
-            caFile.close();
+                              cstring = adb21 + " push " + tempfile2 + " " + xpath;
+                              command = getadbOutput(cstring);
 
-            if (!doroot)
-            {
-             cstring = adb21 + " push " + tempfile1 +" " + xpath;
-             command = getadbOutput(cstring);
+    }
 
-             cstring = adb21 + " push " + tempfile2 + " " + xpath;
-             command = getadbOutput(cstring);
+    else
 
-            }
+    {
 
-            else
+                              cstring = adb21 + " push " + tempfile1 + " " + tmpdir;
+                              command = getadbOutput(cstring);
 
-            {
+                              cstring = adb21 + " push " + tempfile2 + " " + tmpdir;
+                              command = getadbOutput(cstring);
 
+                              cstring =  adb21 + rootShell+ " cp "+tmpdir+rootfile+" "+xpath;
+                              command=getadbOutput(cstring);
 
-             cstring = adb21 + " push " + tempfile1 + " " + tmpdir;         
-             command = getadbOutput(cstring);
+                              cstring =  adb21 + rootShell+ " cp "+tmpdir+backfile+" "+xpath;
+                              command=getadbOutput(cstring);
 
-             cstring = adb21 + " push " + tempfile2 + " " + tmpdir;          
-             command = getadbOutput(cstring);
+                              cstring =  adb21 + rootShell+ " rm "+tmpdir+rootfile;
+                              command=getadbOutput(cstring);
 
+                              cstring =  adb21 + rootShell+ " rm "+tmpdir+backfile;
+                              command=getadbOutput(cstring);
 
-             cstring =  adb21 + rootShell+ " cp "+tmpdir+rootfile+" "+xpath;
-             command=getadbOutput(cstring);
+    }
 
+    file1.close();
 
-             cstring =  adb21 + rootShell+ " cp "+tmpdir+backfile+" "+xpath;
-             command=getadbOutput(cstring);
+    QFile file2(tempfile1);
+    file2.remove();
 
-
-             cstring =  adb21 + rootShell+ " rm "+tmpdir+rootfile;
-             command=getadbOutput(cstring);
-
-             cstring =  adb21 + rootShell+ " rm "+tmpdir+backfile;
-             command=getadbOutput(cstring);
-
-
-
-
-            }
-
-            file1.close();
-
-            QFile file2(tempfile1);
-            file2.remove();
-
-            QFile file3(tempfile2);
-            file3.remove();
- }
+    QFile file3(tempfile2);
+    file3.remove();
 }
+}
+
 
 
 ///////////////////////////////////////////////////////////
@@ -1711,6 +1708,7 @@ void usbfileDialog::assignWindow1()
      hasfocus=true;
       //this->setWindowTitle("Panel 1");
 }
+
 
 
 ///////////////////////////////////////////////////////////
