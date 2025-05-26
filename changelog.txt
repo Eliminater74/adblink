@@ -16,7 +16,7 @@ code. Contributors can enter a code that will hide
 donation graphics and links.
 
 adb shell now has automatic access to
-busybox, adding a huge array of *nix commands to
+busybox, adding a huge array of Unix commands to
 the Android command-line.
 
 Drag and drop has been implemented
