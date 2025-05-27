@@ -317,7 +317,7 @@
        </size>
       </property>
       <property name="toolTip">
-       <string>Edit rimers for Sleep and Screensaver</string>
+       <string>Edit timers for Sleep and Screensaver</string>
       </property>
       <property name="text">
        <string>Edit Timers</string>
