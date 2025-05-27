@@ -35,7 +35,7 @@ bool noroot;
 QString quote1="\"'";
 QString quote2="'\"";
 const QString adbShell = " shell ";
-
+QString scriptDir;
 
 #include "usbfiledialog.h"
 #include "ui_usbfiledialog.h"
@@ -89,12 +89,12 @@ usbfileDialog::usbfileDialog(bool iskodi, QWidget *parent) :
     if (ost1 == 1)
     {
         ufdlogfiledir = QDir::homePath() + "/AppData/Roaming/.jocala/";
-        tmpdir1 = QDir::homePath() + "/AppData/Roaming/.jocala/scripts/";
+        scriptDir = QDir::homePath() + "/AppData/Roaming/.jocala/scripts/";
     }
     else
     {
         ufdlogfiledir = QDir::homePath() + "/.jocala/";
-        tmpdir1 = QDir::homePath() + "/.jocala/scripts/";
+        scriptDir = QDir::homePath() + "/.jocala/scripts/";
     }
 
     ui->kodiDirs->clear();
@@ -1351,13 +1351,15 @@ void usbfileDialog::editfile(QString fileName, QString xpath)
 {
 QString tempfile1;
 QString tempfile2;
-QString rootfile;
+
 QString backfile;
 QString cstring;
 QString command;
-bool doroot = false;
 
-QString tmpdir = " /data/local/tmp/";
+
+
+
+
 
 // Shell commands need single quotes for paths
 cstring = adb21 + adbShell + " if test -d '" + fileName + "'; then echo 'true'; fi";
@@ -1370,19 +1372,10 @@ if (command.contains("true"))
 }
 
 QString filename(fileName.mid(fileName.lastIndexOf("/") + 1, fileName.length()));
-QString remoteTmpFile = tmpdir.trimmed() + "/" + filename; // tmpdir has spaces, ensure it's trimmed
 
-// Shell commands need single quotes
-cstring =  adb21 + adbShell+ " cp '" + fileName + "' '" + remoteTmpFile + "'";
+cstring = adb21 + " pull \"" + fileName + "\" \"" + scriptDir + "/" + filename + "\"";
+
 command = getadbOutput(cstring);
-
-cstring = adb21 + adbShell + " chmod 777 '" + remoteTmpFile + "'";
-command = getadbOutput(cstring);
-
-// adb pull needs double quotes for paths
-cstring = adb21 + " pull \"" + remoteTmpFile + "\" \"" + tmpdir1 + "/" + filename + "\"";
-command = getadbOutput(cstring);
-
 
 
 if (!command.contains("bytes"))
@@ -1393,7 +1386,7 @@ if (!command.contains("bytes"))
     return;
 }
 
-QFile file1(tmpdir1 + filename);
+QFile file1(scriptDir + filename);
 
 if (!file1.open(QIODevice::ReadOnly | QIODevice::Text))
     return;
@@ -1403,11 +1396,11 @@ editorDialog dialog;
 dialog.seteditor(xmlfile);
 dialog.setfilename(filename);
 
-rootfile = filename;
+
 backfile = filename + ".bak";
 
-tempfile1 = tmpdir1 + filename;
-tempfile2 = tmpdir1 + filename + ".bak";
+tempfile1 = scriptDir + filename;
+tempfile2 = scriptDir + filename + ".bak";
 
 dialog.setModal(true);
 
@@ -1432,56 +1425,13 @@ if (dialog.exec() == QDialog::Accepted)
     outStream << xmlfile;
     caFile.close();
 
-    if (!doroot)
-    {
-                              // adb push needs double quotes for paths
-                              cstring = adb21 + " push \"" + tempfile1 + "\" \"" + xpath + "\"";
-                              command = getadbOutput(cstring);
 
-                              // Assuming backup file should also go to same path (xpath might be a directory)
-                              // Might need to construct full path for backup if xpath is a directory
-                              QString backupDestPath = xpath;
-                              if (QFileInfo(xpath).isDir()) {
-                                 backupDestPath = xpath + "/" + backfile; // Construct full path if xpath is dir
-                              } else {
-                                 // if xpath is a file, this logic might be flawed for backup, but follow original structure
-                                 // For now, assume xpath is a directory for simplicity of push.
-                                 // This part might need more robust handling if xpath can be a full file path for push target
-                                 backupDestPath = QFileInfo(xpath).path() + "/" + backfile;
-                              }
-                              cstring = adb21 + " push \"" + tempfile2 + "\" \"" + backupDestPath + "\"";
-                              command = getadbOutput(cstring);
-    }
-    else
-    {
-                              // adb push needs double quotes
-                              QString remoteTmpRootFile = tmpdir.trimmed() + "/" + rootfile;
-                              QString remoteTmpBackFile = tmpdir.trimmed() + "/" + backfile;
+  cstring = adb21 + " push \"" + tempfile1 + "\" \"" + xpath + "\"";
+  command = getadbOutput(cstring);
 
-                              cstring = adb21 + " push \"" + tempfile1 + "\" \"" + remoteTmpRootFile + "\"";
-                              command = getadbOutput(cstring);
+  cstring = adb21 + " push \"" + tempfile2 + "\" \"" + xpath + "\"";
+  command = getadbOutput(cstring);
 
-                              cstring = adb21 + " push \"" + tempfile2 + "\" \"" + remoteTmpBackFile + "\"";
-                              command = getadbOutput(cstring);
-
-                              // Shell commands need single quotes
-                              // xpath is the target directory for cp
-                              cstring =  adb21 + adbShell+ " cp '" + remoteTmpRootFile + "' '" + xpath + "'";
-                              command=getadbOutput(cstring);
-
-                              cstring =  adb21 + adbShell+ " cp '" + remoteTmpBackFile + "' '" + xpath + "'";
-                              command=getadbOutput(cstring);
-
-                              cstring =  adb21 + adbShell+ " rm '" + remoteTmpRootFile + "'";
-                              command=getadbOutput(cstring);
-
-                              cstring =  adb21 + adbShell+ " rm '" + remoteTmpBackFile + "'";
-                              command=getadbOutput(cstring);
-
-
-
-
-    }
 
     file1.close();
 
@@ -1499,40 +1449,29 @@ setPath2(current_directory2);
 
 void usbfileDialog::editfile2()
 {
+
 QString tempfile1;
-QString xpath;
-QString tempfile2;
-QString rootfile;
-QString backfile;
 QString cstring;
 QString command;
-QString fileName;
-
 bool ok;
-
+QString xpath;
 
 if (hasfocus)
     xpath=current_directory1;
 else
     xpath=current_directory2;
 
-
-QString tmpdir1 = QDir::homePath() + "/.jocala/scripts/";
-
-// Get filename from user
 QString filename = QInputDialog::getText(this, "", "Filename", QLineEdit::Normal, "", &ok);
 if (!ok || filename.isEmpty())
     return;
 
-// Set paths
-rootfile = filename;
-backfile = filename + ".bak";
-tempfile1 = tmpdir1 + filename;
-tempfile2 = tmpdir1 + filename + ".bak";
 
-// Create editor dialog with empty content
+tempfile1 = scriptDir + filename;
+
+
+
 editorDialog dialog;
-dialog.seteditor(""); // Start with empty content
+dialog.seteditor("");
 dialog.setfilename(filename);
 dialog.setModal(true);
 
@@ -1546,15 +1485,7 @@ if (dialog.exec() == QDialog::Accepted)
 
     QString xmlfile = dialog.xmlfile();
 
-    // Ensure the directory exists
-    QDir dir;
-    if (!dir.exists(tmpdir1))
-                              dir.mkpath(tmpdir1);
 
-    // Create backup file
-    QFile::copy(tempfile1, tempfile2);
-
-    // Create and write to new file
     QFile caFile(tempfile1);
     if (!caFile.open(QIODevice::WriteOnly | QIODevice::Text))
                               return;
@@ -1564,12 +1495,9 @@ if (dialog.exec() == QDialog::Accepted)
     caFile.close();
 
 
+
     cstring = adb21 + " push \"" + tempfile1 + "\" \"" + xpath + "\"";
     command = getadbOutput(cstring);
-
-
-
-
 
 
     QFile file3(tempfile1);
@@ -1581,6 +1509,8 @@ setPath1(current_directory1);
 setPath2(current_directory2);
 
 }
+
+
 ///////////////////////////////////////////////////////////
 void usbfileDialog::assignWindow1()
 
