@@ -31,6 +31,7 @@ private:
     QAction *renameAction;
     QAction *deleteAction;
     QAction *editAction;
+    QAction *newAction;
     QAction *mkdirAction;
     QAction *pullAction;
     QAction *homeAction;

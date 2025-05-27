@@ -29,6 +29,7 @@ void CustomListWidget::createContextMenu()
     renameAction = new QAction("Rename", this);
     deleteAction = new QAction("Delete", this);
     editAction = new QAction("Edit", this);
+    newAction = new QAction("New", this);
     mkdirAction = new QAction("Mkdir", this);
     pullAction = new QAction("Pull", this);
     homeAction = new QAction("Home", this);
@@ -39,7 +40,7 @@ void CustomListWidget::createContextMenu()
     contextMenu->addAction(renameAction);
     contextMenu->addAction(deleteAction);
     contextMenu->addAction(editAction);
-
+    contextMenu->addAction(newAction);
     contextMenu->addAction(mkdirAction);
     contextMenu->addAction(pullAction);
      contextMenu->addSeparator();
@@ -54,6 +55,7 @@ void CustomListWidget::createContextMenu()
         connect(renameAction, &QAction::triggered, parentDialog, &usbfileDialog::on_renameButton_clicked);
         connect(deleteAction, &QAction::triggered, parentDialog, &usbfileDialog::on_delButton_clicked);
         connect(editAction, &QAction::triggered, parentDialog, &usbfileDialog::on_editButton_clicked);
+        connect(newAction, &QAction::triggered, parentDialog, &usbfileDialog::editfile2);
         connect(mkdirAction, &QAction::triggered, parentDialog, &usbfileDialog::on_mkdirButton_clicked);
         connect(pullAction, &QAction::triggered, parentDialog, &usbfileDialog::on_pullButton_clicked);
         connect(homeAction, &QAction::triggered, parentDialog, &usbfileDialog::on_resetButton_clicked);

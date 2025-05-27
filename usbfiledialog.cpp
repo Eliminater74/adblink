@@ -1722,152 +1722,71 @@ if (dialog.exec() == QDialog::Accepted)
 }
 }
 
-
-
-
-
-
-
-/*
-void usbfileDialog::editfile(QString fileName, QString xpath)
+void usbfileDialog::editfile2()
 {
 QString tempfile1;
+QString xpath;
 QString tempfile2;
 QString rootfile;
 QString backfile;
 QString cstring;
 QString command;
-bool doroot = false;
+QString fileName;
 
-QString tmpdir = " /data/local/tmp/";
+bool ok;
 
-cstring = adb21 + rootShell + " if test -d " + fileName + "; then echo 'true'; fi";
-command = getadbOutput(cstring);
+QString tmpdir1 = QDir::homePath() + "/.jocala/scripts/";
 
-if (command.contains("true"))
-{
-    QMessageBox::critical(this, "", "Can't edit directory " + fileName);
-    return;
-}
-
-QString filename(fileName.mid(fileName.lastIndexOf("/") + 1, fileName.length()));
-
-cstring =  adb21 + rootShell+ " cp "+fileName+" "+ tmpdir;
-command = getadbOutput(cstring);
-logfile(cstring);
-logfile(command);
-
-cstring=adb21+rootShell+" chmod 777 " +tmpdir+filename;
-command=getadbOutput(cstring);
-logfile(cstring);
-logfile(command);
-
-cstring = adb21 + " pull " +tmpdir+filename + " "+ tmpdir1 + "/" + filename;
-command = getadbOutput(cstring);
-logfile(cstring);
-logfile(command);
-
-if (!command.contains("bytes"))
-{
-    logfile("edit failed");
-    logfile(command);
-    QMessageBox::critical(this, "", "Edit failed xxx: "+command);
-    return;
-}
-
-QFile file1(tmpdir1 + filename);
-
-if (!file1.open(QIODevice::ReadOnly | QIODevice::Text))
+// Get filename from user
+QString filename = QInputDialog::getText(this, "", "Filename", QLineEdit::Normal, "", &ok);
+if (!ok || filename.isEmpty())
     return;
 
-QString xmlfile = file1.readAll();
-editorDialog dialog;
-dialog.seteditor(xmlfile);
-dialog.setfilename(filename);
-
+// Set paths
 rootfile = filename;
 backfile = filename + ".bak";
-
 tempfile1 = tmpdir1 + filename;
 tempfile2 = tmpdir1 + filename + ".bak";
 
+// Create editor dialog with empty content
+editorDialog dialog;
+dialog.seteditor(""); // Start with empty content
+dialog.setfilename(filename);
 dialog.setModal(true);
 
 if (dialog.exec() == QDialog::Accepted)
 {
     QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(this, "Save", "Save " + fileName + "?", QMessageBox::Yes | QMessageBox::No);
+    reply = QMessageBox::question(this, "Save", "Save " + filename + "?", QMessageBox::Yes | QMessageBox::No);
     if (reply == QMessageBox::No)
                               return;
 
-    if (checkRoot())
-    {  doroot = true;
-                              rootShell = " shell su -c ";}
-    else {
-                              doroot = false;
-                              rootShell = " shell ";
-    }
-
-    doroot = false;
     rootShell = " shell ";
+    QString xmlfile = dialog.xmlfile();
 
-    xmlfile = dialog.xmlfile();
+    // Ensure the directory exists
+    QDir dir;
+    if (!dir.exists(tmpdir1))
+                              dir.mkpath(tmpdir1);
 
+    // Create backup file
     QFile::copy(tempfile1, tempfile2);
+
+    // Create and write to new file
     QFile caFile(tempfile1);
-    caFile.open(QIODevice::WriteOnly | QIODevice::Text);
+    if (!caFile.open(QIODevice::WriteOnly | QIODevice::Text))
+                              return;
+
     QTextStream outStream(&caFile);
     outStream << xmlfile;
     caFile.close();
 
-    if (!doroot)
-    {
-                              cstring = adb21 + " push " + tempfile1 +" " + xpath;
-                              command = getadbOutput(cstring);
-
-                              cstring = adb21 + " push " + tempfile2 + " " + xpath;
-                              command = getadbOutput(cstring);
-
-    }
-
-    else
-
-    {
-
-                              cstring = adb21 + " push " + tempfile1 + " " + tmpdir;
-                              command = getadbOutput(cstring);
-
-                              cstring = adb21 + " push " + tempfile2 + " " + tmpdir;
-                              command = getadbOutput(cstring);
-
-                              cstring =  adb21 + rootShell+ " cp "+tmpdir+rootfile+" "+xpath;
-                              command=getadbOutput(cstring);
-
-                              cstring =  adb21 + rootShell+ " cp "+tmpdir+backfile+" "+xpath;
-                              command=getadbOutput(cstring);
-
-                              cstring =  adb21 + rootShell+ " rm "+tmpdir+rootfile;
-                              command=getadbOutput(cstring);
-
-                              cstring =  adb21 + rootShell+ " rm "+tmpdir+backfile;
-                              command=getadbOutput(cstring);
-
-    }
-
-    file1.close();
-
-    QFile file2(tempfile1);
-    file2.remove();
-
+    // Clean up backup file if it exists
     QFile file3(tempfile2);
-    file3.remove();
+    if (file3.exists())
+                              file3.remove();
 }
 }
-
-*/
-
-
-
 ///////////////////////////////////////////////////////////
 void usbfileDialog::assignWindow1()
 

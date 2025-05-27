@@ -29,6 +29,7 @@ public:
     void setPackagename(const QString &packagename);
     void setkodiPath(const QString &kodipath);
     void editfile(QString fileName, QString xpath);
+    void editfile2();
     QString RunProcess_ufd(QString cstring);
     QString RunLongProcess_ufd(QString cstring);
     void do_copy(int opcode);
