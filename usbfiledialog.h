@@ -2,7 +2,7 @@
 #define USBFILEDIALOG_H
 #include <QMessageBox>
 #include <QDialog>
-#include "customlistwidget.h"
+
 
 namespace Ui {
 class usbfileDialog;
@@ -86,17 +86,11 @@ public slots:
 private slots:
     QString fix_directory(QString dirname);
     bool is_directory(QString fdirectory);
-    void rootpush(QStringList filenames);
+
     void userpush(QStringList filenames);
      void onExternalFilesDropped(const QStringList &filePaths, const QString &targetDir);
 
 };
 
-extern int ost1;
-extern bool hasfocus;
-extern QString ufdlogfiledir;
-extern bool noroot;
-extern QString quote1;
-extern QString quote2;
 
 #endif // USBFILEDIALOG_H

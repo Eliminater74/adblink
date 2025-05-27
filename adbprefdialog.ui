@@ -110,7 +110,7 @@
     </property>
    </item>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="playoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -148,7 +148,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="p2layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -220,7 +220,7 @@
     </property>
    </item>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="p3layoutWidget">
    <property name="geometry">
     <rect>
      <x>20</x>
