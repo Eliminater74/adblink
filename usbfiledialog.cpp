@@ -1735,6 +1735,13 @@ QString fileName;
 
 bool ok;
 
+
+if (hasfocus)
+    xpath=current_directory1;
+else
+    xpath=current_directory2;
+
+
 QString tmpdir1 = QDir::homePath() + "/.jocala/scripts/";
 
 // Get filename from user
@@ -1781,11 +1788,23 @@ if (dialog.exec() == QDialog::Accepted)
     outStream << xmlfile;
     caFile.close();
 
-    // Clean up backup file if it exists
-    QFile file3(tempfile2);
+
+    cstring = adb21 + " push \"" + tempfile1 + "\" \"" + xpath + "\"";
+    command = getadbOutput(cstring);
+
+
+
+
+
+
+    QFile file3(tempfile1);
     if (file3.exists())
-                              file3.remove();
-}
+      file3.remove();
+  }
+
+setPath1(current_directory1);
+setPath2(current_directory2);
+
 }
 ///////////////////////////////////////////////////////////
 void usbfileDialog::assignWindow1()

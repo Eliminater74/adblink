@@ -29,7 +29,7 @@ void CustomListWidget::createContextMenu()
     renameAction = new QAction("Rename", this);
     deleteAction = new QAction("Delete", this);
     editAction = new QAction("Edit", this);
-    newAction = new QAction("New", this);
+    newAction = new QAction("Edit new", this);
     mkdirAction = new QAction("Mkdir", this);
     pullAction = new QAction("Pull", this);
     homeAction = new QAction("Home", this);
