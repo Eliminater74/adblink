@@ -341,7 +341,6 @@
                     QFile file(filePath);
                     file.setPermissions(QFile::WriteUser | QFile::ReadUser);
                     file.remove();
-            //        QThread::msleep(100);
        }
     }
 
