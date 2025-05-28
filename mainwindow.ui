@@ -1168,7 +1168,6 @@
     <addaction name="actionReiinstall_Busybox"/>
     <addaction name="actionArchitecture"/>
     <addaction name="actionSet_Kodi_permissions"/>
-    <addaction name="actionOculus_VR"/>
     <addaction name="actionSend_text"/>
     <addaction name="actionGet_UID_from_APK_file"/>
     <addaction name="View_Changelog"/>
