@@ -1,6 +1,6 @@
 NOTE: Check scrcpy prior to build/release
 
-XX/XX/25
+06/01/25
 
 Version 6.4
 
@@ -20,12 +20,14 @@ busybox, adding a huge array of Unix commands to
 the Android command-line.
 
 Drag and drop has been implemented
-throughout adblink's file manager.
+throughout adblink's file manager,
+including dragging files from your
+computer to a connected device.
 
 Most of the file manager buttons have been superseded
 by right-click actions.
 
-Merge of adblink (Kodi) & adblink2 (non-Kodi)
+Merge of adblink (Kodi) & adblink2 (Android)
 is complete. adblink now offers two views, Kodi
 and Android. 
 

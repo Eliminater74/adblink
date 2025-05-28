@@ -23,29 +23,33 @@ CustomListWidget::CustomListWidget(QWidget *parent) : QListWidget(parent)
 
 void CustomListWidget::createContextMenu()
 {
+
     contextMenu = new QMenu(this);
     copyAction = new QAction("Copy", this);
     moveAction = new QAction("Move", this);
     renameAction = new QAction("Rename", this);
     deleteAction = new QAction("Delete", this);
-    editAction = new QAction("Edit", this);
-    newAction = new QAction("Edit new", this);
+    editAction = new QAction("Edit text", this);
+    newAction = new QAction("New text", this);
     mkdirAction = new QAction("Mkdir", this);
     pullAction = new QAction("Pull", this);
     homeAction = new QAction("Home", this);
-     exitAction = new QAction("Close", this);
+    exitAction = new QAction("Close", this);
 
     contextMenu->addAction(copyAction);
     contextMenu->addAction(moveAction);
     contextMenu->addAction(renameAction);
     contextMenu->addAction(deleteAction);
-    contextMenu->addAction(editAction);
-    contextMenu->addAction(newAction);
     contextMenu->addAction(mkdirAction);
     contextMenu->addAction(pullAction);
      contextMenu->addSeparator();
+    contextMenu->addAction(editAction);
+    contextMenu->addAction(newAction);
+
+    contextMenu->addSeparator();
+
     contextMenu->addAction(homeAction);
-     contextMenu->addAction(exitAction);
+    contextMenu->addAction(exitAction);
 
     // Connect actions to usbfileDialog slots
     usbfileDialog *parentDialog = qobject_cast<usbfileDialog*>(parent());
