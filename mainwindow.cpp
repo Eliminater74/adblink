@@ -160,7 +160,9 @@
         dir = QDir(scriptdir);
         if (!dir.exists()) {
             dir.mkpath(".");
+
         }
+
 
 
         connect(qApp, &QCoreApplication::aboutToQuit, this, &MainWindow::onApplicationQuit);
@@ -189,6 +191,8 @@
 
 
          ui->server_running->setText(serverOff);
+
+
 
 
 
@@ -321,10 +325,26 @@
     MainWindow::~MainWindow()
     {
 
-         delete ui;
 
 
+
+       delete ui;
     }
+
+
+    void MainWindow::onApplicationQuit() {
+       QDir dir(scriptdir);
+       dir.setNameFilters(QStringList());
+       dir.setFilter(QDir::Files | QDir::Hidden | QDir::NoDotAndDotDot);
+       foreach(const QString& dirFile, dir.entryList()) {
+                    QString filePath = dir.absoluteFilePath(dirFile);
+                    QFile file(filePath);
+                    file.setPermissions(QFile::WriteUser | QFile::ReadUser);
+                    file.remove();
+            //        QThread::msleep(100);
+       }
+    }
+
 
 /////////////////////////////////
 
@@ -7003,11 +7023,6 @@ void MainWindow::screenCap()
 }
 
 
-void MainWindow::onApplicationQuit() {
-
-// stub for exit functions.
-
-}
 
 ///////////////////////////////////////////////
 void MainWindow::loadDeviceTable()
