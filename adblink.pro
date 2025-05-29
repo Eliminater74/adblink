@@ -43,7 +43,6 @@ SOURCES += main.cpp\
     searchdialog.cpp \
     tcpipdialog.cpp \
     forcequitdialog.cpp \
-    foldersdialog.cpp \
     pushfiledialog.cpp \
     adbprefdialog.cpp \
     setpdialog.cpp \
@@ -85,7 +84,6 @@ HEADERS  += mainwindow.h \
     searchdialog.h \
     tcpipdialog.h \    
     forcequitdialog.h \
-    foldersdialog.h \
     pushfiledialog.h \
     adbprefdialog.h \
     sleepdialog.h \
@@ -119,7 +117,6 @@ FORMS    += mainwindow.ui \
     searchdialog.ui \
     tcpipdialog.ui \
     forcequitdialog.ui \
-    foldersdialog.ui \
     pushfiledialog.ui \
     adbprefdialog.ui \
     setpdialog.ui \
