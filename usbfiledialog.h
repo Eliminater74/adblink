@@ -17,9 +17,6 @@ public:
     ~usbfileDialog();
 
 public:
-    // void fmactivityIcon(bool value);
-    // void set1FileList(QStringList zstringlist);
-    // void set2FileList(QStringList zstringlist);
     void setData(const QString &labelText);
     void setADB(const QString &adbdata);
     void setPath1(QString currentdir);
@@ -76,7 +73,6 @@ public slots:
     void on_mkdirButton_clicked();
     void on_renameButton_clicked();
     void on_customdir_returnPressed();
-    void on_pushfilesButton_clicked();
     void assignWindow1();
     void assignWindow2();
     void usbTimerEvent();

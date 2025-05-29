@@ -1,7 +1,6 @@
 #include "usbfiledialog.h"
 #include "ui_usbfiledialog.h"
 #include "editordialog.h"
-#include "dragdialog.h"
 #include "logfile.h"
 #include "getadbdata.h"
 #include <QProcess>
@@ -222,54 +221,6 @@ void usbfileDialog::setkodiPath(const QString &kodipath) {
     mcpath=kodipath;
 
 }
-
-
-
-
-void usbfileDialog::on_pushfilesButton_clicked()
-{
-
-
-    QStringList filePaths;
-
-
-    QString xpath;
-
-
-
-    if (hasfocus)
-    xpath=current_directory1;
-    else
-    xpath=current_directory2;
-
-
-    dragDialog dialog;
-
-    dialog.setWindowTitle(xpath);
-
-
-    if (dialog.exec() == QDialog::Accepted)
-    filePaths   = dialog.getFilePaths();
-
-
-
-
-
-    if (filePaths.count()<=0)
-    return;
-
-
-
-
-    userpush(filePaths);
-
-
-}
-
-
-
-
-/////////////////////////////////////////////
 
 
 /////////////////////////////////////////
