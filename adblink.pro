@@ -46,7 +46,6 @@ SOURCES += main.cpp\
     foldersdialog.cpp \
     pushfiledialog.cpp \
     adbprefdialog.cpp \
-    downloaddialog.cpp \
     setpdialog.cpp \
     sleepdialog.cpp \
     adbstring.cpp \
@@ -89,7 +88,6 @@ HEADERS  += mainwindow.h \
     foldersdialog.h \
     pushfiledialog.h \
     adbprefdialog.h \
-    downloaddialog.h \
     sleepdialog.h \
     version.h \
     setpdialog.h \
@@ -124,7 +122,6 @@ FORMS    += mainwindow.ui \
     foldersdialog.ui \
     pushfiledialog.ui \
     adbprefdialog.ui \
-    downloaddialog.ui \
     setpdialog.ui \
     sleepdialog.ui\
     oculusdialog.ui
