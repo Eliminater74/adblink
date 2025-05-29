@@ -1171,7 +1171,6 @@
     <addaction name="actionSend_text"/>
     <addaction name="actionGet_UID_from_APK_file"/>
     <addaction name="View_Changelog"/>
-    <addaction name="Erase_adbLink_database"/>
     <addaction name="actionWireless_ADBD"/>
     <addaction name="actionTest_adb_connection"/>
     <addaction name="actionReboot"/>
