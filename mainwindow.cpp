@@ -92,8 +92,8 @@
 
 
     const QString vqurl = "http://www.jocala.com/version.txt";
-    const QString serverOn = "ADB server on ";
-    const QString serverOff = "ADB server off ";
+    const QString serverOn = "";
+    const QString serverOff = "";
     const QString busypath="/data/local/tmp/adblink/";
     const QString tempdir = "/data/local/tmp/";
 
@@ -1953,51 +1953,40 @@
 
     }
 
+////////////////////////////////////////
 
-
-
-
-    ////////////////////////////////////////
     void MainWindow::killServer_clicked()
     {
+       if (QMessageBox::question(this, "Disconnect", "Disconnect all IPs?", QMessageBox::Cancel | QMessageBox::Ok) == QMessageBox::Cancel) {
+            return;
+       }
 
+       // Kill the ADB server
+       QString cstring = getadbpath() + " kill-server";
+       QString command = getadbOutput(cstring);
+       ui->server_running->setText(serverOff);
 
-     if (QMessageBox::question(this, "Disconnect", "Disconnect all devices?", QMessageBox::Cancel | QMessageBox::Ok) == QMessageBox::Cancel)
-             {   return;
-
-     }
-
-
-             QString cstring = getadbpath() + " kill-server";
-             QString command=getadbOutput(cstring);
-             ui->server_running->setText(serverOff);
-
-             for (int row = 0; row < ui->deviceTable->rowCount(); ++row) {
-
+       // Update device table
+       for (int row = 0; row < ui->deviceTable->rowCount(); ++row) {
             QTableWidgetItem* descItem = ui->deviceTable->item(row, 0);
             if (!descItem) continue; // Skip if no item
 
+            // Get the current status from column 2
+            QTableWidgetItem* statusItem = ui->deviceTable->item(row, 2);
+            QString currentStatus = statusItem ? statusItem->text() : "";
 
+            // Check if the device is USB based on stored data
             bool isUsb = descItem->data(Qt::UserRole + 1).toBool();
 
+            // Only update status to "Disconnected" if it's not already "USB"
+            if (currentStatus != "USB") {
+                   QString status = isUsb ? "USB" : "Disconnected";
+                   QTableWidgetItem* newStatusItem = new QTableWidgetItem(status);
+                   ui->deviceTable->setItem(row, 2, newStatusItem);
+            }
+       }
 
-            QString status = isUsb ? "USB" : "Disconnected";
-            QTableWidgetItem* statusItem = new QTableWidgetItem(status);
-            ui->deviceTable->setItem(row, 2, statusItem);
-             }
-
-             ui->deviceTable->viewport()->update();
-
-
-
-             return;
-
-
-
-
-
-
-
+       ui->deviceTable->viewport()->update();
     }
 
 
