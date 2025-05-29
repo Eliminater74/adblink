@@ -113,7 +113,7 @@ private slots:
     void restoreButton_clicked();
     void dos_shell();
 
-
+   QString battery();
 
 
 

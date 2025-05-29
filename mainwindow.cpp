@@ -7480,6 +7480,40 @@ void MainWindow::startapp_clicked()
    }
 }
 
+
+////////////////////////////////
+
+
+
+QString MainWindow::battery()
+{
+   QString cstring = getadb() +  " shell dumpsys battery";
+   QString output = getadbOutput(cstring);
+   QString batteryLevel = "Unknown";
+   bool batteryPresent = false;
+   QStringList lines = output.split('\n', Qt::SkipEmptyParts);
+   for (const QString& line : lines) {
+                      QString trimmedLine = line.trimmed();
+                      if (trimmedLine.contains("present", Qt::CaseInsensitive)) {
+                          QStringList parts = trimmedLine.split(':');
+                          if (parts.size() > 1 && parts[1].trimmed().toLower() == "true") {
+               batteryPresent = true;
+                          }
+                      }
+                      if (trimmedLine.contains("level", Qt::CaseInsensitive)) {
+                          QStringList parts = trimmedLine.split(':');
+                          if (parts.size() > 1) {
+               batteryLevel = parts[1].trimmed();
+                          }
+                      }
+   }
+   return batteryPresent ? batteryLevel : "Unknown";
+}
+
+
+
+
+
 /////////////////////////////////////////////////////
 
 void MainWindow::connections()
