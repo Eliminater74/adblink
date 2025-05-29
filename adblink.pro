@@ -30,7 +30,6 @@ SOURCES += main.cpp\
     preferencesdialog.cpp \
     usbfiledialog.cpp \
     adblogdialog.cpp \
-    kodidialog.cpp \
     datadialog.cpp \
     restdialog.cpp \
     backupdialog.cpp \
@@ -71,7 +70,6 @@ HEADERS  += mainwindow.h \
     preferencesdialog.h \
     usbfiledialog.h \
     adblogdialog.h \  
-    kodidialog.h \
     datadialog.h \
     restdialog.h \
     listfiledialog.h \
@@ -104,7 +102,6 @@ FORMS    += mainwindow.ui \
     preferencesdialog.ui \
     usbfiledialog.ui \
     adblogdialog.ui \
-    kodidialog.ui \
     datadialog.ui \
     restdialog.ui \
     backupdialog.ui \
