@@ -82,7 +82,7 @@ void deviceinfoDialog::devinfo(const QStringList &list)
         if (!scoped)
             ui->scoped->setText("/sdcard/Android/data/ is not restricted by scoped storage.");
         else
-            ui->scoped->setText("Scoped storage is in effect. /sdcard/Android/data is sandboxed and can't be accessed by adbLink.");
+            ui->scoped->setText("Scoped storage is in effect. /sdcard/Android/data is sandboxed and can't be accessed by adblink.");
     } else {
         ui->scoped->setText("Scoped storage is not implemented on this device.");
     }
