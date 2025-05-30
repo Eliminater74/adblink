@@ -408,7 +408,7 @@
          ui->restoreButton->setShortcut(QKeySequence("Ctrl+K"));
 
         new QShortcut (QKeySequence("Ctrl+O"), this, SLOT(on_actionSend_text_triggered()));
-
+        new QShortcut (QKeySequence("Ctrl+X"), this, SLOT(displayOff()));
 
     }
 
@@ -6833,37 +6833,6 @@ DeviceRecord MainWindow::queryDeviceRecord(const QString& description) {
  }
 
 
-/*
- // Apply fallbacks from getRecord
- if (record.daddr.isEmpty()) {
-               record.daddr = description;
- }
- if (record.xbmcpackage.isEmpty()) {
-               record.xbmcpackage = "org.xbmc.kodi";
- }
-
-
-
- bool ok;
- int ostypeInt = record.ostype.toInt(&ok);
- if (!ok || ostypeInt > 3) {
-               record.ostype = "0";
- }
- if (sldir.isEmpty()) {
-               sldir = hdir;
- }
- if (pushdir.isEmpty()) {
-               pushdir = hdir;
- }
- if (checkversion == 0) {
-               versioncheck = false;
- } else {
-               versioncheck = true;
- }
-
-
-*/
-
  return record;
 }
 
@@ -7517,6 +7486,17 @@ QString MainWindow::battery()
 
 
 
+////////////////////////////////////
+
+void MainWindow::displayOff()
+{
+
+
+   QString cstring = getadb() + " shell input keyevent 26 ";
+   QString command = getadbOutput(cstring);
+
+}
+
 
 
 /////////////////////////////////////////////////////
@@ -7567,6 +7547,5 @@ void MainWindow::connections()
    connect(ui->deviceTable, &QTableWidget::doubleClicked, this, &MainWindow::fmButton_clicked);
 
 }
-
 
 

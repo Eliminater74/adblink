@@ -94,7 +94,7 @@ private slots:
 
     void connButton_clicked();
 
-
+    void displayOff();
 
     void sideload_Button_clicked();
 
