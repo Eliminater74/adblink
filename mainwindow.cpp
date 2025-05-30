@@ -6844,8 +6844,7 @@ bool MainWindow::validateDeviceSelection(QString& selectedDescription) {
  bool hasConnectedDevice = false;
  for (int i = 0; i < ui->deviceTable->rowCount(); ++i) {
                if (ui->deviceTable->item(i, 2) &&
-                   (ui->deviceTable->item(i, 2)->text() == "Connected" ||
-                    ui->deviceTable->item(i, 2)->text() == "USB")) {
+                   ui->deviceTable->item(i, 2)->text() == "Connected") {
               hasConnectedDevice = true;
               break;
                }
@@ -6866,15 +6865,13 @@ bool MainWindow::validateDeviceSelection(QString& selectedDescription) {
 
  // Check if the selected device is connected
  if (ui->deviceTable->item(selectedRow, 2) &&
-     ui->deviceTable->item(selectedRow, 2)->text() != "Connected" &&
-     ui->deviceTable->item(selectedRow, 2)->text() != "USB") {
+     ui->deviceTable->item(selectedRow, 2)->text() != "Connected") {
                QMessageBox::critical(this, "", "Selected device is not connected");
                return false;
  }
 
  return true;
 }
-
 
 
 
@@ -7449,6 +7446,8 @@ bool MainWindow::usbConnected(QString daddr)
 
 
 ///////////////////////////////////////////////
+
+/*
 void MainWindow::loadDeviceTable()
 {
    QString sqlstatement;
@@ -7512,6 +7511,76 @@ void MainWindow::loadDeviceTable()
    ui->deviceTable->sortItems(0, Qt::AscendingOrder);
    ui->deviceTable->viewport()->update();
 }
+
+*/
+
+void MainWindow::loadDeviceTable()
+{
+   QString sqlstatement;
+   QSqlQuery query;
+
+   // Store current connected device IDs
+   QSet<QString> connectedDeviceIds;
+   for (int row = 0; row < ui->deviceTable->rowCount(); ++row) {
+                      if (ui->deviceTable->item(row, 2) &&
+                          ui->deviceTable->item(row, 2)->text() == "Connected" &&
+                          ui->deviceTable->item(row, 0)) {
+                          connectedDeviceIds.insert(ui->deviceTable->item(row, 0)->data(Qt::UserRole).toString());
+                      }
+   }
+
+   // Clear and setup table
+   ui->deviceTable->clearContents();
+   ui->deviceTable->setRowCount(0);
+   ui->deviceTable->setColumnCount(3);
+   ui->deviceTable->setHorizontalHeaderLabels(QStringList() << "Device" << "IP" << "Status");
+   ui->deviceTable->verticalHeader()->setVisible(false);
+   ui->deviceTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+   ui->deviceTable->setShowGrid(true);
+   ui->deviceTable->setSortingEnabled(false);
+   ui->deviceTable->setSelectionMode(QAbstractItemView::SingleSelection);
+   ui->deviceTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+   // Execute query with device ID
+   sqlstatement = "SELECT id, description, daddr, isusb FROM device";
+   if (!query.exec(sqlstatement)) {
+                      qDebug() << "Query failed:" << query.lastError().text();
+                      return;
+   }
+
+   // Populate table
+   int row = 0;
+   while (query.next()) {
+                      ui->deviceTable->insertRow(row);
+                      QString deviceId = query.value(0).toString();
+                      QString description = query.value(1).toString();
+
+                      // Store device ID in the item for later retrieval
+                      QTableWidgetItem* descItem = new QTableWidgetItem(description);
+                      descItem->setData(Qt::UserRole, deviceId);
+                      ui->deviceTable->setItem(row, 0, descItem);
+
+                      bool isUsb = query.value(3).toBool();
+                      QString ip = isUsb ? "USB" : (query.value(2).toString().isEmpty() ? "N/A" : query.value(2).toString());
+                      ui->deviceTable->setItem(row, 1, new IpTableWidgetItem(ip));
+
+                      // Set status based on isUsb and usbConnected(daddr) for USB devices
+                      QString status;
+                      if (isUsb) {
+                          status = usbConnected(query.value(2).toString()) ? "Connected" : "Disconnected";
+                      } else {
+                          status = connectedDeviceIds.contains(deviceId) ? "Connected" : "Disconnected";
+                      }
+                      ui->deviceTable->setItem(row, 2, new QTableWidgetItem(status));
+                      row++;
+   }
+
+   ui->deviceTable->setSortingEnabled(true);
+   ui->deviceTable->sortItems(0, Qt::AscendingOrder);
+   ui->deviceTable->viewport()->update();
+}
+
+
 
 /////////////////////////////////////////////////////
 

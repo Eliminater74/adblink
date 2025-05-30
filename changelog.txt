@@ -23,8 +23,7 @@ including dragging files from your
 computer to a connected device.
 
 if a USB device is in the database, check it's
-connection status. If its  connected, mark
-it as active. otherwise inactive
+connection status and update table accordingly
 
 Most of the file manager buttons have been superseded
 by right-click actions.
