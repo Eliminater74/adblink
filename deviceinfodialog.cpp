@@ -3,6 +3,7 @@
 #include "ui_deviceinfodialog.h"
 #include <QString>
 #include <QStringList>
+#include <QGridLayout>
 #include <QDebug>
 
 QString deviceinfoDialog::pad_qstring(const QString& qstring, int length) {
@@ -23,56 +24,54 @@ deviceinfoDialog::~deviceinfoDialog()
 
 void deviceinfoDialog::devinfo(const QStringList &list)
 {
+
+
+    /*
+    list.append(archi);
+    list.append(android);
+    list.append(adevice);
+    list.append(manufact);
+    list.append(battery());
+    list.append(scoped);
+   */
+
     QString archi = list.at(0);
     QString droid = list.at(1);
-    bool scoped = (list.at(2).toLower() == "true");
-    QString device = list.at(3);
-    QString manufact = list.at(4);
+    QString device = list.at(2);
+    QString manufact = list.at(3);
+    QString batt = list.at(4);
 
-
-
-
+    bool scoped = (list.at(5).toLower() == "true");
     int av = droid.toInt();
 
-    ui->scoped->setFixedHeight(100);
+    // Set the dialog's fixed size to 400x300
+    //this->setFixedSize(400, 300);
 
-    int xPosition = 20;
-    int yPosition = 25;
-    int labelWidth = 300;
-    int labelHeight = 32;
+    // Set size and position for each label using setGeometry
 
-    ui->archilabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    ui->archilabel->setFixedWidth(labelWidth);
-    ui->archilabel->setFixedHeight(labelHeight);
-    ui->archilabel->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    ui->archilabel->move(xPosition, yPosition);
+  /*
+    ui->archilabel->setGeometry(20, 40, 350, 36);     // Start at y=20 to avoid clipping
+    ui->droidlabel->setGeometry(20, 57, 350, 32);     // y=20 + 32 + 5 = 57
+    ui->devicelabel->setGeometry(20, 94, 350, 32);    // y=57 + 32 + 5 = 94
+    ui->manufactlabel->setGeometry(20, 131, 350, 32); // y=94 + 32 + 5 = 131
+    ui->batterylabel->setGeometry(20, 168, 350, 32);  // y=131 + 32 + 5 = 168
+    ui->scoped->setGeometry(20, 205, 350, 32);        // y=168 + 32 + 5 = 205
+*/
+    // Existing code for setting text
     ui->archilabel->setText("System architecture:   " + archi);
-
-    ui->droidlabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    ui->droidlabel->setFixedWidth(labelWidth);
-    ui->droidlabel->setFixedHeight(labelHeight);
-    ui->droidlabel->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    ui->droidlabel->move(xPosition, yPosition + labelHeight);
 
     if (manufact.contains(QLatin1String("amazon"), Qt::CaseInsensitive))
         ui->droidlabel->setText(QLatin1String("Fire OS version:   ") + droid);
     else
         ui->droidlabel->setText(QLatin1String("Android version:   ") + droid);
 
+    ui->devicelabel->setText("Device:   " + device);
 
-    ui->devicelabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    ui->devicelabel->setFixedWidth(labelWidth);
-    ui->devicelabel->setFixedHeight(labelHeight);
-    ui->devicelabel->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    ui->devicelabel->move(xPosition, yPosition + 2 * labelHeight);
-    ui->devicelabel->setText("Device name:   " + device);
-
-    ui->manufactlabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    ui->manufactlabel->setFixedWidth(labelWidth);
-    ui->manufactlabel->setFixedHeight(labelHeight);
-    ui->manufactlabel->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    ui->manufactlabel->move(xPosition, yPosition + 3 * labelHeight);
     ui->manufactlabel->setText("Manufacturer:   " + manufact);
+
+    ui->batterylabel->setText("Battery level: " + batt);
+
+
 
     if (av >= 11) {
         if (!scoped)
@@ -84,20 +83,4 @@ void deviceinfoDialog::devinfo(const QStringList &list)
     }
 
 
-
-
-
-    ui->archilabel->move(xPosition, yPosition);
-
-    yPosition += 25;
-    ui->droidlabel->move(xPosition, yPosition);
-
-    yPosition += 25;
-    ui->devicelabel->move(xPosition, yPosition);
-
-    yPosition += 25;
-    ui->manufactlabel->move(xPosition, yPosition);
-
-    yPosition += 15;
-    ui->scoped->move(xPosition, yPosition);
 }

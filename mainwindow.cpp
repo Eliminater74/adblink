@@ -3504,16 +3504,22 @@
 
     DeviceRecord device = queryDeviceRecord(selectedDescription);
 
+    battery();
 
-    QString android = QString::number(getandroid());
+
+
     QString cstring;
-    QString archi;
 
+
+
+    cstring = getadb() + " shell getprop ro.product.cpu.abi";
+    QString archi=getadbOutput(cstring);
+    QString android = QString::number(getandroid());
     QString adevice=devicename();
     QString manufact=manufacturer();
 
     QString scoped;
-    QString kbase = "/sdcard/Android/data/";
+
     QStringList list;
 
 
@@ -3522,15 +3528,14 @@
     else scoped = "true";
 
 
-    cstring = getadb() + " shell getprop ro.product.cpu.abi";
-    archi=getadbOutput(cstring);
+     QString kbase = "/sdcard/Android/data/";
 
     list.append(archi);
     list.append(android);
-    list.append(scoped);
     list.append(adevice);
     list.append(manufact);
-
+    list.append(battery());
+    list.append(scoped);
 
     deviceinfoDialog dialog(this);
     dialog.setWindowModality(Qt::WindowModal);
