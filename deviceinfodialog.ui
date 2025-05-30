@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>397</width>
-    <height>382</height>
+    <height>321</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,8 +16,8 @@
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>130</x>
-     <y>320</y>
+     <x>120</x>
+     <y>250</y>
      <width>100</width>
      <height>32</height>
     </rect>
@@ -29,8 +29,8 @@
   <widget class="QLabel" name="scoped">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>260</y>
+     <x>24</x>
+     <y>210</y>
      <width>311</width>
      <height>16</height>
     </rect>
@@ -42,112 +42,130 @@
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QLabel" name="archilabel">
    <property name="geometry">
     <rect>
-     <x>21</x>
-     <y>21</y>
-     <width>352</width>
-     <height>194</height>
+     <x>24</x>
+     <y>24</y>
+     <width>350</width>
+     <height>24</height>
     </rect>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="QLabel" name="archilabel">
-      <property name="minimumSize">
-       <size>
-        <width>350</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>350</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>System architecture</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="droidlabel">
-      <property name="minimumSize">
-       <size>
-        <width>350</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>350</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Android version</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="devicelabel">
-      <property name="minimumSize">
-       <size>
-        <width>350</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>350</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>device</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="manufactlabel">
-      <property name="minimumSize">
-       <size>
-        <width>350</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>350</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>manufact</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="batterylabel">
-      <property name="minimumSize">
-       <size>
-        <width>350</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>350</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>batt</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
+   <property name="minimumSize">
+    <size>
+     <width>350</width>
+     <height>24</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>350</width>
+     <height>24</height>
+    </size>
+   </property>
+   <property name="text">
+    <string>System architecture</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="droidlabel">
+   <property name="geometry">
+    <rect>
+     <x>24</x>
+     <y>50</y>
+     <width>350</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>350</width>
+     <height>24</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>350</width>
+     <height>24</height>
+    </size>
+   </property>
+   <property name="text">
+    <string>Android version</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="devicelabel">
+   <property name="geometry">
+    <rect>
+     <x>24</x>
+     <y>90</y>
+     <width>350</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>350</width>
+     <height>24</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>350</width>
+     <height>24</height>
+    </size>
+   </property>
+   <property name="text">
+    <string>device</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="manufactlabel">
+   <property name="geometry">
+    <rect>
+     <x>24</x>
+     <y>130</y>
+     <width>350</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>350</width>
+     <height>24</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>350</width>
+     <height>24</height>
+    </size>
+   </property>
+   <property name="text">
+    <string>manufact</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="batterylabel">
+   <property name="geometry">
+    <rect>
+     <x>24</x>
+     <y>160</y>
+     <width>350</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>350</width>
+     <height>24</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>350</width>
+     <height>24</height>
+    </size>
+   </property>
+   <property name="text">
+    <string>batt</string>
+   </property>
   </widget>
  </widget>
  <resources/>
