@@ -7392,14 +7392,14 @@ void MainWindow::startapp_clicked()
 
 ////////////////////////////////
 
-
-
 QString MainWindow::battery()
 {
-   QString cstring = getadb() +  " shell dumpsys battery";
+   QString cstring = getadb() + " shell dumpsys battery";
    QString output = getadbOutput(cstring);
    QString batteryLevel = "Unknown";
+   QString batteryStatus = "";
    bool batteryPresent = false;
+
    QStringList lines = output.split('\n', Qt::SkipEmptyParts);
    for (const QString& line : lines) {
                       QString trimmedLine = line.trimmed();
@@ -7415,12 +7415,21 @@ QString MainWindow::battery()
                batteryLevel = parts[1].trimmed();
                           }
                       }
+                      if (trimmedLine.contains("status", Qt::CaseInsensitive)) {
+                          QStringList parts = trimmedLine.split(':');
+                          if (parts.size() > 1) {
+               QString statusValue = parts[1].trimmed();
+               if (statusValue == "2") {
+              batteryStatus = " (charging)";
+               } else if (statusValue == "3") {
+              batteryStatus = " (discharging)";
+               }
+                          }
+                      }
    }
-   return batteryPresent ? batteryLevel : "Unknown";
+
+   return batteryPresent ? (batteryLevel + batteryStatus) : "Unknown";
 }
-
-
-
 ////////////////////////////////////
 
 void MainWindow::displayOff()
