@@ -82,6 +82,8 @@ private slots:
 
     bool validateDeviceSelection(QString& selectedDescription);
 
+    bool usbConnected(QString daddr);
+
     void loadDeviceTable();
 
     void handleFilemanagerFinished();
