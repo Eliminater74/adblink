@@ -69,7 +69,12 @@ void deviceinfoDialog::devinfo(const QStringList &list)
 
     ui->manufactlabel->setText("Manufacturer:   " + manufact);
 
+
+
     ui->batterylabel->setText("Battery level: " + batt);
+
+    if (batt.contains("Unknown"))
+     ui->batterylabel->setVisible(false);
 
 
 
