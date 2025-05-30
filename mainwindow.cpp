@@ -6838,32 +6838,18 @@ DeviceRecord MainWindow::queryDeviceRecord(const QString& description) {
 
 ///////////////////////////////////////
 
-bool MainWindow::validateDeviceSelection(QString& selectedDescription)
-{
+
+bool MainWindow::validateDeviceSelection(QString& selectedDescription) {
  // Check if any device is connected in deviceTable
  bool hasConnectedDevice = false;
  for (int i = 0; i < ui->deviceTable->rowCount(); ++i) {
-               if (ui->deviceTable->item(i, 2)) {
-              QString status = ui->deviceTable->item(i, 2)->text();
-              if (status == "Connected") {
-               hasConnectedDevice = true;
-               break;
-              } else if (status == "USB") {
-               // Retrieve daddr for USB device using deviceId from UserRole
-               QString deviceId = ui->deviceTable->item(i, 0)->data(Qt::UserRole).toString();
-               QSqlQuery query;
-               QString sqlstatement = QString("SELECT daddr FROM device WHERE id = '%1'").arg(deviceId);
-               if (query.exec(sqlstatement) && query.next()) {
-              QString daddr = query.value(0).toString();
-              if (usbConnected(daddr)) {
-                  hasConnectedDevice = true;
-                  break;
-                    }
-                }
-              }
-          }
-      }
-
+               if (ui->deviceTable->item(i, 2) &&
+                   (ui->deviceTable->item(i, 2)->text() == "Connected" ||
+                    ui->deviceTable->item(i, 2)->text() == "USB")) {
+              hasConnectedDevice = true;
+              break;
+               }
+ }
  if (!hasConnectedDevice) {
                QMessageBox::critical(this, "", "No devices connected");
                return false;
@@ -6888,6 +6874,9 @@ bool MainWindow::validateDeviceSelection(QString& selectedDescription)
 
  return true;
 }
+
+
+
 
 void MainWindow::on_actionSwitch_View_triggered()
 {
@@ -7459,6 +7448,7 @@ bool MainWindow::usbConnected(QString daddr)
 }
 
 
+///////////////////////////////////////////////
 void MainWindow::loadDeviceTable()
 {
    QString sqlstatement;
@@ -7470,6 +7460,8 @@ void MainWindow::loadDeviceTable()
                       if (ui->deviceTable->item(row, 2) &&
                           ui->deviceTable->item(row, 2)->text() == "Connected" &&
                           ui->deviceTable->item(row, 0)) {
+                          // Assuming the device ID is stored as a property or retrievable
+                          // If you store ID in the table, adjust this to retrieve it
                           connectedDeviceIds.insert(ui->deviceTable->item(row, 0)->data(Qt::UserRole).toString());
                       }
    }
@@ -7506,8 +7498,7 @@ void MainWindow::loadDeviceTable()
                       ui->deviceTable->setItem(row, 0, descItem);
 
                       bool isUsb = query.value(3).toBool();
-                      QString ip = isUsb ? (usbConnected(query.value(2).toString()) ? "Active" : "Inactive") :
-                                       (query.value(2).toString().isEmpty() ? "N/A" : query.value(2).toString());
+                      QString ip = isUsb ? "N/A" : (query.value(2).toString().isEmpty() ? "N/A" : query.value(2).toString());
                       ui->deviceTable->setItem(row, 1, new IpTableWidgetItem(ip));
 
                       // Set status, preserving "Connected" based on device ID
@@ -7521,6 +7512,7 @@ void MainWindow::loadDeviceTable()
    ui->deviceTable->sortItems(0, Qt::AscendingOrder);
    ui->deviceTable->viewport()->update();
 }
+
 /////////////////////////////////////////////////////
 
 void MainWindow::connections()
