@@ -1641,7 +1641,17 @@
             QMessageBox::critical(this, "", "Selected device is not connected");
             return;
              }
+
+             if (ui->deviceTable->item(selectedRow, 1)->text().contains("USB")) {
+            QMessageBox::critical(this, "", "Inactive for USB connections");
+            return;
+             }
+
+
+
              daddr = ui->deviceTable->item(selectedRow, 1)->text();
+
+
 
              // Confirm disconnection
              QMessageBox::StandardButton reply;
