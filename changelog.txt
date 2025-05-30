@@ -13,6 +13,10 @@ adblink preferences has a text field for donation
 code. Contributors can enter a code that will hide
 donation graphics and links.
 
+if a USB device is in the database, it's
+connection status is updated in the
+device table
+
 System information reports battery status
 if available
 
@@ -20,22 +24,17 @@ adb shell now has automatic access to
 busybox, adding a huge array of Unix commands to
 the Android command-line.
 
-Drag and drop has been implemented
-throughout adblink's file manager,
-including dragging files from your
-computer to a connected device.
+Drag and drop has been implemented throughout
+adblink's file manager, including dragging
+files from your computer to a connected device.
 
-if a USB device is in the database, check it's
-connection status and update table accordingly
-
-Most of the file manager buttons have been superseded
+Most of file manager's buttons have been superseded
 by right-click actions.
 
 adblink now combines adblink (Kodi) and adblink2 (Android),
 offering two views: Kodi view, retaining all original Kodi
 functionality, and Android view, for users seeking
 adbLink’s features without Kodi. 
-
 
 Device selection has moved from a dropdown list
 to a scrollable table. The active device is
