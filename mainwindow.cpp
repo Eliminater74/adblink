@@ -7402,6 +7402,7 @@ void MainWindow::startapp_clicked()
 
 ////////////////////////////////
 
+
 QString MainWindow::battery()
 {
    QString cstring = getadb() + " shell dumpsys battery";
@@ -7429,10 +7430,18 @@ QString MainWindow::battery()
                           QStringList parts = trimmedLine.split(':');
                           if (parts.size() > 1) {
                QString statusValue = parts[1].trimmed();
-               if (statusValue == "2") {
+               if (statusValue == "1") {
+              batteryStatus = " (unknown)";
+               } else if (statusValue == "2") {
               batteryStatus = " (charging)";
                } else if (statusValue == "3") {
               batteryStatus = " (discharging)";
+               } else if (statusValue == "4") {
+              batteryStatus = " (not charging)";
+               } else if (statusValue == "5") {
+              batteryStatus = " (full)";
+               } else {
+              batteryStatus = " (status: " + statusValue + ")";
                }
                           }
                       }
@@ -7440,6 +7449,7 @@ QString MainWindow::battery()
 
    return batteryPresent ? (batteryLevel + batteryStatus) : "Unknown";
 }
+
 ////////////////////////////////////
 
 void MainWindow::displayOff()
