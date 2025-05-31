@@ -359,6 +359,8 @@ private slots:
 
 
 
+  void on_actionReload_devices_triggered();
+
   private:
     Ui::MainWindow *ui;
     QNetworkAccessManager *m_networkManager;

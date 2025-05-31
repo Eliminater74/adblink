@@ -1170,6 +1170,7 @@
     <addaction name="actionSet_Kodi_permissions"/>
     <addaction name="actionSend_text"/>
     <addaction name="actionGet_UID_from_APK_file"/>
+    <addaction name="actionReload_devices"/>
     <addaction name="View_Changelog"/>
     <addaction name="actionWireless_ADBD"/>
     <addaction name="actionTest_adb_connection"/>
@@ -1420,6 +1421,11 @@
    </property>
    <property name="toolTip">
     <string>Enable/Disable Kodi features</string>
+   </property>
+  </action>
+  <action name="actionReload_devices">
+   <property name="text">
+    <string>Reload devices</string>
    </property>
   </action>
  </widget>
