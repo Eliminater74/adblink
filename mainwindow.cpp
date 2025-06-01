@@ -1076,7 +1076,9 @@
         if (startview) {
                   ui->stackedWidget->setCurrentIndex(1);
                   ui->menuKodi->menuAction()->setVisible(false);
-        } else {
+
+
+   } else {
                   ui->stackedWidget->setCurrentIndex(0);
                     ui->menuKodi->menuAction()->setVisible(true);
         }
@@ -1176,9 +1178,14 @@
         if (startview) {
             ui->stackedWidget->setCurrentIndex(0);
             ui->menuKodi->menuAction()->setVisible(true);
+            ui->infoArchitecture->setEnabled(true);
+            ui->infoArchitecture->setVisible(true);
+
         } else {
             ui->stackedWidget->setCurrentIndex(1);
             ui->menuKodi->menuAction()->setVisible(false);
+            ui->infoArchitecture->setEnabled(false);
+            ui->infoArchitecture->setVisible(false);
         }
 
         if (checkversion) {
@@ -3500,7 +3507,7 @@
 
 
 ///////////////////////////////////////////////////////
-    void MainWindow::on_actionArchitecture_triggered()
+    void MainWindow::infoArchitecture()
     {
 
 
@@ -6899,6 +6906,12 @@ void MainWindow::on_actionSwitch_View_triggered()
 
                ui->stackedWidget->setCurrentIndex(1);
                ui->menuKodi->menuAction()->setVisible(false);
+
+
+
+               ui->infoArchitecture->setEnabled(false);
+               ui->infoArchitecture->setVisible(false);
+
  }
 
 
@@ -6913,6 +6926,11 @@ void MainWindow::on_actionSwitch_View_triggered()
 
                ui->stackedWidget->setCurrentIndex(0);
                ui->menuKodi->menuAction()->setVisible(true);
+
+
+
+               ui->infoArchitecture->setEnabled(true);
+               ui->infoArchitecture->setVisible(true);
  }
 
 }
@@ -7138,13 +7156,6 @@ bool MainWindow::validateIPAddress(const QString& ipAddress) {
                );
 
            return ipRegex.match(normalized).hasMatch();
-}
-
-void MainWindow::on_infoButton_clicked()
-{
-
-   on_actionArchitecture_triggered();
-
 }
 
 
@@ -7554,6 +7565,13 @@ void MainWindow::loadDeviceTable()
 
 
 
+void MainWindow::on_infoArchitecture_triggered()
+{
+   infoArchitecture();
+}
+
+
+
 /////////////////////////////////////////////////////
 
 void MainWindow::connections()
@@ -7580,7 +7598,8 @@ void MainWindow::connections()
    connect(ui->fmButton_2, &QPushButton::clicked, this, &MainWindow::fmButton_clicked);
    connect(ui->sideload_Button_2, &QPushButton::clicked, this, &MainWindow::sideload_Button_clicked);
    connect(ui->uninstall_Button_2, &QPushButton::clicked, this, &MainWindow::uninstall_Button_clicked);
-   connect(ui->infoButton, &QPushButton::clicked, this, &MainWindow::on_actionArchitecture_triggered);
+   connect(ui->infoButton, &QPushButton::clicked, this, &MainWindow::infoArchitecture);
+
    connect(ui->screencap2, &QPushButton::clicked, this, &MainWindow::screenCap);
    connect(ui->stopADB2, &QPushButton::clicked, this, &MainWindow::killServer_clicked);
    connect(ui->startapp_2, &QPushButton::clicked, this, &MainWindow::startapp_clicked);
@@ -7602,5 +7621,6 @@ void MainWindow::connections()
    connect(ui->deviceTable, &QTableWidget::doubleClicked, this, &MainWindow::fmButton_clicked);
 
 }
+
 
 

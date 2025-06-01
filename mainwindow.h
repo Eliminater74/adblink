@@ -301,7 +301,7 @@ private slots:
 
   void on_actionReiinstall_Busybox_triggered();
 
-  void on_actionArchitecture_triggered();
+  void infoArchitecture();
 
 
 
@@ -354,12 +354,9 @@ private slots:
   void on_actionSwitch_View_triggered();
 
 
-
-  void on_infoButton_clicked();
-
-
-
   void on_actionReload_devices_triggered();
+
+  void on_infoArchitecture_triggered();
 
   private:
     Ui::MainWindow *ui;

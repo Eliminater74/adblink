@@ -1166,7 +1166,7 @@
     </property>
     <addaction name="actionSwitch_View"/>
     <addaction name="actionReiinstall_Busybox"/>
-    <addaction name="actionArchitecture"/>
+    <addaction name="infoArchitecture"/>
     <addaction name="actionSet_Kodi_permissions"/>
     <addaction name="actionSend_text"/>
     <addaction name="actionGet_UID_from_APK_file"/>
@@ -1316,7 +1316,7 @@
     <string>Get package name of android program</string>
    </property>
   </action>
-  <action name="actionArchitecture">
+  <action name="infoArchitecture">
    <property name="text">
     <string>System information</string>
    </property>
