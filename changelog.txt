@@ -6,51 +6,6 @@ Fix keypad
 
 
 
-06/01/25
-
-Version 6.4
-
-adblink adb updated to Version 36.0.0-13206524
-
-A locally installed adb binary can be used, 
-overriding adblink's included adb binary
-
-adblink help updated for v6.4
-
-adblink preferences has a text field for donation
-code. Contributors can enter a code that will hide
-donation graphics and links.
-
-if a USB device is in the database, it's
-connection status is updated in the
-device table
-
-System information reports battery status
-if available
-
-adb shell now has automatic access to
-busybox, adding a huge array of Unix commands to
-the Android command-line.
-
-Drag and drop has been implemented throughout
-adblink's file manager, including dragging
-files from your computer to a connected device.
-
-Most of file manager's buttons have been superseded
-by right-click actions.
-
-adblink now combines adblink (Kodi) and adblink2 (Android),
-offering two views: Kodi view, retaining all original Kodi
-functionality, and Android view, for users seeking
-adbLink’s features without Kodi. 
-
-Device selection has moved from a dropdown list
-to a scrollable table. The active device is
-selected by clicking the device's row in the
-table. Sort on any column.
-
-
-
 03/03/25
 
 Version 6.3
