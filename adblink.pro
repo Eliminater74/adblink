@@ -85,7 +85,6 @@ HEADERS  += mainwindow.h \
     pushfiledialog.h \
     adbprefdialog.h \
     sleepdialog.h \
-    version.h \
     setpdialog.h \
     detachableprocess.h \
     adbstring.h \
@@ -141,9 +140,5 @@ QMAKE_CXXFLAGS += -Wno-deprecated-declarations
 CONFIG+=sdk_no_version_check
 
 OTHER_FILES +=
-
-qmake
-
-INCLUDEPATH += $$HOME/qtbuild
 
 

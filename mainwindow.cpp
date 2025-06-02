@@ -21,7 +21,7 @@
     #include "sleepdialog.h"
     #include "oculusdialog.h"
     #include "scpdialog.h"
-    #include "version.h"
+ //   #include "version.h"
     #include "program.h"
     #include "getadbdata.h"
     #include "logfile.h"
@@ -96,7 +96,7 @@
     const QString serverOff = "";
     const QString busypath="/data/local/tmp/adblink/";
     const QString tempdir = "/data/local/tmp/";
-
+    const QString version = "6.5";
 
 //  applicationDirPath()
 
