@@ -15,7 +15,7 @@ public:
     explicit keyboardDialog(QWidget *parent = 0);
     ~keyboardDialog();
 
-void setdaddressLabel(const QString &daddress);
+void setdaddr(const QString &daddress);
 
 private slots:
 

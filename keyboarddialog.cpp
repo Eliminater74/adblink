@@ -3,6 +3,8 @@
 #include "getadbdata.h"
 #include <QMessageBox>
 #include <QProcess>
+#include <QDebug>
+#include "adbutils.h"
 QString cstring;
 
 /*
@@ -94,11 +96,11 @@ keyboardDialog::~keyboardDialog()
 }
 
 
-void keyboardDialog::setdaddressLabel(const QString &daddress)
+void keyboardDialog::setdaddr(const QString &daddress)
 {
-    ui->daddressLabel->setText(daddress);
-    ui->daddressLabel->setVisible(false);
-    cstring = ui->daddressLabel->text();
+
+    cstring = getadbpath() + " -s " + daddress;
+
 }
 
 
@@ -106,6 +108,7 @@ void keyboardDialog::setdaddressLabel(const QString &daddress)
 void keyboardDialog::on_upButton_clicked()
 {
  QString command=getadbOutput(cstring+"19");
+
 }
 
 void keyboardDialog::on_downButton_clicked()
@@ -121,6 +124,8 @@ void keyboardDialog::on_leftButton_clicked()
 void keyboardDialog::on_rightButton_clicked()
 {
    QString command=getadbOutput(cstring+"22");
+   qDebug() << cstring;
+
 }
 
 void keyboardDialog::on_homeButton_clicked()

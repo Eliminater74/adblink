@@ -1338,7 +1338,9 @@
                                             QMessageBox::Yes|QMessageBox::No);
               if (reply == QMessageBox::Yes)
               {
-                   for (int i =0;i<filenames.count();i++)
+
+                logfile("starting APK installation(s)");
+                for (int i =0;i<filenames.count();i++)
                   installer = installAPK(filenames.at(i));
 
               }
@@ -2811,14 +2813,15 @@
         if (device.port.isEmpty()) {
             port = "5555";
         }
+        else
+            port=device.port;
 
         daddr = device.daddr+":"+port;
-
 
          QString cstring = daddr + " shell input keyevent ";
          keyboardDialog dialog(this);
          dialog.setWindowModality(Qt::WindowModal);
-         dialog.setdaddressLabel(cstring);
+         dialog.setdaddr(cstring);
          dialog.exec();
 
     }
