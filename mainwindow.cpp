@@ -236,38 +236,26 @@
          logfile("------------");
 
 
-      QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-      db.setDatabaseName(dbstring);
+         dbstring = databasedir + "adblink.db";
+         QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+         db.setDatabaseName(dbstring);
 
 
-      if (!db.open()) {
-          QMessageBox::critical(0, qApp->tr("Cannot open database"),
-         "Database error:\n"+dbstring, QMessageBox::Cancel);
-         logfile("error opening database "+dbstring);
-         return;
-      }
-
-
-
-
-/*
-      if (db.open()) {
-      bool success = renameColumn("oldname", "newname");
-      if (success)
-         logfile("database column renamed");
-      }
-      else logfile("error: db not open");
-*/
-
-
-      if (!QFileInfo::exists(dbstring))
-       {
-          createTables();
-        }
+         if (!db.open()) {
+             QString errorMsg = db.lastError().text();
+             logfile(QString("Error opening database: %1 - %2").arg(dbstring, errorMsg));
+             QMessageBox::critical(0, qApp->tr("Cannot open database"),
+                                   QString("Failed to open database:\n%1\nError: %2").arg(dbstring, errorMsg),
+                                   QMessageBox::Cancel);
+             return;
+         }
 
 
 
-           if (!QFileInfo::exists(databasedir+"/adblink.json"))
+         createTables();
+
+
+         if (!QFileInfo::exists(databasedir+"/adblink.json"))
              {
                      QJsonObject obj;
 
@@ -7209,20 +7197,70 @@ void MainWindow::delRecordButton_clicked()
 
 ///////////////////////////////////////////////////
 
+
 void MainWindow::createTables()
 {
-   logfile("creating adblink.db");
+   logfile("Attempting to create tables for: " + dbstring);
 
-   QString sqlstatement = "CREATE TABLE IF NOT EXISTS \"device\" (Id INTEGER PRIMARY KEY, daddr text, description text NOT NULL UNIQUE, pulldir text, xbmcpackage text, data_root text, buffermode int, buffersize text, bufferfactor text, filepath text, port text, isusb int, ostype text, logfilename text, disableroot int, flag1 TEXT, flag2 TEXT, flag3 TEXT, flag4 TEXT, flag5 TEXT)";
+   QSqlDatabase db = QSqlDatabase::database();
+   if (!db.isOpen()) {
+                      logfile("Error: Database not open");
+                      return;
+   }
 
-   QSqlQuery query;
-   query.exec(sqlstatement);
+   logfile("Database opened successfully: " + db.databaseName());
 
-   if (query.lastError().isValid())
-   {
-                      logfile(sqlstatement);
-                      logfile("SqLite error:" + query.lastError().text());
-                      logfile("SqLite error code:" + QString::number(query.lastError().number()));
+   // Check if the device table already exists
+   QSqlQuery checkQuery(db);
+   bool tableExists = false;
+   if (checkQuery.exec("SELECT name FROM sqlite_master WHERE type='table' AND name='device';") && checkQuery.next()) {
+                      tableExists = true;
+                      logfile("Device table already exists");
+   } else if (checkQuery.lastError().isValid()) {
+                      logfile("Error checking for device table: " + checkQuery.lastError().text());
+                      return;
+   }
+
+   if (!tableExists) {
+                      // Create the device table
+                      QString sqlstatement = "CREATE TABLE IF NOT EXISTS device ("
+                                             "Id INTEGER PRIMARY KEY, "
+                                             "daddr TEXT, "
+                                             "description TEXT NOT NULL UNIQUE, "
+                                             "pulldir TEXT, "
+                                             "xbmcpackage TEXT, "
+                                             "data_root TEXT, "
+                                             "buffermode INTEGER, "
+                                             "buffersize TEXT, "
+                                             "bufferfactor TEXT, "
+                                             "filepath TEXT, "
+                                             "port TEXT, "
+                                             "isusb INTEGER, "
+                                             "ostype TEXT, "
+                                             "logfilename TEXT, "
+                                             "disableroot INTEGER, "
+                                             "flag1 TEXT, "
+                                             "flag2 TEXT, "
+                                             "flag3 TEXT, "
+                                             "flag4 TEXT, "
+                                             "flag5 TEXT)";
+
+                      QSqlQuery query(db);
+                      if (!query.exec(sqlstatement)) {
+                          logfile("SQL statement: " + sqlstatement);
+                          logfile("SQLite error: " + query.lastError().text());
+                          logfile("SQLite error code: " + QString::number(query.lastError().number()));
+                          logfile("Database file path: " + db.databaseName());
+                      } else {
+                          logfile("Successfully created new device table");
+                          // Verify table creation
+                          QSqlQuery verifyQuery(db);
+                          if (verifyQuery.exec("SELECT name FROM sqlite_master WHERE type='table' AND name='device';") && verifyQuery.next()) {
+               logfile("Device table creation confirmed");
+                          } else {
+               logfile("Error: Device table not found after creation attempt");
+                          }
+                      }
    }
 }
 
