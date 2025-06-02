@@ -1173,7 +1173,6 @@
     <addaction name="actionReload_devices"/>
     <addaction name="View_Changelog"/>
     <addaction name="actionWireless_ADBD"/>
-    <addaction name="actionTest_adb_connection"/>
     <addaction name="actionReboot"/>
    </widget>
    <widget class="QMenu" name="menuKodi">
