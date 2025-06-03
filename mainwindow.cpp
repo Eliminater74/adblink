@@ -91,31 +91,6 @@
     #endif
 
 
-    const QString vqurl = "http://www.jocala.com/version.txt";
-    const QString serverOn = "";
-    const QString serverOff = "";
-    const QString busypath="/data/local/tmp/adblink/";
-    const QString tempdir = "/data/local/tmp/";
-    const QString version = "6.5";
-
-//  applicationDirPath()
-
-    QString apphome =  "";
-    QString scriptdir = "";
-    QString aapt = "";
-    QString xmldir = "";
-    QString splashdir = "";
-    QString adbfiles;
-    QString logfiledir;
-    QString databasedir;
-    QString downloaddir;
-    QString scrcpydir;
-    QString dbstring = "";
-    QString jsonstring = "";
-
-//  end applicationDirPath()
-
-
 
         MainWindow::MainWindow(QWidget *parent)
         : QMainWindow(parent)
