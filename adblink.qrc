@@ -60,5 +60,6 @@
         <file>assets/scrcpy.html</file>
         <file>assets/delthumb.html</file>
         <file>assets/xapk.html</file>
+        <file>assets/style.qss</file>
     </qresource>
 </RCC>
