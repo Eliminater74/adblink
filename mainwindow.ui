@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>adblink</string>
+   <string/>
   </property>
   <property name="styleSheet">
    <string notr="true"/>

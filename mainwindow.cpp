@@ -147,7 +147,7 @@
 
          ui->setupUi(this);
          setFixedSize(size());
-         setWindowTitle(QCoreApplication::applicationName());
+         setWindowTitle(" ");
 
 
 
@@ -183,6 +183,7 @@
 
          QList<QHostAddress> list = QNetworkInterface::allAddresses();
          QHostAddress primaryIP;
+
 
          for (const QHostAddress& address : list) {
              if (!address.isLoopback() && address.protocol() == QAbstractSocket::IPv4Protocol) {
