@@ -285,6 +285,13 @@
 
 
     void MainWindow::onApplicationQuit() {
+
+
+     QString cstring = getadbpath() + " kill-server";
+     QString command=getadbOutput(cstring);
+     logfile("server stopped");
+
+
        QDir dir(scriptdir);
        dir.setNameFilters(QStringList());
        dir.setFilter(QDir::Files | QDir::Hidden | QDir::NoDotAndDotDot);
