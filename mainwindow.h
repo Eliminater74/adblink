@@ -369,13 +369,11 @@ private slots:
 
 
     const QString vqurl = "http://www.jocala.com/version.txt";
-    const QString serverOn = "";
-    const QString serverOff = "";
     const QString busypath="/data/local/tmp/adblink/";
     const QString tempdir = "/data/local/tmp/";
     const QString version = "6.5";
 
-    //  applicationDirPath()
+
 
     QString apphome =  "";
     QString scriptdir = "";
@@ -390,7 +388,7 @@ private slots:
     QString dbstring = "";
     QString jsonstring = "";
 
-    //  end applicationDirPath()
+
 
 
 

@@ -21,7 +21,6 @@
     #include "sleepdialog.h"
     #include "oculusdialog.h"
     #include "scpdialog.h"
- //   #include "version.h"
     #include "program.h"
     #include "getadbdata.h"
     #include "logfile.h"
@@ -165,9 +164,6 @@
 
 
 
-         ui->server_running->setText(serverOff);
-
-
 
 
 
@@ -256,15 +252,7 @@
 
 
 
-        logfile("starting server");
-        if (start_server())
-         { ui->server_running->setText(serverOn);
-            }
 
-        else
-        { ui->server_running->setText(serverOff);
-
-        }
 
         setFixedSize(575,390);
         buttonsetup();
@@ -895,7 +883,7 @@
      QString cstring = getadbpath() + " kill-server";
      QString command=getadbOutput(cstring);
      logfile("server stopped");
-      ui->server_running->setText(serverOff);
+
     }
 
 
@@ -1464,7 +1452,7 @@
                       QString selectedDescription;
                       QString daddr;
                       QString port;
-                      bool isConnected;
+
                       int selectedRow;
 
                       if (!ui->adhocip->text().isEmpty())
@@ -1508,7 +1496,7 @@
                       command = connectadb(cstring);
 
                       if (command.contains("failed to authenticate") || command.contains("offline")) {
-                            isConnected = false;
+
                             ui->deviceTable->setItem(selectedRow, 2, new QTableWidgetItem(
                                                                          command.contains("failed to authenticate") ? "Unauthorized" : "Offline"));
                             logfile(cstring);
@@ -1522,7 +1510,7 @@
                       logfile(command);
 
                       if (command.contains("connected to")) {
-                            isConnected = true;
+
                             ui->deviceTable->setItem(selectedRow, 2, new QTableWidgetItem("Connected"));
 
                             ui->deviceTable->clearSelection();
@@ -1533,15 +1521,13 @@
                             logfile("Connected to " + daddr);
                             logfile("Android version: " + s.setNum(getandroid()));
                       } else {
-                            isConnected = false;
+
                             ui->deviceTable->setItem(selectedRow, 2, new QTableWidgetItem("NA"));
                             logfile("Unable to connect to: " + daddr);
                             QMessageBox::critical(this, "", "Unable to connect to: " + daddr);
                       }
 
-                      if (isConnected) {
-                            ui->server_running->setText(serverOn);
-                      }
+
     }
 
 
@@ -1946,7 +1932,7 @@
        // Kill the ADB server
        QString cstring = getadbpath() + " kill-server";
        QString command = getadbOutput(cstring);
-       ui->server_running->setText(serverOff);
+
 
        // Update device table
        for (int row = 0; row < ui->deviceTable->rowCount(); ++row) {
@@ -7094,11 +7080,7 @@ void MainWindow::on_actionSet_Kodi_permissions_triggered()
 void MainWindow::serverlabel()
 {
            QString cstring = getadbpath() + " devices";
-           QString command = getadbOutput(cstring);
-           if (command.contains("List of devices"))
-                      ui->server_running->setText(serverOn);
-           else
-                      ui->server_running->setText(serverOff);
+           getadbOutput(cstring);
 
 }
 
