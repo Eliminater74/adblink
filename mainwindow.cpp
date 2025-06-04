@@ -258,7 +258,7 @@
         setFixedSize(575,390);
         buttonsetup();
         gridsetup();
-        setupDonateButton(ui->centralWidget, 132, 308);
+        setupDonateButton(ui->centralWidget, 132, 320);
 
         QString donation = readDonationValue();
         setDonateButtonActive(donation != "jocala.com");
@@ -478,9 +478,9 @@
       QIcon icon(pix);
       donateButton->setIcon(icon);
       donateButton->setText("");
-      donateButton->setIconSize(QSize(300, 32));
+      donateButton->setIconSize(QSize(300, 20));
          }
-         donateButton->setGeometry(x, y, 300, 32); // Use x, y parameters
+         donateButton->setGeometry(x, y, 300, 20); // Use x, y parameters
          donateButton->setStyleSheet(
              "QPushButton {"
              "   border: none;"
