@@ -1243,12 +1243,6 @@
         DeviceRecord device = queryDeviceRecord(selectedDescription);
 
 
-        if (device.ostype != "0") {
-               QMessageBox::critical(this, "", "Android devices only.");
-               return "";
-        }
-
-
 
 
         logfile("Installing "+filename);
@@ -1359,13 +1353,6 @@
 
 
         DeviceRecord device = queryDeviceRecord(selectedDescription);
-
-
-
-        if (device.ostype != "0") {
-              QMessageBox::critical(this, "", "Android devices only.");
-              return;
-        }
 
 
 
@@ -1857,10 +1844,6 @@
 
          DeviceRecord device = queryDeviceRecord(selectedDescription);
 
-         if (device.ostype != "0") {
-            QMessageBox::critical(this, "Unavailable", "Android devices only.");
-            return;
-         }
 
 
 
@@ -1891,11 +1874,6 @@
             }
 
             DeviceRecord device = queryDeviceRecord(selectedDescription);
-
-            if (device.ostype != "0") {
-             QMessageBox::critical(this, "Unavailable", "Android devices only.");
-             return;
-            }
 
 
 
@@ -2048,7 +2026,7 @@
              dialog.setPulldir(device.pulldir);
              dialog.setfilepath(device.filepath);
              dialog.setdataroot(device.data_root);
-             dialog.setostype(device.ostype);
+             dialog.setostype("0");
              dialog.setdescription(device.description);
              dialog.setdisableroot(device.disableroot);
              if (device.isusb)
@@ -2608,10 +2586,7 @@
 
                   DeviceRecord device = queryDeviceRecord(selectedDescription);
 
-                  if (device.ostype != "0") {
-                    QMessageBox::critical(this, "Unavailable", "Android devices only.");
-                    return;
-                  }
+
 
 
           bool startstop;
@@ -2688,10 +2663,6 @@
 
         DeviceRecord device = queryDeviceRecord(selectedDescription);
 
-        if (device.ostype != "0") {
-        QMessageBox::critical(this, "Unavailable", "Android devices only.");
-        return;
-        }
 
 
 
@@ -2771,11 +2742,6 @@
 
         DeviceRecord device = queryDeviceRecord(selectedDescription);
 
-
-        if (device.ostype != "0") {
-            QMessageBox::critical(this, "", "Android devices only.");
-            return;
-        }
 
 
 
@@ -3002,10 +2968,6 @@
 
             DeviceRecord device = queryDeviceRecord(selectedDescription);
 
-            if (device.ostype != "0") {
-             QMessageBox::critical(this, "Unavailable", "Android devices only.");
-             return;
-            }
 
 
         if (!is_su())
@@ -3046,10 +3008,7 @@
 
         DeviceRecord device = queryDeviceRecord(selectedDescription);
 
-        if (device.ostype != "0") {
-             QMessageBox::critical(this, "Unavailable", "Android devices only.");
-             return;
-        }
+
 
 
 
@@ -4209,10 +4168,6 @@
               DeviceRecord device = queryDeviceRecord(selectedDescription);
 
 
-              if (device.ostype != "0") {
-                 QMessageBox::critical(this, "", "Scrcpy is for Android devices only.");
-                 return;
-              }
 
 
 
