@@ -61,5 +61,7 @@
         <file>assets/delthumb.html</file>
         <file>assets/xapk.html</file>
         <file>assets/style.qss</file>
+        <file>assets/DejaVuSans.ttf</file>
     </qresource>
 </RCC>
+
