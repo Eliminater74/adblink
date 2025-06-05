@@ -80,6 +80,11 @@
     #include <QStackedWidget>
     #include <QGridLayout>
     #include <QVBoxLayout>
+    #include <QHBoxLayout>
+
+
+    #include <QScrollBar>
+    #include <QtGlobal>
 
     #ifdef Q_OS_LINUX
      int os=0;
@@ -7458,6 +7463,137 @@ void MainWindow::on_actionReload_devices_triggered()
 
 ///////////////////////////////////////////////
 
+
+
+void MainWindow::loadDeviceTable()
+{
+   QString sqlstatement;
+   QSqlQuery query;
+
+   // Store current connected device IDs
+   QSet<QString> connectedDeviceIds;
+   for (int row = 0; row < ui->deviceTable->rowCount(); ++row) {
+        if (ui->deviceTable->item(row, 2) &&
+            ui->deviceTable->item(row, 2)->text() == "Connected" &&
+            ui->deviceTable->item(row, 0)) {
+            connectedDeviceIds.insert(ui->deviceTable->item(row, 0)->data(Qt::UserRole).toString());
+        }
+   }
+
+   // Clear and setup table
+   ui->deviceTable->clearContents();
+   ui->deviceTable->setRowCount(0);
+   ui->deviceTable->setColumnCount(3);
+   ui->deviceTable->setHorizontalHeaderLabels(QStringList() << "Device" << "IP" << "Status");
+   ui->deviceTable->verticalHeader()->setVisible(false);
+   ui->deviceTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+   ui->deviceTable->setShowGrid(true);
+   ui->deviceTable->setSortingEnabled(false);
+   ui->deviceTable->setSelectionMode(QAbstractItemView::SingleSelection);
+   ui->deviceTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+   // Ensure table scales with parent widget
+   ui->deviceTable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+   // Reset margins and padding to minimize extra space
+   ui->deviceTable->setStyleSheet("QTableWidget { margin: 0px; padding: 0px; } QHeaderView::section { padding: 0px; }");
+
+   // Execute query
+   sqlstatement = "SELECT id, description, daddr, isusb FROM device";
+   if (!query.exec(sqlstatement)) {
+        qDebug() << "Query failed:" << query.lastError().text();
+        return;
+   }
+
+   // Populate table
+   int row = 0;
+   while (query.next()) {
+        ui->deviceTable->insertRow(row);
+        QString deviceId = query.value(0).toString();
+        QString description = query.value(1).toString();
+
+        QTableWidgetItem* descItem = new QTableWidgetItem(description);
+        descItem->setData(Qt::UserRole, deviceId);
+        ui->deviceTable->setItem(row, 0, descItem);
+
+        bool isUsb = query.value(3).toBool();
+        QString ip = isUsb ? "USB" : (query.value(2).toString().isEmpty() ? "N/A" : query.value(2).toString());
+        ui->deviceTable->setItem(row, 1, new IpTableWidgetItem(ip));
+
+        QString status;
+        if (isUsb) {
+            status = usbConnected(query.value(2).toString()) ? "Connected" : "Disconnected";
+        } else {
+            status = connectedDeviceIds.contains(deviceId) ? "Connected" : "Disconnected";
+        }
+        ui->deviceTable->setItem(row, 2, new QTableWidgetItem(status));
+        row++;
+   }
+
+   // Calculate usable viewport width
+   int totalWidth = ui->deviceTable->viewport()->width() - 2 * ui->deviceTable->frameWidth() - 16; // Increased buffer
+   if (ui->deviceTable->verticalScrollBar()->isVisible()) {
+        totalWidth -= ui->deviceTable->verticalScrollBar()->width();
+   }
+
+   // Get content-based widths
+   ui->deviceTable->resizeColumnsToContents();
+   int col0Width = ui->deviceTable->columnWidth(0);
+   int col1Width = ui->deviceTable->columnWidth(1);
+   int col2Width = ui->deviceTable->columnWidth(2);
+
+   // Define minimum widths for readability
+   const int minWidth = 120; // Ensure readable content
+   col0Width = qMax(col0Width, minWidth);
+   col1Width = qMax(col1Width, minWidth);
+   col2Width = qMax(col2Width, minWidth);
+
+   // Scale widths to fill viewport exactly
+   int currentTotal = col0Width + col1Width + col2Width;
+   if (currentTotal != totalWidth && totalWidth > 0) {
+        double totalContentWidth = col0Width + col1Width + col2Width;
+        int newCol0Width = qRound(static_cast<double>(col0Width) * totalWidth / totalContentWidth);
+        int newCol1Width = qRound(static_cast<double>(col1Width) * totalWidth / totalContentWidth);
+        int newCol2Width = totalWidth - (newCol0Width + newCol1Width);
+
+        // Ensure minimum widths
+        newCol0Width = qMax(newCol0Width, minWidth);
+        newCol1Width = qMax(newCol1Width, minWidth);
+        newCol2Width = qMax(newCol2Width, minWidth);
+
+        // Final adjustment to prevent overflow
+        int newTotal = newCol0Width + newCol1Width + newCol2Width;
+        if (newTotal > totalWidth && totalWidth > 0) {
+            double adjustScale = static_cast<double>(totalWidth) / newTotal;
+            newCol0Width = qRound(static_cast<double>(newCol0Width) * adjustScale);
+            newCol1Width = qRound(static_cast<double>(newCol1Width) * adjustScale);
+            newCol2Width = totalWidth - (newCol0Width + newCol1Width);
+        }
+
+        ui->deviceTable->setColumnWidth(0, newCol0Width);
+        ui->deviceTable->setColumnWidth(1, newCol1Width);
+        ui->deviceTable->setColumnWidth(2, newCol2Width);
+   }
+
+   // Explicitly disable horizontal scrollbar
+   ui->deviceTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+   ui->deviceTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
+   ui->deviceTable->setSortingEnabled(true);
+   ui->deviceTable->sortItems(0, Qt::AscendingOrder);
+   ui->deviceTable->viewport()->update();
+}
+
+
+
+
+
+
+
+
+
+/*
+
 void MainWindow::loadDeviceTable()
 {
    QString sqlstatement;
@@ -7524,7 +7660,7 @@ void MainWindow::loadDeviceTable()
    ui->deviceTable->viewport()->update();
 }
 
-
+*/
 
 void MainWindow::on_infoArchitecture_triggered()
 {
