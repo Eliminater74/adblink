@@ -258,7 +258,7 @@
         setFixedSize(575,390);
         buttonsetup();
         gridsetup();
-        setupDonateButton(ui->centralWidget, 132, 320);
+        setupDonateButton(ui->centralWidget, 132, 315);
 
         QString donation = readDonationValue();
         setDonateButtonActive(donation != "jocala.com");
