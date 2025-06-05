@@ -318,7 +318,6 @@ private slots:
 
 
 
-  void on_pushButton_clicked();
 
   void pushTimers_clicked();
 

@@ -577,7 +577,7 @@
     }
 
 
-
+/*
     //////////////////////////////////////////////
     bool MainWindow::isScoped()
     {
@@ -676,7 +676,93 @@
        return (apiLevel >= 30) || (apiLevel == 29 && restrictedAccess);
     }
 
+*/
 
+    bool MainWindow::isScoped()
+    {
+
+
+       // Validate getadb()
+       QString adbPath = getadb();
+       if (adbPath.isEmpty()) {
+            logfile("Issue: getadb() returned empty path");
+            return false;
+       }
+
+       // Helper to run ADB commands
+       auto runAdbCommand = [adbPath](const QString& adbCommand) -> QString {
+           QString command = adbPath + " " + adbCommand;
+           QProcess process;
+           process.start(command);
+           if (!process.waitForFinished(5000)) {
+               logfile("Issue: ADB command timed out: " + command);
+               return QString();
+           }
+           QString output = process.readAllStandardOutput().trimmed();
+           QString error = process.readAllStandardError().trimmed();
+           if (process.exitCode() != 0 || !error.isEmpty()) {
+               logfile("Issue: ADB command failed: " + command + " Error: " + error);
+               return error.isEmpty() ? "Unknown error" : error;
+           }
+           return output;
+       };
+
+       // Get API level
+       QString apiOutput = runAdbCommand("shell getprop ro.build.version.sdk");
+       bool ok;
+       int apiLevel = apiOutput.toInt(&ok);
+       if (!ok || apiOutput.isEmpty()) {
+            logfile("Issue: Invalid or empty API level output: " + apiOutput);
+            return false;
+       }
+       if (apiLevel < 29) {
+            logfile("Issue: API level too low for scoped storage: " + QString::number(apiLevel));
+            return false;
+       }
+
+       // Test storage access
+       bool restrictedAccess = false;
+       QString touchOutput = runAdbCommand("shell touch /sdcard/Android/data/org.xbmc.kodi/files/test.txt");
+       if (touchOutput.isEmpty() && !restrictedAccess) {
+            // Touch succeeded, clean up
+            runAdbCommand("shell rm /sdcard/Android/data/org.xbmc.kodi/files/test.txt");
+       } else {
+            restrictedAccess = touchOutput.contains("Permission denied", Qt::CaseInsensitive);
+            if (!restrictedAccess && !touchOutput.isEmpty()) {
+                 logfile("Issue: Unexpected touch output for primary path: " + touchOutput);
+            }
+       }
+
+       // Additional test for another path
+       if (!restrictedAccess) {
+            touchOutput = runAdbCommand("shell touch /sdcard/DCIM/test.txt");
+            if (touchOutput.isEmpty()) {
+                 // Touch succeeded, clean up
+                 runAdbCommand("shell rm /sdcard/DCIM/test.txt");
+            } else {
+                 restrictedAccess = touchOutput.contains("Permission denied", Qt::CaseInsensitive);
+                 if (!restrictedAccess && !touchOutput.isEmpty()) {
+                    logfile("Issue: Unexpected touch output for DCIM path: " + touchOutput);
+                 }
+            }
+       }
+
+       // Check filesystem permissions
+       QString lsOutput = runAdbCommand("shell ls -ld /sdcard/");
+       if (lsOutput.isEmpty()) {
+            logfile("Issue: Failed to get /sdcard/ permissions");
+       } else {
+            bool permissiveFs = lsOutput.contains("rwxrwxrwx");
+            if (permissiveFs) {
+                 logfile("Issue: Permissive /sdcard/ permissions, vendor may bypass scoped storage");
+                 restrictedAccess = false;
+            }
+       }
+
+       bool result = (apiLevel >= 30) || (apiLevel == 29 && restrictedAccess);
+       logfile(QString("scoped storage is %1").arg(result ? "in effect" : "not in effect"));
+       return result;
+    }
 
 
 
@@ -1417,9 +1503,9 @@
                          daddr=daddr+":"+port;
 
                           if (!keepbox)
-                  cstring = getadb() + " shell pm uninstall " + package;
+                             cstring = getadb() + " shell pm uninstall " + package;
                           else
-                  cstring = getadb() + " shell pm uninstall -k " + package;
+                             cstring = getadb() + " shell pm uninstall -k " + package;
 
 
                           logfile("uninstall: "+cstring);
@@ -1429,14 +1515,15 @@
 
 
                           if (!command.contains("Success"))
-
+                              {
                                QMessageBox::critical(this,"","Uninstall failed");
-                            else
-                              QMessageBox::information(this,"","Uninstalled");
-
-
-
-                      }
+                                logfile(package+" uninstalled");
+                                }
+                            else {
+                               QMessageBox::information(this,"","Uninstalled");
+                                logfile(package+" uninstalled");
+                               }
+         }
     }
 
 
@@ -4155,6 +4242,10 @@
 
        void MainWindow::scpyButton_clicked()
        {
+
+
+           logfile("starting scrcpy function");
+
               QString port;
               QString daddr;
               QString cstring;
@@ -4372,81 +4463,6 @@
 
               QProcess::startDetached(cstring);
        }
-
-
-    void MainWindow::on_pushButton_clicked()
-    {
-
-
-
-    }
-
-/*
-
-    //////////////////////////////////////////////////////////
-
-       void MainWindow::dos_shell()
-
-       {
-
-              QString sernum = "";
-              QString port = "";
-              QString daddr = "";
-
-              QString selectedDescription;
-              if (!validateDeviceSelection(selectedDescription)) {
-                 return;
-              }
-
-              DeviceRecord device = queryDeviceRecord(selectedDescription);
-
-
-              if (device.isusb) {
-                 port = "";
-                 daddr = device.daddr;
-              } else {
-                 port = device.port.isEmpty() ? "5555" : device.port;
-                 daddr = device.daddr + ":" + port;
-              }
-
-
-              QString programName = QCoreApplication::applicationName();
-
-                           QString commstr = scriptdir+"/shell.bat";
-                           QFile file(commstr);
-
-                               if(!file.open(QFile::WriteOnly |
-                                             QFile::Text))
-                               {
-                                   logfile("error creating shell.bat!");
-                                   QMessageBox::critical(this,"","Error creating bat file!");
-                                   return;
-                               }
-
-
-                               QTextStream out(&file);
-
-
-                               out  <<  "echo off"  << endl;
-
-
-                               out  << "set PATH=%PATH%;"+adbfiles+";" << endl;
-
-                               out  <<  "adb.exe -s "+ daddr + " shell"  << endl;
-
-
-
-
-                               file.flush();
-                               file.close();
-
-
-                               QProcess::startDetached("cmd.exe", QStringList() << "/c" << "start"  << "" << commstr);
-
-
-                      }
-
-   */
 
 
 
@@ -4684,8 +4700,8 @@ void MainWindow::backupButton_clicked()
                   }
 
                   cstring = adbPrefix + "pull " + mcpath + "files/.kodi/. " + '"' + dir + '"';
-                  command = RunLongProcess(cstring, "backup running");
-
+                 // command = RunLongProcess(cstring, "backup running");
+                  command = RunLongProcess(cstring, "backup running for " + device.daddr);
                   if (QDir(dir + "userdata").exists()) { // Preserved original validation
                     writeBackup(dir);
                     QMessageBox::information(this, "", "Backup complete for " + device.daddr); // Added device.daddr
