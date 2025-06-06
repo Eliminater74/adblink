@@ -393,15 +393,6 @@ void usbfileDialog::on_delButton_clicked()
     int error=0;
 
 
-/*
-    if (ui->usblistWidget1->selectedItems().count() >= 1 && ui->usblistWidget2->selectedItems().count() >= 1 )
-       {
-     QMessageBox::critical(this,"","select from one pane only");
-     return;
-
-    }
-*/
-
 
 
     if (hasfocus)
@@ -649,28 +640,6 @@ void usbfileDialog::on_goButton_clicked()
 
 
 
-
-/*
- if (!isKodi)
- {
-
-   kpath1="/sdcard/";
-   kpath2="/sdcard/";
-   kpath3="/sdcard/";
-
- }
-
-
-else
-
- {
-     kpath1 = mcpath;
-     kpath2 = mcpath+"/userdata";
-     kpath3 = mcpath+"/addons";
- }
-
-
-*/
 
 
    if (!dirpath.isEmpty())
@@ -938,17 +907,6 @@ QString destdir;
 
                         tmpstr='"'+tmpstr+'"';
 
-/*
-                        if(info1.isDir())
-                           {
-                             // absolutefname=absolutefname+"/";
-                             absolutefname=absolutefname;
-                             cstring =  adb21 + " shell mkdir -p "+ tmpstr;
-                             logfile(cstring);
-                             command=getadbOutput(cstring);
-                            }
-
-*/
 
                        absolutefname='"'+absolutefname+'"';
 
@@ -997,19 +955,6 @@ QString usbfileDialog::RunLongProcess_ufd(QString cstring)
 
 
   // fmactivityIcon(true);
-
-/*
- QProcess run_command;
- run_command.setProcessChannelMode(QProcess::MergedChannels);
- run_command.start(cstring);
-
- run_command.waitForStarted();
-
- while(run_command.state() != QProcess::NotRunning)
-     qApp->processEvents();
-
- QString command=run_command.readAll();
-*/
 
 QString command=getadbOutput(cstring);
 

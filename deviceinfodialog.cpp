@@ -1,4 +1,3 @@
-// deviceinfodialog.cpp
 #include "deviceinfodialog.h"
 #include "ui_deviceinfodialog.h"
 #include <QString>
@@ -26,15 +25,6 @@ void deviceinfoDialog::devinfo(const QStringList &list)
 {
 
 
-    /*
-    list.append(archi);
-    list.append(android);
-    list.append(adevice);
-    list.append(manufact);
-    list.append(battery());
-    list.append(scoped);
-   */
-
     QString archi = list.at(0);
     QString droid = list.at(1);
     QString device = list.at(2);
@@ -44,20 +34,7 @@ void deviceinfoDialog::devinfo(const QStringList &list)
     bool scoped = (list.at(5).toLower() == "true");
     int av = droid.toInt();
 
-    // Set the dialog's fixed size to 400x300
-    //this->setFixedSize(400, 300);
 
-    // Set size and position for each label using setGeometry
-
-  /*
-    ui->archilabel->setGeometry(20, 40, 350, 36);     // Start at y=20 to avoid clipping
-    ui->droidlabel->setGeometry(20, 57, 350, 32);     // y=20 + 32 + 5 = 57
-    ui->devicelabel->setGeometry(20, 94, 350, 32);    // y=57 + 32 + 5 = 94
-    ui->manufactlabel->setGeometry(20, 131, 350, 32); // y=94 + 32 + 5 = 131
-    ui->batterylabel->setGeometry(20, 168, 350, 32);  // y=131 + 32 + 5 = 168
-    ui->scoped->setGeometry(20, 205, 350, 32);        // y=168 + 32 + 5 = 205
-*/
-    // Existing code for setting text
     ui->archilabel->setText("System architecture:   " + archi);
 
     if (manufact.contains(QLatin1String("amazon"), Qt::CaseInsensitive))

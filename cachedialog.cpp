@@ -187,18 +187,6 @@ void cacheDialog::on_copyxml_clicked()
 
 
 
-
-
-    /*
-    <cachemembuffersize> and <readbufferfactor>
-     - In v17 <cachemembuffersize> is renamed to  <memorysize>
-     and <readbufferfactor> is renamed to <readfactor>.
-    In addition, all three buffer related settings in <network>
-    are moved out of <network> and
-    into a new <cache> parent tag.
-
-    */
-
     QString cacheFilename = "temp.txt";
     QFile cacheFile(cacheFilename);
     cacheFile.open(QIODevice::ReadWrite);
