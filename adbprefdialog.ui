@@ -141,6 +141,9 @@
         <height>21</height>
        </size>
       </property>
+      <property name="toolTip">
+       <string>Turn off donation graphics</string>
+      </property>
       <property name="placeholderText">
        <string/>
       </property>

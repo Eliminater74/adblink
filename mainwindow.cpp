@@ -1511,8 +1511,7 @@
             ui->deviceTable->setItem(selectedRow, 2, new QTableWidgetItem("Disconnected"));
              }
 
-             // Optional: Reload table if necessary
-             loadDeviceTable();
+
     }
 
 
