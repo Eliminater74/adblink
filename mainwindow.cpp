@@ -577,106 +577,8 @@
     }
 
 
-/*
-    //////////////////////////////////////////////
-    bool MainWindow::isScoped()
-    {
-       // Test qDebug to ensure it's working
-       // Comment out after confirming output
-       // qDebug() << "Testing qDebug in isScoped";
 
-       // Validate getadb()
-       QString adbPath = getadb();
-       if (adbPath.isEmpty()) {
-        //    qDebug() << "Issue: getadb() returned empty path";
-            return false;
-       }
-
-       // Helper to run ADB commands
-       auto runAdbCommand = [adbPath](const QString& adbCommand) -> QString {
-           QString command = adbPath + " " + adbCommand;
-           QProcess process;
-           process.start(command);
-           if (!process.waitForFinished(5000)) {
-          //     qDebug() << "Issue: ADB command timed out:" << command;
-               return QString();
-           }
-           QString output = process.readAllStandardOutput().trimmed();
-           QString error = process.readAllStandardError().trimmed();
-           if (process.exitCode() != 0 || !error.isEmpty()) {
-           //    qDebug() << "Issue: ADB command failed:" << command << "Error:" << error;
-               return error.isEmpty() ? "Unknown error" : error;
-           }
-           return output;
-       };
-
-       // Get API level
-       QString apiOutput = runAdbCommand("shell getprop ro.build.version.sdk");
-       bool ok;
-       int apiLevel = apiOutput.toInt(&ok);
-       if (!ok || apiOutput.isEmpty()) {
-         //   qDebug() << "Issue: Invalid or empty API level output:" << apiOutput;
-            return false;
-       }
-       if (apiLevel < 29) {
-        //    qDebug() << "Issue: API level too low for scoped storage:" << apiLevel;
-            return false;
-       }
-
-       // Check for root access
-       QString whoami = runAdbCommand("shell whoami");
-       if (whoami.isEmpty()) {
-        //    qDebug() << "Issue: Failed to determine user (whoami)";
-            return false;
-       }
-       if (whoami.contains("root")) {
-       //     qDebug() << "Issue: Root access detected, scoped storage may be bypassed";
-            return false;
-       }
-
-       // Test storage access
-       bool restrictedAccess = false;
-       QString touchOutput = runAdbCommand("shell touch /sdcard/Android/data/org.xbmc.kodi/files/test.txt");
-       if (touchOutput.isEmpty() && !restrictedAccess) {
-            // Touch succeeded, clean up
-            runAdbCommand("shell rm /sdcard/Android/data/org.xbmc.kodi/files/test.txt");
-       } else {
-            restrictedAccess = touchOutput.contains("Permission denied", Qt::CaseInsensitive);
-            if (!restrictedAccess && !touchOutput.isEmpty()) {
-             //    qDebug() << "Issue: Unexpected touch output for primary path:" << touchOutput;
-            }
-       }
-
-       // Additional test for another path
-       if (!restrictedAccess) {
-            touchOutput = runAdbCommand("shell touch /sdcard/DCIM/test.txt");
-            if (touchOutput.isEmpty()) {
-                 // Touch succeeded, clean up
-                 runAdbCommand("shell rm /sdcard/DCIM/test.txt");
-            } else {
-                 restrictedAccess = touchOutput.contains("Permission denied", Qt::CaseInsensitive);
-                 if (!restrictedAccess && !touchOutput.isEmpty()) {
-               //     qDebug() << "Issue: Unexpected touch output for DCIM path:" << touchOutput;
-                 }
-            }
-       }
-
-       // Check filesystem permissions
-       QString lsOutput = runAdbCommand("shell ls -ld /sdcard/");
-       if (lsOutput.isEmpty()) {
-         //   qDebug() << "Issue: Failed to get /sdcard/ permissions";
-       } else {
-            bool permissiveFs = lsOutput.contains("rwxrwxrwx");
-            if (permissiveFs) {
-         //        qDebug() << "Issue: Permissive /sdcard/ permissions, vendor may bypass scoped storage";
-                 restrictedAccess = false;
-            }
-       }
-
-       return (apiLevel >= 30) || (apiLevel == 29 && restrictedAccess);
-    }
-
-*/
+///////////////////////////////////////
 
     bool MainWindow::isScoped()
     {
@@ -1102,115 +1004,7 @@
 
 
 
-/*
-
-    //////////////////////////////////////////////////////////////////////
-    void MainWindow::do_versioncheck() {
-
-
-        QJsonObject obj;
-        QJsonDocument doc(obj);
-        QFile file(databasedir+"adblink.json");
-        file.open(QIODevice::ReadOnly);
-        doc = QJsonDocument::fromJson(file.readAll());
-        obj = doc.object();
-        bool checkversion = doc.object()["checkversion"].toBool();
-
-        bool startview = doc.object()["startview"].toBool();
-        file.close();
-
-
-
-
-
-        if (startview) {
-                  ui->stackedWidget->setCurrentIndex(1);
-                  ui->menuKodi->menuAction()->setVisible(false);
-
-
-   } else {
-                  ui->stackedWidget->setCurrentIndex(0);
-                    ui->menuKodi->menuAction()->setVisible(true);
-        }
-
-
-
-
-    if (checkversion)
-       {
-        QNetworkRequest request;
-       request.setUrl(QUrl(vqurl));
-
-
-       QNetworkAccessManager *nam = new QNetworkAccessManager(this);
-       QNetworkReply *reply = nam->get(request);
-
-       connect(reply, SIGNAL(finished()),
-               this, SLOT(onReqCompleted()));
-    }
-
-
-
-
-
-    }
-
-
-
-
-    void MainWindow::onReqCompleted() {
-    QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
-
-    if (reply->error() != QNetworkReply::NoError) {
-       int err = reply->error();
-       QString s2 = QString::number(err);
-       QMessageBox::critical(this, "", "Network error: " + s2, QMessageBox::Cancel);
-       reply->deleteLater();
-       return;
-    }
-
-    QByteArray data = reply->readAll();
-    QString s1(data);
-    s1 = strip(s1);  // or s1.trimmed();
-
-    if (version != s1) {
-       QDialog dialog;
-       QVBoxLayout layout(&dialog);
-       QLabel messageLabel("adbLink version " + s1 + " is ready. Download?");
-       layout.addWidget(&messageLabel);
-
-       QHBoxLayout buttonLayout;
-       QPushButton yesButton("Yes");
-       QPushButton noButton("No");
-       QPushButton changelogButton("Changelog");
-
-       buttonLayout.addWidget(&yesButton);
-       buttonLayout.addWidget(&noButton);
-       buttonLayout.addWidget(&changelogButton);
-
-       layout.addLayout(&buttonLayout);
-
-       QObject::connect(&yesButton, &QPushButton::clicked, [&]() {
-           QDesktopServices::openUrl(QUrl("http://www.jocala.com"));
-           dialog.close();
-       });
-
-       QObject::connect(&noButton, &QPushButton::clicked, [&]() {
-           dialog.close();
-       });
-
-       QObject::connect(&changelogButton, &QPushButton::clicked, [&]() {
-           on_actionView_Changelog_triggered();
-       });
-
-       dialog.exec();
-    }
-
-    reply->deleteLater();
-    }
-
-
-*/
+////////////////////////////////////////////
 
     void MainWindow::do_versioncheck()
     {
@@ -1921,72 +1715,6 @@
 
     }
 
-/*
-
-    //////////////////////////////////////////
-
-    void MainWindow::on_actionReboot_bootloader_triggered()
-    {
-
-
-         QString selectedDescription;
-         if (!validateDeviceSelection(selectedDescription)) {
-            return;
-         }
-
-         DeviceRecord device = queryDeviceRecord(selectedDescription);
-
-
-
-
-
-       QMessageBox::StandardButton reply;
-         reply = QMessageBox::question(this, "", "Reboot to bootloader?",
-             QMessageBox::Yes|QMessageBox::No);
-         if (reply == QMessageBox::Yes) {
-
-
-
-             logfile("rebooting device recovery");
-             rebootDevice(" reboot bootloader");
-            }
-
-    }
-
-
-
-    ///////////////////////////////////////////////////////////////////////////////////
-    void MainWindow::on_actionRecovery_triggered()
-    {
-
-
-            QString selectedDescription;
-            if (!validateDeviceSelection(selectedDescription)) {
-             return;
-            }
-
-            DeviceRecord device = queryDeviceRecord(selectedDescription);
-
-
-
-
-
-       QMessageBox::StandardButton reply;
-         reply = QMessageBox::question(this, "", "Reboot to recovery?",
-             QMessageBox::Yes|QMessageBox::No);
-         if (reply == QMessageBox::Yes) {
-
-
-
-             logfile("rebooting device recovery");
-             rebootDevice(" reboot recovery");
-            }
-
-    }
-
-
-*/
-
 
     /////////////////////////////////////////
     void MainWindow::on_donate_clicked()
@@ -2334,16 +2062,6 @@
 
 
 
-
-              /*
-        <cachemembuffersize> and <readbufferfactor>
-         - In v17 <cachemembuffersize> is renamed to  <memorysize>
-         and <readbufferfactor> is renamed to <readfactor>.
-        In addition, all three buffer related settings in <network>
-        are moved out of <network> and
-        into a new <cache> parent tag.
-
-        */
 
               if (oldxml)
               {
@@ -3157,28 +2875,8 @@
 
 
 
-       /*
-
-    setprop service.adb.tcp.port 5555
-    stop adbd
-    start adbd
-
-    setprop service.adb.tcp.port -1
-    stop adbd
-    start adbd
-
-    */
-
-
-
-       // QString tcpstatus = getadb() +   " shell getprop service.adb.tcp.port";
-      //   QString tcpstatus = getadb() +   " shell getprop persist.adb.tcp.port 5555";
-    // QString tcpstatus = getadb() +   " shell getprop persist.adb.tcp.port -1";
-        // QString tcpstatus = getadb() +   " usb";
 
        tcpipDialog dialog;
-
-         //  QString tcpstatus = getadb() +   " shell getprop service.adb.tcp.port";
 
 
        QString tcpstatus = getadb() +   " shell getprop persist.adb.tcp.port 5555";
@@ -5459,104 +5157,6 @@ void MainWindow::on_actionOculus_VR_triggered()
  DeviceRecord device = queryDeviceRecord(selectedDescription);
 
 
-
- /*
-
-
-getadbpath() shell 'dumpsys OVRRemoteService | grep Battery' // controllers
-adb shell 'dumpsys CompanionService | grep Battery' // headset
-
-
-getadbpath() shell setprop debug.oculus.guardian_pause 0  // disable
-getadbpath() shell setprop debug.oculus.guardian_pause 1 //  enable
-
-getadbpath() shell settings put system screen_off_timeout 7200000
-// default 86400000
-getadbpath() shell svc power stayon true
-
- // svc power stayon [true|false|usb|ac|wireless]
-
-Turn off sensor:
-shell am broadcast -a com.oculus.vrpowermanager.prox_close
-
-Turn on sensor:
-shell
-am broadcast -a com.oculus.vrpowermanager.automation_disable
-
-
-getadbpath() shell setprop debug.oculus.refreshrate NNN
-
-Quest 2 supports 60, 72, 80, 90 and 120)
-
-getadbpath() shell setprop debug.oculus.gpuLevel 2
-getadbpath() shell setprop debug.oculus.cpuLevel 2
-
-
-
-
-
-
-command to turn on full rate capture for Quest 2:
-
-getadbpath() shell setprop debug.oculus.fullRateCapture 1
-
-
-
-
-// Disable dynamic FFR
-getadbpath() shell setprop debug.oculus.foveation.dynamic 0
-
-// Set FFR Level between 0 - 4 (Higher = Better Performance)
-getadbpath() shell setprop debug.oculus.foveation.level 4
-
-
-
-480 (852×480 pixels)
-720 (1280×720 pixels
-1080 (1920×1080 pixels)
-
-getadbpath() shell setprop debug.oculus.capture.width [value]
-getadbpath() shell setprop debug.oculus.capture.height [value]
-
-
-
-
-command to disable chromatic aberration (correction):
-
-//0 for disabling, 1 for enabling (default)
-getadbpath() shell setprop debug.oculus.forceChroma 0
-
-getadbpath() shell setprop debug.oculus.fullRateCapture 1
-
-getadbpath() shell setprop debug.oculus.eyeFovDown 49
-getadbpath() shell setprop debug.oculus.eyeFovUp 48
-getadbpath() shell setprop debug.oculus.eyeFovOutward 50
-getadbpath() shell setprop debug.oculus.eyeFovInward 50
-
-
-How to enable Link through getadbpath()
-
-getadbpath() shell am start "xrstreamingclient://?launch_location=ODH&alink=true&adaptiveSrcLatencyMs=100&maxAdaptiveSrcLatencyMs=400&posePerSecond=500&sessionId=ODH"
-How to disable Link through ADB
-
-getadbpath() shell am force-stop com.oculus.xrstreamingclient
-How to enable Air Link through ADB
-
-getadbpath() shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enable_airlink 1
-How to disable Air Link through ADB
-
-getadbpath() shell am broadcast -a "com.oculus.systemux.action.TOGGLE_AIRLINK" --ez enable_airlink 0
-
-Start Link (button 1):
-getadbpath() shell am start -S com.oculus.xrstreamingclient/.MainActivity
-
-Stop Link (button 2):
-getadbpath() shell am force-stop com.oculus.xrstreamingclient
-
-
-
-*/
-
  QString cstring;
  QString command;
  QString android = QString::number(getandroid());
@@ -7602,81 +7202,7 @@ void MainWindow::loadDeviceTable()
 
 
 
-
-
-
-
-
-
-/*
-
-void MainWindow::loadDeviceTable()
-{
-   QString sqlstatement;
-   QSqlQuery query;
-
-   // Store current connected device IDs
-   QSet<QString> connectedDeviceIds;
-   for (int row = 0; row < ui->deviceTable->rowCount(); ++row) {
-                      if (ui->deviceTable->item(row, 2) &&
-                          ui->deviceTable->item(row, 2)->text() == "Connected" &&
-                          ui->deviceTable->item(row, 0)) {
-                          connectedDeviceIds.insert(ui->deviceTable->item(row, 0)->data(Qt::UserRole).toString());
-                      }
-   }
-
-   // Clear and setup table
-   ui->deviceTable->clearContents();
-   ui->deviceTable->setRowCount(0);
-   ui->deviceTable->setColumnCount(3);
-   ui->deviceTable->setHorizontalHeaderLabels(QStringList() << "Device" << "IP" << "Status");
-   ui->deviceTable->verticalHeader()->setVisible(false);
-   ui->deviceTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-   ui->deviceTable->setShowGrid(true);
-   ui->deviceTable->setSortingEnabled(false);
-   ui->deviceTable->setSelectionMode(QAbstractItemView::SingleSelection);
-   ui->deviceTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-
-   // Execute query with device ID
-   sqlstatement = "SELECT id, description, daddr, isusb FROM device";
-   if (!query.exec(sqlstatement)) {
-                      qDebug() << "Query failed:" << query.lastError().text();
-                      return;
-   }
-
-   // Populate table
-   int row = 0;
-   while (query.next()) {
-                      ui->deviceTable->insertRow(row);
-                      QString deviceId = query.value(0).toString();
-                      QString description = query.value(1).toString();
-
-                      // Store device ID in the item for later retrieval
-                      QTableWidgetItem* descItem = new QTableWidgetItem(description);
-                      descItem->setData(Qt::UserRole, deviceId);
-                      ui->deviceTable->setItem(row, 0, descItem);
-
-                      bool isUsb = query.value(3).toBool();
-                      QString ip = isUsb ? "USB" : (query.value(2).toString().isEmpty() ? "N/A" : query.value(2).toString());
-                      ui->deviceTable->setItem(row, 1, new IpTableWidgetItem(ip));
-
-                      // Set status based on isUsb and usbConnected(daddr) for USB devices
-                      QString status;
-                      if (isUsb) {
-                          status = usbConnected(query.value(2).toString()) ? "Connected" : "Disconnected";
-                      } else {
-                          status = connectedDeviceIds.contains(deviceId) ? "Connected" : "Disconnected";
-                      }
-                      ui->deviceTable->setItem(row, 2, new QTableWidgetItem(status));
-                      row++;
-   }
-
-   ui->deviceTable->setSortingEnabled(true);
-   ui->deviceTable->sortItems(0, Qt::AscendingOrder);
-   ui->deviceTable->viewport()->update();
-}
-
-*/
+/////////////////////////////////////////////////
 
 void MainWindow::on_infoArchitecture_triggered()
 {
