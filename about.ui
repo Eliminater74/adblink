@@ -127,7 +127,7 @@
     </font>
    </property>
    <property name="text">
-    <string>adbLinkX 9999</string>
+    <string>adblinkX 9999</string>
    </property>
    <property name="textFormat">
     <enum>Qt::PlainText</enum>

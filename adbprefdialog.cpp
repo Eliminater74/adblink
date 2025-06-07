@@ -66,7 +66,7 @@ int osp=2;
 void adbprefDialog::on_checkButton_clicked()
 {
     QNetworkRequest request;
-    request.setUrl(QUrl("http://www.jocala.com/version.txt"));
+    request.setUrl(QUrl("https://www.jocala.com/version.txt"));
     QNetworkReply *reply = m_networkManager->get(request);
     connect(reply, &QNetworkReply::finished, this, &adbprefDialog::onRequestCompleted);
 }
@@ -99,7 +99,7 @@ void adbprefDialog::onRequestCompleted()
     {
         QDialog dialog(this);
         QVBoxLayout* layout = new QVBoxLayout(&dialog);
-        QLabel* messageLabel = new QLabel("adbLink version " + s1 + " is ready. Download?");
+        QLabel* messageLabel = new QLabel("adblink version " + s1 + " is ready. Download?");
         layout->addWidget(messageLabel);
 
         QDialogButtonBox* buttonBox = new QDialogButtonBox(&dialog);
@@ -129,7 +129,7 @@ void adbprefDialog::onRequestCompleted()
     }
     else
     {
-        QMessageBox::information(this, "", "No adbLink update available", QMessageBox::Ok );
+        QMessageBox::information(this, "", "No adblink update available", QMessageBox::Ok );
     }
 
     reply->deleteLater();
@@ -137,7 +137,7 @@ void adbprefDialog::onRequestCompleted()
 
 void adbprefDialog::setversionLabel(const QString &versiontext)
 {
-    ui->versionLabel->setText("adbLink version: "+ versiontext);
+    ui->versionLabel->setText("adblink version: "+ versiontext);
     version2 = versiontext;
 }
 
@@ -351,7 +351,7 @@ void adbprefDialog::on_backupButton_clicked()
 
 void adbprefDialog::changelog()
 {
-    QString link = "http://jocala.com/changelog.txt";
+    QString link = "https://jocala.com/changelog.txt";
     QDesktopServices::openUrl(QUrl(link));
 
 }

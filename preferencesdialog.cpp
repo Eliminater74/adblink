@@ -179,7 +179,7 @@ void preferencesDialog::setwsa(const bool &wsa)
 ///////////////////////////////////////////////////
 void preferencesDialog::setversionLabel(const QString &versiontext)
 {
-    ui->versionLabel->setText("adbLink version: " + versiontext);
+    ui->versionLabel->setText("adblink version: " + versiontext);
     version2 = versiontext;
 }
 

@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>adbLink help</string>
+   <string>adblink help</string>
   </property>
   <property name="modal">
    <bool>false</bool>

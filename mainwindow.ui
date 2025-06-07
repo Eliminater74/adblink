@@ -1118,7 +1118,8 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;IP address of ad hoc device. Use this to connect to devices that are not entered into the adbLink database. You can also specify a port by appending :&amp;lt;port&amp;gt; to the IP address.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;IP address of ad hoc device. Use this to connect to devices that are not entered into the
+         adblink database. You can also specify a port by appending :&amp;lt;port&amp;gt; to the IP address.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="placeholderText">
          <string>IP address:port</string>
@@ -1204,7 +1205,7 @@
     <string>Quit</string>
    </property>
    <property name="toolTip">
-    <string>Quit adbLink</string>
+    <string>Quit adblink</string>
    </property>
   </action>
   <action name="actionHelp">
@@ -1240,10 +1241,10 @@
   </action>
   <action name="actionView_adbLink_Log">
    <property name="text">
-    <string>View adbLink Log</string>
+    <string>View adblink Log</string>
    </property>
    <property name="toolTip">
-    <string>View/Copy adbLink Log</string>
+    <string>View/Copy adblink Log</string>
    </property>
   </action>
   <action name="actionPaste_path">

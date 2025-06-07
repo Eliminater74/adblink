@@ -112,7 +112,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>adbLink version: 9999</string>
+    <string>adblink version: 9999</string>
    </property>
   </widget>
   <widget class="QCheckBox" name="wsa">

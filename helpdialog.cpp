@@ -14,7 +14,7 @@ helpDialog::helpDialog(QWidget *parent) :
 
     ui->textBrowser->setSource(*new QUrl("qrc:/assets/menu.html"));
 
-    ui->textBrowser->setWindowTitle("adbLink Help");
+    ui->textBrowser->setWindowTitle("adblink Help");
 
 
 }

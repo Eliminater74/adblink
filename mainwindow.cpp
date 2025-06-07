@@ -1064,7 +1064,7 @@
         if (version != s1) {
             QDialog dialog(this);
             QVBoxLayout layout(&dialog);
-            QLabel messageLabel("adbLink version " + s1 + " is ready. Download?");
+            QLabel messageLabel("adblink version " + s1 + " is ready. Download?");
             layout.addWidget(&messageLabel);
 
             QHBoxLayout buttonLayout;
@@ -1079,7 +1079,7 @@
             layout.addLayout(&buttonLayout);
 
             connect(&yesButton, &QPushButton::clicked, [&dialog]() {
-                QDesktopServices::openUrl(QUrl("http://www.jocala.com"));
+                QDesktopServices::openUrl(QUrl("https://www.jocala.com"));
                 dialog.close();
             });
 
@@ -4894,7 +4894,7 @@ void MainWindow::mvdataButton_clicked()
 
 void MainWindow::on_actionView_Changelog_triggered()
 {
-    QString link = "http://jocala.com/changelog.txt";
+    QString link = "https://jocala.com/changelog.txt";
     QDesktopServices::openUrl(QUrl(link));
 
 }
@@ -5049,7 +5049,7 @@ void MainWindow::on_actionSplash_Screen_triggered()
 
 void MainWindow::on_View_Changelog_triggered()
 {
-            QString link = "http://jocala.com/changelog.txt";
+            QString link = "https://jocala.com/changelog.txt";
             QDesktopServices::openUrl(QUrl(link));
 }
 
