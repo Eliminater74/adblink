@@ -96,11 +96,12 @@
 
 
 
-        MainWindow::MainWindow(QWidget *parent)
-        : QMainWindow(parent)
-        , ui(new Ui::MainWindow)
-        , m_networkManager(new QNetworkAccessManager(this))
-    {
+ MainWindow::MainWindow(QWidget *parent)
+  : QMainWindow(parent)
+  , ui(new Ui::MainWindow)
+  , m_networkManager(new QNetworkAccessManager(this))
+
+     {
 
 
 
@@ -171,7 +172,6 @@
 
 
 
-
       rotate_logfile();
 
 
@@ -227,42 +227,27 @@
              return;
          }
 
-
-/*
          createTables();
 
 
-         if (!QFileInfo::exists(databasedir+"/adblink.json"))
-             {
-                     QJsonObject obj;
-
-                     obj["checkversion"] = true;
-                     obj["scrcpy"] = true;
-                     obj["startview"] = true;
-                     obj["dropdown"] = "0";
-                     obj["download"] = QDir::homePath();
-                     obj["install"] = QDir::homePath();
-                     obj["backup"] = QDir::homePath();
-                     obj["donation"] = "";
-                     obj["localadb"] = "";
-                     obj["stopapp"] = "org.xbmc.kodi";
-                     obj["startapp"] = "org.xbmc.kodi/org.xbmc.kodi.Splash";
-
-                     QJsonDocument doc(obj);
-
-                    QFile file(databasedir+"adblink.json");
-                    file.open(QIODevice::WriteOnly);
-                    file.write(doc.toJson());
-                    file.close();
-           }
-
-*/
-
-         createTables();
-
-         // Handle adblink.json
          QFile jsonFile(databasedir + "/adblink.json");
          QJsonObject obj;
+
+         // Default values for the JSON object
+         QJsonObject defaultValues;
+         defaultValues["checkversion"] = true;
+         defaultValues["scrcpy"] = true;
+         defaultValues["startview"] = true;
+         defaultValues["dropdown"] = "0";
+         defaultValues["download"] = QDir::homePath();
+         defaultValues["install"] = QDir::homePath();
+         defaultValues["backup"] = QDir::homePath();
+         defaultValues["donation"] = "";
+         defaultValues["localadb"] = "";
+         defaultValues["stopapp"] = "org.xbmc.kodi";
+         defaultValues["startapp"] = "org.xbmc.kodi/org.xbmc.kodi.Splash";
+
+         bool needsUpdate = false;
 
          if (QFileInfo::exists(databasedir + "/adblink.json")) {
              if (jsonFile.open(QIODevice::ReadOnly)) {
@@ -270,11 +255,16 @@
                  jsonFile.close();
                  obj = doc.object();
 
-                 // Add startview with default true if missing
-                 if (!obj.contains("startview")) {
-                    obj["startview"] = true;
+                 // Check each field and set default if missing
+                 for (auto it = defaultValues.constBegin(); it != defaultValues.constEnd(); ++it) {
+                    if (!obj.contains(it.key())) {
+                        obj[it.key()] = it.value();
+                        needsUpdate = true;
+                    }
+                 }
 
-                    // Write updated JSON back to file
+                 // Write updated JSON back to file if any field was missing
+                 if (needsUpdate) {
                     if (jsonFile.open(QIODevice::WriteOnly)) {
                         QJsonDocument updatedDoc(obj);
                         jsonFile.write(updatedDoc.toJson());
@@ -288,17 +278,7 @@
              }
          } else {
              // Create new JSON file with default values
-             obj["checkversion"] = true;
-             obj["scrcpy"] = true;
-             obj["startview"] = true;
-             obj["dropdown"] = "0";
-             obj["download"] = QDir::homePath();
-             obj["install"] = QDir::homePath();
-             obj["backup"] = QDir::homePath();
-             obj["donation"] = "";
-             obj["localadb"] = "";
-             obj["stopapp"] = "org.xbmc.kodi";
-             obj["startapp"] = "org.xbmc.kodi/org.xbmc.kodi.Splash";
+             obj = defaultValues;
 
              if (jsonFile.open(QIODevice::WriteOnly)) {
                  QJsonDocument doc(obj);
