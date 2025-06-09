@@ -1,11 +1,11 @@
-XX/XX/25
+06/10/25
 
 Version 6.6
 
 ssl added for access to https
 
-
-
+json file initalization at startup
+recoded for detection of required fields
 
 06/05/25
 

@@ -255,15 +255,28 @@
                  jsonFile.close();
                  obj = doc.object();
 
-                 // Check each field and set default if missing
+                 // Create a new object with only the keys from defaultValues
+                 QJsonObject updatedObj;
                  for (auto it = defaultValues.constBegin(); it != defaultValues.constEnd(); ++it) {
-                    if (!obj.contains(it.key())) {
-                        obj[it.key()] = it.value();
+                    if (obj.contains(it.key())) {
+                        updatedObj[it.key()] = obj[it.key()]; // Keep existing value
+                    } else {
+                        updatedObj[it.key()] = it.value(); // Set default value
                         needsUpdate = true;
                     }
                  }
 
-                 // Write updated JSON back to file if any field was missing
+                 // Check if any keys in obj are not in defaultValues (for removal)
+                 for (const QString &key : obj.keys()) {
+                    if (!defaultValues.contains(key)) {
+                        needsUpdate = true; // Mark for update if obsolete keys are found
+                    }
+                 }
+
+                 // Update obj to the filtered version
+                 obj = updatedObj;
+
+                 // Write updated JSON back to file if any changes were made
                  if (needsUpdate) {
                     if (jsonFile.open(QIODevice::WriteOnly)) {
                         QJsonDocument updatedDoc(obj);
@@ -288,8 +301,6 @@
                  logfile("Failed to create adblink.json");
              }
          }
-
-
 
         setFixedSize(575,390);
         buttonsetup();
