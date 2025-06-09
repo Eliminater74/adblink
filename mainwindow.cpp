@@ -228,7 +228,7 @@
          }
 
 
-
+/*
          createTables();
 
 
@@ -256,7 +256,58 @@
                     file.close();
            }
 
+*/
 
+         createTables();
+
+         // Handle adblink.json
+         QFile jsonFile(databasedir + "/adblink.json");
+         QJsonObject obj;
+
+         if (QFileInfo::exists(databasedir + "/adblink.json")) {
+             if (jsonFile.open(QIODevice::ReadOnly)) {
+                 QJsonDocument doc = QJsonDocument::fromJson(jsonFile.readAll());
+                 jsonFile.close();
+                 obj = doc.object();
+
+                 // Add startview with default true if missing
+                 if (!obj.contains("startview")) {
+                    obj["startview"] = true;
+
+                    // Write updated JSON back to file
+                    if (jsonFile.open(QIODevice::WriteOnly)) {
+                        QJsonDocument updatedDoc(obj);
+                        jsonFile.write(updatedDoc.toJson());
+                        jsonFile.close();
+                    } else {
+                        logfile("Failed to write updated adblink.json");
+                    }
+                 }
+             } else {
+                 logfile("Failed to read adblink.json");
+             }
+         } else {
+             // Create new JSON file with default values
+             obj["checkversion"] = true;
+             obj["scrcpy"] = true;
+             obj["startview"] = true;
+             obj["dropdown"] = "0";
+             obj["download"] = QDir::homePath();
+             obj["install"] = QDir::homePath();
+             obj["backup"] = QDir::homePath();
+             obj["donation"] = "";
+             obj["localadb"] = "";
+             obj["stopapp"] = "org.xbmc.kodi";
+             obj["startapp"] = "org.xbmc.kodi/org.xbmc.kodi.Splash";
+
+             if (jsonFile.open(QIODevice::WriteOnly)) {
+                 QJsonDocument doc(obj);
+                 jsonFile.write(doc.toJson());
+                 jsonFile.close();
+             } else {
+                 logfile("Failed to create adblink.json");
+             }
+         }
 
 
 
