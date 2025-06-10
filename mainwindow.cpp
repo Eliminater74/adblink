@@ -81,7 +81,7 @@
     #include <QGridLayout>
     #include <QVBoxLayout>
     #include <QHBoxLayout>
-
+    #include <QSettings>
 
     #include <QScrollBar>
     #include <QtGlobal>
@@ -7120,8 +7120,6 @@ void MainWindow::on_actionReload_devices_triggered()
 
 ///////////////////////////////////////////////
 
-
-
 void MainWindow::loadDeviceTable()
 {
    QString sqlstatement;
@@ -7145,7 +7143,7 @@ void MainWindow::loadDeviceTable()
    ui->deviceTable->verticalHeader()->setVisible(false);
    ui->deviceTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
    ui->deviceTable->setShowGrid(true);
-   ui->deviceTable->setSortingEnabled(false);
+   ui->deviceTable->setSortingEnabled(false); // Temporarily disable sorting
    ui->deviceTable->setSelectionMode(QAbstractItemView::SingleSelection);
    ui->deviceTable->setSelectionBehavior(QAbstractItemView::SelectRows);
 
@@ -7188,7 +7186,7 @@ void MainWindow::loadDeviceTable()
    }
 
    // Calculate usable viewport width
-   int totalWidth = ui->deviceTable->viewport()->width() - 2 * ui->deviceTable->frameWidth() - 16; // Increased buffer
+   int totalWidth = ui->deviceTable->viewport()->width() - 2 * ui->deviceTable->frameWidth() - 16;
    if (ui->deviceTable->verticalScrollBar()->isVisible()) {
         totalWidth -= ui->deviceTable->verticalScrollBar()->width();
    }
@@ -7200,7 +7198,7 @@ void MainWindow::loadDeviceTable()
    int col2Width = ui->deviceTable->columnWidth(2);
 
    // Define minimum widths for readability
-   const int minWidth = 120; // Ensure readable content
+   const int minWidth = 120;
    col0Width = qMax(col0Width, minWidth);
    col1Width = qMax(col1Width, minWidth);
    col2Width = qMax(col2Width, minWidth);
@@ -7235,13 +7233,24 @@ void MainWindow::loadDeviceTable()
    // Explicitly disable horizontal scrollbar
    ui->deviceTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
+   // Load saved sort settings
+   QSettings settings("YourCompany", "YourApp"); // Replace with your organization and app name
+   int sortColumn = settings.value("DeviceTableSortColumn", 0).toInt();
+   Qt::SortOrder sortOrder = static_cast<Qt::SortOrder>(settings.value("DeviceTableSortOrder", Qt::AscendingOrder).toInt());
+
+   // Enable sorting and apply saved sort settings
    ui->deviceTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
    ui->deviceTable->setSortingEnabled(true);
-   ui->deviceTable->sortItems(0, Qt::AscendingOrder);
+   ui->deviceTable->sortItems(sortColumn, sortOrder);
    ui->deviceTable->viewport()->update();
+
+   // Connect header click to save sort settings
+   connect(ui->deviceTable->horizontalHeader(), &QHeaderView::sectionClicked, this, [this](int logicalIndex) {
+       QSettings settings("YourCompany", "YourApp"); // Replace with your organization and app name
+       settings.setValue("DeviceTableSortColumn", logicalIndex);
+       settings.setValue("DeviceTableSortOrder", ui->deviceTable->horizontalHeader()->sortIndicatorOrder());
+   });
 }
-
-
 
 /////////////////////////////////////////////////
 
