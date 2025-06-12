@@ -6874,11 +6874,17 @@ void MainWindow::deleteRecord(QString descrip)
 
 
 /////////////////////////////////////////////////////
+
 void MainWindow::on_Erase_adbLink_database_triggered()
 {
-   QMessageBox::StandardButton reply;
-   reply = QMessageBox::question(0, "", "Erase device database?\n\nWARNING: This action will delete all device records. Are you sure you want to proceed?",
-                                 QMessageBox::Yes|QMessageBox::No);
+   QMessageBox msgBox;
+   msgBox.setWindowTitle(""); // Optional: Set window title if needed
+   msgBox.setText("Erase device database?");
+   msgBox.setInformativeText("WARNING: This action will delete all device records. Are you sure you want to proceed?");
+   msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+   msgBox.setIcon(QMessageBox::Critical); // Set red error (critical) icon
+   QMessageBox::StandardButton reply = static_cast<QMessageBox::StandardButton>(msgBox.exec());
+
    if (reply == QMessageBox::Yes)
    {
                       QSqlQuery pquery;
@@ -6892,10 +6898,8 @@ void MainWindow::on_Erase_adbLink_database_triggered()
 
                       createTables();
                       loadDeviceTable();
-
    }
 }
-
 
 //////////////////////////////////////////
 

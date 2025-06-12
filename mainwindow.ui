@@ -1169,6 +1169,7 @@
     <addaction name="actionReiinstall_Busybox"/>
     <addaction name="infoArchitecture"/>
     <addaction name="actionSet_Kodi_permissions"/>
+    <addaction name="Erase_adbLink_database"/>
     <addaction name="actionSend_text"/>
     <addaction name="actionGet_UID_from_APK_file"/>
     <addaction name="actionReload_devices"/>
