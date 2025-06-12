@@ -6850,6 +6850,7 @@ void MainWindow::createTables()
 }
 
 
+
 //////////////////////////////////////////////
 
 void MainWindow::deleteRecord(QString descrip)
