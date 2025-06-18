@@ -70,6 +70,8 @@ private slots:
 
      void buttonsetup();
 
+   void updateButtonProperties();
+
     void gridsetup();
 
     bool validateIPAddress(const QString& ipAddress);
@@ -85,6 +87,8 @@ private slots:
     bool usbConnected(QString daddr);
 
     void loadDeviceTable();
+    void loadDeviceTableX(QTableWidget* table);
+
 
     void handleFilemanagerFinished();
 

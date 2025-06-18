@@ -82,7 +82,7 @@
     #include <QVBoxLayout>
     #include <QHBoxLayout>
     #include <QSettings>
-
+    #include <QScrollArea>
     #include <QScrollBar>
     #include <QtGlobal>
 
@@ -152,12 +152,11 @@
 
 
          ui->setupUi(this);
-         setFixedSize(size());
+         setFixedSize(700,500);
          setWindowTitle(" ");
 
 
-
-    #ifdef Q_OS_MAC
+#ifdef Q_OS_MAC
       //https://bugreports.qt.io/browse/QTBUG-51120
       ui->progressBar->setTextVisible(true);
     #endif //Q_OS_MAC
@@ -302,9 +301,11 @@
              }
          }
 
-        setFixedSize(575,390);
-        buttonsetup();
-        gridsetup();
+/*
+       setFixedSize(700,500);
+       setFixedSize(575,390);
+      buttonsetup();
+   gridsetup();
         setupDonateButton(ui->centralWidget, 132, 315);
 
         QString donation = readDonationValue();
@@ -315,7 +316,143 @@
         connections();
         loadDeviceTable();
         do_versioncheck();
+*/
 
+////////////////////////////////////////////
+
+         QWidget *centralWidget = new QWidget(this);
+         setCentralWidget(centralWidget);
+
+         QVBoxLayout *mainLayout = new QVBoxLayout(centralWidget);
+         mainLayout->setContentsMargins(0, 0, 0, 0);
+         mainLayout->setSpacing(0);
+
+         // --- WRAPPER for Top Section ---
+         QWidget *topWidget = new QWidget();
+         topWidget->setFixedHeight(180);  // Enforce strict height for scroll + buttons
+         QHBoxLayout *upperLayout = new QHBoxLayout(topWidget);
+         upperLayout->setSpacing(0);
+         upperLayout->setContentsMargins(28, 0, 0, 0);
+         upperLayout->setAlignment(Qt::AlignTop);
+
+         // --- TABLE SCROLL AREA ---
+         QTableWidget *deviceTableWidgetPtr = new QTableWidget(0, 3);
+         deviceTableWidgetPtr->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+
+         QScrollArea *scrollArea = new QScrollArea();
+         scrollArea->setWidget(deviceTableWidgetPtr);
+         scrollArea->setWidgetResizable(true);
+         scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+         scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+         scrollArea->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+         scrollArea->setFixedSize(390, 180); // Enforce width and height
+         upperLayout->addWidget(scrollArea);
+
+         // --- Cosmetic Horizontal Gap between Table and Button Grid ---
+         QSpacerItem *cosmeticGap = new QSpacerItem(12, 0, QSizePolicy::Fixed, QSizePolicy::Minimum);
+         upperLayout->addItem(cosmeticGap);
+
+         // --- RIGHT COLUMN ---
+         QWidget *rightColumnWidget = new QWidget();
+         rightColumnWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+         QVBoxLayout *rightLayout = new QVBoxLayout(rightColumnWidget);
+         rightLayout->setSpacing(0);
+         rightLayout->setContentsMargins(0, 0, 0, 0);
+         rightLayout->setAlignment(Qt::AlignTop);
+
+         // Button grid
+         QWidget *buttonGridWidget = new QWidget();
+         buttonGridWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+         QGridLayout *buttonGridLayout = new QGridLayout(buttonGridWidget);
+         buttonGridLayout->setSpacing(6);
+         buttonGridLayout->setContentsMargins(0, 0, 0, 0);
+
+         QPushButton *buttons[6];
+         for (int i = 0; i < 6; ++i) {
+             buttons[i] = new QPushButton(QString("Button %1").arg(i + 1));
+             buttons[i]->setFixedSize(110, 42);
+             buttonGridLayout->addWidget(buttons[i], i / 2, i % 2);
+         }
+         rightLayout->addWidget(buttonGridWidget);
+
+         // --- Cosmetic Vertical Gap between Button Grid and Line Edit ---
+         QSpacerItem *vSpacer = new QSpacerItem(0, 15, QSizePolicy::Minimum, QSizePolicy::Fixed);
+         rightLayout->addItem(vSpacer);
+
+         // Line edit
+         QLineEdit *lineEdit = new QLineEdit();
+         lineEdit->setPlaceholderText("ip address<:port>");
+         lineEdit->setMaximumWidth(250);
+         lineEdit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+         rightLayout->addWidget(lineEdit);
+
+         // Add right column to upper layout
+         upperLayout->addWidget(rightColumnWidget);
+
+         // Add top layout to main layout
+         mainLayout->addWidget(topWidget);  // Fixes vertical size issues
+
+         // --- STACKED WIDGET ---
+         QStackedWidget *stackedWidget = new QStackedWidget();
+         ui->stackedWidget = stackedWidget;
+         mainLayout->addWidget(stackedWidget);
+
+         // Grid 1
+         QWidget *gridWidget1 = new QWidget();
+         QGridLayout *gridLayout1 = new QGridLayout(gridWidget1);
+         gridLayout1->setSpacing(0);
+         gridLayout1->setContentsMargins(0, 0, 0, 0);
+
+         for (int i = 0; i < 16; ++i) {
+             QPushButton *button = new QPushButton(QString("Button %1").arg(i + 1));
+             button->setFixedSize(140, 52);
+             gridLayout1->addWidget(button, i / 4, i % 4);
+         }
+         stackedWidget->addWidget(gridWidget1);
+
+         // Grid 2
+         QWidget *gridWidget2 = new QWidget();
+         QGridLayout *gridLayout2 = new QGridLayout(gridWidget2);
+         gridLayout2->setSpacing(0);
+         gridLayout2->setContentsMargins(0, 0, 0, 0);
+
+         for (int i = 0; i < 16; ++i) {
+             QPushButton *button = new QPushButton(QString("Button %1").arg(i + 17));
+             button->setFixedSize(140, 52);
+             gridLayout2->addWidget(button, i / 4, i % 4);
+         }
+         stackedWidget->addWidget(gridWidget2);
+
+         // --- STATUS BAR ---
+         QWidget *statusBarWidget = new QWidget();
+         statusBarWidget->setFixedHeight(26);
+         QVBoxLayout *statusLayout = new QVBoxLayout(statusBarWidget);
+         statusLayout->setContentsMargins(0, 0, 0, 0);
+         statusLayout->setSpacing(0);
+
+         QLabel *statusLabel = new QLabel("Status Bar");
+         statusLabel->setAlignment(Qt::AlignCenter);
+         statusLayout->addWidget(statusLabel);
+
+         mainLayout->addWidget(statusBarWidget);
+
+         // --- FINALIZATION ---
+         ui->stackedWidget->setCurrentIndex(1);
+         scrollArea->show();
+         deviceTableWidgetPtr->show();
+         buttonGridWidget->show();
+         lineEdit->show();
+         loadDeviceTableX(deviceTableWidgetPtr);
+         centralWidget->updateGeometry();
+
+
+
+
+////////////////////////////////////////////
+
+
+        updateButtonProperties();
+        return;
 
 
      }
@@ -349,6 +486,142 @@
                     file.remove();
        }
     }
+
+
+
+///////////////////////////////////
+
+
+    void MainWindow::updateButtonProperties()
+    {
+       // Get grid 1 widget from stacked widget (index 0)
+       QWidget *gridWidget1 = ui->stackedWidget->widget(0);
+       if (!gridWidget1) {
+                    qWarning() << "Grid widget 1 not found";
+                    return;
+       }
+       QGridLayout *gridLayout1 = qobject_cast<QGridLayout*>(gridWidget1->layout());
+       if (!gridLayout1) {
+                    qWarning() << "Grid layout 1 not found";
+                    return;
+       }
+
+       // Update buttons in grid 1
+       QPushButton *button1_1 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(0, 0)->widget());
+       if (button1_1) { button1_1->setText("Button"); connect(button1_1, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       QPushButton *button1_2 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(0, 1)->widget());
+       if (button1_2) { button1_2->setText("Button"); connect(button1_2, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       QPushButton *button1_3 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(0, 2)->widget());
+       if (button1_3) { button1_3->setText("Button"); connect(button1_3, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       QPushButton *button1_4 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(0, 3)->widget());
+       if (button1_4) { button1_4->setText("Button"); connect(button1_4, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       QPushButton *button1_5 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(1, 0)->widget());
+       if (button1_5) { button1_5->setText("Button"); connect(button1_5, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       QPushButton *button1_6 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(1, 1)->widget());
+       if (button1_6) { button1_6->setText("Button"); connect(button1_6, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       QPushButton *button1_7 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(1, 2)->widget());
+       if (button1_7) { button1_7->setText("Button"); connect(button1_7, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       QPushButton *button1_8 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(1, 3)->widget());
+       if (button1_8) { button1_8->setText("Button"); connect(button1_8, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       QPushButton *button1_9 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(2, 0)->widget());
+       if (button1_9) { button1_9->setText("Button"); connect(button1_9, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       QPushButton *button1_10 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(2, 1)->widget());
+       if (button1_10) { button1_10->setText("Button"); connect(button1_10, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       QPushButton *button1_11 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(2, 2)->widget());
+       if (button1_11) { button1_11->setText("Button"); connect(button1_11, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       QPushButton *button1_12 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(2, 3)->widget());
+       if (button1_12) { button1_12->setText("Button"); connect(button1_12, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       QPushButton *button1_13 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(3, 0)->widget());
+       if (button1_13) { button1_13->setText("Button"); connect(button1_13, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       QPushButton *button1_14 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(3, 1)->widget());
+       if (button1_14) { button1_14->setText("Button"); connect(button1_14, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       QPushButton *button1_15 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(3, 2)->widget());
+       if (button1_15) { button1_15->setText("Button"); connect(button1_15, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       QPushButton *button1_16 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(3, 3)->widget());
+       if (button1_16) { button1_16->setText("Button"); connect(button1_16, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       // Get grid 2 widget from stacked widget (index 1)
+       QWidget *gridWidget2 = ui->stackedWidget->widget(1);
+       if (!gridWidget2) {
+                    qWarning() << "Grid widget 2 not found";
+                    return;
+       }
+       QGridLayout *gridLayout2 = qobject_cast<QGridLayout*>(gridWidget2->layout());
+       if (!gridLayout2) {
+                    qWarning() << "Grid layout 2 not found";
+                    return;
+       }
+
+       // Update buttons in grid 2
+       QPushButton *button2_1 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(0, 0)->widget());
+       if (button2_1) { button2_1->setText("Button"); connect(button2_1, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       QPushButton *button2_2 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(0, 1)->widget());
+       if (button2_2) { button2_2->setText("Button"); connect(button2_2, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       QPushButton *button2_3 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(0, 2)->widget());
+       if (button2_3) { button2_3->setText("Button"); connect(button2_3, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       QPushButton *button2_4 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(0, 3)->widget());
+       if (button2_4) { button2_4->setText("Button"); connect(button2_4, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       QPushButton *button2_5 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(1, 0)->widget());
+       if (button2_5) { button2_5->setText("Button"); connect(button2_5, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       QPushButton *button2_6 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(1, 1)->widget());
+       if (button2_6) { button2_6->setText("Button"); connect(button2_6, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       QPushButton *button2_7 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(1, 2)->widget());
+       if (button2_7) { button2_7->setText("Button"); connect(button2_7, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       QPushButton *button2_8 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(1, 3)->widget());
+       if (button2_8) { button2_8->setText("Button"); connect(button2_8, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       QPushButton *button2_9 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(2, 0)->widget());
+       if (button2_9) { button2_9->setText("Button"); connect(button2_9, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       QPushButton *button2_10 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(2, 1)->widget());
+       if (button2_10) { button2_10->setText("Button"); connect(button2_10, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       QPushButton *button2_11 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(2, 2)->widget());
+       if (button2_11) { button2_11->setText("Button"); connect(button2_11, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       QPushButton *button2_12 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(2, 3)->widget());
+       if (button2_12) { button2_12->setText("Button"); connect(button2_12, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       QPushButton *button2_13 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(3, 0)->widget());
+       if (button2_13) { button2_13->setText("Button"); connect(button2_13, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       QPushButton *button2_14 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(3, 1)->widget());
+       if (button2_14) { button2_14->setText("Button"); connect(button2_14, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       QPushButton *button2_15 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(3, 2)->widget());
+       if (button2_15) { button2_15->setText("Button"); connect(button2_15, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+
+       QPushButton *button2_16 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(3, 3)->widget());
+       if (button2_16) { button2_16->setText("Button"); connect(button2_16, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
+    }
+
+
+
+
+
+
 
 
 /////////////////////////////////
@@ -7121,6 +7394,174 @@ void MainWindow::on_actionReload_devices_triggered()
 
 }
 
+/////////////////////////////////////////////////////
+
+
+void MainWindow::loadDeviceTableX(QTableWidget* table)
+{
+   qDebug() << "Entering loadDeviceTableX";
+   QString sqlstatement;
+   QSqlQuery query;
+
+   // Store current connected device IDs
+   QSet<QString> connectedDeviceIds;
+   for (int row = 0; row < table->rowCount(); ++row) {
+        if (table->item(row, 2) &&
+            table->item(row, 2)->text() == "Connected" &&
+            table->item(row, 0)) {
+            connectedDeviceIds.insert(table->item(row, 0)->data(Qt::UserRole).toString());
+        }
+   }
+
+   // Clear and setup table
+   table->clearContents();
+   table->setRowCount(0); // Reset rows
+   table->setColumnCount(3);
+   table->setHorizontalHeaderLabels(QStringList() << "Device" << "IP" << "Status");
+   table->verticalHeader()->setVisible(false);
+   table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+   table->setShowGrid(true);
+   table->setSortingEnabled(false); // Temporarily disable sorting
+   table->setSelectionMode(QAbstractItemView::SingleSelection);
+   table->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+   // Ensure table scales with parent widget
+   table->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+
+   // Reset margins and padding
+   table->setStyleSheet("QTableWidget { margin: 0px; padding: 0px; } QHeaderView::section { padding: 0px; }");
+
+   // Set initial column widths
+   for (int col = 0; col < 3; ++col) {
+        table->setColumnWidth(col, 130); // Initial ~130px (reduced from 133)
+   }
+
+   // Ensure all columns are visible
+   for (int col = 0; col < 3; ++col) {
+        table->showColumn(col);
+   }
+
+   // Set fixed row height for 5 rows visible
+   table->verticalHeader()->setDefaultSectionSize(30); // ~30px per row
+
+   // Execute query
+   sqlstatement = "SELECT id, description, daddr, isusb FROM device";
+   qDebug() << "Executing query:" << sqlstatement;
+   if (!query.exec(sqlstatement)) {
+        qDebug() << "Query failed:" << query.lastError().text();
+        return;
+   }
+
+   // Populate all records
+   int row = 0;
+   while (query.next()) {
+        table->insertRow(row);
+        QString deviceId = query.value(0).toString();
+        QString description = query.value(1).toString();
+
+        QTableWidgetItem* descItem = new QTableWidgetItem(description);
+        descItem->setData(Qt::UserRole, deviceId);
+        table->setItem(row, 0, descItem);
+
+        bool isUsb = query.value(3).toBool();
+        QString ip = isUsb ? "USB" : (query.value(2).toString().isEmpty() ? "N/A" : query.value(2).toString());
+        table->setItem(row, 1, new IpTableWidgetItem(ip));
+
+        QString status;
+        if (isUsb) {
+            status = usbConnected(query.value(2).toString()) ? "Connected" : "Disconnected";
+        } else {
+            status = connectedDeviceIds.contains(deviceId) ? "Connected" : "Disconnected";
+        }
+        table->setItem(row, 2, new QTableWidgetItem(status));
+        qDebug() << "Row" << row << "ID:" << deviceId << "Desc:" << description << "IP:" << ip << "Status:" << status;
+        row++;
+   }
+   qDebug() << "Total rows loaded:" << row;
+
+   // Calculate column widths
+   QScrollArea *scrollArea = qobject_cast<QScrollArea*>(table->parentWidget());
+   int totalWidth = scrollArea && scrollArea->width() > 0 ? scrollArea->width() : 390; // Default 390px (reduced from 400)
+   totalWidth -= 2 * table->frameWidth();
+   if (table->verticalScrollBar()->isVisible()) {
+        totalWidth -= table->verticalScrollBar()->width();
+   }
+   totalWidth = qMax(totalWidth, 390); // Minimum 390px
+   qDebug() << "Scroll area width:" << (scrollArea ? scrollArea->width() : 0) << "Total width:" << totalWidth;
+
+   // Get content-based widths
+   table->resizeColumnsToContents();
+   int col0Width = table->columnWidth(0);
+   int col1Width = table->columnWidth(1);
+   int col2Width = table->columnWidth(2);
+
+   // Minimum widths (reduced from 133 to ~130)
+   const int minWidth = 130;
+   col0Width = qMax(col0Width, minWidth);
+   col1Width = qMax(col1Width, minWidth);
+   col2Width = qMax(col2Width, minWidth);
+
+   // Scale to fill totalWidth
+   int currentTotal = col0Width + col1Width + col2Width;
+   if (currentTotal != totalWidth && totalWidth > 0) {
+        double scale = static_cast<double>(totalWidth) / currentTotal;
+        col0Width = qRound(col0Width * scale);
+        col1Width = qRound(col1Width * scale);
+        col2Width = totalWidth - (col0Width + col1Width); // Exact fit
+   }
+
+   // Ensure minimum widths and prevent negative widths
+   if (col2Width < minWidth) {
+        int excess = (col0Width + col1Width + minWidth) - totalWidth;
+        if (excess > 0) {
+            double scale = static_cast<double>(totalWidth - minWidth) / (col0Width + col1Width);
+            col0Width = qRound(col0Width * scale);
+            col1Width = qRound(col1Width * scale);
+        }
+        col2Width = minWidth;
+   }
+
+   table->setColumnWidth(0, col0Width);
+   table->setColumnWidth(1, col1Width);
+   table->setColumnWidth(2, col2Width);
+   qDebug() << "Final column widths: Col0:" << col0Width << "Col1:" << col1Width << "Col2:" << col2Width;
+
+   // Set table and scroll area widths
+   table->setFixedWidth(totalWidth);
+   if (scrollArea) {
+        scrollArea->setFixedWidth(totalWidth);
+   }
+
+   // Force layout update
+   table->updateGeometry();
+   table->viewport()->update();
+   if (scrollArea) {
+        scrollArea->updateGeometry();
+        scrollArea->viewport()->update();
+   }
+
+   // Disable horizontal scrollbar
+   table->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+   // Load saved sort settings
+   QSettings settings("YourCompany", "YourApp"); // Replace with your organization and app name
+   int sortColumn = settings.value("DeviceTableSortColumn", 0).toInt();
+   Qt::SortOrder sortOrder = static_cast<Qt::SortOrder>(settings.value("DeviceTableSortOrder", Qt::AscendingOrder).toInt());
+
+   // Enable sorting
+   table->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
+   table->setSortingEnabled(true);
+   table->sortItems(sortColumn, sortOrder);
+   table->viewport()->update();
+   qDebug() << "Table rows after population:" << table->rowCount();
+
+   // Connect header click
+   connect(table->horizontalHeader(), &QHeaderView::sectionClicked, this, [this, table](int logicalIndex) {
+       QSettings settings("YourCompany", "YourApp");
+       settings.setValue("DeviceTableSortColumn", logicalIndex);
+       settings.setValue("DeviceTableSortOrder", table->horizontalHeader()->sortIndicatorOrder());
+   });
+}
 
 
 ///////////////////////////////////////////////
