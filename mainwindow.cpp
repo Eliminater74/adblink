@@ -414,7 +414,6 @@
 
              // --- STACKED WIDGET ---
              stackedWidget = new QStackedWidget();
-             ui->stackedWidget = stackedWidget; // Assuming ui->stackedWidget is part of the .ui file or intended for compatibility
              mainLayout->addWidget(stackedWidget);
 
              // Grid 1 (16 buttons)
@@ -627,7 +626,7 @@
 
 ///////////////////////////////////
 
-
+/*
     void MainWindow::updateButtonProperties()
     {
        // Get grid 1 widget from stacked widget (index 0)
@@ -766,6 +765,9 @@
     void MainWindow::buttonsetup()
 
     {
+
+
+
          ui->fmButton->setFixedSize(120,32);
          ui->adbshellButton1->setFixedSize(120,32);
          ui->backupButton->setFixedSize(120,32);
@@ -824,6 +826,8 @@
 
         new QShortcut (QKeySequence("Ctrl+O"), this, SLOT(on_actionSend_text_triggered()));
         new QShortcut (QKeySequence("Ctrl+X"), this, SLOT(displayOff()));
+
+
 
     }
 
@@ -921,6 +925,7 @@
 
 
   }
+*/
 
   //////////////////////////////////////////////
 
@@ -1471,13 +1476,13 @@
         bool startview = obj["startview"].toBool();
 
         if (startview) {
-            ui->stackedWidget->setCurrentIndex(0);
+            stackedWidget->setCurrentIndex(0);
             ui->menuKodi->menuAction()->setVisible(true);
             ui->infoArchitecture->setEnabled(true);
             ui->infoArchitecture->setVisible(true);
 
         } else {
-            ui->stackedWidget->setCurrentIndex(1);
+            stackedWidget->setCurrentIndex(1);
             ui->menuKodi->menuAction()->setVisible(false);
             ui->infoArchitecture->setEnabled(false);
             ui->infoArchitecture->setVisible(false);
@@ -2260,7 +2265,7 @@
 
              bool iskodi;
 
-             if (ui->stackedWidget->currentIndex() == 0)
+             if (stackedWidget->currentIndex() == 0)
              iskodi = true;
              else
              iskodi = false;
@@ -2823,13 +2828,13 @@
 
         if(!isusb)
                {
-                  ui->connButton->setDisabled(false);
-                  ui->disButton->setDisabled(false);
+                 // ui->connButton->setDisabled(false);
+                 // ui->disButton->setDisabled(false);
                   }
               else
                   {
-                    ui->connButton->setDisabled(true);
-                    ui->disButton->setDisabled(true);
+                  // ui->connButton->setDisabled(true);
+                   // ui->disButton->setDisabled(true);
                   }
 
     }
@@ -3070,7 +3075,7 @@
          }
 
 
-         if (ui->stackedWidget->currentIndex() == 0)
+         if (stackedWidget->currentIndex() == 0)
             iskodi=true;
          else
             iskodi=false;
@@ -3103,9 +3108,9 @@
 
          fmdialog->setkodiPath(mcpath);
 
-         if (!ui->adhocip->text().isEmpty())
+         if (!adhoc_ip->text().isEmpty())
          {
-            fmdialog->setData(ui->adhocip->text());
+            fmdialog->setData(adhoc_ip->text());
             fmdialog->setADB(getadbpath());
          }
          else
@@ -7073,7 +7078,7 @@ void MainWindow::on_actionSet_Kodi_permissions_triggered()
            setpDialog dialog(this);
            dialog.setWindowModality(Qt::WindowModal);
 
-            if (ui->stackedWidget->currentIndex() == 0)
+            if (stackedWidget->currentIndex() == 0)
                    dialog.setpname(device.xbmcpackage);
             else
                    dialog.setpname("");
@@ -7711,7 +7716,7 @@ void MainWindow::on_infoArchitecture_triggered()
 
 
 /////////////////////////////////////////////////////
-
+/*
 void MainWindow::connections()
 {
    // grid 1
@@ -7761,4 +7766,4 @@ void MainWindow::connections()
 }
 
 
-
+*/

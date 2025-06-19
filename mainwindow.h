@@ -77,7 +77,7 @@ DeviceRecord queryDeviceRecord(const QString& description);
 private slots:
 
 
-
+/*
     void connections();
 
      void buttonsetup();
@@ -85,6 +85,7 @@ private slots:
    void updateButtonProperties();
 
     void gridsetup();
+*/
 
     bool validateIPAddress(const QString& ipAddress);
 
