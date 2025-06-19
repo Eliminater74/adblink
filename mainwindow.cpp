@@ -322,14 +322,13 @@
 
          QWidget *centralWidget = new QWidget(this);
          setCentralWidget(centralWidget);
-
          QVBoxLayout *mainLayout = new QVBoxLayout(centralWidget);
          mainLayout->setContentsMargins(0, 0, 0, 0);
          mainLayout->setSpacing(0);
 
          // --- WRAPPER for Top Section ---
          QWidget *topWidget = new QWidget();
-         topWidget->setFixedHeight(180);  // Enforce strict height for scroll + buttons
+         topWidget->setFixedHeight(180);
          QHBoxLayout *upperLayout = new QHBoxLayout(topWidget);
          upperLayout->setSpacing(0);
          upperLayout->setContentsMargins(28, 0, 0, 0);
@@ -338,17 +337,16 @@
          // --- TABLE SCROLL AREA ---
          QTableWidget *deviceTableWidgetPtr = new QTableWidget(0, 3);
          deviceTableWidgetPtr->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-
          QScrollArea *scrollArea = new QScrollArea();
          scrollArea->setWidget(deviceTableWidgetPtr);
          scrollArea->setWidgetResizable(true);
          scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
          scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
          scrollArea->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-         scrollArea->setFixedSize(390, 180); // Enforce width and height
+         scrollArea->setFixedSize(390, 180);
          upperLayout->addWidget(scrollArea);
 
-         // --- Cosmetic Horizontal Gap between Table and Button Grid ---
+         // --- Cosmetic Horizontal Gap ---
          QSpacerItem *cosmeticGap = new QSpacerItem(12, 0, QSizePolicy::Fixed, QSizePolicy::Minimum);
          upperLayout->addItem(cosmeticGap);
 
@@ -360,7 +358,7 @@
          rightLayout->setContentsMargins(0, 0, 0, 0);
          rightLayout->setAlignment(Qt::AlignTop);
 
-         // Button grid
+         // Button grid (6 buttons)
          QWidget *buttonGridWidget = new QWidget();
          buttonGridWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
          QGridLayout *buttonGridLayout = new QGridLayout(buttonGridWidget);
@@ -369,13 +367,39 @@
 
          QPushButton *buttons[6];
          for (int i = 0; i < 6; ++i) {
-             buttons[i] = new QPushButton(QString("Button %1").arg(i + 1));
+             buttons[i] = new QPushButton();
              buttons[i]->setFixedSize(110, 42);
              buttonGridLayout->addWidget(buttons[i], i / 2, i % 2);
+             switch (i) {
+             case 0:
+                 buttons[i]->setText("Button 1");
+                 connect(buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 1:
+                 buttons[i]->setText("Button 2");
+                 connect(buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 2:
+                 buttons[i]->setText("Button 3");
+                 connect(buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 3:
+                 buttons[i]->setText("Button 4");
+                 connect(buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 4:
+                 buttons[i]->setText("Button 5");
+                 connect(buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 5:
+                 buttons[i]->setText("Button 6");
+                 connect(buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             }
          }
          rightLayout->addWidget(buttonGridWidget);
 
-         // --- Cosmetic Vertical Gap between Button Grid and Line Edit ---
+         // --- Cosmetic Vertical Gap ---
          QSpacerItem *vSpacer = new QSpacerItem(0, 15, QSizePolicy::Minimum, QSizePolicy::Fixed);
          rightLayout->addItem(vSpacer);
 
@@ -386,40 +410,169 @@
          lineEdit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
          rightLayout->addWidget(lineEdit);
 
-         // Add right column to upper layout
          upperLayout->addWidget(rightColumnWidget);
-
-         // Add top layout to main layout
-         mainLayout->addWidget(topWidget);  // Fixes vertical size issues
+         mainLayout->addWidget(topWidget);
 
          // --- STACKED WIDGET ---
          QStackedWidget *stackedWidget = new QStackedWidget();
          ui->stackedWidget = stackedWidget;
          mainLayout->addWidget(stackedWidget);
 
-         // Grid 1
+         // Grid 1 (16 buttons)
          QWidget *gridWidget1 = new QWidget();
          QGridLayout *gridLayout1 = new QGridLayout(gridWidget1);
          gridLayout1->setSpacing(0);
          gridLayout1->setContentsMargins(0, 0, 0, 0);
 
          for (int i = 0; i < 16; ++i) {
-             QPushButton *button = new QPushButton(QString("Button %1").arg(i + 1));
+             QPushButton *button = new QPushButton();
              button->setFixedSize(140, 52);
              gridLayout1->addWidget(button, i / 4, i % 4);
+             switch (i) {
+             case 0:
+                 button->setText("Button 7");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 1:
+                 button->setText("Button 8");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 2:
+                 button->setText("Button 9");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 3:
+                 button->setText("Button 10");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 4:
+                 button->setText("Button 11");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 5:
+                 button->setText("Button 12");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 6:
+                 button->setText("Button 13");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 7:
+                 button->setText("Button 14");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 8:
+                 button->setText("Button 15");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 9:
+                 button->setText("Button 16");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 10:
+                 button->setText("Button 17");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 11:
+                 button->setText("Button 18");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 12:
+                 button->setText("Button 19");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 13:
+                 button->setText("Button 20");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 14:
+                 button->setText("Button 21");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 15:
+                 button->setText("Button 22");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             }
          }
          stackedWidget->addWidget(gridWidget1);
 
-         // Grid 2
+         // Grid 2 (16 buttons)
          QWidget *gridWidget2 = new QWidget();
          QGridLayout *gridLayout2 = new QGridLayout(gridWidget2);
          gridLayout2->setSpacing(0);
          gridLayout2->setContentsMargins(0, 0, 0, 0);
 
          for (int i = 0; i < 16; ++i) {
-             QPushButton *button = new QPushButton(QString("Button %1").arg(i + 17));
+             QPushButton *button = new QPushButton();
              button->setFixedSize(140, 52);
              gridLayout2->addWidget(button, i / 4, i % 4);
+             switch (i) {
+             case 0:
+                 button->setText("Button 23");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 1:
+                 button->setText("Button 24");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 2:
+                 button->setText("Button 25");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 3:
+                 button->setText("Button 26");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 4:
+                 button->setText("Button 27");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 5:
+                 button->setText("Button 28");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 6:
+                 button->setText("Button 29");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 7:
+                 button->setText("Button 30");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 8:
+                 button->setText("Button 31");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 9:
+                 button->setText("Button 32");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 10:
+                 button->setText("Button 33");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 11:
+                 button->setText("Button 34");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 12:
+                 button->setText("Button 35");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 13:
+                 button->setText("Button 36");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 14:
+                 button->setText("Button 37");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             case 15:
+                 button->setText("Button 38");
+                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                 break;
+             }
          }
          stackedWidget->addWidget(gridWidget2);
 
@@ -429,11 +582,9 @@
          QVBoxLayout *statusLayout = new QVBoxLayout(statusBarWidget);
          statusLayout->setContentsMargins(0, 0, 0, 0);
          statusLayout->setSpacing(0);
-
          QLabel *statusLabel = new QLabel("Status Bar");
          statusLabel->setAlignment(Qt::AlignCenter);
          statusLayout->addWidget(statusLabel);
-
          mainLayout->addWidget(statusBarWidget);
 
          // --- FINALIZATION ---
@@ -444,15 +595,6 @@
          lineEdit->show();
          loadDeviceTableX(deviceTableWidgetPtr);
          centralWidget->updateGeometry();
-
-
-
-
-////////////////////////////////////////////
-
-
-        updateButtonProperties();
-        return;
 
 
      }
