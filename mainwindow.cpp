@@ -430,67 +430,67 @@
                  switch (i) {
                  case 0:
                     grid1Buttons[i]->setText("File Manager");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::fmButton_clicked);
                     break;
                  case 1:
                     grid1Buttons[i]->setText("ADB Shell");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::adbshellButton_clicked);
                     break;
                  case 2:
                     grid1Buttons[i]->setText("Backup");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::backupButton_clicked);
                     break;
                  case 3:
                     grid1Buttons[i]->setText("Restore");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::restoreButton_clicked);
                     break;
                  case 4:
                     grid1Buttons[i]->setText("Install APK");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::sideload_Button_clicked);
                     break;
                  case 5:
                     grid1Buttons[i]->setText("Uninstall APK");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::uninstall_Button_clicked);
                     break;
                  case 6:
                     grid1Buttons[i]->setText("Move Kodi Data");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::mvdataButton_clicked);
                     break;
                  case 7:
                     grid1Buttons[i]->setText("Edit Timers");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::pushTimers_clicked);
                     break;
                  case 8:
                     grid1Buttons[i]->setText("Screen Capture");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::screenCap);
                     break;
                  case 9:
                     grid1Buttons[i]->setText("Stop ADB");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::killServer_clicked);
                     break;
                  case 10:
                     grid1Buttons[i]->setText("Scrcpy");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::scpyButton_clicked);
                     break;
                  case 11:
                     grid1Buttons[i]->setText("Edit Cache");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::cacheButton_clicked);
                     break;
                  case 12:
                     grid1Buttons[i]->setText("Console");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::doConsole_clicked);
                     break;
                  case 13:
                     grid1Buttons[i]->setText("Keypad");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::keypadButton_clicked);
                     break;
                  case 14:
                     grid1Buttons[i]->setText("Start App");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::startapp_clicked);
                     break;
                  case 15:
                     grid1Buttons[i]->setText("Stop App");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::stopapp_clicked);
                     break;
                  }
              }
