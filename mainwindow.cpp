@@ -314,300 +314,294 @@
         ui->server_running->setText("");
 
         connections();
-        loadDeviceTable();
+        loadDeviceTableX(deviceTable);;
         do_versioncheck();
 */
 
 ////////////////////////////////////////////
 
-         QWidget *centralWidget = new QWidget(this);
-         setCentralWidget(centralWidget);
-         QVBoxLayout *mainLayout = new QVBoxLayout(centralWidget);
-         mainLayout->setContentsMargins(0, 0, 0, 0);
-         mainLayout->setSpacing(0);
+             centralWidget = new QWidget(this);
+             setCentralWidget(centralWidget);
+             mainLayout = new QVBoxLayout(centralWidget);
+             mainLayout->setContentsMargins(0, 0, 0, 0);
+             mainLayout->setSpacing(0);
 
-         // --- WRAPPER for Top Section ---
-         QWidget *topWidget = new QWidget();
-         topWidget->setFixedHeight(180);
-         QHBoxLayout *upperLayout = new QHBoxLayout(topWidget);
-         upperLayout->setSpacing(0);
-         upperLayout->setContentsMargins(28, 0, 0, 0);
-         upperLayout->setAlignment(Qt::AlignTop);
+             // --- WRAPPER for Top Section ---
+             topWidget = new QWidget();
+             topWidget->setFixedHeight(180);
+             upperLayout = new QHBoxLayout(topWidget);
+             upperLayout->setSpacing(0);
+             upperLayout->setContentsMargins(28, 0, 0, 0);
+             upperLayout->setAlignment(Qt::AlignTop);
 
-         // --- TABLE SCROLL AREA ---
-         QTableWidget *deviceTableWidgetPtr = new QTableWidget(0, 3);
-         deviceTableWidgetPtr->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-         QScrollArea *scrollArea = new QScrollArea();
-         scrollArea->setWidget(deviceTableWidgetPtr);
-         scrollArea->setWidgetResizable(true);
-         scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-         scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-         scrollArea->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-         scrollArea->setFixedSize(390, 180);
-         upperLayout->addWidget(scrollArea);
+             // --- TABLE SCROLL AREA ---
+             deviceTable = new QTableWidget(0, 3);
+             deviceTable->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+             scrollArea = new QScrollArea();
+             scrollArea->setWidget(deviceTable);
+             scrollArea->setWidgetResizable(true);
+             scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+             scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+             scrollArea->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+             scrollArea->setFixedSize(390, 180);
+             upperLayout->addWidget(scrollArea);
 
-         // --- Cosmetic Horizontal Gap ---
-         QSpacerItem *cosmeticGap = new QSpacerItem(12, 0, QSizePolicy::Fixed, QSizePolicy::Minimum);
-         upperLayout->addItem(cosmeticGap);
+             // --- Cosmetic Horizontal Gap ---
+             cosmeticGap = new QSpacerItem(12, 0, QSizePolicy::Fixed, QSizePolicy::Minimum);
+             upperLayout->addItem(cosmeticGap);
 
-         // --- RIGHT COLUMN ---
-         QWidget *rightColumnWidget = new QWidget();
-         rightColumnWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-         QVBoxLayout *rightLayout = new QVBoxLayout(rightColumnWidget);
-         rightLayout->setSpacing(0);
-         rightLayout->setContentsMargins(0, 0, 0, 0);
-         rightLayout->setAlignment(Qt::AlignTop);
+             // --- RIGHT COLUMN ---
+             rightColumnWidget = new QWidget();
+             rightColumnWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+             rightLayout = new QVBoxLayout(rightColumnWidget);
+             rightLayout->setSpacing(0);
+             rightLayout->setContentsMargins(0, 0, 0, 0);
+             rightLayout->setAlignment(Qt::AlignTop);
 
-         // Button grid (6 buttons)
-         QWidget *buttonGridWidget = new QWidget();
-         buttonGridWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-         QGridLayout *buttonGridLayout = new QGridLayout(buttonGridWidget);
-         buttonGridLayout->setSpacing(6);
-         buttonGridLayout->setContentsMargins(0, 0, 0, 0);
+             // Button grid (6 buttons)
+             buttonGridWidget = new QWidget();
+             buttonGridWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+             buttonGridLayout = new QGridLayout(buttonGridWidget);
+             buttonGridLayout->setSpacing(6);
+             buttonGridLayout->setContentsMargins(0, 0, 0, 0);
 
-         QPushButton *buttons[6];
-         for (int i = 0; i < 6; ++i) {
-             buttons[i] = new QPushButton();
-             buttons[i]->setFixedSize(110, 42);
-             buttonGridLayout->addWidget(buttons[i], i / 2, i % 2);
-             switch (i) {
-             case 0:
-                 buttons[i]->setText("Button 1");
-                 connect(buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 1:
-                 buttons[i]->setText("Button 2");
-                 connect(buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 2:
-                 buttons[i]->setText("Button 3");
-                 connect(buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 3:
-                 buttons[i]->setText("Button 4");
-                 connect(buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 4:
-                 buttons[i]->setText("Button 5");
-                 connect(buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 5:
-                 buttons[i]->setText("Button 6");
-                 connect(buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
+             for (int i = 0; i < 6; ++i) {
+                 buttons[i] = new QPushButton();
+                 buttons[i]->setFixedSize(110, 42);
+                 buttonGridLayout->addWidget(buttons[i], i / 2, i % 2);
+                 switch (i) {
+                 case 0:
+                    buttons[i]->setText("Connect");
+                    connect(buttons[i], &QPushButton::clicked, this, &MainWindow::connButton_clicked);
+                    break;
+                 case 1:
+                    buttons[i]->setText("Disconnect");
+                    connect(buttons[i], &QPushButton::clicked, this, &MainWindow::disButton_clicked);
+                    break;
+                 case 2:
+                    buttons[i]->setText("New");
+                    connect(buttons[i], &QPushButton::clicked, this, [this](bool) { dataentry(true); });
+                    break;
+                 case 3:
+                    buttons[i]->setText("Edit");
+                    connect(buttons[i], &QPushButton::clicked, this, [this](bool) { dataentry(false); });
+                    break;
+                 case 4:
+                    buttons[i]->setText("Delete");
+                    connect(buttons[i], &QPushButton::clicked, this, &MainWindow::delRecordButton_clicked);
+                    break;
+                 case 5:
+                    buttons[i]->setText("Clear");
+                    connect(buttons[i], &QPushButton::clicked, this, &MainWindow::on_clearAdhocButton_clicked);
+                    break;
+                 }
              }
-         }
-         rightLayout->addWidget(buttonGridWidget);
+             rightLayout->addWidget(buttonGridWidget);
 
-         // --- Cosmetic Vertical Gap ---
-         QSpacerItem *vSpacer = new QSpacerItem(0, 15, QSizePolicy::Minimum, QSizePolicy::Fixed);
-         rightLayout->addItem(vSpacer);
+             // --- Cosmetic Vertical Gap ---
+             vSpacer = new QSpacerItem(0, 15, QSizePolicy::Minimum, QSizePolicy::Fixed);
+             rightLayout->addItem(vSpacer);
 
-         // Line edit
-         QLineEdit *lineEdit = new QLineEdit();
-         lineEdit->setPlaceholderText("ip address<:port>");
-         lineEdit->setMaximumWidth(250);
-         lineEdit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-         rightLayout->addWidget(lineEdit);
+             // Line edit
+             adhoc_ip = new QLineEdit();
+             adhoc_ip->setPlaceholderText("ip address<:port>");
+             adhoc_ip->setMaximumWidth(250);
+             adhoc_ip->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+             rightLayout->addWidget(adhoc_ip);
 
-         upperLayout->addWidget(rightColumnWidget);
-         mainLayout->addWidget(topWidget);
+             upperLayout->addWidget(rightColumnWidget);
+             mainLayout->addWidget(topWidget);
 
-         // --- STACKED WIDGET ---
-         QStackedWidget *stackedWidget = new QStackedWidget();
-         ui->stackedWidget = stackedWidget;
-         mainLayout->addWidget(stackedWidget);
+             // --- STACKED WIDGET ---
+             stackedWidget = new QStackedWidget();
+             ui->stackedWidget = stackedWidget; // Assuming ui->stackedWidget is part of the .ui file or intended for compatibility
+             mainLayout->addWidget(stackedWidget);
 
-         // Grid 1 (16 buttons)
-         QWidget *gridWidget1 = new QWidget();
-         QGridLayout *gridLayout1 = new QGridLayout(gridWidget1);
-         gridLayout1->setSpacing(0);
-         gridLayout1->setContentsMargins(0, 0, 0, 0);
+             // Grid 1 (16 buttons)
+             gridWidget1 = new QWidget();
+             gridLayout1 = new QGridLayout(gridWidget1);
+             gridLayout1->setSpacing(0);
+             gridLayout1->setContentsMargins(0, 0, 0, 0);
 
-         for (int i = 0; i < 16; ++i) {
-             QPushButton *button = new QPushButton();
-             button->setFixedSize(140, 52);
-             gridLayout1->addWidget(button, i / 4, i % 4);
-             switch (i) {
-             case 0:
-                 button->setText("Button 7");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 1:
-                 button->setText("Button 8");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 2:
-                 button->setText("Button 9");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 3:
-                 button->setText("Button 10");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 4:
-                 button->setText("Button 11");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 5:
-                 button->setText("Button 12");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 6:
-                 button->setText("Button 13");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 7:
-                 button->setText("Button 14");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 8:
-                 button->setText("Button 15");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 9:
-                 button->setText("Button 16");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 10:
-                 button->setText("Button 17");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 11:
-                 button->setText("Button 18");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 12:
-                 button->setText("Button 19");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 13:
-                 button->setText("Button 20");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 14:
-                 button->setText("Button 21");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 15:
-                 button->setText("Button 22");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
+             for (int i = 0; i < 16; ++i) {
+                 grid1Buttons[i] = new QPushButton();
+                 grid1Buttons[i]->setFixedSize(140, 52);
+                 gridLayout1->addWidget(grid1Buttons[i], i / 4, i % 4);
+                 switch (i) {
+                 case 0:
+                    grid1Buttons[i]->setText("File Manager");
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 case 1:
+                    grid1Buttons[i]->setText("ADB Shell");
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 case 2:
+                    grid1Buttons[i]->setText("Backup");
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 case 3:
+                    grid1Buttons[i]->setText("Restore");
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 case 4:
+                    grid1Buttons[i]->setText("Install APK");
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 case 5:
+                    grid1Buttons[i]->setText("Uninstall APK");
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 case 6:
+                    grid1Buttons[i]->setText("Move Kodi Data");
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 case 7:
+                    grid1Buttons[i]->setText("Edit Timers");
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 case 8:
+                    grid1Buttons[i]->setText("Screen Capture");
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 case 9:
+                    grid1Buttons[i]->setText("Stop ADB");
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 case 10:
+                    grid1Buttons[i]->setText("Scrcpy");
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 case 11:
+                    grid1Buttons[i]->setText("Edit Cache");
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 case 12:
+                    grid1Buttons[i]->setText("Console");
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 case 13:
+                    grid1Buttons[i]->setText("Keypad");
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 case 14:
+                    grid1Buttons[i]->setText("Start App");
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 case 15:
+                    grid1Buttons[i]->setText("Stop App");
+                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 }
              }
-         }
-         stackedWidget->addWidget(gridWidget1);
+             stackedWidget->addWidget(gridWidget1);
 
-         // Grid 2 (16 buttons)
-         QWidget *gridWidget2 = new QWidget();
-         QGridLayout *gridLayout2 = new QGridLayout(gridWidget2);
-         gridLayout2->setSpacing(0);
-         gridLayout2->setContentsMargins(0, 0, 0, 0);
+             // Grid 2 (16 buttons)
+             gridWidget2 = new QWidget();
+             gridLayout2 = new QGridLayout(gridWidget2);
+             gridLayout2->setSpacing(0);
+             gridLayout2->setContentsMargins(0, 0, 0, 0);
 
-         for (int i = 0; i < 16; ++i) {
-             QPushButton *button = new QPushButton();
-             button->setFixedSize(140, 52);
-             gridLayout2->addWidget(button, i / 4, i % 4);
-             switch (i) {
-             case 0:
-                 button->setText("Button 23");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 1:
-                 button->setText("Button 24");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 2:
-                 button->setText("Button 25");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 3:
-                 button->setText("Button 26");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 4:
-                 button->setText("Button 27");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 5:
-                 button->setText("Button 28");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 6:
-                 button->setText("Button 29");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 7:
-                 button->setText("Button 30");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 8:
-                 button->setText("Button 31");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 9:
-                 button->setText("Button 32");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 10:
-                 button->setText("Button 33");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 11:
-                 button->setText("Button 34");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 12:
-                 button->setText("Button 35");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 13:
-                 button->setText("Button 36");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 14:
-                 button->setText("Button 37");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
-             case 15:
-                 button->setText("Button 38");
-                 connect(button, &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                 break;
+             for (int i = 0; i < 16; ++i) {
+                 grid2Buttons[i] = new QPushButton();
+                 grid2Buttons[i]->setFixedSize(140, 52);
+                 gridLayout2->addWidget(grid2Buttons[i], i / 4, i % 4);
+                 switch (i) {
+                 case 0:
+                    grid2Buttons[i]->setText("Button 23");
+                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 case 1:
+                    grid2Buttons[i]->setText("Button 24");
+                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 case 2:
+                    grid2Buttons[i]->setText("Button 25");
+                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 case 3:
+                    grid2Buttons[i]->setText("Button 26");
+                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 case 4:
+                    grid2Buttons[i]->setText("Button 27");
+                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 case 5:
+                    grid2Buttons[i]->setText("Button 28");
+                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 case 6:
+                    grid2Buttons[i]->setText("Button 29");
+                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 case 7:
+                    grid2Buttons[i]->setText("Button 30");
+                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 case 8:
+                    grid2Buttons[i]->setText("Button 31");
+                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 case 9:
+                    grid2Buttons[i]->setText("Button 32");
+                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 case 10:
+                    grid2Buttons[i]->setText("Button 33");
+                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 case 11:
+                    grid2Buttons[i]->setText("Button 34");
+                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 case 12:
+                    grid2Buttons[i]->setText("Button 35");
+                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 case 13:
+                    grid2Buttons[i]->setText("Button 36");
+                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 case 14:
+                    grid2Buttons[i]->setText("Button 37");
+                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 case 15:
+                    grid2Buttons[i]->setText("Button 38");
+                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    break;
+                 }
              }
+             stackedWidget->addWidget(gridWidget2);
+
+             // --- STATUS BAR ---
+             statusBarWidget = new QWidget();
+             statusBarWidget->setFixedHeight(26);
+             statusLayout = new QVBoxLayout(statusBarWidget);
+             statusLayout->setContentsMargins(0, 0, 0, 0);
+             statusLayout->setSpacing(0);
+             statusLabel = new QLabel("Status Bar");
+             statusLabel->setAlignment(Qt::AlignCenter);
+             statusLayout->addWidget(statusLabel);
+             mainLayout->addWidget(statusBarWidget);
+
+             // --- FINALIZATION ---
+             stackedWidget->setCurrentIndex(0);
+             scrollArea->show();
+             deviceTable->show();
+             buttonGridWidget->show();
+             adhoc_ip->show();
+             loadDeviceTableX(deviceTable);
+             centralWidget->updateGeometry();
          }
-         stackedWidget->addWidget(gridWidget2);
 
-         // --- STATUS BAR ---
-         QWidget *statusBarWidget = new QWidget();
-         statusBarWidget->setFixedHeight(26);
-         QVBoxLayout *statusLayout = new QVBoxLayout(statusBarWidget);
-         statusLayout->setContentsMargins(0, 0, 0, 0);
-         statusLayout->setSpacing(0);
-         QLabel *statusLabel = new QLabel("Status Bar");
-         statusLabel->setAlignment(Qt::AlignCenter);
-         statusLayout->addWidget(statusLabel);
-         mainLayout->addWidget(statusBarWidget);
-
-         // --- FINALIZATION ---
-         ui->stackedWidget->setCurrentIndex(1);
-         scrollArea->show();
-         deviceTableWidgetPtr->show();
-         buttonGridWidget->show();
-         lineEdit->show();
-         loadDeviceTableX(deviceTableWidgetPtr);
-         centralWidget->updateGeometry();
+         MainWindow::~MainWindow()
+         {
+             delete ui;
+         }
 
 
-     }
-
-
-    MainWindow::~MainWindow()
-    {
-
-
-
-
-       delete ui;
-    }
 
 
     void MainWindow::onApplicationQuit() {
@@ -1577,7 +1571,7 @@
         QString cstring;
         QString port;
         QString daddr;
-        QString selectedDescription = ui->deviceTable->item(ui->deviceTable->currentRow(), 0)->text();
+        QString selectedDescription = deviceTable->item(deviceTable->currentRow(), 0)->text();
 
 
 
@@ -1793,22 +1787,22 @@
 
                       int selectedRow;
 
-                      if (!ui->adhocip->text().isEmpty())
+                      if (!adhoc_ip->text().isEmpty())
                       {
                             adhocip();
-                            ui->adhocip->clear();
-                            for (int row = 0; row < ui->deviceTable->rowCount(); ++row) {
-                              QTableWidgetItem* item = ui->deviceTable->item(row, 0);
+                            adhoc_ip->clear();
+                            for (int row = 0; row < deviceTable->rowCount(); ++row) {
+                              QTableWidgetItem* item = deviceTable->item(row, 0);
                               if (item && item->text() == adhoc) {
-                  ui->deviceTable->selectRow(row);
+                  deviceTable->selectRow(row);
                   break;
                               }
                             }
                       }
 
-                      selectedRow = ui->deviceTable->currentRow();
-                      if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
-                            selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+                      selectedRow = deviceTable->currentRow();
+                      if (selectedRow >= 0 && deviceTable->item(selectedRow, 0)) {
+                            selectedDescription = deviceTable->item(selectedRow, 0)->text();
                       } else {
                             QMessageBox::critical(this, "", "No device selected in table");
                             return;
@@ -1835,7 +1829,7 @@
 
                       if (command.contains("failed to authenticate") || command.contains("offline")) {
 
-                            ui->deviceTable->setItem(selectedRow, 2, new QTableWidgetItem(
+                            deviceTable->setItem(selectedRow, 2, new QTableWidgetItem(
                                                                          command.contains("failed to authenticate") ? "Unauthorized" : "Offline"));
                             logfile(cstring);
                             logfile(command);
@@ -1849,18 +1843,18 @@
 
                       if (command.contains("connected to")) {
 
-                            ui->deviceTable->setItem(selectedRow, 2, new QTableWidgetItem("Connected"));
+                            deviceTable->setItem(selectedRow, 2, new QTableWidgetItem("Connected"));
 
-                            ui->deviceTable->clearSelection();
-                            ui->deviceTable->setCurrentCell(selectedRow, 0);
-                            ui->deviceTable->selectRow(selectedRow);
-                            ui->deviceTable->setFocus();
+                            deviceTable->clearSelection();
+                            deviceTable->setCurrentCell(selectedRow, 0);
+                            deviceTable->selectRow(selectedRow);
+                            deviceTable->setFocus();
 
                             logfile("Connected to " + daddr);
                             logfile("Android version: " + s.setNum(getandroid()));
                       } else {
 
-                            ui->deviceTable->setItem(selectedRow, 2, new QTableWidgetItem("NA"));
+                            deviceTable->setItem(selectedRow, 2, new QTableWidgetItem("NA"));
                             logfile("Unable to connect to: " + daddr);
                             QMessageBox::critical(this, "", "Unable to connect to: " + daddr);
                       }
@@ -1878,9 +1872,9 @@
                       QString daddr;
                       QString port;
 
-                      if (!ui->adhocip->text().isEmpty())
+                      if (!adhoc_ip->text().isEmpty())
                       {
-                            QString adhocIPText = ui->adhocip->text().trimmed();
+                            QString adhocIPText = adhoc_ip->text().trimmed();
                             int colonIndex = adhocIPText.indexOf(':');
                             QString daddr, port;
 
@@ -1918,7 +1912,7 @@
                             }
                       }
 
-                      loadDeviceTable();
+                      loadDeviceTableX(deviceTable);;
     }
 
     ////////////////////////////////////////////////////////////////
@@ -1926,26 +1920,26 @@
     void MainWindow::disButton_clicked()
     {
              QString daddr;
-             int selectedRow = ui->deviceTable->currentRow();
+             int selectedRow = deviceTable->currentRow();
 
              // Validate selection and connection status
-             if (selectedRow < 0 || !ui->deviceTable->item(selectedRow, 2) || !ui->deviceTable->item(selectedRow, 1)) {
+             if (selectedRow < 0 || !deviceTable->item(selectedRow, 2) || !deviceTable->item(selectedRow, 1)) {
             QMessageBox::critical(this, "", "No valid device selected");
             return;
              }
-             if (ui->deviceTable->item(selectedRow, 2)->text() != "Connected") {
+             if (deviceTable->item(selectedRow, 2)->text() != "Connected") {
             QMessageBox::critical(this, "", "Selected device is not connected");
             return;
              }
 
-             if (ui->deviceTable->item(selectedRow, 1)->text().contains("USB")) {
+             if (deviceTable->item(selectedRow, 1)->text().contains("USB")) {
             QMessageBox::critical(this, "", "Inactive for USB connections");
             return;
              }
 
 
 
-             daddr = ui->deviceTable->item(selectedRow, 1)->text();
+             daddr = deviceTable->item(selectedRow, 1)->text();
 
 
 
@@ -1964,8 +1958,8 @@
              logfile("disconnect: " + daddr);
 
              // Update status column (column 2) to "Disconnected"
-             if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 2)) {
-            ui->deviceTable->setItem(selectedRow, 2, new QTableWidgetItem("Disconnected"));
+             if (selectedRow >= 0 && deviceTable->item(selectedRow, 2)) {
+            deviceTable->setItem(selectedRow, 2, new QTableWidgetItem("Disconnected"));
              }
 
 
@@ -2197,12 +2191,12 @@
 
 
        // Update device table
-       for (int row = 0; row < ui->deviceTable->rowCount(); ++row) {
-            QTableWidgetItem* descItem = ui->deviceTable->item(row, 0);
+       for (int row = 0; row < deviceTable->rowCount(); ++row) {
+            QTableWidgetItem* descItem = deviceTable->item(row, 0);
             if (!descItem) continue; // Skip if no item
 
             // Get the current status from column 2
-            QTableWidgetItem* statusItem = ui->deviceTable->item(row, 2);
+            QTableWidgetItem* statusItem = deviceTable->item(row, 2);
             QString currentStatus = statusItem ? statusItem->text() : "";
 
             // Check if the device is USB based on stored data
@@ -2212,11 +2206,11 @@
             if (currentStatus != "USB") {
                    QString status = isUsb ? "USB" : "Disconnected";
                    QTableWidgetItem* newStatusItem = new QTableWidgetItem(status);
-                   ui->deviceTable->setItem(row, 2, newStatusItem);
+                   deviceTable->setItem(row, 2, newStatusItem);
             }
        }
 
-       ui->deviceTable->viewport()->update();
+       deviceTable->viewport()->update();
     }
 
 
@@ -2251,10 +2245,10 @@
              // For update, get selected description from deviceTable
              if (!isNewRecord)
              {
-             int selectedRow = ui->deviceTable->currentRow();
-             if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0))
+             int selectedRow = deviceTable->currentRow();
+             if (selectedRow >= 0 && deviceTable->item(selectedRow, 0))
              {
-                   selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+                   selectedDescription = deviceTable->item(selectedRow, 0)->text();
                    device = queryDeviceRecord(selectedDescription);                 
              }
              else
@@ -2406,7 +2400,7 @@
 
 
              QSqlDatabase::database().commit();
-             loadDeviceTable();
+             loadDeviceTableX(deviceTable);;
 
     }
 
@@ -3444,7 +3438,7 @@
 
     void MainWindow::on_clearAdhocButton_clicked()
     {
-        ui->adhocip->setText("");
+        adhoc_ip->setText("");
 
 
     }
@@ -6569,9 +6563,9 @@ void MainWindow::on_actionEdit_XML_triggered()
 
 
 
- int selectedRow = ui->deviceTable->currentRow();
- if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
-           selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+ int selectedRow = deviceTable->currentRow();
+ if (selectedRow >= 0 && deviceTable->item(selectedRow, 0)) {
+           selectedDescription = deviceTable->item(selectedRow, 0)->text();
  } else {
            QMessageBox::critical(this, "", "No device selected in table");
            return;
@@ -6777,17 +6771,17 @@ QString MainWindow::getadb()
  QString port;
  QString editport = "";
  QString selectedDescription;
- int selectedRow = ui->deviceTable->currentRow();
+ int selectedRow = deviceTable->currentRow();
 
 
-           if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
-              selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+           if (selectedRow >= 0 && deviceTable->item(selectedRow, 0)) {
+              selectedDescription = deviceTable->item(selectedRow, 0)->text();
            } else {
               QMessageBox::critical(this, "Error", "No device selected in table");
               return "error";
            }
 
-            QString daddr = ui->deviceTable->item(selectedRow, 1)->text();
+            QString daddr = deviceTable->item(selectedRow, 1)->text();
 
             DeviceRecord device = queryDeviceRecord(selectedDescription);
 
@@ -6851,9 +6845,9 @@ DeviceRecord MainWindow::queryDeviceRecord(const QString& description) {
 bool MainWindow::validateDeviceSelection(QString& selectedDescription) {
  // Check if any device is connected in deviceTable
  bool hasConnectedDevice = false;
- for (int i = 0; i < ui->deviceTable->rowCount(); ++i) {
-               if (ui->deviceTable->item(i, 2) &&
-                   ui->deviceTable->item(i, 2)->text() == "Connected") {
+ for (int i = 0; i < deviceTable->rowCount(); ++i) {
+               if (deviceTable->item(i, 2) &&
+                   deviceTable->item(i, 2)->text() == "Connected") {
               hasConnectedDevice = true;
               break;
                }
@@ -6864,17 +6858,17 @@ bool MainWindow::validateDeviceSelection(QString& selectedDescription) {
  }
 
  // Get selected description from deviceTable
- int selectedRow = ui->deviceTable->currentRow();
- if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
-               selectedDescription = ui->deviceTable->item(selectedRow, 0)->text();
+ int selectedRow = deviceTable->currentRow();
+ if (selectedRow >= 0 && deviceTable->item(selectedRow, 0)) {
+               selectedDescription = deviceTable->item(selectedRow, 0)->text();
  } else {
                QMessageBox::critical(this, "", "No device selected in table");
                return false;
  }
 
  // Check if the selected device is connected
- if (ui->deviceTable->item(selectedRow, 2) &&
-     ui->deviceTable->item(selectedRow, 2)->text() != "Connected") {
+ if (deviceTable->item(selectedRow, 2) &&
+     deviceTable->item(selectedRow, 2)->text() != "Connected") {
                QMessageBox::critical(this, "", "Selected device is not connected");
                return false;
  }
@@ -7155,9 +7149,9 @@ void MainWindow::delRecordButton_clicked()
    QString descrip;
    QString daddr;
 
-   int selectedRow = ui->deviceTable->currentRow();
-   if (selectedRow >= 0 && ui->deviceTable->item(selectedRow, 0)) {
-                      descrip = ui->deviceTable->item(selectedRow, 0)->text();
+   int selectedRow = deviceTable->currentRow();
+   if (selectedRow >= 0 && deviceTable->item(selectedRow, 0)) {
+                      descrip = deviceTable->item(selectedRow, 0)->text();
    } else {
                       QMessageBox::critical(this, "", "No device selected in table");
                       return;
@@ -7178,8 +7172,8 @@ void MainWindow::delRecordButton_clicked()
                       deleteRecord(descrip);
 
 
-                      selectedRow = ui->deviceTable->currentRow();
-                      daddr = ui->deviceTable->item(selectedRow, 1)->text();
+                      selectedRow = deviceTable->currentRow();
+                      daddr = deviceTable->item(selectedRow, 1)->text();
 
 
 
@@ -7188,7 +7182,7 @@ void MainWindow::delRecordButton_clicked()
                       logfile (command);
                       logfile("disconnect: "+daddr);
 
-                      ui->deviceTable->removeRow(selectedRow);
+                      deviceTable->removeRow(selectedRow);
                       logfile(descrip + " is deleted");
 
    }
@@ -7313,7 +7307,7 @@ void MainWindow::on_Erase_adbLink_database_triggered()
                       }
 
                       createTables();
-                      loadDeviceTable();
+                      loadDeviceTableX(deviceTable);;
    }
 }
 
@@ -7532,7 +7526,7 @@ bool MainWindow::usbConnected(QString daddr)
 void MainWindow::on_actionReload_devices_triggered()
 {
 
-   loadDeviceTable();
+   loadDeviceTableX(deviceTable);;
 
 }
 
@@ -7705,140 +7699,6 @@ void MainWindow::loadDeviceTableX(QTableWidget* table)
    });
 }
 
-
-///////////////////////////////////////////////
-
-void MainWindow::loadDeviceTable()
-{
-   QString sqlstatement;
-   QSqlQuery query;
-
-   // Store current connected device IDs
-   QSet<QString> connectedDeviceIds;
-   for (int row = 0; row < ui->deviceTable->rowCount(); ++row) {
-        if (ui->deviceTable->item(row, 2) &&
-            ui->deviceTable->item(row, 2)->text() == "Connected" &&
-            ui->deviceTable->item(row, 0)) {
-            connectedDeviceIds.insert(ui->deviceTable->item(row, 0)->data(Qt::UserRole).toString());
-        }
-   }
-
-   // Clear and setup table
-   ui->deviceTable->clearContents();
-   ui->deviceTable->setRowCount(0);
-   ui->deviceTable->setColumnCount(3);
-   ui->deviceTable->setHorizontalHeaderLabels(QStringList() << "Device" << "IP" << "Status");
-   ui->deviceTable->verticalHeader()->setVisible(false);
-   ui->deviceTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-   ui->deviceTable->setShowGrid(true);
-   ui->deviceTable->setSortingEnabled(false); // Temporarily disable sorting
-   ui->deviceTable->setSelectionMode(QAbstractItemView::SingleSelection);
-   ui->deviceTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-
-   // Ensure table scales with parent widget
-   ui->deviceTable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-   // Reset margins and padding to minimize extra space
-   ui->deviceTable->setStyleSheet("QTableWidget { margin: 0px; padding: 0px; } QHeaderView::section { padding: 0px; }");
-
-   // Execute query
-   sqlstatement = "SELECT id, description, daddr, isusb FROM device";
-   if (!query.exec(sqlstatement)) {
-        qDebug() << "Query failed:" << query.lastError().text();
-        return;
-   }
-
-   // Populate table
-   int row = 0;
-   while (query.next()) {
-        ui->deviceTable->insertRow(row);
-        QString deviceId = query.value(0).toString();
-        QString description = query.value(1).toString();
-
-        QTableWidgetItem* descItem = new QTableWidgetItem(description);
-        descItem->setData(Qt::UserRole, deviceId);
-        ui->deviceTable->setItem(row, 0, descItem);
-
-        bool isUsb = query.value(3).toBool();
-        QString ip = isUsb ? "USB" : (query.value(2).toString().isEmpty() ? "N/A" : query.value(2).toString());
-        ui->deviceTable->setItem(row, 1, new IpTableWidgetItem(ip));
-
-        QString status;
-        if (isUsb) {
-            status = usbConnected(query.value(2).toString()) ? "Connected" : "Disconnected";
-        } else {
-            status = connectedDeviceIds.contains(deviceId) ? "Connected" : "Disconnected";
-        }
-        ui->deviceTable->setItem(row, 2, new QTableWidgetItem(status));
-        row++;
-   }
-
-   // Calculate usable viewport width
-   int totalWidth = ui->deviceTable->viewport()->width() - 2 * ui->deviceTable->frameWidth() - 16;
-   if (ui->deviceTable->verticalScrollBar()->isVisible()) {
-        totalWidth -= ui->deviceTable->verticalScrollBar()->width();
-   }
-
-   // Get content-based widths
-   ui->deviceTable->resizeColumnsToContents();
-   int col0Width = ui->deviceTable->columnWidth(0);
-   int col1Width = ui->deviceTable->columnWidth(1);
-   int col2Width = ui->deviceTable->columnWidth(2);
-
-   // Define minimum widths for readability
-   const int minWidth = 120;
-   col0Width = qMax(col0Width, minWidth);
-   col1Width = qMax(col1Width, minWidth);
-   col2Width = qMax(col2Width, minWidth);
-
-   // Scale widths to fill viewport exactly
-   int currentTotal = col0Width + col1Width + col2Width;
-   if (currentTotal != totalWidth && totalWidth > 0) {
-        double totalContentWidth = col0Width + col1Width + col2Width;
-        int newCol0Width = qRound(static_cast<double>(col0Width) * totalWidth / totalContentWidth);
-        int newCol1Width = qRound(static_cast<double>(col1Width) * totalWidth / totalContentWidth);
-        int newCol2Width = totalWidth - (newCol0Width + newCol1Width);
-
-        // Ensure minimum widths
-        newCol0Width = qMax(newCol0Width, minWidth);
-        newCol1Width = qMax(newCol1Width, minWidth);
-        newCol2Width = qMax(newCol2Width, minWidth);
-
-        // Final adjustment to prevent overflow
-        int newTotal = newCol0Width + newCol1Width + newCol2Width;
-        if (newTotal > totalWidth && totalWidth > 0) {
-            double adjustScale = static_cast<double>(totalWidth) / newTotal;
-            newCol0Width = qRound(static_cast<double>(newCol0Width) * adjustScale);
-            newCol1Width = qRound(static_cast<double>(newCol1Width) * adjustScale);
-            newCol2Width = totalWidth - (newCol0Width + newCol1Width);
-        }
-
-        ui->deviceTable->setColumnWidth(0, newCol0Width);
-        ui->deviceTable->setColumnWidth(1, newCol1Width);
-        ui->deviceTable->setColumnWidth(2, newCol2Width);
-   }
-
-   // Explicitly disable horizontal scrollbar
-   ui->deviceTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-   // Load saved sort settings
-   QSettings settings("YourCompany", "YourApp"); // Replace with your organization and app name
-   int sortColumn = settings.value("DeviceTableSortColumn", 0).toInt();
-   Qt::SortOrder sortOrder = static_cast<Qt::SortOrder>(settings.value("DeviceTableSortOrder", Qt::AscendingOrder).toInt());
-
-   // Enable sorting and apply saved sort settings
-   ui->deviceTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
-   ui->deviceTable->setSortingEnabled(true);
-   ui->deviceTable->sortItems(sortColumn, sortOrder);
-   ui->deviceTable->viewport()->update();
-
-   // Connect header click to save sort settings
-   connect(ui->deviceTable->horizontalHeader(), &QHeaderView::sectionClicked, this, [this](int logicalIndex) {
-       QSettings settings("YourCompany", "YourApp"); // Replace with your organization and app name
-       settings.setValue("DeviceTableSortColumn", logicalIndex);
-       settings.setValue("DeviceTableSortOrder", ui->deviceTable->horizontalHeader()->sortIndicatorOrder());
-   });
-}
 
 /////////////////////////////////////////////////
 

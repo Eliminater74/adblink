@@ -7,6 +7,18 @@
 #include "usbfiledialog.h"
 #include <QTextEdit>
 #include <QNetworkAccessManager>
+#include <QTableWidget>
+#include <QPushButton>
+#include <QStackedWidget>
+#include <QLineEdit>
+#include <QScrollArea>
+#include <QWidget>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QGridLayout>
+#include <QLabel>
+
+
 #include "devicerecord.h"
 
 
@@ -86,7 +98,7 @@ private slots:
 
     bool usbConnected(QString daddr);
 
-    void loadDeviceTable();
+
     void loadDeviceTableX(QTableWidget* table);
 
 
@@ -391,7 +403,34 @@ private slots:
     QString dbstring = "";
     QString jsonstring = "";
 
+    // Member variables for widgets
+    QWidget *centralWidget;
+    QVBoxLayout *mainLayout;
+    QWidget *topWidget;
+    QHBoxLayout *upperLayout;
+    QTableWidget *deviceTable;
+    QScrollArea *scrollArea;
+    QSpacerItem *cosmeticGap;
+    QWidget *rightColumnWidget;
+    QVBoxLayout *rightLayout;
+    QWidget *buttonGridWidget;
+    QGridLayout *buttonGridLayout;
+    QPushButton *buttons[6]; // Array for the 6 buttons
+    QSpacerItem *vSpacer;
+    QLineEdit *adhoc_ip;
+    QStackedWidget *stackedWidget;
+    QWidget *gridWidget1;
+    QGridLayout *gridLayout1;
+    QPushButton *grid1Buttons[16]; // Array for grid1 buttons
+    QWidget *gridWidget2;
+    QGridLayout *gridLayout2;
+    QPushButton *grid2Buttons[16]; // Array for grid2 buttons
+    QWidget *statusBarWidget;
+    QVBoxLayout *statusLayout;
+    QLabel *statusLabel;
 
+    // Other private methods (e.g., loadDeviceTableX)
+    // void loadDeviceTableX(QTableWidget *table);
 
 
 
