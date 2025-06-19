@@ -508,52 +508,52 @@
                  gridLayout2->addWidget(grid2Buttons[i], i / 4, i % 4);
                  switch (i) {
                  case 0:
-                    grid2Buttons[i]->setText("Button 23");
-                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    grid2Buttons[i]->setText("File Manager");
+                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::fmButton_clicked);
                     break;
                  case 1:
-                    grid2Buttons[i]->setText("Button 24");
-                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    grid2Buttons[i]->setText("Install APK");
+                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::sideload_Button_clicked);
                     break;
                  case 2:
-                    grid2Buttons[i]->setText("Button 25");
-                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    grid2Buttons[i]->setText("Uninstall APK");
+                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::uninstall_Button_clicked);
                     break;
                  case 3:
-                    grid2Buttons[i]->setText("Button 26");
-                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    grid2Buttons[i]->setText("System Info");
+                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::infoArchitecture);
                     break;
                  case 4:
-                    grid2Buttons[i]->setText("Button 27");
-                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    grid2Buttons[i]->setText("Screen Capture");
+                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::screenCap);
                     break;
                  case 5:
-                    grid2Buttons[i]->setText("Button 28");
-                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    grid2Buttons[i]->setText("Stop ADB");
+                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::killServer_clicked);
                     break;
                  case 6:
-                    grid2Buttons[i]->setText("Button 29");
-                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    grid2Buttons[i]->setText("Start App");
+                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::startapp_clicked);
                     break;
                  case 7:
-                    grid2Buttons[i]->setText("Button 30");
-                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    grid2Buttons[i]->setText("Stop App");
+                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::stopapp_clicked);
                     break;
                  case 8:
-                    grid2Buttons[i]->setText("Button 31");
-                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    grid2Buttons[i]->setText("ADB Shell");
+                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::adbshellButton_clicked);
                     break;
                  case 9:
-                    grid2Buttons[i]->setText("Button 32");
-                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    grid2Buttons[i]->setText("Console");
+                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::doConsole_clicked);
                     break;
                  case 10:
-                    grid2Buttons[i]->setText("Button 33");
-                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    grid2Buttons[i]->setText("Send Text");
+                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionSend_text_triggered);
                     break;
                  case 11:
-                    grid2Buttons[i]->setText("Button 34");
-                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+                    grid2Buttons[i]->setText("ScrCpy");
+                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::scpyButton_clicked);
                     break;
                  case 12:
                     grid2Buttons[i]->setText("Button 35");
@@ -6884,52 +6884,6 @@ bool MainWindow::validateDeviceSelection(QString& selectedDescription) {
 
 
 
-void MainWindow::on_actionSwitch_View_triggered()
-{
-
- if (stackedWidget->currentIndex() == 0) {
-
-               QMessageBox::StandardButton reply;
-               reply = QMessageBox::question(this, "Kodi", "Switch to Android View?",
-                                             QMessageBox::Yes | QMessageBox::No);
-               if (reply == QMessageBox::No) {
-              return;
-               }
-
-               stackedWidget->setCurrentIndex(1);
-               ui->menuKodi->menuAction()->setVisible(false);
-
-
-
-               ui->infoArchitecture->setEnabled(false);
-               ui->infoArchitecture->setVisible(false);
-
- }
-
-
- else {
-
-               QMessageBox::StandardButton reply;
-               reply = QMessageBox::question(this, "Kodi", "Switch to Kodi View?",
-                                             QMessageBox::Yes | QMessageBox::No);
-               if (reply == QMessageBox::No) {
-              return;
-               }
-
-               stackedWidget->setCurrentIndex(0);
-               ui->menuKodi->menuAction()->setVisible(true);
-
-
-
-               ui->infoArchitecture->setEnabled(true);
-               ui->infoArchitecture->setVisible(true);
- }
-
-}
-
-
-
-
 
 
 
@@ -7717,54 +7671,55 @@ void MainWindow::on_infoArchitecture_triggered()
 
 
 /////////////////////////////////////////////////////
-/*
-void MainWindow::connections()
+
+void MainWindow::on_actionSwitch_View_triggered()
 {
-   // grid 1
-   connect(ui->fmButton, &QPushButton::clicked, this, &MainWindow::fmButton_clicked);
-   connect(ui->adbshellButton1, &QPushButton::clicked, this, &MainWindow::adbshellButton_clicked);
-   connect(ui->backupButton, &QPushButton::clicked, this, &MainWindow::backupButton_clicked);
-   connect(ui->restoreButton, &QPushButton::clicked, this, &MainWindow::restoreButton_clicked);
-   connect(ui->sideload_Button, &QPushButton::clicked, this, &MainWindow::sideload_Button_clicked);
-   connect(ui->uninstall_Button, &QPushButton::clicked, this, &MainWindow::uninstall_Button_clicked);
-   connect(ui->mvdataButton, &QPushButton::clicked, this, &MainWindow::mvdataButton_clicked);
-   connect(ui->pushTimers, &QPushButton::clicked, this, &MainWindow::pushTimers_clicked);
-   connect(ui->screencap1, &QPushButton::clicked, this, &MainWindow::screenCap);
-   connect(ui->stopADB, &QPushButton::clicked, this, &MainWindow::killServer_clicked);
-   connect(ui->scpyButton, &QPushButton::clicked, this, &MainWindow::scpyButton_clicked);
-   connect(ui->cacheButton, &QPushButton::clicked, this, &MainWindow::cacheButton_clicked);
-   connect(ui->doConsole, &QPushButton::clicked, this, &MainWindow::doConsole_clicked);
-   connect(ui->keypadButton, &QPushButton::clicked, this, &MainWindow::keypadButton_clicked);
-   connect(ui->startapp, &QPushButton::clicked, this, &MainWindow::startapp_clicked);
-   connect(ui->stopapp, &QPushButton::clicked, this, &MainWindow::stopapp_clicked);
 
-   // grid2
-   connect(ui->fmButton_2, &QPushButton::clicked, this, &MainWindow::fmButton_clicked);
-   connect(ui->sideload_Button_2, &QPushButton::clicked, this, &MainWindow::sideload_Button_clicked);
-   connect(ui->uninstall_Button_2, &QPushButton::clicked, this, &MainWindow::uninstall_Button_clicked);
-   connect(ui->infoButton, &QPushButton::clicked, this, &MainWindow::infoArchitecture);
+   if (stackedWidget->currentIndex() == 0) {
 
-   connect(ui->screencap2, &QPushButton::clicked, this, &MainWindow::screenCap);
-   connect(ui->stopADB2, &QPushButton::clicked, this, &MainWindow::killServer_clicked);
-   connect(ui->startapp_2, &QPushButton::clicked, this, &MainWindow::startapp_clicked);
-   connect(ui->stopapp_2, &QPushButton::clicked, this, &MainWindow::stopapp_clicked);
-   connect(ui->adbshellButton_2, &QPushButton::clicked, this, &MainWindow::adbshellButton_clicked);
-   connect(ui->doConsole_2, &QPushButton::clicked, this, &MainWindow::doConsole_clicked);
-   connect(ui->textButton, &QPushButton::clicked, this, &MainWindow::on_actionSend_text_triggered);
-   connect(ui->scpyButton_2, &QPushButton::clicked, this, &MainWindow::scpyButton_clicked);
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Kodi", "Switch to Android View?",
+                                      QMessageBox::Yes | QMessageBox::No);
+        if (reply == QMessageBox::No) {
+            return;
+        }
 
-   // adbconnect/edit
-   connect(ui->connButton, &QPushButton::clicked, this, &MainWindow::connButton_clicked);
-   connect(ui->disButton, &QPushButton::clicked, this, &MainWindow::disButton_clicked);
-   connect(ui->newRecordButton, &QPushButton::clicked, this, [this]() {dataentry(true);});
-   connect(ui->editRecordButton, &QPushButton::clicked, this, [this]() {dataentry(false);});
-   connect(ui->delRecordButton, &QPushButton::clicked, this, &MainWindow::delRecordButton_clicked);
-   connect(ui->clearAdhocButton, &QPushButton::clicked, this, &MainWindow::on_clearAdhocButton_clicked);
+        stackedWidget->setCurrentIndex(1);
+        ui->menuKodi->menuAction()->setVisible(false);
 
-   // devices
-   connect(ui->deviceTable, &QTableWidget::doubleClicked, this, &MainWindow::fmButton_clicked);
+
+
+        ui->infoArchitecture->setEnabled(false);
+        ui->infoArchitecture->setVisible(false);
+
+
+               for (int i = 12; i <= 15; ++i) {
+              if (grid2Buttons[i]) { // Check for null to avoid crashes
+               grid2Buttons[i]->setVisible(false); // Make invisible
+               grid2Buttons[i]->setEnabled(false); // Make inactive
+              }}
+
+   }
+
+
+   else {
+
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Kodi", "Switch to Kodi View?",
+                                      QMessageBox::Yes | QMessageBox::No);
+        if (reply == QMessageBox::No) {
+            return;
+        }
+
+        stackedWidget->setCurrentIndex(0);
+        ui->menuKodi->menuAction()->setVisible(true);
+
+
+
+        ui->infoArchitecture->setEnabled(true);
+        ui->infoArchitecture->setVisible(true);
+   }
 
 }
 
 
-*/
