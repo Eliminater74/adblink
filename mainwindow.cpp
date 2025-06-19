@@ -6881,7 +6881,7 @@ bool MainWindow::validateDeviceSelection(QString& selectedDescription) {
 void MainWindow::on_actionSwitch_View_triggered()
 {
 
- if (ui->stackedWidget->currentIndex() == 0) {
+ if (stackedWidget->currentIndex() == 0) {
 
                QMessageBox::StandardButton reply;
                reply = QMessageBox::question(this, "Kodi", "Switch to Android View?",
@@ -6890,7 +6890,7 @@ void MainWindow::on_actionSwitch_View_triggered()
               return;
                }
 
-               ui->stackedWidget->setCurrentIndex(1);
+               stackedWidget->setCurrentIndex(1);
                ui->menuKodi->menuAction()->setVisible(false);
 
 
@@ -6910,7 +6910,7 @@ void MainWindow::on_actionSwitch_View_triggered()
               return;
                }
 
-               ui->stackedWidget->setCurrentIndex(0);
+               stackedWidget->setCurrentIndex(0);
                ui->menuKodi->menuAction()->setVisible(true);
 
 
@@ -7535,7 +7535,7 @@ void MainWindow::on_actionReload_devices_triggered()
 
 void MainWindow::loadDeviceTableX(QTableWidget* table)
 {
-   qDebug() << "Entering loadDeviceTableX";
+ //  qDebug() << "Entering loadDeviceTableX";
    QString sqlstatement;
    QSqlQuery query;
 
@@ -7582,11 +7582,12 @@ void MainWindow::loadDeviceTableX(QTableWidget* table)
 
    // Execute query
    sqlstatement = "SELECT id, description, daddr, isusb FROM device";
-   qDebug() << "Executing query:" << sqlstatement;
+
+
    if (!query.exec(sqlstatement)) {
-        qDebug() << "Query failed:" << query.lastError().text();
-        return;
-   }
+        logfile ("Query failed:" + query.lastError().text());
+       return;
+  }
 
    // Populate all records
    int row = 0;
@@ -7610,10 +7611,10 @@ void MainWindow::loadDeviceTableX(QTableWidget* table)
             status = connectedDeviceIds.contains(deviceId) ? "Connected" : "Disconnected";
         }
         table->setItem(row, 2, new QTableWidgetItem(status));
-        qDebug() << "Row" << row << "ID:" << deviceId << "Desc:" << description << "IP:" << ip << "Status:" << status;
+//        qDebug() << "Row" << row << "ID:" << deviceId << "Desc:" << description << "IP:" << ip << "Status:" << status;
         row++;
    }
-   qDebug() << "Total rows loaded:" << row;
+//   qDebug() << "Total rows loaded:" << row;
 
    // Calculate column widths
    QScrollArea *scrollArea = qobject_cast<QScrollArea*>(table->parentWidget());
@@ -7623,7 +7624,7 @@ void MainWindow::loadDeviceTableX(QTableWidget* table)
         totalWidth -= table->verticalScrollBar()->width();
    }
    totalWidth = qMax(totalWidth, 390); // Minimum 390px
-   qDebug() << "Scroll area width:" << (scrollArea ? scrollArea->width() : 0) << "Total width:" << totalWidth;
+ //  qDebug() << "Scroll area width:" << (scrollArea ? scrollArea->width() : 0) << "Total width:" << totalWidth;
 
    // Get content-based widths
    table->resizeColumnsToContents();
@@ -7660,7 +7661,7 @@ void MainWindow::loadDeviceTableX(QTableWidget* table)
    table->setColumnWidth(0, col0Width);
    table->setColumnWidth(1, col1Width);
    table->setColumnWidth(2, col2Width);
-   qDebug() << "Final column widths: Col0:" << col0Width << "Col1:" << col1Width << "Col2:" << col2Width;
+//   qDebug() << "Final column widths: Col0:" << col0Width << "Col1:" << col1Width << "Col2:" << col2Width;
 
    // Set table and scroll area widths
    table->setFixedWidth(totalWidth);
@@ -7689,7 +7690,7 @@ void MainWindow::loadDeviceTableX(QTableWidget* table)
    table->setSortingEnabled(true);
    table->sortItems(sortColumn, sortOrder);
    table->viewport()->update();
-   qDebug() << "Table rows after population:" << table->rowCount();
+//   qDebug() << "Table rows after population:" << table->rowCount();
 
    // Connect header click
    connect(table->horizontalHeader(), &QHeaderView::sectionClicked, this, [this, table](int logicalIndex) {
