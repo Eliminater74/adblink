@@ -85,6 +85,7 @@
     #include <QScrollArea>
     #include <QScrollBar>
     #include <QtGlobal>
+    #include <QHeaderView>
 
     #ifdef Q_OS_LINUX
      int os=0;

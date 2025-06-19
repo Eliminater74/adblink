@@ -17,7 +17,7 @@
 #include <QHBoxLayout>
 #include <QGridLayout>
 #include <QLabel>
-
+#include <QHeaderView>
 
 #include "devicerecord.h"
 
