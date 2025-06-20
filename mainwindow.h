@@ -450,7 +450,7 @@ private slots:
     QLabel *statusLabel;
     QProgressBar *progressBar;
     QLabel *server_running;
-
+    QWidget *container;
 
 
     // Other private methods (e.g., loadDeviceTableX)

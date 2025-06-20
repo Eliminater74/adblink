@@ -177,7 +177,10 @@
         setDonateButtonActive(donation != "jocala.com");
 
 
-        QWidget* container = new QWidget(statusBar);
+        statusBar()->addWidget(container); // Example: Add container to status bar
+
+
+         container = new QWidget(statusBar());
         container->setFixedHeight(statusBar->height());
         container->setMinimumWidth(statusBar->width());
 
@@ -2727,6 +2730,7 @@
         QString command;
         QString s = jobname;
         RunProcessList << s;
+
         server_running->setText(s);
 
         int tsvalue = 4000;
