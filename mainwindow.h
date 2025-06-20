@@ -362,9 +362,14 @@ private slots:
     QNetworkAccessManager *m_networkManager;
     usbfileDialog *fmdialog;
     QStringList RunProcessList;
-    QPushButton* setupDonateButton(QWidget* parent, int x, int y);
+    // QPushButton* setupDonateButton(QWidget* parent, int x, int y);
+
+    QPushButton* setupDonateButton(QWidget* parent);
+
     QPushButton* donateButton;
     void setDonateButtonActive(bool active);
+
+     QWidget *container;
 
 
     const QString vqurl = "http://www.jocala.com/version.txt";

@@ -162,12 +162,25 @@
       ui->progressBar->setTextVisible(true);
     #endif //Q_OS_MAC
 
+      donateButton = setupDonateButton(ui->statusBar);
+      QString donation = readDonationValue();
+      setDonateButtonActive(donation != "jocala.com");
+
+      container = new QWidget(ui->statusBar);
+      container->setFixedHeight(ui->statusBar->height());
+      container->setMinimumWidth(ui->statusBar->width());
+
+
+      int xPosition = 120;
+      donateButton->setParent(container);
+      donateButton->move(xPosition, (container->height() - donateButton->height()) / 2); // Center vertically
+      ui->statusBar->addPermanentWidget(container, 1);
 
 
          ui->statusBar->addPermanentWidget(ui->server_running);
          ui->statusBar->addPermanentWidget(ui->progressBar);
          ui->progressBar->setHidden(true);
-
+         container->setHidden(false);
 
 
 
@@ -305,10 +318,10 @@
         setFixedSize(575,390);
         buttonsetup();
         gridsetup();
-        setupDonateButton(ui->centralWidget, 132, 315);
+       // setupDonateButton(ui->centralWidget, 132, 315);
 
-        QString donation = readDonationValue();
-        setDonateButtonActive(donation != "jocala.com");
+     //   QString donation = readDonationValue();
+      //  setDonateButtonActive(donation != "jocala.com");
 
         ui->server_running->setText("");
 
@@ -513,9 +526,9 @@
 
   }
 
-  //////////////////////////////////////////////
 
-  QPushButton* MainWindow::setupDonateButton(QWidget* parent, int x, int y) {
+
+  QPushButton* MainWindow::setupDonateButton(QWidget* parent) {
          donateButton = new QPushButton(parent); // Assign to member variable
          QPixmap pix(":/assets/donatel.png");
          if (pix.isNull()) {
@@ -527,7 +540,7 @@
       donateButton->setText("");
       donateButton->setIconSize(QSize(300, 20));
          }
-         donateButton->setGeometry(x, y, 300, 20); // Use x, y parameters
+         donateButton->setFixedHeight(26); // Match status bar height
          donateButton->setStyleSheet(
              "QPushButton {"
              "   border: none;"
@@ -544,8 +557,14 @@
       qDebug() << "Warning: on_donate_clicked slot not found";
          }
 
+         QString donation = readDonationValue();
+         setDonateButtonActive(donation != "jocala.com");
+
          return donateButton;
-    }
+  }
+
+
+
 
     void MainWindow::setDonateButtonActive(bool active) {
          if (donateButton) {
@@ -2775,6 +2794,7 @@
         QString command;
         QString s = jobname;
         RunProcessList << s;
+        container->setHidden(true);
         ui->server_running->setText(s);
 
         int tsvalue = 4000;
@@ -2799,6 +2819,8 @@
            ui->progressBar->setHidden(true);
            ui->progressBar->setValue(0);
            ui->server_running->setText("");
+           container->setHidden(false);
+
         }
 
         serverlabel();
