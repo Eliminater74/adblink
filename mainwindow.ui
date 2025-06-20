@@ -22,19 +22,7 @@
   <property name="styleSheet">
    <string notr="true"/>
   </property>
-  <widget class="QWidget" name="centralWidget">
-   <widget class="QWidget" name="connwidget" native="true">
-    <property name="geometry">
-     <rect>
-      <x>350</x>
-      <y>4</y>
-      <width>221</width>
-      <height>151</height>
-     </rect>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QWidget" name="centralWidget"/>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
