@@ -18,7 +18,8 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QHeaderView>
-
+#include <QStatusBar>
+#include <QProgressBar>
 #include "devicerecord.h"
 
 
@@ -360,6 +361,9 @@ private slots:
   void on_actionSend_text_triggered();
 
 
+
+
+
   void on_actionEdit_XML_triggered();
 
   void on_actionScreen_Capture_triggered();
@@ -431,7 +435,8 @@ private slots:
     QWidget *statusBarWidget;
     QVBoxLayout *statusLayout;
     QLabel *statusLabel;
-  //  QLabel *server_running;
+    QProgressBar *progressBar;
+    QLabel *server_running;
 
     // Other private methods (e.g., loadDeviceTableX)
     // void loadDeviceTableX(QTableWidget *table);

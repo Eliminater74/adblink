@@ -1,5 +1,5 @@
     #include "mainwindow.h"
-    #include "ui_mainwindow.h"
+   #include "ui_mainwindow.h"
     #include "about.h"
     #include "helpdialog.h"
     #include "connectadb.h"
@@ -86,6 +86,9 @@
     #include <QScrollBar>
     #include <QtGlobal>
     #include <QHeaderView>
+    #include <QStatusBar>
+    #include <QProgressBar>
+
 
     #ifdef Q_OS_LINUX
      int os=0;
@@ -155,21 +158,21 @@
          ui->setupUi(this);
          setFixedSize(700,500);
          setWindowTitle(" ");
-
+          QStatusBar *statusBar = new QStatusBar(this);
+          setStatusBar(statusBar);
+         progressBar = new QProgressBar(this);
+         server_running = new QLabel("", this);
 
 #ifdef Q_OS_MAC
       //https://bugreports.qt.io/browse/QTBUG-51120
-      ui->progressBar->setTextVisible(true);
+        progressBar->setTextVisible(true);
     #endif //Q_OS_MAC
 
 
 
-         ui->statusBar->addPermanentWidget(ui->server_running);
-         ui->statusBar->addPermanentWidget(ui->progressBar);
-         ui->progressBar->setHidden(true);
-
-
-
+         statusBar->addPermanentWidget(server_running);
+         statusBar->addPermanentWidget(progressBar);
+          progressBar->setHidden(true);
 
 
       rotate_logfile();
@@ -311,7 +314,7 @@
         QString donation = readDonationValue();
         setDonateButtonActive(donation != "jocala.com");
 
-        ui->server_running->setText("");
+        server_running->setText("");
 
         connections();
         loadDeviceTableX(deviceTable);;
@@ -869,15 +872,15 @@
     /////////////////////////////////////////////////////
     void MainWindow::TimerEvent()
     {
-      int value = ui->progressBar->value();
+      int value = progressBar->value();
 
       if (value >= 100)
           {
              value = 0;
-             ui->progressBar->reset();
+             progressBar->reset();
          }
 
-      ui->progressBar->setValue(value+1);
+      progressBar->setValue(value+1);
 
 
 
@@ -3062,12 +3065,12 @@
 
     QString MainWindow::RunLongProcess(QString cstring, QString jobname)
     {
-        ui->progressBar->setHidden(false);
-        ui->progressBar->setValue(0);
+        progressBar->setHidden(false);
+        progressBar->setValue(0);
         QString command;
         QString s = jobname;
         RunProcessList << s;
-        ui->server_running->setText(s);
+        server_running->setText(s);
 
         int tsvalue = 4000;
 
@@ -3082,15 +3085,15 @@
         if (RunProcessList.count() > 0)
         {
            //activityIcon(true);
-           ui->progressBar->setHidden(false);
-           ui->progressBar->setValue(0);
+           progressBar->setHidden(false);
+           progressBar->setValue(0);
         }
         else
         {
            //activityIcon(false);
-           ui->progressBar->setHidden(true);
-           ui->progressBar->setValue(0);
-           ui->server_running->setText("");
+           progressBar->setHidden(true);
+           progressBar->setValue(0);
+           server_running->setText("");
         }
 
         serverlabel();
