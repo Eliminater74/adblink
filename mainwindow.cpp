@@ -155,9 +155,10 @@
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
 
-         ui->setupUi(this);
 
-        setFixedSize(675,475);
+
+         setFixedSize(675,475);
+         ui->setupUi(this);
          setWindowTitle(" ");
           QStatusBar *statusBar = new QStatusBar(this);
           setStatusBar(statusBar);
@@ -7452,6 +7453,8 @@ void MainWindow::on_actionSwitch_View_triggered()
 
 ///////////////////////////////////
 
+
+
 QPushButton* MainWindow::setupDonateButton(QWidget* parent) {
    donateButton = new QPushButton(parent); // Assign to member variable
    QPixmap pix(":/assets/donatel.png");
@@ -7486,6 +7489,8 @@ QPushButton* MainWindow::setupDonateButton(QWidget* parent) {
 
    return donateButton;
 }
+
+/*
 
 void MainWindow::setupUI() {
    centralWidget = new QWidget(this);
@@ -7741,13 +7746,6 @@ void MainWindow::setupUI() {
         }
    }
    stackedWidget->addWidget(gridWidget2);
-/*
-   donateButton = setupDonateButton(centralWidget);
-   mainLayout->addWidget(donateButton);
-
-   QString donation = readDonationValue();
-   setDonateButtonActive(donation != "jocala.com");
-*/
 
    // --- FINALIZATION ---
    stackedWidget->setCurrentIndex(0);
@@ -7758,7 +7756,7 @@ void MainWindow::setupUI() {
    loadDeviceTableX(deviceTable);
    centralWidget->updateGeometry();
 }
-
+*/
 
 
 /////////////////////////////////////////
@@ -7837,4 +7835,338 @@ if (QFileInfo::exists(databasedir + "/adblink.json")) {
         logfile("Failed to create adblink.json");
    }
  }
+}
+
+/////////////////////////////////
+
+void MainWindow::setupUI() {
+ centralWidget = new QWidget(this);
+ setCentralWidget(centralWidget);
+ mainLayout = new QVBoxLayout(centralWidget);
+ mainLayout->setContentsMargins(0, 0, 0, 0);
+ mainLayout->setSpacing(0);
+
+ // --- WRAPPER for Top Section ---
+ topWidget = new QWidget();
+ topWidget->setFixedHeight(180);
+ upperLayout = new QHBoxLayout(topWidget);
+ upperLayout->setSpacing(0);
+ upperLayout->setContentsMargins(28, 0, 0, 0); // Restore 28px left margin
+ upperLayout->setAlignment(Qt::AlignTop);
+
+ // --- TABLE SCROLL AREA ---
+ deviceTable = new QTableWidget(0, 3);
+ deviceTable->setFixedSize(390, 160); // Restore original width
+ deviceTable->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+ deviceTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+ deviceTable->horizontalHeader()->setMinimumSectionSize(130);
+ deviceTable->horizontalHeader()->setMaximumSectionSize(130);
+ deviceTable->horizontalHeader()->setStretchLastSection(false);
+ deviceTable->horizontalHeader()->setVisible(true); // Restore headers
+ deviceTable->verticalHeader()->setVisible(true);
+ deviceTable->setColumnWidth(0, 130);
+ deviceTable->setColumnWidth(1, 130);
+ deviceTable->setColumnWidth(2, 130);
+ deviceTable->setSelectionMode(QAbstractItemView::SingleSelection);
+ deviceTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+ deviceTable->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
+ deviceTable->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+ deviceTable->setFocusPolicy(Qt::NoFocus); // Prevent focus issues
+ deviceTable->setShowGrid(true);
+ deviceTable->setStyleSheet(""); // Remove stylesheet
+ deviceTable->setWordWrap(false); // Prevent content overflow
+ deviceTable->setTextElideMode(Qt::ElideRight); // Clip long text
+
+
+ scrollArea = new QScrollArea();
+ scrollArea->setWidget(deviceTable);
+ scrollArea->setWidgetResizable(false);
+ scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+ scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+ scrollArea->setFixedSize(390, 180); // Restore original size
+ scrollArea->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+ scrollArea->setStyleSheet("");
+ upperLayout->addWidget(scrollArea);
+
+ // Debug on row click to monitor state
+ connect(deviceTable, &QTableWidget::itemClicked, this, [this]() {
+     qDebug() << "Row clicked - ScrollBar value:" << scrollArea->horizontalScrollBar()->value()
+              << "Table geometry:" << deviceTable->geometry()
+              << "Viewport geometry:" << deviceTable->viewport()->geometry()
+              << "Column widths:" << deviceTable->columnWidth(0) << deviceTable->columnWidth(1) << deviceTable->columnWidth(2)
+              << "Selected row:" << deviceTable->currentRow();
+     // Log cell content
+     if (deviceTable->currentRow() >= 0) {
+         for (int col = 0; col < 3; ++col) {
+             QTableWidgetItem* item = deviceTable->item(deviceTable->currentRow(), col);
+             qDebug() << "Col" << col << "content:" << (item ? item->text() : "null");
+         }
+     }
+ });
+
+ // --- Cosmetic Horizontal Gap ---
+ cosmeticGap = new QSpacerItem(12, 0, QSizePolicy::Fixed, QSizePolicy::Minimum);
+ upperLayout->addItem(cosmeticGap);
+
+ // --- RIGHT COLUMN ---
+ rightColumnWidget = new QWidget();
+ rightColumnWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+ rightLayout = new QVBoxLayout(rightColumnWidget);
+ rightLayout->setSpacing(0);
+ rightLayout->setContentsMargins(0, 0, 0, 0);
+ rightLayout->setAlignment(Qt::AlignTop);
+
+ // Button grid (6 buttons)
+ buttonGridWidget = new QWidget();
+ buttonGridWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+ buttonGridLayout = new QGridLayout(buttonGridWidget);
+ buttonGridLayout->setSpacing(6);
+ buttonGridLayout->setContentsMargins(0, 0, 0, 0);
+
+ for (int i = 0; i < 6; ++i) {
+   buttons[i] = new QPushButton();
+   buttons[i]->setFixedSize(110, 42);
+   buttonGridLayout->addWidget(buttons[i], i / 2, i % 2);
+   switch (i) {
+   case 0:
+        buttons[i]->setText("Connect");
+        connect(buttons[i], &QPushButton::clicked, this, &MainWindow::connButton_clicked);
+        break;
+   case 1:
+        buttons[i]->setText("Disconnect");
+        connect(buttons[i], &QPushButton::clicked, this, &MainWindow::disButton_clicked);
+        break;
+   case 2:
+        buttons[i]->setText("New");
+        connect(buttons[i], &QPushButton::clicked, this, [this](bool) { dataentry(true); });
+        break;
+   case 3:
+        buttons[i]->setText("Edit");
+        connect(buttons[i], &QPushButton::clicked, this, [this](bool) { dataentry(false); });
+        break;
+   case 4:
+        buttons[i]->setText("Delete");
+        connect(buttons[i], &QPushButton::clicked, this, &MainWindow::delRecordButton_clicked);
+        break;
+   case 5:
+        buttons[i]->setText("Clear");
+        connect(buttons[i], &QPushButton::clicked, this, &MainWindow::on_clearAdhocButton_clicked);
+        break;
+   }
+ }
+ rightLayout->addWidget(buttonGridWidget);
+
+ // --- Cosmetic Vertical Gap ---
+ vSpacer = new QSpacerItem(0, 15, QSizePolicy::Minimum, QSizePolicy::Fixed);
+ rightLayout->addItem(vSpacer);
+
+ // Line edit
+ adhoc_ip = new QLineEdit();
+ adhoc_ip->setPlaceholderText("ip address<:port>");
+ adhoc_ip->setMaximumWidth(250);
+ adhoc_ip->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+ rightLayout->addWidget(adhoc_ip);
+
+ upperLayout->addWidget(rightColumnWidget);
+ mainLayout->addWidget(topWidget);
+
+ // --- STACKED WIDGET ---
+ stackedWidget = new QStackedWidget();
+ mainLayout->addWidget(stackedWidget);
+
+ // Grid 1 (16 buttons)
+ gridWidget1 = new QWidget();
+ gridLayout1 = new QGridLayout(gridWidget1);
+ gridLayout1->setSpacing(0);
+ gridLayout1->setContentsMargins(0, 0, 0, 0);
+
+ for (int i = 0; i < 16; ++i) {
+   grid1Buttons[i] = new QPushButton();
+   grid1Buttons[i]->setFixedSize(140, 52);
+   gridLayout1->addWidget(grid1Buttons[i], i / 4, i % 4);
+   switch (i) {
+   case 0:
+        grid1Buttons[i]->setText("File Manager");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::fmButton_clicked);
+        break;
+   case 1:
+        grid1Buttons[i]->setText("ADB Shell");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::adbshellButton_clicked);
+        break;
+   case 2:
+        grid1Buttons[i]->setText("Backup");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::backupButton_clicked);
+        break;
+   case 3:
+        grid1Buttons[i]->setText("Restore");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::restoreButton_clicked);
+        break;
+   case 4:
+        grid1Buttons[i]->setText("Install APK");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::sideload_Button_clicked);
+        break;
+   case 5:
+        grid1Buttons[i]->setText("Uninstall APK");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::uninstall_Button_clicked);
+        break;
+   case 6:
+        grid1Buttons[i]->setText("Move Kodi Data");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::mvdataButton_clicked);
+        break;
+   case 7:
+        grid1Buttons[i]->setText("Edit Timers");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::pushTimers_clicked);
+        break;
+   case 8:
+        grid1Buttons[i]->setText("Screen Capture");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::screenCap);
+        break;
+   case 9:
+        grid1Buttons[i]->setText("Stop ADB");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::killServer_clicked);
+        break;
+   case 10:
+        grid1Buttons[i]->setText("Scrcpy");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::scpyButton_clicked);
+        break;
+   case 11:
+        grid1Buttons[i]->setText("Edit Cache");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::cacheButton_clicked);
+        break;
+   case 12:
+        grid1Buttons[i]->setText("Console");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::doConsole_clicked);
+        break;
+   case 13:
+        grid1Buttons[i]->setText("Keypad");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::keypadButton_clicked);
+        break;
+   case 14:
+        grid1Buttons[i]->setText("Start App");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::startapp_clicked);
+        break;
+   case 15:
+        grid1Buttons[i]->setText("Stop App");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::stopapp_clicked);
+        break;
+   }
+ }
+
+ stackedWidget->addWidget(gridWidget1);
+
+ // Grid 2 (16 buttons)
+ gridWidget2 = new QWidget();
+ gridLayout2 = new QGridLayout(gridWidget2);
+ gridLayout2->setSpacing(0);
+ gridLayout2->setContentsMargins(0, 0, 0, 0);
+
+ for (int i = 0; i < 16; ++i) {
+   grid2Buttons[i] = new QPushButton();
+   grid2Buttons[i]->setFixedSize(140, 52);
+   gridLayout2->addWidget(grid2Buttons[i], i / 4, i % 4);
+   switch (i) {
+   case 0:
+        grid2Buttons[i]->setText("File Manager");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::fmButton_clicked);
+        break;
+   case 1:
+        grid2Buttons[i]->setText("Install APK");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::sideload_Button_clicked);
+        break;
+   case 2:
+        grid2Buttons[i]->setText("Uninstall APK");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::uninstall_Button_clicked);
+        break;
+   case 3:
+        grid2Buttons[i]->setText("System Info");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::infoArchitecture);
+        break;
+   case 4:
+        grid2Buttons[i]->setText("Screen Capture");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::screenCap);
+        break;
+   case 5:
+        grid2Buttons[i]->setText("Stop ADB");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::killServer_clicked);
+        break;
+   case 6:
+        grid2Buttons[i]->setText("Start App");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::startapp_clicked);
+        break;
+   case 7:
+        grid2Buttons[i]->setText("Stop App");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::stopapp_clicked);
+        break;
+   case 8:
+        grid2Buttons[i]->setText("ADB Shell");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::adbshellButton_clicked);
+        break;
+   case 9:
+        grid2Buttons[i]->setText("Console");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::doConsole_clicked);
+        break;
+   case 10:
+        grid2Buttons[i]->setText("Send Text");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionSend_text_triggered);
+        break;
+   case 11:
+        grid2Buttons[i]->setText("ScrCpy");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::scpyButton_clicked);
+        break;
+   case 12:
+        grid2Buttons[i]->setText("Button 35");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+        break;
+   case 13:
+        grid2Buttons[i]->setText("Button 36");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+        break;
+   case 14:
+        grid2Buttons[i]->setText("Button 37");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+        break;
+   case 15:
+        grid2Buttons[i]->setText("Button 38");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+        break;
+   }
+ }
+
+ stackedWidget->addWidget(gridWidget2);
+
+ // --- FINALIZATION ---
+ stackedWidget->setCurrentIndex(0);
+ scrollArea->show();
+ deviceTable->show();
+ buttonGridWidget->show();
+ adhoc_ip->show();
+
+ // Debug before loading table
+ qDebug() << "Before loadDeviceTableX - ScrollArea geometry:" << scrollArea->geometry()
+          << "Table geometry:" << deviceTable->geometry()
+          << "Viewport geometry:" << deviceTable->viewport()->geometry()
+          << "Column widths:" << deviceTable->columnWidth(0) << deviceTable->columnWidth(1) << deviceTable->columnWidth(2);
+
+ loadDeviceTableX(deviceTable);
+
+ // Debug after loading table
+ qDebug() << "After loadDeviceTableX - ScrollArea geometry:" << scrollArea->geometry()
+          << "Table geometry:" << deviceTable->geometry()
+          << "Viewport geometry:" << deviceTable->viewport()->geometry()
+          << "Column widths:" << deviceTable->columnWidth(0) << deviceTable->columnWidth(1) << deviceTable->columnWidth(2);
+
+ // Force layout update
+ centralWidget->layout()->activate();
+ centralWidget->update();
+ scrollArea->updateGeometry();
+ deviceTable->updateGeometry();
+
+ // Debug final state
+ qDebug() << "Final - ScrollArea geometry:" << scrollArea->geometry()
+          << "Table geometry:" << deviceTable->geometry()
+          << "Viewport geometry:" << deviceTable->viewport()->geometry()
+          << "ScrollArea visible:" << scrollArea->isVisible()
+          << "Table visible:" << deviceTable->isVisible()
+          << "Column widths:" << deviceTable->columnWidth(0) << deviceTable->columnWidth(1) << deviceTable->columnWidth(2);
 }

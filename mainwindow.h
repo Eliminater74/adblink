@@ -435,16 +435,16 @@ private slots:
     QVBoxLayout *rightLayout;
     QWidget *buttonGridWidget;
     QGridLayout *buttonGridLayout;
-    QPushButton *buttons[6]; // Array for the 6 buttons
+    QPushButton *buttons[6];
     QSpacerItem *vSpacer;
     QLineEdit *adhoc_ip;
     QStackedWidget *stackedWidget;
     QWidget *gridWidget1;
     QGridLayout *gridLayout1;
-    QPushButton *grid1Buttons[16]; // Array for grid1 buttons
+    QPushButton *grid1Buttons[16];
     QWidget *gridWidget2;
     QGridLayout *gridLayout2;
-    QPushButton *grid2Buttons[16]; // Array for grid2 buttons
+    QPushButton *grid2Buttons[16];
     QWidget *statusBarWidget;
     QVBoxLayout *statusLayout;
     QLabel *statusLabel;
