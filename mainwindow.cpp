@@ -308,7 +308,6 @@
       buttonsetup();
    gridsetup();
         setupDonateButton(ui->centralWidget, 132, 315);
-
         QString donation = readDonationValue();
         setDonateButtonActive(donation != "jocala.com");
 
@@ -575,16 +574,13 @@
              }
              stackedWidget->addWidget(gridWidget2);
 
-             // --- STATUS BAR ---
-             statusBarWidget = new QWidget();
-             statusBarWidget->setFixedHeight(26);
-             statusLayout = new QVBoxLayout(statusBarWidget);
-             statusLayout->setContentsMargins(0, 0, 0, 0);
-             statusLayout->setSpacing(0);
-             statusLabel = new QLabel("Status Bar");
-             statusLabel->setAlignment(Qt::AlignCenter);
-             statusLayout->addWidget(statusLabel);
-             mainLayout->addWidget(statusBarWidget);
+             donateButton = setupDonateButton(centralWidget);
+             mainLayout->addWidget(donateButton);
+
+          //   setupDonateButton(centralWidget, 132, 315);
+             QString donation = readDonationValue();
+             setDonateButtonActive(donation != "jocala.com");
+
 
              // --- FINALIZATION ---
              stackedWidget->setCurrentIndex(0);
@@ -594,7 +590,15 @@
              adhoc_ip->show();
              loadDeviceTableX(deviceTable);
              centralWidget->updateGeometry();
-         }
+
+
+
+
+     }
+
+
+
+
 
          MainWindow::~MainWindow()
          {
@@ -603,6 +607,7 @@
 
 
 
+//////////////////////////////////////////////
 
     void MainWindow::onApplicationQuit() {
 
@@ -832,135 +837,7 @@
 
     }
 
-///////////////////////////////////////////
-
-    void MainWindow::gridsetup()
-    {
-
-         QWidget* gridWidget1 = new QWidget();
-         QWidget* gridWidget2 = new QWidget();
-
-
-         QGridLayout* gridLayout1 = new QGridLayout(gridWidget1);
-         QGridLayout* gridLayout2 = new QGridLayout(gridWidget2);
-
-         // --------- Fill first grid
-         // Row 0
-         gridLayout1->addWidget(ui->fmButton,        0, 0);
-         gridLayout1->addWidget(ui->adbshellButton1, 0, 1);
-         gridLayout1->addWidget(ui->backupButton,    0, 2);
-         gridLayout1->addWidget(ui->restoreButton,   0, 3);
-
-         // Row 1
-         gridLayout1->addWidget(ui->sideload_Button,  1, 0);
-         gridLayout1->addWidget(ui->uninstall_Button, 1, 1);
-         gridLayout1->addWidget(ui->mvdataButton,     1, 2);
-         gridLayout1->addWidget(ui->pushTimers,       1, 3);
-
-         // Row 2
-         gridLayout1->addWidget(ui->screencap1,    2, 0);
-         gridLayout1->addWidget(ui->stopADB,       2, 1);
-         gridLayout1->addWidget(ui->scpyButton,    2, 2);
-         gridLayout1->addWidget(ui->cacheButton,   2, 3);
-
-         // Row 3
-         gridLayout1->addWidget(ui->doConsole,     3, 0);
-         gridLayout1->addWidget(ui->keypadButton,  3, 1);
-         gridLayout1->addWidget(ui->startapp,      3, 2);
-         gridLayout1->addWidget(ui->stopapp,       3, 3);
-
-         // --------- Fill second grid
-         // Row 0
-         gridLayout2->addWidget(ui->fmButton_2,         0, 0);
-         gridLayout2->addWidget(ui->sideload_Button_2,  0, 1);
-         gridLayout2->addWidget(ui->uninstall_Button_2, 0, 2);
-         gridLayout2->addWidget(ui->infoButton,         0, 3);
-
-         // Row 1
-         gridLayout2->addWidget(ui->screencap2,   1, 0);
-         gridLayout2->addWidget(ui->stopADB2,     1, 1);
-         gridLayout2->addWidget(ui->startapp_2,   1, 2);
-         gridLayout2->addWidget(ui->stopapp_2,    1, 3);
-
-         // Row 2
-         gridLayout2->addWidget(ui->adbshellButton_2, 2, 0);
-         gridLayout2->addWidget(ui->doConsole_2,      2, 1);
-         gridLayout2->addWidget(ui->textButton,       2, 2);
-         gridLayout2->addWidget(ui->scpyButton_2,     2, 3);
-
-         // Row 3 — spacers to match grid1 layout and size
-         gridLayout2->addItem(new QSpacerItem(0, 30, QSizePolicy::Minimum, QSizePolicy::Fixed), 3, 0);
-         gridLayout2->addItem(new QSpacerItem(0, 30, QSizePolicy::Minimum, QSizePolicy::Fixed), 3, 1);
-         gridLayout2->addItem(new QSpacerItem(0, 30, QSizePolicy::Minimum, QSizePolicy::Fixed), 3, 2);
-         gridLayout2->addItem(new QSpacerItem(0, 30, QSizePolicy::Minimum, QSizePolicy::Fixed), 3, 3);
-
-
-         gridWidget1->setContentsMargins(0, 0, 0, 0);
-         gridLayout1->setHorizontalSpacing(0);
-         gridLayout1->setVerticalSpacing(0);
-
-         gridWidget2->setContentsMargins(0, 0, 0, 0);
-         gridLayout2->setHorizontalSpacing(0);
-         gridLayout2->setVerticalSpacing(0);
-
-
-         ui->stackedWidget->layout()->setContentsMargins(0, 0, 0, 0);
-
-
-
-
-
-         // --------- Clear existing widgets from stackedWidget ---------
-         while (ui->stackedWidget->count() > 0) {
-      QWidget* w = ui->stackedWidget->widget(0);
-      ui->stackedWidget->removeWidget(w);
-      delete w;
-         }
-
-         // --------- Add the new grid widgets ---------
-         ui->stackedWidget->addWidget(gridWidget1);
-         ui->stackedWidget->addWidget(gridWidget2);
-
-         // --------- Show the first grid ---------
-         ui->stackedWidget->setCurrentIndex(0);
-
-
-  }
 */
-
-  //////////////////////////////////////////////
-
-  QPushButton* MainWindow::setupDonateButton(QWidget* parent, int x, int y) {
-         donateButton = new QPushButton(parent); // Assign to member variable
-         QPixmap pix(":/assets/donatel.png");
-         if (pix.isNull()) {
-      qDebug() << "Error: Failed to load :/assets/donatel.png";
-      donateButton->setText("Donate");
-         } else {
-      QIcon icon(pix);
-      donateButton->setIcon(icon);
-      donateButton->setText("");
-      donateButton->setIconSize(QSize(300, 20));
-         }
-         donateButton->setGeometry(x, y, 300, 20); // Use x, y parameters
-         donateButton->setStyleSheet(
-             "QPushButton {"
-             "   border: none;"
-             "   background: transparent;"
-             "   padding: 0;"
-             "}"
-             "QPushButton:hover {"
-             "   background: rgba(200, 200, 200, 50);"
-             "}"
-             );
-         if (QMetaObject::checkConnectArgs(SIGNAL(clicked()), SLOT(on_donate_clicked()))) {
-      connect(donateButton, &QPushButton::clicked, this, &MainWindow::on_donate_clicked);
-         } else {
-      qDebug() << "Warning: on_donate_clicked slot not found";
-         }
-
-         return donateButton;
-    }
 
     void MainWindow::setDonateButtonActive(bool active) {
          if (donateButton) {
@@ -7722,4 +7599,40 @@ void MainWindow::on_actionSwitch_View_triggered()
 
 }
 
+///////////////////////////////////
+
+QPushButton* MainWindow::setupDonateButton(QWidget* parent) {
+   donateButton = new QPushButton(parent); // Assign to member variable
+   QPixmap pix(":/assets/donatel.png");
+   if (pix.isNull()) {
+        qDebug() << "Error: Failed to load :/assets/donatel.png";
+        donateButton->setText("Donate");
+   } else {
+        QIcon icon(pix);
+        donateButton->setIcon(icon);
+        donateButton->setText("");
+        donateButton->setIconSize(QSize(300, 20));
+   }
+   donateButton->setFixedHeight(26); // Match status bar height
+   donateButton->setStyleSheet(
+       "QPushButton {"
+       "   border: none;"
+       "   background: transparent;"
+       "   padding: 0;"
+       "}"
+       "QPushButton:hover {"
+       "   background: rgba(200, 200, 200, 50);"
+       "}"
+       );
+   if (QMetaObject::checkConnectArgs(SIGNAL(clicked()), SLOT(on_donate_clicked()))) {
+        connect(donateButton, &QPushButton::clicked, this, &MainWindow::on_donate_clicked);
+   } else {
+        qDebug() << "Warning: on_donate_clicked slot not found";
+   }
+
+   QString donation = readDonationValue();
+   setDonateButtonActive(donation != "jocala.com");
+
+   return donateButton;
+}
 
