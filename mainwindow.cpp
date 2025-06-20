@@ -1,5 +1,5 @@
     #include "mainwindow.h"
-   #include "ui_mainwindow.h"
+    #include "ui_mainwindow.h"
     #include "about.h"
     #include "helpdialog.h"
     #include "connectadb.h"
@@ -156,7 +156,8 @@
 
 
          ui->setupUi(this);
-         setFixedSize(700,500);
+
+        setFixedSize(675,475);
          setWindowTitle(" ");
           QStatusBar *statusBar = new QStatusBar(this);
           setStatusBar(statusBar);
@@ -169,13 +170,28 @@
     #endif //Q_OS_MAC
 
 
+        // Assuming donateButton, server_running, and progressBar are already created
+        donateButton = setupDonateButton(statusBar);
+        QString donation = readDonationValue();
+        setDonateButtonActive(donation != "jocala.com");
 
-         statusBar->addPermanentWidget(server_running);
-         statusBar->addPermanentWidget(progressBar);
-          progressBar->setHidden(true);
 
+        QWidget* container = new QWidget(statusBar);
+        container->setFixedHeight(statusBar->height());
+        container->setMinimumWidth(statusBar->width());
 
-      rotate_logfile();
+        int buttonWidth = donateButton->width();
+        int xPosition = 150;
+        donateButton->setParent(container);
+        donateButton->move(xPosition, (container->height() - donateButton->height()) / 2); // Center vertically
+
+        // Add the container and other widgets to the status bar
+        statusBar->addWidget(container, 1); // Use addWidget with stretch to fill space
+        statusBar->addPermanentWidget(server_running);
+        statusBar->addPermanentWidget(progressBar);
+        progressBar->setHidden(true);
+
+       rotate_logfile();
 
 
       QDateTime dateTime = QDateTime::currentDateTime();
@@ -231,371 +247,11 @@
          }
 
          createTables();
+         createjson();
 
 
-         QFile jsonFile(databasedir + "/adblink.json");
-         QJsonObject obj;
-
-         // Default values for the JSON object
-         QJsonObject defaultValues;
-         defaultValues["checkversion"] = true;
-         defaultValues["scrcpy"] = true;
-         defaultValues["startview"] = true;
-         defaultValues["dropdown"] = "0";
-         defaultValues["download"] = QDir::homePath();
-         defaultValues["install"] = QDir::homePath();
-         defaultValues["backup"] = QDir::homePath();
-         defaultValues["donation"] = "";
-         defaultValues["localadb"] = "";
-         defaultValues["stopapp"] = "org.xbmc.kodi";
-         defaultValues["startapp"] = "org.xbmc.kodi/org.xbmc.kodi.Splash";
-
-         bool needsUpdate = false;
-
-         if (QFileInfo::exists(databasedir + "/adblink.json")) {
-             if (jsonFile.open(QIODevice::ReadOnly)) {
-                 QJsonDocument doc = QJsonDocument::fromJson(jsonFile.readAll());
-                 jsonFile.close();
-                 obj = doc.object();
-
-                 // Create a new object with only the keys from defaultValues
-                 QJsonObject updatedObj;
-                 for (auto it = defaultValues.constBegin(); it != defaultValues.constEnd(); ++it) {
-                    if (obj.contains(it.key())) {
-                        updatedObj[it.key()] = obj[it.key()]; // Keep existing value
-                    } else {
-                        updatedObj[it.key()] = it.value(); // Set default value
-                        needsUpdate = true;
-                    }
-                 }
-
-                 // Check if any keys in obj are not in defaultValues (for removal)
-                 for (const QString &key : obj.keys()) {
-                    if (!defaultValues.contains(key)) {
-                        needsUpdate = true; // Mark for update if obsolete keys are found
-                    }
-                 }
-
-                 // Update obj to the filtered version
-                 obj = updatedObj;
-
-                 // Write updated JSON back to file if any changes were made
-                 if (needsUpdate) {
-                    if (jsonFile.open(QIODevice::WriteOnly)) {
-                        QJsonDocument updatedDoc(obj);
-                        jsonFile.write(updatedDoc.toJson());
-                        jsonFile.close();
-                    } else {
-                        logfile("Failed to write updated adblink.json");
-                    }
-                 }
-             } else {
-                 logfile("Failed to read adblink.json");
-             }
-         } else {
-             // Create new JSON file with default values
-             obj = defaultValues;
-
-             if (jsonFile.open(QIODevice::WriteOnly)) {
-                 QJsonDocument doc(obj);
-                 jsonFile.write(doc.toJson());
-                 jsonFile.close();
-             } else {
-                 logfile("Failed to create adblink.json");
-             }
-         }
-
-/*
-       setFixedSize(700,500);
-       setFixedSize(575,390);
-      buttonsetup();
-   gridsetup();
-        setupDonateButton(ui->centralWidget, 132, 315);
-        QString donation = readDonationValue();
-        setDonateButtonActive(donation != "jocala.com");
-
-        server_running->setText("");
-
-        connections();
-        loadDeviceTableX(deviceTable);;
-        do_versioncheck();
-*/
-
-////////////////////////////////////////////
-
-             centralWidget = new QWidget(this);
-             setCentralWidget(centralWidget);
-             mainLayout = new QVBoxLayout(centralWidget);
-             mainLayout->setContentsMargins(0, 0, 0, 0);
-             mainLayout->setSpacing(0);
-
-             // --- WRAPPER for Top Section ---
-             topWidget = new QWidget();
-             topWidget->setFixedHeight(180);
-             upperLayout = new QHBoxLayout(topWidget);
-             upperLayout->setSpacing(0);
-             upperLayout->setContentsMargins(28, 0, 0, 0);
-             upperLayout->setAlignment(Qt::AlignTop);
-
-             // --- TABLE SCROLL AREA ---
-             deviceTable = new QTableWidget(0, 3);
-             deviceTable->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-             scrollArea = new QScrollArea();
-             scrollArea->setWidget(deviceTable);
-             scrollArea->setWidgetResizable(true);
-             scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-             scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-             scrollArea->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-             scrollArea->setFixedSize(390, 180);
-             upperLayout->addWidget(scrollArea);
-
-             // --- Cosmetic Horizontal Gap ---
-             cosmeticGap = new QSpacerItem(12, 0, QSizePolicy::Fixed, QSizePolicy::Minimum);
-             upperLayout->addItem(cosmeticGap);
-
-             // --- RIGHT COLUMN ---
-             rightColumnWidget = new QWidget();
-             rightColumnWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-             rightLayout = new QVBoxLayout(rightColumnWidget);
-             rightLayout->setSpacing(0);
-             rightLayout->setContentsMargins(0, 0, 0, 0);
-             rightLayout->setAlignment(Qt::AlignTop);
-
-             // Button grid (6 buttons)
-             buttonGridWidget = new QWidget();
-             buttonGridWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-             buttonGridLayout = new QGridLayout(buttonGridWidget);
-             buttonGridLayout->setSpacing(6);
-             buttonGridLayout->setContentsMargins(0, 0, 0, 0);
-
-             for (int i = 0; i < 6; ++i) {
-                 buttons[i] = new QPushButton();
-                 buttons[i]->setFixedSize(110, 42);
-                 buttonGridLayout->addWidget(buttons[i], i / 2, i % 2);
-                 switch (i) {
-                 case 0:
-                    buttons[i]->setText("Connect");
-                    connect(buttons[i], &QPushButton::clicked, this, &MainWindow::connButton_clicked);
-                    break;
-                 case 1:
-                    buttons[i]->setText("Disconnect");
-                    connect(buttons[i], &QPushButton::clicked, this, &MainWindow::disButton_clicked);
-                    break;
-                 case 2:
-                    buttons[i]->setText("New");
-                    connect(buttons[i], &QPushButton::clicked, this, [this](bool) { dataentry(true); });
-                    break;
-                 case 3:
-                    buttons[i]->setText("Edit");
-                    connect(buttons[i], &QPushButton::clicked, this, [this](bool) { dataentry(false); });
-                    break;
-                 case 4:
-                    buttons[i]->setText("Delete");
-                    connect(buttons[i], &QPushButton::clicked, this, &MainWindow::delRecordButton_clicked);
-                    break;
-                 case 5:
-                    buttons[i]->setText("Clear");
-                    connect(buttons[i], &QPushButton::clicked, this, &MainWindow::on_clearAdhocButton_clicked);
-                    break;
-                 }
-             }
-             rightLayout->addWidget(buttonGridWidget);
-
-             // --- Cosmetic Vertical Gap ---
-             vSpacer = new QSpacerItem(0, 15, QSizePolicy::Minimum, QSizePolicy::Fixed);
-             rightLayout->addItem(vSpacer);
-
-             // Line edit
-             adhoc_ip = new QLineEdit();
-             adhoc_ip->setPlaceholderText("ip address<:port>");
-             adhoc_ip->setMaximumWidth(250);
-             adhoc_ip->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-             rightLayout->addWidget(adhoc_ip);
-
-             upperLayout->addWidget(rightColumnWidget);
-             mainLayout->addWidget(topWidget);
-
-             // --- STACKED WIDGET ---
-             stackedWidget = new QStackedWidget();
-             mainLayout->addWidget(stackedWidget);
-
-             // Grid 1 (16 buttons)
-             gridWidget1 = new QWidget();
-             gridLayout1 = new QGridLayout(gridWidget1);
-             gridLayout1->setSpacing(0);
-             gridLayout1->setContentsMargins(0, 0, 0, 0);
-
-             for (int i = 0; i < 16; ++i) {
-                 grid1Buttons[i] = new QPushButton();
-                 grid1Buttons[i]->setFixedSize(140, 52);
-                 gridLayout1->addWidget(grid1Buttons[i], i / 4, i % 4);
-                 switch (i) {
-                 case 0:
-                    grid1Buttons[i]->setText("File Manager");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::fmButton_clicked);
-                    break;
-                 case 1:
-                    grid1Buttons[i]->setText("ADB Shell");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::adbshellButton_clicked);
-                    break;
-                 case 2:
-                    grid1Buttons[i]->setText("Backup");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::backupButton_clicked);
-                    break;
-                 case 3:
-                    grid1Buttons[i]->setText("Restore");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::restoreButton_clicked);
-                    break;
-                 case 4:
-                    grid1Buttons[i]->setText("Install APK");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::sideload_Button_clicked);
-                    break;
-                 case 5:
-                    grid1Buttons[i]->setText("Uninstall APK");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::uninstall_Button_clicked);
-                    break;
-                 case 6:
-                    grid1Buttons[i]->setText("Move Kodi Data");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::mvdataButton_clicked);
-                    break;
-                 case 7:
-                    grid1Buttons[i]->setText("Edit Timers");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::pushTimers_clicked);
-                    break;
-                 case 8:
-                    grid1Buttons[i]->setText("Screen Capture");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::screenCap);
-                    break;
-                 case 9:
-                    grid1Buttons[i]->setText("Stop ADB");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::killServer_clicked);
-                    break;
-                 case 10:
-                    grid1Buttons[i]->setText("Scrcpy");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::scpyButton_clicked);
-                    break;
-                 case 11:
-                    grid1Buttons[i]->setText("Edit Cache");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::cacheButton_clicked);
-                    break;
-                 case 12:
-                    grid1Buttons[i]->setText("Console");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::doConsole_clicked);
-                    break;
-                 case 13:
-                    grid1Buttons[i]->setText("Keypad");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::keypadButton_clicked);
-                    break;
-                 case 14:
-                    grid1Buttons[i]->setText("Start App");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::startapp_clicked);
-                    break;
-                 case 15:
-                    grid1Buttons[i]->setText("Stop App");
-                    connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::stopapp_clicked);
-                    break;
-                 }
-             }
-             stackedWidget->addWidget(gridWidget1);
-
-             // Grid 2 (16 buttons)
-             gridWidget2 = new QWidget();
-             gridLayout2 = new QGridLayout(gridWidget2);
-             gridLayout2->setSpacing(0);
-             gridLayout2->setContentsMargins(0, 0, 0, 0);
-
-             for (int i = 0; i < 16; ++i) {
-                 grid2Buttons[i] = new QPushButton();
-                 grid2Buttons[i]->setFixedSize(140, 52);
-                 gridLayout2->addWidget(grid2Buttons[i], i / 4, i % 4);
-                 switch (i) {
-                 case 0:
-                    grid2Buttons[i]->setText("File Manager");
-                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::fmButton_clicked);
-                    break;
-                 case 1:
-                    grid2Buttons[i]->setText("Install APK");
-                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::sideload_Button_clicked);
-                    break;
-                 case 2:
-                    grid2Buttons[i]->setText("Uninstall APK");
-                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::uninstall_Button_clicked);
-                    break;
-                 case 3:
-                    grid2Buttons[i]->setText("System Info");
-                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::infoArchitecture);
-                    break;
-                 case 4:
-                    grid2Buttons[i]->setText("Screen Capture");
-                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::screenCap);
-                    break;
-                 case 5:
-                    grid2Buttons[i]->setText("Stop ADB");
-                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::killServer_clicked);
-                    break;
-                 case 6:
-                    grid2Buttons[i]->setText("Start App");
-                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::startapp_clicked);
-                    break;
-                 case 7:
-                    grid2Buttons[i]->setText("Stop App");
-                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::stopapp_clicked);
-                    break;
-                 case 8:
-                    grid2Buttons[i]->setText("ADB Shell");
-                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::adbshellButton_clicked);
-                    break;
-                 case 9:
-                    grid2Buttons[i]->setText("Console");
-                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::doConsole_clicked);
-                    break;
-                 case 10:
-                    grid2Buttons[i]->setText("Send Text");
-                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionSend_text_triggered);
-                    break;
-                 case 11:
-                    grid2Buttons[i]->setText("ScrCpy");
-                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::scpyButton_clicked);
-                    break;
-                 case 12:
-                    grid2Buttons[i]->setText("Button 35");
-                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                    break;
-                 case 13:
-                    grid2Buttons[i]->setText("Button 36");
-                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                    break;
-                 case 14:
-                    grid2Buttons[i]->setText("Button 37");
-                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                    break;
-                 case 15:
-                    grid2Buttons[i]->setText("Button 38");
-                    connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-                    break;
-                 }
-             }
-             stackedWidget->addWidget(gridWidget2);
-
-             donateButton = setupDonateButton(centralWidget);
-             mainLayout->addWidget(donateButton);
-
-          //   setupDonateButton(centralWidget, 132, 315);
-             QString donation = readDonationValue();
-             setDonateButtonActive(donation != "jocala.com");
-
-
-             // --- FINALIZATION ---
-             stackedWidget->setCurrentIndex(0);
-             scrollArea->show();
-             deviceTable->show();
-             buttonGridWidget->show();
-             adhoc_ip->show();
-             loadDeviceTableX(deviceTable);
-             centralWidget->updateGeometry();
-
-
-
+            setupUI();
+            do_versioncheck();
 
      }
 
@@ -7372,6 +7028,7 @@ void MainWindow::on_actionReload_devices_triggered()
 
 /////////////////////////////////////////////////////
 
+/*
 
 void MainWindow::loadDeviceTableX(QTableWidget* table)
 {
@@ -7540,6 +7197,197 @@ void MainWindow::loadDeviceTableX(QTableWidget* table)
    });
 }
 
+*/
+
+
+void MainWindow::loadDeviceTableX(QTableWidget* table) {
+   // Debugging: Log initial geometry and visibility
+   QScrollArea *scrollArea = qobject_cast<QScrollArea*>(table->parentWidget());
+   qDebug() << "Initial geometry - ScrollArea:" << (scrollArea ? scrollArea->geometry() : QRect())
+            << "Table:" << table->geometry()
+            << "ParentWidget:" << (scrollArea ? scrollArea->parentWidget()->geometry() : QRect())
+            << "ScrollArea visible:" << (scrollArea ? scrollArea->isVisible() : false)
+            << "Table visible:" << table->isVisible();
+
+   // Store current connected device IDs
+   QSet<QString> connectedDeviceIds;
+   for (int row = 0; row < table->rowCount(); ++row) {
+        if (table->item(row, 2) &&
+            table->item(row, 2)->text() == "Connected" &&
+            table->item(row, 0)) {
+            connectedDeviceIds.insert(table->item(row, 0)->data(Qt::UserRole).toString());
+        }
+   }
+
+   // Clear and setup table
+   table->clearContents();
+   table->setRowCount(0);
+   table->setColumnCount(3);
+   table->setHorizontalHeaderLabels(QStringList() << "Device" << "IP" << "Status");
+   table->verticalHeader()->setVisible(false);
+   table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+   table->setShowGrid(true);
+   table->setSortingEnabled(false);
+   table->setSelectionMode(QAbstractItemView::SingleSelection);
+   table->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+   // Ensure table scales with parent widget
+   table->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+
+   // Reset margins and padding
+   table->setStyleSheet("QTableWidget { margin: 0px; padding: 0px; } QHeaderView::section { padding: 0px; }");
+
+   // Set initial column widths
+   for (int col = 0; col < 3; ++col) {
+        table->setColumnWidth(col, 130);
+   }
+
+   // Ensure all columns are visible
+   for (int col = 0; col < 3; ++col) {
+        table->showColumn(col);
+   }
+
+   // Set fixed row height for 5 rows visible
+   table->verticalHeader()->setDefaultSectionSize(30);
+
+   // Execute query
+   QString sqlstatement = "SELECT id, description, daddr, isusb FROM device";
+   QSqlQuery query;
+   if (!query.exec(sqlstatement)) {
+        logfile("Query failed: " + query.lastError().text());
+        return;
+   }
+
+   // Populate all records
+   int row = 0;
+   while (query.next()) {
+        table->insertRow(row);
+        QString deviceId = query.value(0).toString();
+        QString description = query.value(1).toString();
+
+        QTableWidgetItem* descItem = new QTableWidgetItem(description);
+        descItem->setData(Qt::UserRole, deviceId);
+        table->setItem(row, 0, descItem);
+
+        bool isUsb = query.value(3).toBool();
+        QString ip = isUsb ? "USB" : (query.value(2).toString().isEmpty() ? "N/A" : query.value(2).toString());
+        table->setItem(row, 1, new IpTableWidgetItem(ip));
+
+        QString status;
+        if (isUsb) {
+            status = usbConnected(query.value(2).toString()) ? "Connected" : "Disconnected";
+        } else {
+            status = connectedDeviceIds.contains(deviceId) ? "Connected" : "Disconnected";
+        }
+        table->setItem(row, 2, new QTableWidgetItem(status));
+        row++;
+   }
+
+   // Calculate column widths
+   int totalWidth = scrollArea && scrollArea->width() > 0 ? scrollArea->width() : 390;
+   totalWidth -= 2 * table->frameWidth();
+   if (table->verticalScrollBar()->isVisible()) {
+        totalWidth -= table->verticalScrollBar()->width();
+   }
+   totalWidth = qMax(totalWidth, 390);
+
+   // Get content-based widths
+   table->resizeColumnsToContents();
+   int col0Width = table->columnWidth(0);
+   int col1Width = table->columnWidth(1);
+   int col2Width = table->columnWidth(2);
+
+   // Minimum widths
+   const int minWidth = 130;
+   col0Width = qMax(col0Width, minWidth);
+   col1Width = qMax(col1Width, minWidth);
+   col2Width = qMax(col2Width, minWidth);
+
+   // Scale to fill totalWidth
+   int currentTotal = col0Width + col1Width + col2Width;
+   if (currentTotal != totalWidth && totalWidth > 0) {
+        double scale = static_cast<double>(totalWidth) / currentTotal;
+        col0Width = qRound(col0Width * scale);
+        col1Width = qRound(col1Width * scale);
+        col2Width = totalWidth - (col0Width + col1Width);
+   }
+
+   // Ensure minimum widths and prevent negative widths
+   if (col2Width < minWidth) {
+        int excess = (col0Width + col1Width + minWidth) - totalWidth;
+        if (excess > 0) {
+            double scale = static_cast<double>(totalWidth - minWidth) / (col0Width + col1Width);
+            col0Width = qRound(col0Width * scale);
+            col1Width = qRound(col1Width * scale);
+        }
+        col2Width = minWidth;
+   }
+
+   table->setColumnWidth(0, col0Width);
+   table->setColumnWidth(1, col1Width);
+   table->setColumnWidth(2, col2Width);
+
+   // Debugging: Log column widths
+   qDebug() << "Column widths - Col0:" << col0Width << "Col1:" << col1Width << "Col2:" << col2Width
+            << "TotalWidth:" << totalWidth;
+
+   // Set minimum width to ensure visibility
+   table->setMinimumWidth(totalWidth);
+   if (scrollArea) {
+        scrollArea->setMinimumWidth(totalWidth);
+   }
+
+   // Ensure widgets are visible
+   table->show();
+   if (scrollArea) {
+        scrollArea->show();
+   }
+
+   // Force repaint and layout update
+   if (scrollArea) {
+        scrollArea->updateGeometry();
+        scrollArea->viewport()->update();
+        scrollArea->update();
+   }
+   table->updateGeometry();
+   table->viewport()->update();
+   table->update();
+   if (centralWidget) {
+        centralWidget->updateGeometry();
+        centralWidget->update();
+   }
+
+   // Debugging: Log final geometry and visibility
+   qDebug() << "Final geometry - ScrollArea:" << (scrollArea ? scrollArea->geometry() : QRect())
+            << "Table:" << table->geometry()
+            << "ParentWidget:" << (scrollArea ? scrollArea->parentWidget()->geometry() : QRect())
+            << "ScrollArea visible:" << (scrollArea ? scrollArea->isVisible() : false)
+            << "Table visible:" << table->isVisible();
+
+   // Disable horizontal scrollbar
+   table->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+   // Load saved sort settings
+   QSettings settings("YourCompany", "YourApp");
+   int sortColumn = settings.value("DeviceTableSortColumn", 0).toInt();
+   Qt::SortOrder sortOrder = static_cast<Qt::SortOrder>(settings.value("DeviceTableSortOrder", Qt::AscendingOrder).toInt());
+
+   // Enable sorting
+   table->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
+   table->setSortingEnabled(true);
+   table->sortItems(sortColumn, sortOrder);
+   table->viewport()->update();
+
+   // Connect header click
+   disconnect(table->horizontalHeader(), &QHeaderView::sectionClicked, nullptr, nullptr);
+   connect(table->horizontalHeader(), &QHeaderView::sectionClicked, this, [this, table](int logicalIndex) {
+       QSettings settings("YourCompany", "YourApp");
+       settings.setValue("DeviceTableSortColumn", logicalIndex);
+       settings.setValue("DeviceTableSortOrder", table->horizontalHeader()->sortIndicatorOrder());
+   });
+}
+
+
 
 /////////////////////////////////////////////////
 
@@ -7639,3 +7487,354 @@ QPushButton* MainWindow::setupDonateButton(QWidget* parent) {
    return donateButton;
 }
 
+void MainWindow::setupUI() {
+   centralWidget = new QWidget(this);
+   setCentralWidget(centralWidget);
+   mainLayout = new QVBoxLayout(centralWidget);
+   mainLayout->setContentsMargins(0, 0, 0, 0);
+   mainLayout->setSpacing(0);
+
+   // --- WRAPPER for Top Section ---
+   topWidget = new QWidget();
+   topWidget->setFixedHeight(180);
+   upperLayout = new QHBoxLayout(topWidget);
+   upperLayout->setSpacing(0);
+   upperLayout->setContentsMargins(28, 0, 0, 0);
+   upperLayout->setAlignment(Qt::AlignTop);
+
+   // --- TABLE SCROLL AREA ---
+   deviceTable = new QTableWidget(0, 3);
+   deviceTable->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+   scrollArea = new QScrollArea();
+   scrollArea->setWidget(deviceTable);
+   scrollArea->setWidgetResizable(true);
+   scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+   scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+   scrollArea->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+   scrollArea->setFixedSize(390, 180);
+   upperLayout->addWidget(scrollArea);
+
+   // --- Cosmetic Horizontal Gap ---
+   cosmeticGap = new QSpacerItem(12, 0, QSizePolicy::Fixed, QSizePolicy::Minimum);
+   upperLayout->addItem(cosmeticGap);
+
+   // --- RIGHT COLUMN ---
+   rightColumnWidget = new QWidget();
+   rightColumnWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+   rightLayout = new QVBoxLayout(rightColumnWidget);
+   rightLayout->setSpacing(0);
+   rightLayout->setContentsMargins(0, 0, 0, 0);
+   rightLayout->setAlignment(Qt::AlignTop);
+
+   // Button grid (6 buttons)
+   buttonGridWidget = new QWidget();
+   buttonGridWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+   buttonGridLayout = new QGridLayout(buttonGridWidget);
+   buttonGridLayout->setSpacing(6);
+   buttonGridLayout->setContentsMargins(0, 0, 0, 0);
+
+   for (int i = 0; i < 6; ++i) {
+        buttons[i] = new QPushButton();
+        buttons[i]->setFixedSize(110, 42);
+        buttonGridLayout->addWidget(buttons[i], i / 2, i % 2);
+        switch (i) {
+        case 0:
+            buttons[i]->setText("Connect");
+            connect(buttons[i], &QPushButton::clicked, this, &MainWindow::connButton_clicked);
+            break;
+        case 1:
+            buttons[i]->setText("Disconnect");
+            connect(buttons[i], &QPushButton::clicked, this, &MainWindow::disButton_clicked);
+            break;
+        case 2:
+            buttons[i]->setText("New");
+            connect(buttons[i], &QPushButton::clicked, this, [this](bool) { dataentry(true); });
+            break;
+        case 3:
+            buttons[i]->setText("Edit");
+            connect(buttons[i], &QPushButton::clicked, this, [this](bool) { dataentry(false); });
+            break;
+        case 4:
+            buttons[i]->setText("Delete");
+            connect(buttons[i], &QPushButton::clicked, this, &MainWindow::delRecordButton_clicked);
+            break;
+        case 5:
+            buttons[i]->setText("Clear");
+            connect(buttons[i], &QPushButton::clicked, this, &MainWindow::on_clearAdhocButton_clicked);
+            break;
+        }
+   }
+   rightLayout->addWidget(buttonGridWidget);
+
+   // --- Cosmetic Vertical Gap ---
+   vSpacer = new QSpacerItem(0, 15, QSizePolicy::Minimum, QSizePolicy::Fixed);
+   rightLayout->addItem(vSpacer);
+
+   // Line edit
+   adhoc_ip = new QLineEdit();
+   adhoc_ip->setPlaceholderText("ip address<:port>");
+   adhoc_ip->setMaximumWidth(250);
+   adhoc_ip->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+   rightLayout->addWidget(adhoc_ip);
+
+   upperLayout->addWidget(rightColumnWidget);
+   mainLayout->addWidget(topWidget);
+
+   // --- STACKED WIDGET ---
+   stackedWidget = new QStackedWidget();
+   mainLayout->addWidget(stackedWidget);
+
+   // Grid 1 (16 buttons)
+   gridWidget1 = new QWidget();
+   gridLayout1 = new QGridLayout(gridWidget1);
+   gridLayout1->setSpacing(0);
+   gridLayout1->setContentsMargins(0, 0, 0, 0);
+
+   for (int i = 0; i < 16; ++i) {
+        grid1Buttons[i] = new QPushButton();
+        grid1Buttons[i]->setFixedSize(140, 52);
+        gridLayout1->addWidget(grid1Buttons[i], i / 4, i % 4);
+        switch (i) {
+        case 0:
+            grid1Buttons[i]->setText("File Manager");
+            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::fmButton_clicked);
+            break;
+        case 1:
+            grid1Buttons[i]->setText("ADB Shell");
+            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::adbshellButton_clicked);
+            break;
+        case 2:
+            grid1Buttons[i]->setText("Backup");
+            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::backupButton_clicked);
+            break;
+        case 3:
+            grid1Buttons[i]->setText("Restore");
+            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::restoreButton_clicked);
+            break;
+        case 4:
+            grid1Buttons[i]->setText("Install APK");
+            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::sideload_Button_clicked);
+            break;
+        case 5:
+            grid1Buttons[i]->setText("Uninstall APK");
+            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::uninstall_Button_clicked);
+            break;
+        case 6:
+            grid1Buttons[i]->setText("Move Kodi Data");
+            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::mvdataButton_clicked);
+            break;
+        case 7:
+            grid1Buttons[i]->setText("Edit Timers");
+            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::pushTimers_clicked);
+            break;
+        case 8:
+            grid1Buttons[i]->setText("Screen Capture");
+            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::screenCap);
+            break;
+        case 9:
+            grid1Buttons[i]->setText("Stop ADB");
+            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::killServer_clicked);
+            break;
+        case 10:
+            grid1Buttons[i]->setText("Scrcpy");
+            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::scpyButton_clicked);
+            break;
+        case 11:
+            grid1Buttons[i]->setText("Edit Cache");
+            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::cacheButton_clicked);
+            break;
+        case 12:
+            grid1Buttons[i]->setText("Console");
+            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::doConsole_clicked);
+            break;
+        case 13:
+            grid1Buttons[i]->setText("Keypad");
+            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::keypadButton_clicked);
+            break;
+        case 14:
+            grid1Buttons[i]->setText("Start App");
+            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::startapp_clicked);
+            break;
+        case 15:
+            grid1Buttons[i]->setText("Stop App");
+            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::stopapp_clicked);
+            break;
+        }
+   }
+   stackedWidget->addWidget(gridWidget1);
+
+   // Grid 2 (16 buttons)
+   gridWidget2 = new QWidget();
+   gridLayout2 = new QGridLayout(gridWidget2);
+   gridLayout2->setSpacing(0);
+   gridLayout2->setContentsMargins(0, 0, 0, 0);
+
+   for (int i = 0; i < 16; ++i) {
+        grid2Buttons[i] = new QPushButton();
+        grid2Buttons[i]->setFixedSize(140, 52);
+        gridLayout2->addWidget(grid2Buttons[i], i / 4, i % 4);
+        switch (i) {
+        case 0:
+            grid2Buttons[i]->setText("File Manager");
+            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::fmButton_clicked);
+            break;
+        case 1:
+            grid2Buttons[i]->setText("Install APK");
+            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::sideload_Button_clicked);
+            break;
+        case 2:
+            grid2Buttons[i]->setText("Uninstall APK");
+            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::uninstall_Button_clicked);
+            break;
+        case 3:
+            grid2Buttons[i]->setText("System Info");
+            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::infoArchitecture);
+            break;
+        case 4:
+            grid2Buttons[i]->setText("Screen Capture");
+            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::screenCap);
+            break;
+        case 5:
+            grid2Buttons[i]->setText("Stop ADB");
+            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::killServer_clicked);
+            break;
+        case 6:
+            grid2Buttons[i]->setText("Start App");
+            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::startapp_clicked);
+            break;
+        case 7:
+            grid2Buttons[i]->setText("Stop App");
+            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::stopapp_clicked);
+            break;
+        case 8:
+            grid2Buttons[i]->setText("ADB Shell");
+            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::adbshellButton_clicked);
+            break;
+        case 9:
+            grid2Buttons[i]->setText("Console");
+            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::doConsole_clicked);
+            break;
+        case 10:
+            grid2Buttons[i]->setText("Send Text");
+            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionSend_text_triggered);
+            break;
+        case 11:
+            grid2Buttons[i]->setText("ScrCpy");
+            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::scpyButton_clicked);
+            break;
+        case 12:
+            grid2Buttons[i]->setText("Button 35");
+            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+            break;
+        case 13:
+            grid2Buttons[i]->setText("Button 36");
+            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+            break;
+        case 14:
+            grid2Buttons[i]->setText("Button 37");
+            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+            break;
+        case 15:
+            grid2Buttons[i]->setText("Button 38");
+            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+            break;
+        }
+   }
+   stackedWidget->addWidget(gridWidget2);
+/*
+   donateButton = setupDonateButton(centralWidget);
+   mainLayout->addWidget(donateButton);
+
+   QString donation = readDonationValue();
+   setDonateButtonActive(donation != "jocala.com");
+*/
+
+   // --- FINALIZATION ---
+   stackedWidget->setCurrentIndex(0);
+   scrollArea->show();
+   deviceTable->show();
+   buttonGridWidget->show();
+   adhoc_ip->show();
+   loadDeviceTableX(deviceTable);
+   centralWidget->updateGeometry();
+}
+
+
+
+/////////////////////////////////////////
+
+void MainWindow::createjson() {
+
+
+QFile jsonFile(databasedir + "/adblink.json");
+QJsonObject obj;
+
+// Default values for the JSON object
+QJsonObject defaultValues;
+defaultValues["checkversion"] = true;
+defaultValues["scrcpy"] = true;
+defaultValues["startview"] = true;
+defaultValues["dropdown"] = "0";
+defaultValues["download"] = QDir::homePath();
+defaultValues["install"] = QDir::homePath();
+defaultValues["backup"] = QDir::homePath();
+defaultValues["donation"] = "";
+defaultValues["localadb"] = "";
+defaultValues["stopapp"] = "org.xbmc.kodi";
+defaultValues["startapp"] = "org.xbmc.kodi/org.xbmc.kodi.Splash";
+
+bool needsUpdate = false;
+
+if (QFileInfo::exists(databasedir + "/adblink.json")) {
+   if (jsonFile.open(QIODevice::ReadOnly)) {
+        QJsonDocument doc = QJsonDocument::fromJson(jsonFile.readAll());
+        jsonFile.close();
+        obj = doc.object();
+
+        // Create a new object with only the keys from defaultValues
+        QJsonObject updatedObj;
+        for (auto it = defaultValues.constBegin(); it != defaultValues.constEnd(); ++it) {
+            if (obj.contains(it.key())) {
+               updatedObj[it.key()] = obj[it.key()]; // Keep existing value
+            } else {
+               updatedObj[it.key()] = it.value(); // Set default value
+               needsUpdate = true;
+            }
+        }
+
+        // Check if any keys in obj are not in defaultValues (for removal)
+        for (const QString &key : obj.keys()) {
+            if (!defaultValues.contains(key)) {
+               needsUpdate = true; // Mark for update if obsolete keys are found
+            }
+        }
+
+        // Update obj to the filtered version
+        obj = updatedObj;
+
+        // Write updated JSON back to file if any changes were made
+        if (needsUpdate) {
+            if (jsonFile.open(QIODevice::WriteOnly)) {
+               QJsonDocument updatedDoc(obj);
+               jsonFile.write(updatedDoc.toJson());
+               jsonFile.close();
+            } else {
+               logfile("Failed to write updated adblink.json");
+            }
+        }
+   } else {
+        logfile("Failed to read adblink.json");
+   }
+} else {
+   // Create new JSON file with default values
+   obj = defaultValues;
+
+   if (jsonFile.open(QIODevice::WriteOnly)) {
+        QJsonDocument doc(obj);
+        jsonFile.write(doc.toJson());
+        jsonFile.close();
+   } else {
+        logfile("Failed to create adblink.json");
+   }
+ }
+}

@@ -20,6 +20,19 @@
 #include <QHeaderView>
 #include <QStatusBar>
 #include <QProgressBar>
+
+
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QTableWidget>
+#include <QScrollArea>
+#include <QSpacerItem>
+
+
+#include <QGridLayout>
+
+
+
 #include "devicerecord.h"
 
 
@@ -218,7 +231,7 @@ private slots:
    bool is_package(QString package);
 
 
-
+     void createjson();
 
 
     void androidLog();
@@ -360,7 +373,7 @@ private slots:
 
   void on_actionSend_text_triggered();
 
-
+  void setupUI();
 
 
 
@@ -393,7 +406,7 @@ private slots:
     const QString vqurl = "http://www.jocala.com/version.txt";
     const QString busypath="/data/local/tmp/adblink/";
     const QString tempdir = "/data/local/tmp/";
-    const QString version = "6.6";
+    const QString version = "6.7";
 
 
 
@@ -437,6 +450,8 @@ private slots:
     QLabel *statusLabel;
     QProgressBar *progressBar;
     QLabel *server_running;
+
+
 
     // Other private methods (e.g., loadDeviceTableX)
     // void loadDeviceTableX(QTableWidget *table);
