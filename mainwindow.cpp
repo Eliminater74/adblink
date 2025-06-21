@@ -157,7 +157,7 @@
 
 
 
-         setFixedSize(675,475);
+         setFixedSize(700,475);
          ui->setupUi(this);
          setWindowTitle(" ");
           QStatusBar *statusBar = new QStatusBar(this);
@@ -182,7 +182,7 @@
         container->setMinimumWidth(statusBar->width());
 
         int buttonWidth = donateButton->width();
-        int xPosition = 150;
+        int xPosition = 200;
         donateButton->setParent(container);
         donateButton->move(xPosition, (container->height() - donateButton->height()) / 2); // Center vertically
 
