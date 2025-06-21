@@ -92,8 +92,7 @@ HEADERS  += mainwindow.h \
  
 
 
-FORMS    += mainwindow.ui \
-    about.ui \
+FORMS    +=  about.ui \
     deviceinfodialog.ui \
     helpdialog.ui \
     scpdialog.ui \

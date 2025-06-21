@@ -181,7 +181,8 @@
         container->setFixedHeight(statusBar->height());
         container->setMinimumWidth(statusBar->width());
 
-        int buttonWidth = donateButton->width();
+//      int buttonWidth = donateButton->width();
+
         int xPosition = 200;
         donateButton->setParent(container);
         donateButton->move(xPosition, (container->height() - donateButton->height()) / 2); // Center vertically
