@@ -31,7 +31,9 @@
 
 #include <QGridLayout>
 
-
+#include <QMenuBar>
+#include <QMenu>
+#include <QAction>
 
 #include "devicerecord.h"
 
@@ -391,6 +393,8 @@ private slots:
 
   void on_infoArchitecture_triggered();
 
+   void setupMenus();
+
   private:
     Ui::MainWindow *ui;
     QNetworkAccessManager *m_networkManager;
@@ -452,10 +456,37 @@ private slots:
     QLabel *server_running;
     QWidget *container;
 
+    QMenuBar *menuBar;
+    QMenu *menuFile;
+    QMenu *menuKodi;
+    QMenu *menuUtility;
+    QMenu *menuAbout;
+    QMenu *menuHelp;
 
-    // Other private methods (e.g., loadDeviceTableX)
-    // void loadDeviceTableX(QTableWidget *table);
-
+    QAction *actionAbout;
+    QAction *actionQuit;
+    QAction *actionHelp;
+    QAction *actionReboot;
+    QAction *actionDownload_Kodi;
+    QAction *actionView_Kodi_Log;
+    QAction *actionView_adbLink_Log;
+    QAction *actionWireless_ADBD;
+    QAction *actionKodi_data_usage;
+    QAction *actionPreferences;
+    QAction *infoArchitecture2;
+    QAction *actiondelthumb;
+    QAction *actionPush_remote;
+    QAction *actionSplash_Screen;
+    QAction *View_Changelog;
+    QAction *Erase_adbLink_database;
+    QAction *actionReiinstall_Busybox;
+    QAction *actionSet_Kodi_permissions;
+    QAction *actionGet_UID_from_APK_file;
+    QAction *actionSend_text;
+    QAction *actionCreate_kodi_data;
+    QAction *actionEdit_XML;
+    QAction *actionSwitch_View;
+    QAction *actionReload_devices;
 
 
 };
