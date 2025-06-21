@@ -2737,10 +2737,10 @@
 
 
 
-         if (pulldir.isEmpty() || pulldir == download)
+         if (device.pulldir.isEmpty() || pulldir == download)
             fmpullpath = download;
          else
-            fmpullpath = pulldir;
+            fmpullpath = device.pulldir;
 
          QDir directory(fmpullpath);
 
