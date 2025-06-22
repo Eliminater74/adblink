@@ -488,6 +488,8 @@ private slots:
     QAction *actionEdit_XML;
     QAction *actionSwitch_View;
     QAction *actionReload_devices;
+
+
     const QSize bigButtonSize = QSize(130, 42);
     const QSize smallButtonSize = QSize(110, 32);
 
@@ -496,6 +498,8 @@ private slots:
 
     const QSize bigWindowSize = QSize(700, 500);
     const QSize smallWindowSize = QSize(700, 425);
+
+
 
     QSize buttonsize;
     QSize windowsize;
