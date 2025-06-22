@@ -20,7 +20,7 @@
 #include <QHeaderView>
 #include <QStatusBar>
 #include <QProgressBar>
-
+#include <QScrollBar>
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -506,7 +506,17 @@ private slots:
     QSize ebuttonsize;
 };
 
+class NoHScrollTableWidget : public QTableWidget {
+    Q_OBJECT
+public:
+    using QTableWidget::QTableWidget;
 
+    void scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible) override {
+        int hVal = horizontalScrollBar()->value();
+        QTableWidget::scrollTo(index, hint);
+        horizontalScrollBar()->setValue(hVal);
+    }
+};
 
 
 #endif // MAINWINDOW_H

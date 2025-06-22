@@ -7506,8 +7506,19 @@ void MainWindow::setupUI() {
  upperLayout->setContentsMargins(28, 0, 0, 0);
  upperLayout->setAlignment(Qt::AlignTop);
 
- deviceTable = new QTableWidget(0, 3);
+ // deviceTable = new QTableWidget(0, 3);
+
+ deviceTable = new NoHScrollTableWidget(0, 3);
+
+ // Connect the selection changed signal here once
+ connect(deviceTable->selectionModel(), &QItemSelectionModel::currentChanged,
+         this, [this](const QModelIndex &, const QModelIndex &) {
+             deviceTable->horizontalScrollBar()->setValue(0);
+         });
+
+
  deviceTable->setFixedSize(390, 160);
+ deviceTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
  deviceTable->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
  deviceTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
  deviceTable->horizontalHeader()->setMinimumSectionSize(130);
@@ -7527,16 +7538,7 @@ void MainWindow::setupUI() {
  deviceTable->setWordWrap(false);
  deviceTable->setTextElideMode(Qt::ElideRight);
 
- scrollArea = new QScrollArea();
- scrollArea->setWidget(deviceTable);
- scrollArea->setWidgetResizable(false);
- scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
- scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
- scrollArea->setFixedSize(400, 180);
- scrollArea->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
- scrollArea->setContentsMargins(0, 0, 0, 0);
- scrollArea->horizontalScrollBar()->setValue(0);
- upperLayout->addWidget(scrollArea);
+ upperLayout->addWidget(deviceTable);
 
  connect(deviceTable, &QTableWidget::itemClicked, this, [this]() {
      if (deviceTable->currentRow() >= 0) {
@@ -7672,9 +7674,8 @@ void MainWindow::setupUI() {
  }
 
  stackedWidget->addWidget(gridWidget2);
-
  stackedWidget->setCurrentIndex(0);
- scrollArea->show();
+
  deviceTable->show();
  buttonGridWidget->show();
  adhoc_ip->show();
@@ -7683,11 +7684,10 @@ void MainWindow::setupUI() {
 
  centralWidget->layout()->activate();
  centralWidget->update();
- scrollArea->updateGeometry();
  deviceTable->updateGeometry();
- scrollArea->viewport()->update();
  deviceTable->viewport()->update();
 }
+
 
 
 //////////////////////////////////////////////////////////
@@ -7796,6 +7796,10 @@ void MainWindow::loadDeviceTableX(QTableWidget* table) {
  table->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
  table->setSortingEnabled(true);
  table->sortItems(sortColumn, sortOrder);
+
+ table->horizontalScrollBar()->setValue(0);
+
+
 
  if (scrollArea) {
    scrollArea->updateGeometry();
