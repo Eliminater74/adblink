@@ -2671,7 +2671,7 @@
 
 
 
-         if (pulldir.isEmpty() || pulldir == download)
+         if (device.pulldir.isEmpty() || device.pulldir == download)
             fmpullpath = download;
          else
             fmpullpath = pulldir;
