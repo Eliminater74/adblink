@@ -153,9 +153,11 @@
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
 
+        windowsize=smallWindowSize;
+        buttonsize=bigButtonSize;
+        ebuttonsize=bigEbuttonSize;
 
-
-         setFixedSize(700,475);
+         setFixedSize(windowsize);
 
 
 
@@ -7305,273 +7307,6 @@ QPushButton* MainWindow::setupDonateButton(QWidget* parent) {
    return donateButton;
 }
 
-/*
-
-void MainWindow::setupUI() {
-   centralWidget = new QWidget(this);
-   setCentralWidget(centralWidget);
-   mainLayout = new QVBoxLayout(centralWidget);
-   mainLayout->setContentsMargins(0, 0, 0, 0);
-   mainLayout->setSpacing(0);
-
-   // --- WRAPPER for Top Section ---
-   topWidget = new QWidget();
-   topWidget->setFixedHeight(180);
-   upperLayout = new QHBoxLayout(topWidget);
-   upperLayout->setSpacing(0);
-   upperLayout->setContentsMargins(28, 0, 0, 0);
-   upperLayout->setAlignment(Qt::AlignTop);
-
-   // --- TABLE SCROLL AREA ---
-   deviceTable = new QTableWidget(0, 3);
-   deviceTable->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-   scrollArea = new QScrollArea();
-   scrollArea->setWidget(deviceTable);
-   scrollArea->setWidgetResizable(true);
-   scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-   scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-   scrollArea->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-   scrollArea->setFixedSize(390, 180);
-   upperLayout->addWidget(scrollArea);
-
-   // --- Cosmetic Horizontal Gap ---
-   cosmeticGap = new QSpacerItem(12, 0, QSizePolicy::Fixed, QSizePolicy::Minimum);
-   upperLayout->addItem(cosmeticGap);
-
-   // --- RIGHT COLUMN ---
-   rightColumnWidget = new QWidget();
-   rightColumnWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-   rightLayout = new QVBoxLayout(rightColumnWidget);
-   rightLayout->setSpacing(0);
-   rightLayout->setContentsMargins(0, 0, 0, 0);
-   rightLayout->setAlignment(Qt::AlignTop);
-
-   // Button grid (6 buttons)
-   buttonGridWidget = new QWidget();
-   buttonGridWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-   buttonGridLayout = new QGridLayout(buttonGridWidget);
-   buttonGridLayout->setSpacing(6);
-   buttonGridLayout->setContentsMargins(0, 0, 0, 0);
-
-   for (int i = 0; i < 6; ++i) {
-        buttons[i] = new QPushButton();
-        buttons[i]->setFixedSize(110, 42);
-        buttonGridLayout->addWidget(buttons[i], i / 2, i % 2);
-        switch (i) {
-        case 0:
-            buttons[i]->setText("Connect");
-            connect(buttons[i], &QPushButton::clicked, this, &MainWindow::connButton_clicked);
-            break;
-        case 1:
-            buttons[i]->setText("Disconnect");
-            connect(buttons[i], &QPushButton::clicked, this, &MainWindow::disButton_clicked);
-            break;
-        case 2:
-            buttons[i]->setText("New");
-            connect(buttons[i], &QPushButton::clicked, this, [this](bool) { dataentry(true); });
-            break;
-        case 3:
-            buttons[i]->setText("Edit");
-            connect(buttons[i], &QPushButton::clicked, this, [this](bool) { dataentry(false); });
-            break;
-        case 4:
-            buttons[i]->setText("Delete");
-            connect(buttons[i], &QPushButton::clicked, this, &MainWindow::delRecordButton_clicked);
-            break;
-        case 5:
-            buttons[i]->setText("Clear");
-            connect(buttons[i], &QPushButton::clicked, this, &MainWindow::on_clearAdhocButton_clicked);
-            break;
-        }
-   }
-   rightLayout->addWidget(buttonGridWidget);
-
-   // --- Cosmetic Vertical Gap ---
-   vSpacer = new QSpacerItem(0, 15, QSizePolicy::Minimum, QSizePolicy::Fixed);
-   rightLayout->addItem(vSpacer);
-
-   // Line edit
-   adhoc_ip = new QLineEdit();
-   adhoc_ip->setPlaceholderText("ip address<:port>");
-   adhoc_ip->setMaximumWidth(250);
-   adhoc_ip->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-   rightLayout->addWidget(adhoc_ip);
-
-   upperLayout->addWidget(rightColumnWidget);
-   mainLayout->addWidget(topWidget);
-
-   // --- STACKED WIDGET ---
-   stackedWidget = new QStackedWidget();
-   mainLayout->addWidget(stackedWidget);
-
-   // Grid 1 (16 buttons)
-   gridWidget1 = new QWidget();
-   gridLayout1 = new QGridLayout(gridWidget1);
-   gridLayout1->setSpacing(0);
-   gridLayout1->setContentsMargins(0, 0, 0, 0);
-
-   for (int i = 0; i < 16; ++i) {
-        grid1Buttons[i] = new QPushButton();
-        grid1Buttons[i]->setFixedSize(140, 52);
-        gridLayout1->addWidget(grid1Buttons[i], i / 4, i % 4);
-        switch (i) {
-        case 0:
-            grid1Buttons[i]->setText("File Manager");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::fmButton_clicked);
-            break;
-        case 1:
-            grid1Buttons[i]->setText("ADB Shell");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::adbshellButton_clicked);
-            break;
-        case 2:
-            grid1Buttons[i]->setText("Backup");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::backupButton_clicked);
-            break;
-        case 3:
-            grid1Buttons[i]->setText("Restore");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::restoreButton_clicked);
-            break;
-        case 4:
-            grid1Buttons[i]->setText("Install APK");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::sideload_Button_clicked);
-            break;
-        case 5:
-            grid1Buttons[i]->setText("Uninstall APK");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::uninstall_Button_clicked);
-            break;
-        case 6:
-            grid1Buttons[i]->setText("Move Kodi Data");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::mvdataButton_clicked);
-            break;
-        case 7:
-            grid1Buttons[i]->setText("Edit Timers");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::pushTimers_clicked);
-            break;
-        case 8:
-            grid1Buttons[i]->setText("Screen Capture");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::screenCap);
-            break;
-        case 9:
-            grid1Buttons[i]->setText("Stop ADB");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::killServer_clicked);
-            break;
-        case 10:
-            grid1Buttons[i]->setText("Scrcpy");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::scpyButton_clicked);
-            break;
-        case 11:
-            grid1Buttons[i]->setText("Edit Cache");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::cacheButton_clicked);
-            break;
-        case 12:
-            grid1Buttons[i]->setText("Console");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::doConsole_clicked);
-            break;
-        case 13:
-            grid1Buttons[i]->setText("Keypad");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::keypadButton_clicked);
-            break;
-        case 14:
-            grid1Buttons[i]->setText("Start App");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::startapp_clicked);
-            break;
-        case 15:
-            grid1Buttons[i]->setText("Stop App");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::stopapp_clicked);
-            break;
-        }
-   }
-   stackedWidget->addWidget(gridWidget1);
-
-   // Grid 2 (16 buttons)
-   gridWidget2 = new QWidget();
-   gridLayout2 = new QGridLayout(gridWidget2);
-   gridLayout2->setSpacing(0);
-   gridLayout2->setContentsMargins(0, 0, 0, 0);
-
-   for (int i = 0; i < 16; ++i) {
-        grid2Buttons[i] = new QPushButton();
-        grid2Buttons[i]->setFixedSize(140, 52);
-        gridLayout2->addWidget(grid2Buttons[i], i / 4, i % 4);
-        switch (i) {
-        case 0:
-            grid2Buttons[i]->setText("File Manager");
-            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::fmButton_clicked);
-            break;
-        case 1:
-            grid2Buttons[i]->setText("Install APK");
-            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::sideload_Button_clicked);
-            break;
-        case 2:
-            grid2Buttons[i]->setText("Uninstall APK");
-            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::uninstall_Button_clicked);
-            break;
-        case 3:
-            grid2Buttons[i]->setText("System Info");
-            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::infoArchitecture);
-            break;
-        case 4:
-            grid2Buttons[i]->setText("Screen Capture");
-            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::screenCap);
-            break;
-        case 5:
-            grid2Buttons[i]->setText("Stop ADB");
-            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::killServer_clicked);
-            break;
-        case 6:
-            grid2Buttons[i]->setText("Start App");
-            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::startapp_clicked);
-            break;
-        case 7:
-            grid2Buttons[i]->setText("Stop App");
-            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::stopapp_clicked);
-            break;
-        case 8:
-            grid2Buttons[i]->setText("ADB Shell");
-            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::adbshellButton_clicked);
-            break;
-        case 9:
-            grid2Buttons[i]->setText("Console");
-            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::doConsole_clicked);
-            break;
-        case 10:
-            grid2Buttons[i]->setText("Send Text");
-            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionSend_text_triggered);
-            break;
-        case 11:
-            grid2Buttons[i]->setText("ScrCpy");
-            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::scpyButton_clicked);
-            break;
-        case 12:
-            grid2Buttons[i]->setText("Button 35");
-            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-            break;
-        case 13:
-            grid2Buttons[i]->setText("Button 36");
-            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-            break;
-        case 14:
-            grid2Buttons[i]->setText("Button 37");
-            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-            break;
-        case 15:
-            grid2Buttons[i]->setText("Button 38");
-            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-            break;
-        }
-   }
-   stackedWidget->addWidget(gridWidget2);
-
-   // --- FINALIZATION ---
-   stackedWidget->setCurrentIndex(0);
-   scrollArea->show();
-   deviceTable->show();
-   buttonGridWidget->show();
-   adhoc_ip->show();
-   loadDeviceTableX(deviceTable);
-   centralWidget->updateGeometry();
-}
-*/
 
 
 /////////////////////////////////////////
@@ -7738,7 +7473,7 @@ void MainWindow::setupUI() {
 
  for (int i = 0; i < 6; ++i) {
    buttons[i] = new QPushButton();
-   buttons[i]->setFixedSize(110, 42);
+   buttons[i]->setFixedSize(ebuttonsize);
    buttonGridLayout->addWidget(buttons[i], i / 2, i % 2);
    switch (i) {
    case 0:
@@ -7795,7 +7530,7 @@ void MainWindow::setupUI() {
 
  for (int i = 0; i < 16; ++i) {
    grid1Buttons[i] = new QPushButton();
-   grid1Buttons[i]->setFixedSize(140, 52);
+   grid1Buttons[i]->setFixedSize(buttonsize);
    gridLayout1->addWidget(grid1Buttons[i], i / 4, i % 4);
    switch (i) {
    case 0:
@@ -7875,7 +7610,7 @@ void MainWindow::setupUI() {
 
  for (int i = 0; i < 16; ++i) {
    grid2Buttons[i] = new QPushButton();
-   grid2Buttons[i]->setFixedSize(140, 52);
+   grid2Buttons[i]->setFixedSize(buttonsize);
    gridLayout2->addWidget(grid2Buttons[i], i / 4, i % 4);
    switch (i) {
    case 0:
