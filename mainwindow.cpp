@@ -7484,6 +7484,11 @@ void MainWindow::setupUI() {
  new QShortcut(QKeySequence("Ctrl+F"), this, SLOT(fmButton_clicked()));
  new QShortcut(QKeySequence("Ctrl+T"), this, SLOT(on_actionSend_text_triggered()));
  new QShortcut(QKeySequence("Ctrl+X"), this, SLOT(displayOff()));
+ new QShortcut(QKeySequence("Ctrl+K"), this, SLOT(keypadButton_clicked()));
+ new QShortcut(QKeySequence("Ctrl+V"), this, SLOT(sideload_Button_clicked()));
+  new QShortcut(QKeySequence("Ctrl+U"), this, SLOT(uninstall_Button_clicked()));
+
+
 
 
 
