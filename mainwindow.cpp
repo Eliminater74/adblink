@@ -7419,28 +7419,91 @@ void MainWindow::setupUI() {
  gridLayout1 = new QGridLayout(gridWidget1);
  gridLayout1->setSpacing(0);
  gridLayout1->setContentsMargins(0, 0, 0, 0);
-
  for (int i = 0; i < 16; ++i) {
    grid1Buttons[i] = new QPushButton();
    grid1Buttons[i]->setFixedSize(buttonsize);
    gridLayout1->addWidget(grid1Buttons[i], i / 4, i % 4);
    switch (i) {
-   case 0: grid1Buttons[i]->setText("File Manager"); connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::fmButton_clicked); break;
-   case 1: grid1Buttons[i]->setText("ADB Shell"); connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::adbshellButton_clicked); break;
-   case 2: grid1Buttons[i]->setText("Backup"); connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::backupButton_clicked); break;
-   case 3: grid1Buttons[i]->setText("Restore"); connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::restoreButton_clicked); break;
-   case 4: grid1Buttons[i]->setText("Install APK"); connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::sideload_Button_clicked); break;
-   case 5: grid1Buttons[i]->setText("Uninstall APK"); connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::uninstall_Button_clicked); break;
-   case 6: grid1Buttons[i]->setText("Move Kodi Data"); connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::mvdataButton_clicked); break;
-   case 7: grid1Buttons[i]->setText("Edit Timers"); connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::pushTimers_clicked); break;
-   case 8: grid1Buttons[i]->setText("Screen Capture"); connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::screenCap); break;
-   case 9: grid1Buttons[i]->setText("Stop ADB"); connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::killServer_clicked); break;
-   case 10: grid1Buttons[i]->setText("Scrcpy"); connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::scpyButton_clicked); break;
-   case 11: grid1Buttons[i]->setText("Edit Cache"); connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::cacheButton_clicked); break;
-   case 12: grid1Buttons[i]->setText("Console"); connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::doConsole_clicked); break;
-   case 13: grid1Buttons[i]->setText("Keypad"); connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::keypadButton_clicked); break;
-   case 14: grid1Buttons[i]->setText("Start App"); connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::startapp_clicked); break;
-   case 15: grid1Buttons[i]->setText("Stop App"); connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::stopapp_clicked); break;
+   case 0:
+        grid1Buttons[i]->setText("File Manager");
+        grid1Buttons[i]->setToolTip("Open the file manager (Ctrl+F)");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::fmButton_clicked);
+        break;
+   case 1:
+        grid1Buttons[i]->setText("ADB Shell");
+        grid1Buttons[i]->setToolTip("Open an ADB shell (Ctrl+A)");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::adbshellButton_clicked);
+        break;
+   case 2:
+        grid1Buttons[i]->setText("Backup");
+        grid1Buttons[i]->setToolTip("Backup device data (Ctrl+B)");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::backupButton_clicked);
+        break;
+   case 3:
+        grid1Buttons[i]->setText("Restore");
+        grid1Buttons[i]->setToolTip("Restore device data (Ctrl+R)");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::restoreButton_clicked);
+        break;
+   case 4:
+        grid1Buttons[i]->setText("Install APK");
+        grid1Buttons[i]->setToolTip("Install an APK file (Ctrl+V)");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::sideload_Button_clicked);
+        break;
+   case 5:
+        grid1Buttons[i]->setText("Uninstall APK");
+        grid1Buttons[i]->setToolTip("Uninstall an APK (Ctrl+U)");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::uninstall_Button_clicked);
+        break;
+   case 6:
+        grid1Buttons[i]->setText("Move Kodi Data");
+        grid1Buttons[i]->setToolTip("Move Kodi data to another location");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::mvdataButton_clicked);
+        break;
+   case 7:
+        grid1Buttons[i]->setText("Edit Timers");
+        grid1Buttons[i]->setToolTip("Edit device timers");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::pushTimers_clicked);
+        break;
+   case 8:
+        grid1Buttons[i]->setText("Screen Capture");
+        grid1Buttons[i]->setToolTip("Capture the device screen (Ctrl+C)");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::screenCap);
+        break;
+   case 9:
+        grid1Buttons[i]->setText("Stop ADB");
+        grid1Buttons[i]->setToolTip("Stop the ADB server");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::killServer_clicked);
+        break;
+   case 10:
+        grid1Buttons[i]->setText("Scrcpy");
+        grid1Buttons[i]->setToolTip("Mirror and control device screen (Ctrl+S)");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::scpyButton_clicked);
+        break;
+   case 11:
+        grid1Buttons[i]->setText("Edit Cache");
+        grid1Buttons[i]->setToolTip("Manage device cache");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::cacheButton_clicked);
+        break;
+   case 12:
+        grid1Buttons[i]->setText("Console");
+        grid1Buttons[i]->setToolTip("Open the console (Ctrl+N)");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::doConsole_clicked);
+        break;
+   case 13:
+        grid1Buttons[i]->setText("Keypad");
+        grid1Buttons[i]->setToolTip("Access virtual keypad (Ctrl+K)");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::keypadButton_clicked);
+        break;
+   case 14:
+        grid1Buttons[i]->setText("Start App");
+        grid1Buttons[i]->setToolTip("Launch an application (Ctrl+O)");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::startapp_clicked);
+        break;
+   case 15:
+        grid1Buttons[i]->setText("Stop App");
+        grid1Buttons[i]->setToolTip("Stop a running application (Ctrl+P)");
+        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::stopapp_clicked);
+        break;
    }
  }
 
@@ -7456,39 +7519,103 @@ void MainWindow::setupUI() {
    grid2Buttons[i]->setFixedSize(buttonsize);
    gridLayout2->addWidget(grid2Buttons[i], i / 4, i % 4);
    switch (i) {
-   case 0: grid2Buttons[i]->setText("File Manager"); connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::fmButton_clicked); break;
-   case 1: grid2Buttons[i]->setText("Install APK"); connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::sideload_Button_clicked); break;
-   case 2: grid2Buttons[i]->setText("Uninstall APK"); connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::uninstall_Button_clicked); break;
-   case 3: grid2Buttons[i]->setText("System Info"); connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::infoArchitecture); break;
-   case 4: grid2Buttons[i]->setText("Screen Capture"); connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::screenCap); break;
-   case 5: grid2Buttons[i]->setText("Stop ADB"); connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::killServer_clicked); break;
-   case 6: grid2Buttons[i]->setText("Start App"); connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::startapp_clicked); break;
-   case 7: grid2Buttons[i]->setText("Stop App"); connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::stopapp_clicked); break;
-   case 8: grid2Buttons[i]->setText("ADB Shell"); connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::adbshellButton_clicked); break;
-   case 9: grid2Buttons[i]->setText("Console"); connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::doConsole_clicked); break;
-   case 10: grid2Buttons[i]->setText("Send Text"); connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionSend_text_triggered); break;
-   case 11: grid2Buttons[i]->setText("ScrCpy"); connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::scpyButton_clicked); break;
-   case 12: grid2Buttons[i]->setText("Button 35"); connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered); break;
-   case 13: grid2Buttons[i]->setText("Button 36"); connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered); break;
-   case 14: grid2Buttons[i]->setText("Button 37"); connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered); break;
-   case 15: grid2Buttons[i]->setText("Button 38"); connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered); break;
+   case 0:
+        grid2Buttons[i]->setText("File Manager");
+        grid2Buttons[i]->setToolTip("Open the file manager (Ctrl+F)");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::fmButton_clicked);
+        break;
+   case 1:
+        grid2Buttons[i]->setText("Install APK");
+        grid2Buttons[i]->setToolTip("Install an APK file (Ctrl+V)");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::sideload_Button_clicked);
+        break;
+   case 2:
+        grid2Buttons[i]->setText("Uninstall APK");
+        grid2Buttons[i]->setToolTip("Uninstall an APK (Ctrl+U)");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::uninstall_Button_clicked);
+        break;
+   case 3:
+        grid2Buttons[i]->setText("System Info");
+        grid2Buttons[i]->setToolTip("Display system information");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::infoArchitecture);
+        break;
+   case 4:
+        grid2Buttons[i]->setText("Screen Capture");
+        grid2Buttons[i]->setToolTip("Capture the device screen (Ctrl+C)");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::screenCap);
+        break;
+   case 5:
+        grid2Buttons[i]->setText("Stop ADB");
+        grid2Buttons[i]->setToolTip("Stop the ADB server");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::killServer_clicked);
+        break;
+   case 6:
+        grid2Buttons[i]->setText("Start App");
+        grid2Buttons[i]->setToolTip("Launch an application (Ctrl+O)");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::startapp_clicked);
+        break;
+   case 7:
+        grid2Buttons[i]->setText("Stop App");
+        grid2Buttons[i]->setToolTip("Stop a running application (Ctrl+P)");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::stopapp_clicked);
+        break;
+   case 8:
+        grid2Buttons[i]->setText("ADB Shell");
+        grid2Buttons[i]->setToolTip("Open an ADB shell (Ctrl+A)");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::adbshellButton_clicked);
+        break;
+   case 9:
+        grid2Buttons[i]->setText("Console");
+        grid2Buttons[i]->setToolTip("Open the console (Ctrl+N)");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::doConsole_clicked);
+        break;
+   case 10:
+        grid2Buttons[i]->setText("Send Text");
+        grid2Buttons[i]->setToolTip("Send text to the device (Ctrl+T)");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionSend_text_triggered);
+        break;
+   case 11:
+        grid2Buttons[i]->setText("ScrCpy");
+        grid2Buttons[i]->setToolTip("Mirror and control device screen (Ctrl+S)");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::scpyButton_clicked);
+        break;
+   case 12:
+        grid2Buttons[i]->setText("Button 35");
+        grid2Buttons[i]->setToolTip("View information");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+        break;
+   case 13:
+        grid2Buttons[i]->setText("Button 36");
+        grid2Buttons[i]->setToolTip("View information");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+        break;
+   case 14:
+        grid2Buttons[i]->setText("Button 37");
+        grid2Buttons[i]->setToolTip("View information");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+        break;
+   case 15:
+        grid2Buttons[i]->setText("Button 38");
+        grid2Buttons[i]->setToolTip("View information");
+        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
+        break;
    }
  }
 
-
-
- new QShortcut(QKeySequence("Ctrl+N"), this, SLOT(doConsole_clicked()));
- new QShortcut(QKeySequence("Ctrl+S"), this, SLOT(scpyButton_clicked()));
- new QShortcut(QKeySequence("Ctrl+C"), this, SLOT(screenCap()));
  new QShortcut(QKeySequence("Ctrl+A"), this, SLOT(adbshellButton_clicked()));
+ new QShortcut(QKeySequence("Ctrl+B"), this, SLOT(backupButton_clicked()));
+ new QShortcut(QKeySequence("Ctrl+C"), this, SLOT(screenCap()));
  new QShortcut(QKeySequence("Ctrl+F"), this, SLOT(fmButton_clicked()));
- new QShortcut(QKeySequence("Ctrl+T"), this, SLOT(on_actionSend_text_triggered()));
- new QShortcut(QKeySequence("Ctrl+X"), this, SLOT(displayOff()));
  new QShortcut(QKeySequence("Ctrl+K"), this, SLOT(keypadButton_clicked()));
+ new QShortcut(QKeySequence("Ctrl+N"), this, SLOT(doConsole_clicked()));
+ new QShortcut(QKeySequence("Ctrl+O"), this, SLOT(startapp_clicked()));
+ new QShortcut(QKeySequence("Ctrl+P"), this, SLOT(stopapp_clicked()));
+ new QShortcut(QKeySequence("Ctrl+R"), this, SLOT(restoreButton_clicked()));
+ new QShortcut(QKeySequence("Ctrl+S"), this, SLOT(scpyButton_clicked()));
+ new QShortcut(QKeySequence("Ctrl+T"), this, SLOT(on_actionSend_text_triggered()));
+ new QShortcut(QKeySequence("Ctrl+U"), this, SLOT(uninstall_Button_clicked()));
  new QShortcut(QKeySequence("Ctrl+V"), this, SLOT(sideload_Button_clicked()));
-  new QShortcut(QKeySequence("Ctrl+U"), this, SLOT(uninstall_Button_clicked()));
-
-
+ new QShortcut(QKeySequence("Ctrl+X"), this, SLOT(displayOff()));
 
 
 
