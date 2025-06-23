@@ -506,10 +506,21 @@ private slots:
     QSize ebuttonsize;
 };
 
+#include <QTableWidget>
+#include <QScrollBar>
+
 class NoHScrollTableWidget : public QTableWidget {
     Q_OBJECT
 public:
     using QTableWidget::QTableWidget;
+
+    NoHScrollTableWidget(QWidget *parent = nullptr) : QTableWidget(parent) {
+        setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    }
+
+    NoHScrollTableWidget(int rows, int columns, QWidget *parent = nullptr) : QTableWidget(rows, columns, parent) {
+        setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    }
 
     void scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible) override {
         int hVal = horizontalScrollBar()->value();
@@ -517,6 +528,5 @@ public:
         horizontalScrollBar()->setValue(hVal);
     }
 };
-
 
 #endif // MAINWINDOW_H

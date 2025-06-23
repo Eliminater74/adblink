@@ -8,7 +8,8 @@
 
 int main(int argc, char *argv[])
 {
-    // Enable high-DPI scaling
+
+
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     QApplication a(argc, argv);

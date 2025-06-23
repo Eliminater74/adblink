@@ -293,215 +293,6 @@
 
 
 
-///////////////////////////////////
-
-/*
-    void MainWindow::updateButtonProperties()
-    {
-       // Get grid 1 widget from stacked widget (index 0)
-       QWidget *gridWidget1 = ui->stackedWidget->widget(0);
-       if (!gridWidget1) {
-                    qWarning() << "Grid widget 1 not found";
-                    return;
-       }
-       QGridLayout *gridLayout1 = qobject_cast<QGridLayout*>(gridWidget1->layout());
-       if (!gridLayout1) {
-                    qWarning() << "Grid layout 1 not found";
-                    return;
-       }
-
-       // Update buttons in grid 1
-       QPushButton *button1_1 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(0, 0)->widget());
-       if (button1_1) { button1_1->setText("Button"); connect(button1_1, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       QPushButton *button1_2 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(0, 1)->widget());
-       if (button1_2) { button1_2->setText("Button"); connect(button1_2, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       QPushButton *button1_3 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(0, 2)->widget());
-       if (button1_3) { button1_3->setText("Button"); connect(button1_3, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       QPushButton *button1_4 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(0, 3)->widget());
-       if (button1_4) { button1_4->setText("Button"); connect(button1_4, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       QPushButton *button1_5 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(1, 0)->widget());
-       if (button1_5) { button1_5->setText("Button"); connect(button1_5, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       QPushButton *button1_6 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(1, 1)->widget());
-       if (button1_6) { button1_6->setText("Button"); connect(button1_6, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       QPushButton *button1_7 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(1, 2)->widget());
-       if (button1_7) { button1_7->setText("Button"); connect(button1_7, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       QPushButton *button1_8 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(1, 3)->widget());
-       if (button1_8) { button1_8->setText("Button"); connect(button1_8, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       QPushButton *button1_9 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(2, 0)->widget());
-       if (button1_9) { button1_9->setText("Button"); connect(button1_9, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       QPushButton *button1_10 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(2, 1)->widget());
-       if (button1_10) { button1_10->setText("Button"); connect(button1_10, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       QPushButton *button1_11 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(2, 2)->widget());
-       if (button1_11) { button1_11->setText("Button"); connect(button1_11, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       QPushButton *button1_12 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(2, 3)->widget());
-       if (button1_12) { button1_12->setText("Button"); connect(button1_12, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       QPushButton *button1_13 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(3, 0)->widget());
-       if (button1_13) { button1_13->setText("Button"); connect(button1_13, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       QPushButton *button1_14 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(3, 1)->widget());
-       if (button1_14) { button1_14->setText("Button"); connect(button1_14, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       QPushButton *button1_15 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(3, 2)->widget());
-       if (button1_15) { button1_15->setText("Button"); connect(button1_15, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       QPushButton *button1_16 = qobject_cast<QPushButton*>(gridLayout1->itemAtPosition(3, 3)->widget());
-       if (button1_16) { button1_16->setText("Button"); connect(button1_16, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       // Get grid 2 widget from stacked widget (index 1)
-       QWidget *gridWidget2 = ui->stackedWidget->widget(1);
-       if (!gridWidget2) {
-                    qWarning() << "Grid widget 2 not found";
-                    return;
-       }
-       QGridLayout *gridLayout2 = qobject_cast<QGridLayout*>(gridWidget2->layout());
-       if (!gridLayout2) {
-                    qWarning() << "Grid layout 2 not found";
-                    return;
-       }
-
-       // Update buttons in grid 2
-       QPushButton *button2_1 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(0, 0)->widget());
-       if (button2_1) { button2_1->setText("Button"); connect(button2_1, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       QPushButton *button2_2 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(0, 1)->widget());
-       if (button2_2) { button2_2->setText("Button"); connect(button2_2, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       QPushButton *button2_3 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(0, 2)->widget());
-       if (button2_3) { button2_3->setText("Button"); connect(button2_3, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       QPushButton *button2_4 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(0, 3)->widget());
-       if (button2_4) { button2_4->setText("Button"); connect(button2_4, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       QPushButton *button2_5 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(1, 0)->widget());
-       if (button2_5) { button2_5->setText("Button"); connect(button2_5, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       QPushButton *button2_6 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(1, 1)->widget());
-       if (button2_6) { button2_6->setText("Button"); connect(button2_6, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       QPushButton *button2_7 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(1, 2)->widget());
-       if (button2_7) { button2_7->setText("Button"); connect(button2_7, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       QPushButton *button2_8 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(1, 3)->widget());
-       if (button2_8) { button2_8->setText("Button"); connect(button2_8, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       QPushButton *button2_9 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(2, 0)->widget());
-       if (button2_9) { button2_9->setText("Button"); connect(button2_9, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       QPushButton *button2_10 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(2, 1)->widget());
-       if (button2_10) { button2_10->setText("Button"); connect(button2_10, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       QPushButton *button2_11 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(2, 2)->widget());
-       if (button2_11) { button2_11->setText("Button"); connect(button2_11, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       QPushButton *button2_12 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(2, 3)->widget());
-       if (button2_12) { button2_12->setText("Button"); connect(button2_12, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       QPushButton *button2_13 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(3, 0)->widget());
-       if (button2_13) { button2_13->setText("Button"); connect(button2_13, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       QPushButton *button2_14 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(3, 1)->widget());
-       if (button2_14) { button2_14->setText("Button"); connect(button2_14, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       QPushButton *button2_15 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(3, 2)->widget());
-       if (button2_15) { button2_15->setText("Button"); connect(button2_15, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-
-       QPushButton *button2_16 = qobject_cast<QPushButton*>(gridLayout2->itemAtPosition(3, 3)->widget());
-       if (button2_16) { button2_16->setText("Button"); connect(button2_16, &QPushButton::clicked, this, &MainWindow::on_actionSwitch_View_triggered); }
-    }
-
-
-
-
-
-
-
-
-/////////////////////////////////
-
-
-    void MainWindow::buttonsetup()
-
-    {
-
-
-
-         ui->fmButton->setFixedSize(120,32);
-         ui->adbshellButton1->setFixedSize(120,32);
-         ui->backupButton->setFixedSize(120,32);
-         ui->restoreButton->setFixedSize(120,32);
-         ui->sideload_Button->setFixedSize(120,32);
-         ui->uninstall_Button->setFixedSize(120,32);
-         ui->mvdataButton->setFixedSize(120,32);
-         ui->pushTimers->setFixedSize(120,32);
-         ui->screencap1->setFixedSize(120,32);
-         ui->stopADB->setFixedSize(120,32);
-         ui->scpyButton->setFixedSize(120,32);
-         ui->cacheButton->setFixedSize(120,32);
-         ui->doConsole->setFixedSize(120,32);
-         ui->keypadButton->setFixedSize(120,32);
-         ui->startapp->setFixedSize(120,32);
-         ui->stopapp->setFixedSize(120,32);
-         ui->fmButton_2->setFixedSize(120,32);
-         ui->sideload_Button_2->setFixedSize(120,32);
-         ui->uninstall_Button_2->setFixedSize(120,32);
-         ui->infoButton->setFixedSize(120,32);
-         ui->screencap2->setFixedSize(120,32);
-         ui->stopADB2->setFixedSize(120,32);
-         ui->startapp_2->setFixedSize(120,32);
-         ui->stopapp_2->setFixedSize(120,32);
-         ui->adbshellButton_2->setFixedSize(120,32);
-         ui->doConsole_2->setFixedSize(120,32);
-         ui->textButton->setFixedSize(120,32);
-         ui->scpyButton_2->setFixedSize(120,32);
-
-         ui->connButton->setFixedSize(80,32);
-         ui->disButton->setFixedSize(80,32);
-         ui->newRecordButton->setFixedSize(80,32);
-         ui->editRecordButton->setFixedSize(80,32);
-         ui->delRecordButton->setFixedSize(80,32);
-         ui->clearAdhocButton->setFixedSize(80,32);
-
-         ui->newRecordButton->setShortcut(QKeySequence("Ctrl+B"));
-         ui->editRecordButton->setShortcut(QKeySequence("Ctrl+C"));
-         ui->delRecordButton->setShortcut(QKeySequence("Ctrl+D"));
-         ui->connButton->setShortcut(QKeySequence("Ctrl+E"));
-         ui->disButton->setShortcut(QKeySequence("Ctrl+F"));
-         ui->fmButton->setShortcut(QKeySequence("Ctrl+G"));
-         ui->adbshellButton1->setShortcut(QKeySequence("Ctrl+I"));
-         ui->sideload_Button->setShortcut(QKeySequence("Ctrl+L"));
-         ui->uninstall_Button->setShortcut(QKeySequence("Ctrl+M"));
-         ui->scpyButton->setShortcut(QKeySequence("Ctrl+R"));
-         ui->doConsole->setShortcut(QKeySequence("Ctrl+T"));
-         ui->stopapp->setShortcut(QKeySequence("Ctrl+U"));
-         ui->startapp->setShortcut(QKeySequence("Ctrl+W"));
-         ui->clearAdhocButton->setShortcut(QKeySequence("Ctrl+Y"));
-         ui->stopADB->setShortcut(QKeySequence("Ctrl+Z"));
-         ui->startapp->setShortcut(QKeySequence("Ctrl+V"));
-         ui->mvdataButton->setShortcut(QKeySequence("Ctrl+N"));
-         ui->backupButton->setShortcut(QKeySequence("Ctrl+J"));
-         ui->restoreButton->setShortcut(QKeySequence("Ctrl+K"));
-
-        new QShortcut (QKeySequence("Ctrl+O"), this, SLOT(on_actionSend_text_triggered()));
-        new QShortcut (QKeySequence("Ctrl+X"), this, SLOT(displayOff()));
-
-
-
-    }
-
-*/
-
     void MainWindow::setDonateButtonActive(bool active) {
          if (donateButton) {
       donateButton->setVisible(active);
@@ -7506,19 +7297,18 @@ void MainWindow::setupUI() {
  upperLayout->setContentsMargins(28, 0, 0, 0);
  upperLayout->setAlignment(Qt::AlignTop);
 
- // deviceTable = new QTableWidget(0, 3);
-
  deviceTable = new NoHScrollTableWidget(0, 3);
 
- // Connect the selection changed signal here once
+/*
  connect(deviceTable->selectionModel(), &QItemSelectionModel::currentChanged,
          this, [this](const QModelIndex &, const QModelIndex &) {
              deviceTable->horizontalScrollBar()->setValue(0);
          });
 
+*/
+
 
  deviceTable->setFixedSize(390, 160);
- deviceTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
  deviceTable->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
  deviceTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
  deviceTable->horizontalHeader()->setMinimumSectionSize(130);
@@ -7790,16 +7580,15 @@ void MainWindow::loadDeviceTableX(QTableWidget* table) {
  }
 
  QSettings settings("YourCompany", "YourApp");
+
+ // QSettings settings("jocala", "adblink");
+
  int sortColumn = settings.value("DeviceTableSortColumn", 0).toInt();
  Qt::SortOrder sortOrder = static_cast<Qt::SortOrder>(settings.value("DeviceTableSortOrder", Qt::AscendingOrder).toInt());
 
  table->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
  table->setSortingEnabled(true);
  table->sortItems(sortColumn, sortOrder);
-
- table->horizontalScrollBar()->setValue(0);
-
-
 
  if (scrollArea) {
    scrollArea->updateGeometry();
@@ -7816,12 +7605,14 @@ void MainWindow::loadDeviceTableX(QTableWidget* table) {
  }
 
  disconnect(table->horizontalHeader(), &QHeaderView::sectionClicked, nullptr, nullptr);
- connect(table->horizontalHeader(), &QHeaderView::sectionClicked, this, [this, table, scrollArea](int logicalIndex) {
-     QSettings settings("YourCompany", "YourApp");
+ connect(table->horizontalHeader(), &QHeaderView::sectionClicked, this, [table, scrollArea](int logicalIndex) {
+      QSettings settings("YourCompany", "YourApp");
      settings.setValue("DeviceTableSortColumn", logicalIndex);
      settings.setValue("DeviceTableSortOrder", table->horizontalHeader()->sortIndicatorOrder());
      if (scrollArea) {
          scrollArea->horizontalScrollBar()->setValue(0);
      }
  });
+
+
 }
