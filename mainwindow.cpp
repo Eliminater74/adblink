@@ -7286,7 +7286,7 @@ void MainWindow::setupMenus()
  connect(actionReboot,               &QAction::triggered, this, &MainWindow::on_actionReboot_triggered);
  connect(actionAbout,                &QAction::triggered, this, &MainWindow::on_actionAbout_triggered);
  connect(actionOculus,                 &QAction::triggered, this, &MainWindow::on_actionOculus_VR_triggered);
-
+connect(actionHelp,                 &QAction::triggered, this, &MainWindow::on_actionHelp_triggered);
 
 
 }
@@ -7474,6 +7474,19 @@ void MainWindow::setupUI() {
    case 15: grid2Buttons[i]->setText("Button 38"); connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered); break;
    }
  }
+
+
+
+ new QShortcut(QKeySequence("Ctrl+N"), this, SLOT(doConsole_clicked()));
+ new QShortcut(QKeySequence("Ctrl+S"), this, SLOT(scpyButton_clicked()));
+ new QShortcut(QKeySequence("Ctrl+C"), this, SLOT(screenCap()));
+ new QShortcut(QKeySequence("Ctrl+A"), this, SLOT(adbshellButton_clicked()));
+ new QShortcut(QKeySequence("Ctrl+F"), this, SLOT(fmButton_clicked()));
+ new QShortcut(QKeySequence("Ctrl+T"), this, SLOT(on_actionSend_text_triggered()));
+ new QShortcut(QKeySequence("Ctrl+X"), this, SLOT(displayOff()));
+
+
+
 
  stackedWidget->addWidget(gridWidget2);
  stackedWidget->setCurrentIndex(0);
