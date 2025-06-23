@@ -16,8 +16,8 @@
 int edos=2;
 #endif
 
-QClipboard *edclipboard = QApplication::clipboard();
-
+// QClipboard *edclipboard = QApplication::clipboard();
+QClipboard *edclipboard = nullptr;
 
 editorDialog::editorDialog(QWidget *parent) :
     QDialog(parent),

@@ -16,7 +16,8 @@
 int kos1=2;
 #endif
 
-QClipboard *kclipboard = QApplication::clipboard();
+ QClipboard *kclipboard = nullptr;
+// QClipboard *kclipboard = QApplication::clipboard();
 
 klogDialog::klogDialog(QWidget *parent) :
     QDialog(parent),

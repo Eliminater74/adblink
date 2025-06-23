@@ -189,8 +189,8 @@
         donateButton->setParent(container);
         donateButton->move(xPosition, (container->height() - donateButton->height()) / 2); // Center vertically
 
-        // Add the container and other widgets to the status bar
-        statusBar->addWidget(container, 1); // Use addWidget with stretch to fill space
+
+        statusBar->addPermanentWidget(container, 1);
         statusBar->addPermanentWidget(server_running);
         statusBar->addPermanentWidget(progressBar);
         progressBar->setHidden(true);
@@ -250,9 +250,8 @@
              return;
          }
 
-         createTables();
-         createjson();
-
+            createTables();
+            createjson();
             setupMenus();
             setupUI();
             do_versioncheck();
@@ -265,6 +264,8 @@
 
          MainWindow::~MainWindow()
          {
+
+
 
          }
 
@@ -7330,6 +7331,7 @@ void MainWindow::setupUI() {
 
  upperLayout->addWidget(deviceTable);
 
+ /*
  connect(deviceTable, &QTableWidget::itemClicked, this, [this]() {
      if (deviceTable->currentRow() >= 0) {
          for (int col = 0; col < 3; ++col) {
@@ -7337,6 +7339,7 @@ void MainWindow::setupUI() {
          }
      }
  });
+*/
 
  cosmeticGap = new QSpacerItem(12, 0, QSizePolicy::Fixed, QSizePolicy::Minimum);
  upperLayout->addItem(cosmeticGap);

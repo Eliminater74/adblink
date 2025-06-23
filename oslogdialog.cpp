@@ -27,8 +27,8 @@ QString cliplog;
 QString logText;
 QString oldlogText;
 
-QClipboard *osclipboard = QApplication::clipboard();
-
+// QClipboard *osclipboard = QApplication::clipboard();
+QClipboard *osclipboard = nullptr;
 
 
 

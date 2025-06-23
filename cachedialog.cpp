@@ -9,8 +9,8 @@
 
 #include<QClipboard>
 
-
-QClipboard *cacheclipboard = QApplication::clipboard();
+QClipboard *cacheclipboard = nullptr;
+// QClipboard *cacheclipboard = QApplication::clipboard();
 
 int cval1;
 

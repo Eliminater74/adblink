@@ -23,8 +23,8 @@ QString content;
 bool getfile=true;
 
 
-
-QClipboard *clipboard = QApplication::clipboard();
+QClipboard *clipboard = nullptr;
+// QClipboard *clipboard = QApplication::clipboard();
 
 void getlog()
 
