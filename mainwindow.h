@@ -488,7 +488,7 @@ private slots:
     QAction *actionEdit_XML;
     QAction *actionSwitch_View;
     QAction *actionReload_devices;
-
+    QAction *actionOculus;
 
     const QSize bigButtonSize = QSize(130, 42);
     const QSize smallButtonSize = QSize(110, 32);

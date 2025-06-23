@@ -7219,6 +7219,7 @@ void MainWindow::setupMenus()
  actionSwitch_View = new QAction("Switch View", this);
  actionReiinstall_Busybox = new QAction("Reinstall Busybox", this);
  infoArchitecture2 = new QAction("System information", this);
+ actionOculus = new QAction("Oculus Headset", this);
  actionSet_Kodi_permissions = new QAction("Set app permissions", this);
  Erase_adbLink_database = new QAction("Erase device database", this);
  actionSend_text = new QAction("Send text to device", this);
@@ -7227,9 +7228,12 @@ void MainWindow::setupMenus()
  View_Changelog = new QAction("View changelog", this);
  actionWireless_ADBD = new QAction("Wireless ADBD", this);
  actionReboot = new QAction("Reboot device", this);
+
+
  menuUtility->addAction(actionSwitch_View);
  menuUtility->addAction(actionReiinstall_Busybox);
  menuUtility->addAction(infoArchitecture2);
+  menuUtility->addAction(actionOculus);
  menuUtility->addAction(actionSet_Kodi_permissions);
  menuUtility->addAction(Erase_adbLink_database);
  menuUtility->addAction(actionSend_text);
@@ -7238,6 +7242,8 @@ void MainWindow::setupMenus()
  menuUtility->addAction(View_Changelog);
  menuUtility->addAction(actionWireless_ADBD);
  menuUtility->addAction(actionReboot);
+
+
 
  // About Menu
  menuAbout = new QMenu("About", this);
@@ -7279,7 +7285,10 @@ void MainWindow::setupMenus()
  connect(actionWireless_ADBD,        &QAction::triggered, this, &MainWindow::on_actionWireless_ADBD_triggered);
  connect(actionReboot,               &QAction::triggered, this, &MainWindow::on_actionReboot_triggered);
  connect(actionAbout,                &QAction::triggered, this, &MainWindow::on_actionAbout_triggered);
- connect(actionHelp,                 &QAction::triggered, this, &MainWindow::on_actionHelp_triggered);
+ connect(actionOculus,                 &QAction::triggered, this, &MainWindow::on_actionOculus_VR_triggered);
+
+
+
 }
 
 ///////////////////////////////////////
