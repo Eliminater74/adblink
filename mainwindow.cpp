@@ -186,22 +186,21 @@
     #endif //Q_OS_MAC
 
 
-        // Assuming donateButton, server_running, and progressBar are already created
         donateButton = setupDonateButton(statusBar);
         QString donation = readDonationValue();
         setDonateButtonActive(donation != "jocala.com");
-
 
         container = new QWidget(statusBar);
         container->setFixedHeight(statusBar->height());
         container->setMinimumWidth(statusBar->width());
 
-//      int buttonWidth = donateButton->width();
 
-        int xPosition = 200;
-        donateButton->setParent(container);
-        donateButton->move(xPosition, (container->height() - donateButton->height()) / 2); // Center vertically
-
+        QHBoxLayout *layout = new QHBoxLayout(container);
+        layout->addStretch();
+        layout->addWidget(donateButton);
+        layout->addStretch();
+        layout->setContentsMargins(0, 0, 0, 0);
+        layout->setSpacing(0);
 
         statusBar->addPermanentWidget(container, 1);
         statusBar->addPermanentWidget(server_running);
