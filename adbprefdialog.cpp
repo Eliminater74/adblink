@@ -1,72 +1,169 @@
 #include "adbprefdialog.h"
-#include "ui_adbprefdialog.h"
+
+#include <QLabel>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QFileDialog>
-#include <QProcess>
-#include <QNetworkAccessManager>
+#include <QMessageBox>
+#include <QDesktopServices>
+#include <QDialogButtonBox>
 #include <QNetworkRequest>
 #include <QNetworkReply>
-#include <QtNetwork/QNetworkInterface>
-#include <QMessageBox>
-#include <QElapsedTimer>
-#include <QDesktopServices>
-#include <QDir>
-#include <QDialogButtonBox>
-#include <QAbstractButton>
-#include <QFileDialog>
-#include <QMessageBox>
-#include <QFileInfo>
+#include <QFormLayout>
+
+#include <QDebug>
 
 #ifdef Q_OS_LINUX
- int osp=0;
+static const int osp = 0;
 #elif defined(Q_OS_WIN)
-  int osp=1;
+static const int osp = 1;
 #elif defined(Q_OS_MAC)
-int osp=2;
+static const int osp = 2;
+#else
+static const int osp = -1;
 #endif
 
+adbprefDialog::adbprefDialog(QWidget *parent)
+    : QDialog(parent),
+    m_networkManager(new QNetworkAccessManager(this))
+{
+    setupUiManual();
+    this->setFixedSize(300, 500);
 
- adbprefDialog::adbprefDialog(QWidget *parent) :
-     QDialog(parent),
-     ui(new Ui::adbprefDialog),
-     m_networkManager(new QNetworkAccessManager(this))
- {
-     ui->setupUi(this);
-     this->setFixedHeight(415);
-     this->setFixedWidth(310);
+    // Platform-specific combo box visibility/positioning
+    if (osp == 0) { // Linux
+        linTermCombo->move(10, 150);
+        macTermCombo->setVisible(false);
+        macTermCombo->setEnabled(false);
+    } else if (osp == 1) { // Windows
+        macTermCombo->setVisible(false);
+        macTermCombo->setEnabled(false);
+        linTermCombo->setVisible(false);
+        linTermCombo->setEnabled(false);
+    } else if (osp == 2) { // macOS
+        macTermCombo->move(10, 150);
+        linTermCombo->setVisible(false);
+        linTermCombo->setEnabled(false);
+    }
+}
 
-
-#ifdef Q_OS_LINUX
-     ui->linTerm->move(10, 150);
-     ui->macTerm->setVisible(false);
-     ui->macTerm->setEnabled(false);
-#elif defined(Q_OS_WIN)
-     ui->macTerm->setVisible(false);
-     ui->macTerm->setEnabled(false);
-     ui->linTerm->setVisible(false);
-     ui->linTerm->setEnabled(false);
-#elif defined(Q_OS_MAC)
-     ui->macTerm->move(10, 150);
-     ui->linTerm->setVisible(false);
-     ui->linTerm->setEnabled(false);
-#endif
-
-
-
-
-
- }
-
- adbprefDialog::~adbprefDialog()
- {
-     delete ui;
- }
+adbprefDialog::~adbprefDialog()
+{
+    // Qt handles child deletion automatically
+}
 
 
+void adbprefDialog::setupUiManual()
+{
+    this->setWindowTitle("Preferences");
+
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    mainLayout->setSpacing(4);  // Uniform vertical spacing
+    mainLayout->setContentsMargins(10, 10, 10, 10);
+
+    // --- Checkboxes ---
+    versionCheckBox = new QCheckBox("Check for updates at program start", this);
+    versionCheckBox->setObjectName("versioncheck");
+    mainLayout->addWidget(versionCheckBox);
+
+    scrcpyArgsCheckBox = new QCheckBox("Ask for Scrcpy arguments", this);
+    scrcpyArgsCheckBox->setObjectName("scrcpyargs");
+    mainLayout->addWidget(scrcpyArgsCheckBox);
+
+    startViewCheckBox = new QCheckBox("Kodi view at startup", this);
+    startViewCheckBox->setObjectName("startview");
+    mainLayout->addWidget(startViewCheckBox);
+
+    defaultWindowCheckBox = new QCheckBox("Default window", this);
+    defaultWindowCheckBox->setObjectName("defaultwindow");
+    mainLayout->addWidget(defaultWindowCheckBox);
+
+    // --- Platform dropdowns ---
+    macTermCombo = new QComboBox(this);
+    macTermCombo->setObjectName("macTerm");
+    macTermCombo->addItems({"macOS Terminal", "iTerm2 Terminal"});
+    mainLayout->addWidget(macTermCombo);
+
+    linTermCombo = new QComboBox(this);
+    linTermCombo->setObjectName("linTerm");
+    linTermCombo->addItems({"Gnome Terminal", "XFCE4 Terminal", "KDE Konsole"});
+    mainLayout->addWidget(linTermCombo);
+
+    // --- Donation code row as horizontal layout ---
+    QHBoxLayout *donationRow = new QHBoxLayout();
+    QLabel *donationLabel = new QLabel("Donation code", this);
+    donationLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+    donationEdit = new QLineEdit(this);
+    donationEdit->setObjectName("donation");
+    donationEdit->setToolTip("Turn off donation graphics");
+    donationRow->addWidget(donationLabel);
+    donationRow->addWidget(donationEdit);
+    mainLayout->addLayout(donationRow);
+
+    // --- Button rows ---
+    const int buttonWidth = 80;
+    auto addRow = [&](QPushButton *&button, QLineEdit *&edit,
+                      const QString &btnText, const QString &btnObjectName, const QString &btnTooltip,
+                      const QString &editObjectName, const QString &editTooltip,
+                      void (adbprefDialog::*slot)()) {
+        QHBoxLayout *row = new QHBoxLayout();
+        button = new QPushButton(btnText, this);
+        button->setObjectName(btnObjectName);
+        button->setToolTip(btnTooltip);
+        button->setFixedWidth(buttonWidth);
+
+        edit = new QLineEdit(this);
+        edit->setObjectName(editObjectName);
+        edit->setToolTip(editTooltip);
+
+        row->addWidget(button);
+        row->addWidget(edit);
+        mainLayout->addLayout(row);
+
+        connect(button, &QPushButton::clicked, this, slot);
+    };
+
+    addRow(downloadButton, downloadPathEdit, "Pull", "downloadButton", "Default folder for pulled files",
+           "dfilepath", "Default folder for pulled files", &adbprefDialog::on_downloadButton_clicked);
+
+    addRow(installButton, installPathEdit, "Install", "installButton", "Default folder for APK files",
+           "ifilepath", "Default folder for APK files", &adbprefDialog::on_installButton_clicked);
+
+    addRow(backupButton, backupPathEdit, "Backup", "backupButton", "Default folder for backup sets",
+           "bfilepath", "Default folder for backup sets", &adbprefDialog::on_backupButton_clicked);
+
+    addRow(adbButton, localAdbEdit, "External ADB", "adbButton", "Custom ADB. Leave blank to use adblink's included adb",
+           "localadb", "Custom ADB. Leave blank to use adblink's included adb", &adbprefDialog::on_adbButton_clicked);
+
+    // --- Bottom button row ---
+    QHBoxLayout *bottomButtons = new QHBoxLayout();
+    cancelButton = new QPushButton("Cancel", this);
+    cancelButton->setObjectName("cancelButton");
+    checkButton = new QPushButton("Updates", this);
+    checkButton->setObjectName("checkButton");
+    okButton = new QPushButton("OK", this);
+    okButton->setObjectName("okButton");
+
+    bottomButtons->addWidget(cancelButton);
+    bottomButtons->addWidget(checkButton);
+    bottomButtons->addWidget(okButton);
+    mainLayout->addLayout(bottomButtons);
+
+    connect(cancelButton, &QPushButton::clicked, this, &adbprefDialog::reject);
+    connect(okButton, &QPushButton::clicked, this, &adbprefDialog::accept);
+    connect(checkButton, &QPushButton::clicked, this, &adbprefDialog::on_checkButton_clicked);
+}
+
+
+// --- Slots implementations ---
 
 void adbprefDialog::on_checkButton_clicked()
 {
-    QNetworkRequest request;
-    request.setUrl(QUrl("https://www.jocala.com/version.txt"));
+    QNetworkRequest request(QUrl("https://www.jocala.com/version.txt"));
     QNetworkReply *reply = m_networkManager->get(request);
     connect(reply, &QNetworkReply::finished, this, &adbprefDialog::onRequestCompleted);
 }
@@ -77,362 +174,118 @@ void adbprefDialog::onRequestCompleted()
     if (!reply)
         return;
 
-    if (reply->error() != QNetworkReply::NoError)
-    {
-        QMessageBox::critical(this, "", "Network error: " + reply->errorString(), QMessageBox::Ok);
+    if (reply->error() != QNetworkReply::NoError) {
+        QMessageBox::critical(this, "Network error", reply->errorString(), QMessageBox::Ok);
         reply->deleteLater();
         return;
     }
 
-    QByteArray data = reply->readAll();
-    if (data.isEmpty())
-    {
-        QMessageBox::critical(this, "", "Received empty response", QMessageBox::Ok);
-        reply->deleteLater();
-        return;
-    }
-
-    QString s1 = QString::fromUtf8(data);
-    s1 = s1.trimmed(); // Replace strip2 with QString::trimmed, assuming it trims whitespace
-
-    if (version2 != s1)
-    {
+    QString newVersion = QString::fromUtf8(reply->readAll()).trimmed();
+    if (version2 != newVersion) {
         QDialog dialog(this);
-        QVBoxLayout* layout = new QVBoxLayout(&dialog);
-        QLabel* messageLabel = new QLabel("adblink version " + s1 + " is ready. Download?");
+        QVBoxLayout *layout = new QVBoxLayout(&dialog);
+        QLabel *messageLabel = new QLabel("adblink version " + newVersion + " is ready. Download?", &dialog);
         layout->addWidget(messageLabel);
 
-        QDialogButtonBox* buttonBox = new QDialogButtonBox(&dialog);
+        QDialogButtonBox *buttonBox = new QDialogButtonBox(&dialog);
         buttonBox->addButton("Yes", QDialogButtonBox::AcceptRole);
         buttonBox->addButton("No", QDialogButtonBox::RejectRole);
         buttonBox->addButton("Changelog", QDialogButtonBox::ActionRole);
         layout->addWidget(buttonBox);
 
-        connect(buttonBox, &QDialogButtonBox::accepted, [&]() {
-            QUrl url("https://www.jocala.com");
-            if (!QDesktopServices::openUrl(url))
-            {
-                QMessageBox::warning(this, "", "Failed to open download page");
-            }
+        QObject::connect(buttonBox, &QDialogButtonBox::accepted, [&dialog]() {
+            QDesktopServices::openUrl(QUrl("https://www.jocala.com"));
             dialog.accept();
         });
-        connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
-        connect(buttonBox, &QDialogButtonBox::clicked, [&](QAbstractButton* button) {
-            if (buttonBox->buttonRole(button) == QDialogButtonBox::ActionRole)
-            {
-                changelog();
-                dialog.close(); // Close dialog after changelog, if appropriate
+        QObject::connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+        QObject::connect(buttonBox, &QDialogButtonBox::clicked, [&](QAbstractButton *button) {
+            if (buttonBox->buttonRole(button) == QDialogButtonBox::ActionRole) {
+                QDesktopServices::openUrl(QUrl("https://jocala.com/changelog.txt"));
+                dialog.close();
             }
         });
 
         dialog.exec();
-    }
-    else
-    {
-        QMessageBox::information(this, "", "No adblink update available", QMessageBox::Ok );
+    } else {
+        QMessageBox::information(this, "Update", "No adblink update available", QMessageBox::Ok);
     }
 
     reply->deleteLater();
 }
 
-void adbprefDialog::setversionLabel(const QString &versiontext)
-{
-    ui->versionLabel->setText("adblink version: "+ versiontext);
-    version2 = versiontext;
-}
-
-
-
-void adbprefDialog::setmacterm(int macterm)
-{
-    if (osp == 2)
-     ui->macTerm->setCurrentIndex(macterm);
-    else
-    ui->macTerm->setDisabled(true);
-}
-
-
-void adbprefDialog::setlinterm(int linterm)
-{
-
-    if (osp == 0)
-     ui->linTerm->setCurrentIndex(linterm);
-    else
-    ui->linTerm->setDisabled(true);
-
-
-}
-
-
-void adbprefDialog::setwinterm(int winterm)
-{
-
-    if (osp == 1)
-     ui->winTerm->setCurrentIndex(winterm);
-    else
-    ui->winTerm->setDisabled(true);
-
-
-}
-
-
-void adbprefDialog::setdownloaddir(const QString &ddir)
-{
-    ui->dfilepath->setText(ddir);
-}
-
-
-
-void adbprefDialog::setlocaladb(const QString &localadb)
-{
-    ui->localadb->setText(localadb);
-}
-
-
-
-void adbprefDialog::setdonation(const QString &donation)
-{
-    ui->donation->setText(donation);
-}
-
-
-
-void adbprefDialog::setinstalldir(const QString &idir)
-{
-    ui->ifilepath->setText(idir);
-}
-
-
-void adbprefDialog::setbackupdir(const QString &bdir)
-{
-    ui->bfilepath->setText(bdir);
-}
-
-
-
-
-
-
-void adbprefDialog::setscrcpyargs(const bool &scrcpyargs)
-{
-    ui->scrcpyargs->setChecked(scrcpyargs);
-}
-
-
-
-
-void adbprefDialog::setstartview(const bool &startview)
-{
-    ui->startview->setChecked(startview);
-}
-
-
-
-
-void adbprefDialog::setversioncheck(const bool &versioncheck)
-{
-    ui->versioncheck->setChecked(versioncheck);
-}
-
-
-
-
-bool adbprefDialog::versioncheck() {
-   return ui->versioncheck->isChecked();
-}
-
-
-
-
-bool adbprefDialog::scrcpyargs() {
-   return ui->scrcpyargs->isChecked();
-}
-
-
-
-
-bool adbprefDialog::startview() {
-   return ui->startview->isChecked();
-}
-
-QString adbprefDialog::donation() {
-   return ui->donation->text();
-}
-
-
-QString adbprefDialog::downloaddir() {
-   return ui->dfilepath->text();
-}
-
-
-QString adbprefDialog::installdir() {
-   return ui->ifilepath->text();
-}
-
-
-QString adbprefDialog::backupdir() {
-   return ui->bfilepath->text();
-}
-
-
-QString adbprefDialog::localadb() {
-   return ui->localadb->text();
-}
-
-
-QString adbprefDialog::linterm() {
-   return QString::number(ui->linTerm->currentIndex());
-}
-
-QString adbprefDialog::macterm() {
-   return QString::number(ui->macTerm->currentIndex());
-}
-
-QString adbprefDialog::winterm() {
-   return QString::number(ui->winTerm->currentIndex());
-}
-
-
-
 void adbprefDialog::on_downloadButton_clicked()
 {
-    QString dir = QFileDialog::getExistingDirectory(this, tr("Default pull path"),
-                                                 ui->dfilepath->text(),
-                                                 QFileDialog::ShowDirsOnly
-                                                 | QFileDialog::DontResolveSymlinks);
-
-    if (!dir.isEmpty() )
-    {
-        ui->dfilepath->setText(dir);
+    QString dir = QFileDialog::getExistingDirectory(this, "Select pull folder");
+    if (!dir.isEmpty()) {
+        downloadPathEdit->setText(dir);
     }
 }
-
-
-QString adbprefDialog::strip2 (QString str)
-{
-   str = str.simplified();
-   str.replace( " ", "" );
-   return str;
-}
-
 
 void adbprefDialog::on_installButton_clicked()
 {
-
-    QString dir = QFileDialog::getExistingDirectory(this, tr("Default APK folder"),
-                                                 ui->ifilepath->text(),
-                                                 QFileDialog::ShowDirsOnly
-                                                 | QFileDialog::DontResolveSymlinks);
-
-    if (!dir.isEmpty() )
-    {
-        ui->ifilepath->setText(dir);
+    QString dir = QFileDialog::getExistingDirectory(this, "Select install folder");
+    if (!dir.isEmpty()) {
+        installPathEdit->setText(dir);
     }
-
 }
-
 
 void adbprefDialog::on_backupButton_clicked()
 {
-
-    QString dir = QFileDialog::getExistingDirectory(this, tr("Default backup folder"),
-                                                 ui->bfilepath->text(),
-                                                 QFileDialog::ShowDirsOnly
-                                                 | QFileDialog::DontResolveSymlinks);
-
-    if (!dir.isEmpty() )
-    {
-        ui->bfilepath->setText(dir);
+    QString dir = QFileDialog::getExistingDirectory(this, "Select backup folder");
+    if (!dir.isEmpty()) {
+        backupPathEdit->setText(dir);
     }
-
-}
-
-
-
-void adbprefDialog::changelog()
-{
-    QString link = "https://jocala.com/changelog.txt";
-    QDesktopServices::openUrl(QUrl(link));
-
-}
-
-void adbprefDialog::accept() {
-    QString donationText = ui->donation->text();
-    if (!donationText.isEmpty() && donationText != "jocala.com") {
-        ui->donation->clear();
-        QMessageBox::critical(this, "Error", "Invalid donation code", QMessageBox::Ok);
-        return; // Do not accept, keep dialog open
-    }
-    QDialog::accept(); // Accept if validation passes
 }
 
 void adbprefDialog::on_adbButton_clicked()
 {
-    QString result = selectAdbDirectory();
-    if (!result.isEmpty()) {
-        ui->localadb->setText(result);
-    } else {
-        qDebug() << "No valid ADB directory selected";
+    QString file = QFileDialog::getOpenFileName(this, "Select ADB executable");
+    if (!file.isEmpty()) {
+        localAdbEdit->setText(file);
     }
 }
 
-
-
-// Member function to select ADB directory
-QString adbprefDialog::selectAdbDirectory() {
-    // Determine starting directory
-    QString startPath = QDir::homePath(); // Default to home directory
-#ifdef Q_OS_MAC
-    startPath = "/"; // Start at root on macOS to access /usr/local/
-#elif defined(Q_OS_WIN)
-    startPath = QDir::homePath(); // Use home directory on Windows
-#else
-    startPath = QDir::rootPath(); // Use root (/) on Linux/other Unix-like systems
-#endif
-
-    // Create QFileDialog with non-native dialog
-    QFileDialog dialog(this, tr("Select ADB or Directory"), startPath);
-    dialog.setFileMode(QFileDialog::ExistingFile); // Allow selecting a file
-    dialog.setOption(QFileDialog::DontResolveSymlinks, true);
-    dialog.setOption(QFileDialog::DontUseNativeDialog, true); // Force Qt dialog
-
-    // Show all files and directories, including hidden
-    dialog.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden);
-    dialog.setOption(QFileDialog::ReadOnly, true);
-    dialog.setViewMode(QFileDialog::List);
-
-    // Show dialog and get selected file or directory
-    QString selectedPath;
-    if (dialog.exec()) {
-        selectedPath = dialog.selectedFiles().value(0);
+void adbprefDialog::accept()
+{
+    // Validate donation code
+    QString donationText = donationEdit->text().trimmed();
+    if (!donationText.isEmpty() && donationText != "jocala.com") {
+        QMessageBox::critical(this, "Error", "Invalid donation code", QMessageBox::Ok);
+        return; // Don't accept
     }
-
-    // Check if user canceled the dialog
-    if (selectedPath.isEmpty()) {
-        return QString();
-    }
-
-    // Get the directory containing the selected file
-    QFileInfo fileInfo(selectedPath);
-    QString dirPath = fileInfo.isDir() ? selectedPath : fileInfo.absolutePath();
-
-    // Use native separators for the path
-    dirPath = QDir::toNativeSeparators(dirPath);
-
-    // Check for adb or adb.exe in the directory
-    QFileInfo adbFile(dirPath + QDir::separator() + "adb");
-    QFileInfo adbExeFile(dirPath + QDir::separator() + "adb.exe");
-
-    if (!adbFile.exists() && !adbExeFile.exists()) {
-        QMessageBox::warning(
-            this,
-            tr("Invalid Directory"),
-            tr("The selected directory does not contain 'adb' or 'adb.exe'.")
-            );
-        return QString();
-    }
-
-    // Return the valid directory path
-    return dirPath;
+    QDialog::accept();
 }
+
+// --- Getters ---
+
+QString adbprefDialog::downloaddir() const { return downloadPathEdit->text(); }
+QString adbprefDialog::installdir() const { return installPathEdit->text(); }
+QString adbprefDialog::backupdir() const { return backupPathEdit->text(); }
+QString adbprefDialog::localadb() const { return localAdbEdit->text(); }
+QString adbprefDialog::donation() const { return donationEdit->text(); }
+
+bool adbprefDialog::versioncheck() const { return versionCheckBox->isChecked(); }
+bool adbprefDialog::scrcpyargs() const { return scrcpyArgsCheckBox->isChecked(); }
+bool adbprefDialog::startview() const { return startViewCheckBox->isChecked(); }
+bool adbprefDialog::defaultwindow() const { return defaultWindowCheckBox->isChecked(); }
+
+int adbprefDialog::linterm() const { return linTermCombo->currentIndex(); }
+int adbprefDialog::macterm() const { return macTermCombo->currentIndex(); }
+
+
+// --- Setters ---
+
+void adbprefDialog::setdownloaddir(const QString &dir) { downloadPathEdit->setText(dir); }
+void adbprefDialog::setinstalldir(const QString &dir) { installPathEdit->setText(dir); }
+void adbprefDialog::setbackupdir(const QString &dir) { backupPathEdit->setText(dir); }
+void adbprefDialog::setlocaladb(const QString &path) { localAdbEdit->setText(path); }
+void adbprefDialog::setdonation(const QString &code) { donationEdit->setText(code); }
+
+void adbprefDialog::setversioncheck(bool val) { versionCheckBox->setChecked(val); }
+void adbprefDialog::setscrcpyargs(bool val) { scrcpyArgsCheckBox->setChecked(val); }
+void adbprefDialog::setstartview(bool val) { startViewCheckBox->setChecked(val); }
+void adbprefDialog::setdefaultwindow(bool val) { defaultWindowCheckBox->setChecked(val); }
+
+void adbprefDialog::setlinterm(int index) { linTermCombo->setCurrentIndex(index); }
+void adbprefDialog::setmacterm(int index) { macTermCombo->setCurrentIndex(index); }
 

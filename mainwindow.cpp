@@ -147,17 +147,30 @@
 
 
 
+        new QShortcut(QKeySequence("Ctrl+A"), this, SLOT(adbshellButton_clicked()));
+        new QShortcut(QKeySequence("Ctrl+B"), this, SLOT(backupButton_clicked()));
+        new QShortcut(QKeySequence("Ctrl+C"), this, SLOT(screenCap()));
+        new QShortcut(QKeySequence("Ctrl+F"), this, SLOT(fmButton_clicked()));
+        new QShortcut(QKeySequence("Ctrl+K"), this, SLOT(keypadButton_clicked()));
+        new QShortcut(QKeySequence("Ctrl+N"), this, SLOT(doConsole_clicked()));
+        new QShortcut(QKeySequence("Ctrl+O"), this, SLOT(startapp_clicked()));
+        new QShortcut(QKeySequence("Ctrl+P"), this, SLOT(stopapp_clicked()));
+        new QShortcut(QKeySequence("Ctrl+R"), this, SLOT(restoreButton_clicked()));
+        new QShortcut(QKeySequence("Ctrl+S"), this, SLOT(scpyButton_clicked()));
+        new QShortcut(QKeySequence("Ctrl+T"), this, SLOT(on_actionSend_text_triggered()));
+        new QShortcut(QKeySequence("Ctrl+U"), this, SLOT(uninstall_Button_clicked()));
+        new QShortcut(QKeySequence("Ctrl+V"), this, SLOT(sideload_Button_clicked()));
+        new QShortcut(QKeySequence("Ctrl+X"), this, SLOT(displayOff()));
+        new QShortcut(QKeySequence("Ctrl+Z"), this, SLOT(switchSize()));
+
+
         connect(qApp, &QCoreApplication::aboutToQuit, this, &MainWindow::onApplicationQuit);
 
 
         setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
 
-        windowsize=smallWindowSize;
-        buttonsize=bigButtonSize;
-        ebuttonsize=bigEbuttonSize;
 
-         setFixedSize(windowsize);
 
 
 
@@ -253,8 +266,21 @@
             createTables();
             createjson();
             setupMenus();
+
+          //  windowsize=bMainWindowSize;
+          //  buttonsize=bGridButtonSize;
+          //  ebuttonsize=b6ButtonSize;
+
+            initialWindowSize();
+
+
+            setFixedSize(windowsize);
+
             setupUI();
             do_versioncheck();
+
+
+
 
      }
 
@@ -2810,7 +2836,7 @@
          bool checkversion = doc.object()["checkversion"].toBool();
          bool scrcpy = doc.object()["scrcpy"].toBool();
          bool startview = doc.object()["startview"].toBool();
-
+         bool defaultwindow = doc.object()["defaultwindow"].toBool();
 
          file.close();
 
@@ -2835,9 +2861,15 @@
              dialog.setstartview(false);
 
 
+         if (defaultwindow)
+             dialog.setdefaultwindow(true);
+         else
+             dialog.setdefaultwindow(false);
+
+
          dialog.setlinterm(dropdown.toInt());
          dialog.setmacterm(dropdown.toInt());
-         dialog.setwinterm(dropdown.toInt());
+     //   dialog.setwinterm(dropdown.toInt());
 
          dialog.setdownloaddir(download);
          dialog.setlocaladb(localadb);
@@ -2846,14 +2878,12 @@
           dialog.setdonation(donation);
 
 
-         dialog.setversionLabel(version);
 
          dialog.setModal(true);
 
          if (dialog.exec() == QDialog::Accepted)
          {
-             if (os == 1)
-                obj["dropdown"] = dialog.winterm();
+
              if (os == 0)
                 obj["dropdown"] = dialog.linterm();
              if (os == 2)
@@ -2865,6 +2895,7 @@
 
              obj["startview"] = dialog.startview();
 
+              obj["defaultwindow"] = dialog.defaultwindow();
 
              obj["donation"] = dialog.donation();
              obj["download"] = dialog.downloaddir();
@@ -7060,6 +7091,8 @@ void MainWindow::on_actionSwitch_View_triggered()
 
 }
 
+
+
 ///////////////////////////////////
 
 
@@ -7114,6 +7147,7 @@ QJsonObject defaultValues;
 defaultValues["checkversion"] = true;
 defaultValues["scrcpy"] = true;
 defaultValues["startview"] = true;
+defaultValues["defaultwindow"] = true;
 defaultValues["dropdown"] = "0";
 defaultValues["download"] = QDir::homePath();
 defaultValues["install"] = QDir::homePath();
@@ -7228,9 +7262,10 @@ void MainWindow::setupMenus()
  View_Changelog = new QAction("View changelog", this);
  actionWireless_ADBD = new QAction("Wireless ADBD", this);
  actionReboot = new QAction("Reboot device", this);
-
+ actionSize = new QAction("Toggle UI Size", this);
 
  menuUtility->addAction(actionSwitch_View);
+ menuUtility->addAction(actionSize);
  menuUtility->addAction(actionReiinstall_Busybox);
  menuUtility->addAction(infoArchitecture2);
   menuUtility->addAction(actionOculus);
@@ -7274,6 +7309,8 @@ void MainWindow::setupMenus()
  connect(actionKodi_data_usage,      &QAction::triggered, this, &MainWindow::on_actionKodi_data_usage_triggered);
  connect(actionCreate_kodi_data,     &QAction::triggered, this, &MainWindow::on_actionCreate_kodi_data_triggered);
  connect(actionSwitch_View,          &QAction::triggered, this, &MainWindow::on_actionSwitch_View_triggered);
+ connect(actionSize,                 &QAction::triggered, this, &MainWindow::switchSize);
+
  connect(actionReiinstall_Busybox,   &QAction::triggered, this, &MainWindow::on_actionReiinstall_Busybox_triggered);
  connect(infoArchitecture2,           &QAction::triggered, this, &MainWindow::on_infoArchitecture_triggered);
  connect(actionSet_Kodi_permissions, &QAction::triggered, this, &MainWindow::on_actionSet_Kodi_permissions_triggered);
@@ -7309,25 +7346,26 @@ void MainWindow::setupUI() {
 
  deviceTable = new NoHScrollTableWidget(0, 3);
 
-/*
- connect(deviceTable->selectionModel(), &QItemSelectionModel::currentChanged,
-         this, [this](const QModelIndex &, const QModelIndex &) {
-             deviceTable->horizontalScrollBar()->setValue(0);
-         });
-
-*/
 
 
  deviceTable->setFixedSize(390, 160);
+
+
  deviceTable->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
  deviceTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+
  deviceTable->horizontalHeader()->setMinimumSectionSize(130);
  deviceTable->horizontalHeader()->setMaximumSectionSize(130);
+
+
  deviceTable->horizontalHeader()->setVisible(true);
  deviceTable->verticalHeader()->setVisible(false);
+
  deviceTable->setColumnWidth(0, 130);
  deviceTable->setColumnWidth(1, 130);
  deviceTable->setColumnWidth(2, 130);
+
+
  deviceTable->setSelectionMode(QAbstractItemView::SingleSelection);
  deviceTable->setSelectionBehavior(QAbstractItemView::SelectRows);
  deviceTable->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
@@ -7339,16 +7377,6 @@ void MainWindow::setupUI() {
  deviceTable->setTextElideMode(Qt::ElideRight);
 
  upperLayout->addWidget(deviceTable);
-
- /*
- connect(deviceTable, &QTableWidget::itemClicked, this, [this]() {
-     if (deviceTable->currentRow() >= 0) {
-         for (int col = 0; col < 3; ++col) {
-             QTableWidgetItem* item = deviceTable->item(deviceTable->currentRow(), col);
-         }
-     }
- });
-*/
 
  cosmeticGap = new QSpacerItem(12, 0, QSizePolicy::Fixed, QSizePolicy::Minimum);
  upperLayout->addItem(cosmeticGap);
@@ -7602,23 +7630,6 @@ void MainWindow::setupUI() {
    }
  }
 
- new QShortcut(QKeySequence("Ctrl+A"), this, SLOT(adbshellButton_clicked()));
- new QShortcut(QKeySequence("Ctrl+B"), this, SLOT(backupButton_clicked()));
- new QShortcut(QKeySequence("Ctrl+C"), this, SLOT(screenCap()));
- new QShortcut(QKeySequence("Ctrl+F"), this, SLOT(fmButton_clicked()));
- new QShortcut(QKeySequence("Ctrl+K"), this, SLOT(keypadButton_clicked()));
- new QShortcut(QKeySequence("Ctrl+N"), this, SLOT(doConsole_clicked()));
- new QShortcut(QKeySequence("Ctrl+O"), this, SLOT(startapp_clicked()));
- new QShortcut(QKeySequence("Ctrl+P"), this, SLOT(stopapp_clicked()));
- new QShortcut(QKeySequence("Ctrl+R"), this, SLOT(restoreButton_clicked()));
- new QShortcut(QKeySequence("Ctrl+S"), this, SLOT(scpyButton_clicked()));
- new QShortcut(QKeySequence("Ctrl+T"), this, SLOT(on_actionSend_text_triggered()));
- new QShortcut(QKeySequence("Ctrl+U"), this, SLOT(uninstall_Button_clicked()));
- new QShortcut(QKeySequence("Ctrl+V"), this, SLOT(sideload_Button_clicked()));
- new QShortcut(QKeySequence("Ctrl+X"), this, SLOT(displayOff()));
-
-
-
 
  stackedWidget->addWidget(gridWidget2);
  stackedWidget->setCurrentIndex(0);
@@ -7772,4 +7783,56 @@ void MainWindow::loadDeviceTableX(QTableWidget* table) {
  });
 
 
+}
+void MainWindow::switchSize()
+{
+
+ if (windowSizeSelector) {
+   // default size
+   windowsize = mMainWindowSize;
+   buttonsize = mGridButtonSize;
+   ebuttonsize = m6ButtonSize;
+ } else {
+   // larger size
+   windowsize = bMainWindowSize;
+   buttonsize = bGridButtonSize;
+   ebuttonsize = b6ButtonSize;
+ }
+
+ setFixedSize(windowsize);
+ windowSizeSelector = !windowSizeSelector;
+ setupUI();
+}
+
+
+void MainWindow::initialWindowSize()
+{
+ QFile jsonFile(databasedir + "/adblink.json");
+ bool defaultWindow = true; // Default fallback value
+ if (jsonFile.open(QIODevice::ReadOnly)) {
+   QJsonDocument doc = QJsonDocument::fromJson(jsonFile.readAll());
+   jsonFile.close();
+   QJsonObject obj = doc.object();
+   if (obj.contains("defaultwindow")) {
+        defaultWindow = obj["defaultwindow"].toBool();
+   }
+ } else {
+   logfile("Failed to read adblink.json");
+   defaultWindow = true; // Explicitly set fallback
+ }
+
+ if (defaultWindow) {
+   windowsize = mMainWindowSize;
+   buttonsize = mGridButtonSize;
+   ebuttonsize = m6ButtonSize;
+   windowSizeSelector = false; // Medium size
+ } else {
+   windowsize = bMainWindowSize;
+   buttonsize = bGridButtonSize;
+   ebuttonsize = b6ButtonSize;
+   windowSizeSelector = true; // Big size
+ }
+
+ setFixedSize(windowsize); // Apply initial size
+ setupUI(); // Ensure UI is set up with initial sizes
 }

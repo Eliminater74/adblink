@@ -113,7 +113,6 @@ FORMS    +=  about.ui \
     tcpipdialog.ui \
     forcequitdialog.ui \
     pushfiledialog.ui \
-    adbprefdialog.ui \
     setpdialog.ui \
     sleepdialog.ui\
     oculusdialog.ui

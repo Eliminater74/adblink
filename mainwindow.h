@@ -134,6 +134,9 @@ private slots:
 
     void sideload_Button_clicked();
 
+
+     void initialWindowSize();
+
     void disButton_clicked();
 
     void on_actionQuit_triggered();
@@ -390,6 +393,8 @@ private slots:
   void on_actionSwitch_View_triggered();
 
 
+  void switchSize();
+
   void on_actionReload_devices_triggered();
 
   void on_infoArchitecture_triggered();
@@ -414,7 +419,7 @@ private slots:
     const QString version = "6.7";
 
 
-
+    bool windowSizeSelector;
     QString apphome =  "";
     QString scriptdir = "";
     QString aapt = "";
@@ -489,16 +494,20 @@ private slots:
     QAction *actionSwitch_View;
     QAction *actionReload_devices;
     QAction *actionOculus;
+    QAction *actionSize;
 
-    const QSize bigButtonSize = QSize(130, 42);
-    const QSize smallButtonSize = QSize(110, 32);
+    const QSize bMainWindowSize = QSize(700,425);
+    const QSize bGridButtonSize = QSize(130,42);
+    const QSize b6ButtonSize = QSize(110, 42);
 
-    const QSize bigEbuttonSize=QSize(110, 42);
-    const QSize smallEbuttonSize=QSize(110, 32);
+   // const QSize mMainWindowSize = QSize(630, 400);
+   // const QSize mGridButtonSize = QSize(130, 32);
+  //  const QSize m6ButtonSize = QSize(80, 42);
 
-    const QSize bigWindowSize = QSize(700, 500);
-    const QSize smallWindowSize = QSize(700, 425);
 
+    const QSize mMainWindowSize = QSize(630, 370);
+    const QSize mGridButtonSize = QSize(110, 32);
+    const QSize m6ButtonSize = QSize(80, 42);
 
 
     QSize buttonsize;

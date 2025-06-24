@@ -1,92 +1,93 @@
 #ifndef ADBPREFDIALOG_H
 #define ADBPREFDIALOG_H
-#include <QNetworkAccessManager>
-#include <QDialog>
 
-namespace Ui {
-class adbprefDialog;
-}
+#include <QDialog>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+
+class QLabel;
+class QCheckBox;
+class QComboBox;
+class QLineEdit;
+class QPushButton;
 
 class adbprefDialog : public QDialog
 {
     Q_OBJECT
+public:
+    explicit adbprefDialog(QWidget *parent = nullptr);
+    ~adbprefDialog() override;
+
+    // Getters
+    QString downloaddir() const;
+    QString installdir() const;
+    QString backupdir() const;
+    QString localadb() const;
+    QString donation() const;
+    bool versioncheck() const;
+    bool scrcpyargs() const;
+    bool startview() const;
+    bool defaultwindow() const;
+    int linterm() const;
+    int macterm() const;
+
+
+    // Setters
+    void setdownloaddir(const QString &dir);
+    void setinstalldir(const QString &dir);
+    void setbackupdir(const QString &dir);
+    void setlocaladb(const QString &path);
+    void setdonation(const QString &code);
+    void setversioncheck(bool val);
+    void setscrcpyargs(bool val);
+    void setstartview(bool val);
+    void setdefaultwindow(bool val);
+    void setlinterm(int index);
+    void setmacterm(int index);
+
 
 protected:
     void accept() override;
 
-
-public:
-    explicit adbprefDialog(QWidget *parent = 0);
-    ~adbprefDialog();
-
-    QString version2;
-
-     void setversioncheck(const bool &versioncheck);
-
-     void setscrcpyargs(const bool &scrcpyargs);
-
-     void setstartview(const bool &startview);
-
-     QString selectAdbDirectory();
-
-    void setmacterm(int macterm);
-    void setlinterm(int linterm);
-    void setwinterm(int winterm);
-    void changelog();
-    void setversionLabel(const QString &versiontext);
-
-    void setdownloaddir(const QString &ddir);
-    void setlocaladb(const QString &localadb);
-
-    void setdonation(const QString &donation);
-
-
-void setinstalldir(const QString &idir);
-void setbackupdir(const QString &bdir);
-
-
-
-bool versioncheck();
-bool scrcpyargs();
-bool startview();
-
-QString downloaddir();
-QString localadb();
-QString installdir();
-QString backupdir();
-
-
-QString linterm();
-QString macterm();
-QString winterm();
-bool msgboxtype();
-QString donation();
-
 private slots:
-
-
     void on_checkButton_clicked();
     void onRequestCompleted();
-
     void on_downloadButton_clicked();
-
-    QString strip2 (QString str);
-
-
     void on_installButton_clicked();
-
     void on_backupButton_clicked();
-
-
-
     void on_adbButton_clicked();
 
 private:
+    void setupUiManual();
 
-    Ui::adbprefDialog *ui;
-    QNetworkAccessManager* m_networkManager;
+  //  QLabel *versionLabel;
+
+    QCheckBox *versionCheckBox;
+    QCheckBox *scrcpyArgsCheckBox;
+    QCheckBox *startViewCheckBox;
+    QCheckBox *defaultWindowCheckBox;
+
+    QComboBox *macTermCombo;
+    QComboBox *linTermCombo;
 
 
+    QLineEdit *donationEdit;
+    QLineEdit *downloadPathEdit;
+    QLineEdit *installPathEdit;
+    QLineEdit *backupPathEdit;
+    QLineEdit *localAdbEdit;
+
+    QPushButton *cancelButton;
+    QPushButton *checkButton;
+    QPushButton *okButton;
+
+    QPushButton *downloadButton;
+    QPushButton *installButton;
+    QPushButton *backupButton;
+    QPushButton *adbButton;
+
+    QNetworkAccessManager *m_networkManager;
+    QString version2;  // To track current version text
 
 };
 
