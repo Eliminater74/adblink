@@ -497,13 +497,13 @@ private slots:
     QAction *actionOculus;
     QAction *actionSize;
 
+    const QSize cMainWindowSize = QSize(800,525);
+    const QSize cGridButtonSize = QSize(180,62);
+    const QSize c6ButtonSize = QSize(160, 42);
+
     const QSize bMainWindowSize = QSize(700,425);
     const QSize bGridButtonSize = QSize(130,42);
     const QSize b6ButtonSize = QSize(110, 42);
-
-   // const QSize mMainWindowSize = QSize(630, 400);
-   // const QSize mGridButtonSize = QSize(130, 32);
-  //  const QSize m6ButtonSize = QSize(80, 42);
 
 
     const QSize mMainWindowSize = QSize(630, 370);
