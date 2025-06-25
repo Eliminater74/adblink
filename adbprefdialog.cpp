@@ -78,7 +78,7 @@ void adbprefDialog::setupUiManual()
     startViewCheckBox->setObjectName("startview");
     mainLayout->addWidget(startViewCheckBox);
 
-    defaultWindowCheckBox = new QCheckBox("Default window", this);
+    defaultWindowCheckBox = new QCheckBox("Default window size", this);
     defaultWindowCheckBox->setObjectName("defaultwindow");
     mainLayout->addWidget(defaultWindowCheckBox);
 

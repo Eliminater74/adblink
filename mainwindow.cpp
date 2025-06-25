@@ -266,9 +266,6 @@
             createjson();
             setupMenus();
 
-          //  windowsize=bMainWindowSize;
-          //  buttonsize=bGridButtonSize;
-          //  ebuttonsize=b6ButtonSize;
 
             initialWindowSize();
 
@@ -837,12 +834,14 @@
 
         if (startview) {
             stackedWidget->setCurrentIndex(0);
+            currentStack=0;
             menuKodi->menuAction()->setVisible(true);
             infoArchitecture2->setEnabled(true);
             infoArchitecture2->setVisible(true);
 
         } else {
             stackedWidget->setCurrentIndex(1);
+            currentStack=1;
             menuKodi->menuAction()->setVisible(false);
             infoArchitecture2->setEnabled(false);
             infoArchitecture2->setVisible(false);
@@ -6856,181 +6855,6 @@ void MainWindow::on_actionReload_devices_triggered()
 
 }
 
-/////////////////////////////////////////////////////
-
-/*
-
-void MainWindow::loadDeviceTableX(QTableWidget* table)
-{
- //  qDebug() << "Entering loadDeviceTableX";
-   QString sqlstatement;
-   QSqlQuery query;
-
-   // Store current connected device IDs
-   QSet<QString> connectedDeviceIds;
-   for (int row = 0; row < table->rowCount(); ++row) {
-        if (table->item(row, 2) &&
-            table->item(row, 2)->text() == "Connected" &&
-            table->item(row, 0)) {
-            connectedDeviceIds.insert(table->item(row, 0)->data(Qt::UserRole).toString());
-        }
-   }
-
-   // Clear and setup table
-   table->clearContents();
-   table->setRowCount(0); // Reset rows
-   table->setColumnCount(3);
-   table->setHorizontalHeaderLabels(QStringList() << "Device" << "IP" << "Status");
-   table->verticalHeader()->setVisible(false);
-   table->setEditTriggers(QAbstractItemView::NoEditTriggers);
-   table->setShowGrid(true);
-   table->setSortingEnabled(false); // Temporarily disable sorting
-   table->setSelectionMode(QAbstractItemView::SingleSelection);
-   table->setSelectionBehavior(QAbstractItemView::SelectRows);
-
-   // Ensure table scales with parent widget
-   table->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-
-   // Reset margins and padding
-   table->setStyleSheet("QTableWidget { margin: 0px; padding: 0px; } QHeaderView::section { padding: 0px; }");
-
-   // Set initial column widths
-   for (int col = 0; col < 3; ++col) {
-        table->setColumnWidth(col, 130); // Initial ~130px (reduced from 133)
-   }
-
-   // Ensure all columns are visible
-   for (int col = 0; col < 3; ++col) {
-        table->showColumn(col);
-   }
-
-   // Set fixed row height for 5 rows visible
-   table->verticalHeader()->setDefaultSectionSize(30); // ~30px per row
-
-   // Execute query
-   sqlstatement = "SELECT id, description, daddr, isusb FROM device";
-
-
-   if (!query.exec(sqlstatement)) {
-        logfile ("Query failed:" + query.lastError().text());
-       return;
-  }
-
-   // Populate all records
-   int row = 0;
-   while (query.next()) {
-        table->insertRow(row);
-        QString deviceId = query.value(0).toString();
-        QString description = query.value(1).toString();
-
-        QTableWidgetItem* descItem = new QTableWidgetItem(description);
-        descItem->setData(Qt::UserRole, deviceId);
-        table->setItem(row, 0, descItem);
-
-        bool isUsb = query.value(3).toBool();
-        QString ip = isUsb ? "USB" : (query.value(2).toString().isEmpty() ? "N/A" : query.value(2).toString());
-        table->setItem(row, 1, new IpTableWidgetItem(ip));
-
-        QString status;
-        if (isUsb) {
-            status = usbConnected(query.value(2).toString()) ? "Connected" : "Disconnected";
-        } else {
-            status = connectedDeviceIds.contains(deviceId) ? "Connected" : "Disconnected";
-        }
-        table->setItem(row, 2, new QTableWidgetItem(status));
-//        qDebug() << "Row" << row << "ID:" << deviceId << "Desc:" << description << "IP:" << ip << "Status:" << status;
-        row++;
-   }
-//   qDebug() << "Total rows loaded:" << row;
-
-   // Calculate column widths
-   QScrollArea *scrollArea = qobject_cast<QScrollArea*>(table->parentWidget());
-   int totalWidth = scrollArea && scrollArea->width() > 0 ? scrollArea->width() : 390; // Default 390px (reduced from 400)
-   totalWidth -= 2 * table->frameWidth();
-   if (table->verticalScrollBar()->isVisible()) {
-        totalWidth -= table->verticalScrollBar()->width();
-   }
-   totalWidth = qMax(totalWidth, 390); // Minimum 390px
- //  qDebug() << "Scroll area width:" << (scrollArea ? scrollArea->width() : 0) << "Total width:" << totalWidth;
-
-   // Get content-based widths
-   table->resizeColumnsToContents();
-   int col0Width = table->columnWidth(0);
-   int col1Width = table->columnWidth(1);
-   int col2Width = table->columnWidth(2);
-
-   // Minimum widths (reduced from 133 to ~130)
-   const int minWidth = 130;
-   col0Width = qMax(col0Width, minWidth);
-   col1Width = qMax(col1Width, minWidth);
-   col2Width = qMax(col2Width, minWidth);
-
-   // Scale to fill totalWidth
-   int currentTotal = col0Width + col1Width + col2Width;
-   if (currentTotal != totalWidth && totalWidth > 0) {
-        double scale = static_cast<double>(totalWidth) / currentTotal;
-        col0Width = qRound(col0Width * scale);
-        col1Width = qRound(col1Width * scale);
-        col2Width = totalWidth - (col0Width + col1Width); // Exact fit
-   }
-
-   // Ensure minimum widths and prevent negative widths
-   if (col2Width < minWidth) {
-        int excess = (col0Width + col1Width + minWidth) - totalWidth;
-        if (excess > 0) {
-            double scale = static_cast<double>(totalWidth - minWidth) / (col0Width + col1Width);
-            col0Width = qRound(col0Width * scale);
-            col1Width = qRound(col1Width * scale);
-        }
-        col2Width = minWidth;
-   }
-
-   table->setColumnWidth(0, col0Width);
-   table->setColumnWidth(1, col1Width);
-   table->setColumnWidth(2, col2Width);
-//   qDebug() << "Final column widths: Col0:" << col0Width << "Col1:" << col1Width << "Col2:" << col2Width;
-
-   // Set table and scroll area widths
-   table->setFixedWidth(totalWidth);
-   if (scrollArea) {
-        scrollArea->setFixedWidth(totalWidth);
-   }
-
-   // Force layout update
-   table->updateGeometry();
-   table->viewport()->update();
-   if (scrollArea) {
-        scrollArea->updateGeometry();
-        scrollArea->viewport()->update();
-   }
-
-   // Disable horizontal scrollbar
-   table->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-   // Load saved sort settings
-   QSettings settings("YourCompany", "YourApp"); // Replace with your organization and app name
-   int sortColumn = settings.value("DeviceTableSortColumn", 0).toInt();
-   Qt::SortOrder sortOrder = static_cast<Qt::SortOrder>(settings.value("DeviceTableSortOrder", Qt::AscendingOrder).toInt());
-
-   // Enable sorting
-   table->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
-   table->setSortingEnabled(true);
-   table->sortItems(sortColumn, sortOrder);
-   table->viewport()->update();
-//   qDebug() << "Table rows after population:" << table->rowCount();
-
-   // Connect header click
-   connect(table->horizontalHeader(), &QHeaderView::sectionClicked, this, [this, table](int logicalIndex) {
-       QSettings settings("YourCompany", "YourApp");
-       settings.setValue("DeviceTableSortColumn", logicalIndex);
-       settings.setValue("DeviceTableSortOrder", table->horizontalHeader()->sortIndicatorOrder());
-   });
-}
-
-*/
-
-
-
 /////////////////////////////////////////////////
 
 void MainWindow::on_infoArchitecture_triggered()
@@ -7047,16 +6871,10 @@ void MainWindow::on_actionSwitch_View_triggered()
 
    if (stackedWidget->currentIndex() == 0) {
 
-   /*
-        QMessageBox::StandardButton reply;
-        reply = QMessageBox::question(this, "Kodi", "Switch to Android View?",
-                                      QMessageBox::Yes | QMessageBox::No);
-        if (reply == QMessageBox::No) {
-            return;
-        }
-  */
+
 
         stackedWidget->setCurrentIndex(1);
+        currentStack = 1;
         menuKodi->menuAction()->setVisible(false);
 
 
@@ -7064,26 +6882,23 @@ void MainWindow::on_actionSwitch_View_triggered()
         infoArchitecture2->setEnabled(false);
         infoArchitecture2->setVisible(false);
 
-
+/*
                for (int i = 12; i <= 15; ++i) {
               if (grid2Buttons[i]) { // Check for null to avoid crashes
                grid2Buttons[i]->setVisible(false); // Make invisible
                grid2Buttons[i]->setEnabled(false); // Make inactive
-              }}
+             }}
+*/
 
    }
 
 
    else {
 
-        QMessageBox::StandardButton reply;
-        reply = QMessageBox::question(this, "Kodi", "Switch to Kodi View?",
-                                      QMessageBox::Yes | QMessageBox::No);
-        if (reply == QMessageBox::No) {
-            return;
-        }
+
 
         stackedWidget->setCurrentIndex(0);
+        currentStack = 0;
         menuKodi->menuAction()->setVisible(true);
 
 
@@ -7140,82 +6955,94 @@ QPushButton* MainWindow::setupDonateButton(QWidget* parent) {
 /////////////////////////////////////////
 
 void MainWindow::createjson() {
+   const QString kJsonFileName = databasedir + "/adblink.json";
+   QFile jsonFile(kJsonFileName);
+   QJsonObject config;
 
+   // Ensure directory exists
+   QDir dir(databasedir);
+   dir.mkpath(".");
 
-QFile jsonFile(databasedir + "/adblink.json");
-QJsonObject obj;
+   // Define default values
+   QJsonObject defaultValues;
+   defaultValues["checkversion"] = true;
+   defaultValues["scrcpy"] = true;
+   defaultValues["startview"] = true;
+   defaultValues["defaultwindow"] = true;
+   defaultValues["dropdown"] = "0";
+   defaultValues["download"] = QDir::homePath();
+   defaultValues["install"] = QDir::homePath();
+   defaultValues["backup"] = QDir::homePath();
+   defaultValues["donation"] = "";
+   defaultValues["localadb"] = "";
+   defaultValues["stopapp"] = "org.xbmc.kodi";
+   defaultValues["startapp"] = "org.xbmc.kodi/org.xbmc.kodi.Splash";
 
-// Default values for the JSON object
-QJsonObject defaultValues;
-defaultValues["checkversion"] = true;
-defaultValues["scrcpy"] = true;
-defaultValues["startview"] = true;
-defaultValues["defaultwindow"] = true;
-defaultValues["dropdown"] = "0";
-defaultValues["download"] = QDir::homePath();
-defaultValues["install"] = QDir::homePath();
-defaultValues["backup"] = QDir::homePath();
-defaultValues["donation"] = "";
-defaultValues["localadb"] = "";
-defaultValues["stopapp"] = "org.xbmc.kodi";
-defaultValues["startapp"] = "org.xbmc.kodi/org.xbmc.kodi.Splash";
+   // Lambda to write JSON to a specified file
+   auto writeJsonFile = [](QFile& file, const QJsonObject& obj) {
+       if (!file.open(QIODevice::WriteOnly)) {
+           logfile("Failed to write " + file.fileName());
+           return false;
+       }
+       QJsonDocument doc(obj);
+       file.write(doc.toJson());
+       file.close();
+       return true;
+   };
 
-bool needsUpdate = false;
-
-if (QFileInfo::exists(databasedir + "/adblink.json")) {
-   if (jsonFile.open(QIODevice::ReadOnly)) {
-        QJsonDocument doc = QJsonDocument::fromJson(jsonFile.readAll());
-        jsonFile.close();
-        obj = doc.object();
-
-        // Create a new object with only the keys from defaultValues
-        QJsonObject updatedObj;
-        for (auto it = defaultValues.constBegin(); it != defaultValues.constEnd(); ++it) {
-            if (obj.contains(it.key())) {
-               updatedObj[it.key()] = obj[it.key()]; // Keep existing value
+   if (QFileInfo::exists(kJsonFileName)) {
+        if (jsonFile.open(QIODevice::ReadOnly)) {
+            if (jsonFile.size() == 0) {
+               logfile("Empty JSON file: adblink.json");
+               config = defaultValues;
             } else {
-               updatedObj[it.key()] = it.value(); // Set default value
-               needsUpdate = true;
-            }
-        }
-
-        // Check if any keys in obj are not in defaultValues (for removal)
-        for (const QString &key : obj.keys()) {
-            if (!defaultValues.contains(key)) {
-               needsUpdate = true; // Mark for update if obsolete keys are found
-            }
-        }
-
-        // Update obj to the filtered version
-        obj = updatedObj;
-
-        // Write updated JSON back to file if any changes were made
-        if (needsUpdate) {
-            if (jsonFile.open(QIODevice::WriteOnly)) {
-               QJsonDocument updatedDoc(obj);
-               jsonFile.write(updatedDoc.toJson());
+               QJsonParseError parseError;
+               QJsonDocument doc = QJsonDocument::fromJson(jsonFile.readAll(), &parseError);
                jsonFile.close();
-            } else {
-               logfile("Failed to write updated adblink.json");
+               if (parseError.error != QJsonParseError::NoError) {
+                    logfile("Invalid JSON format in adblink.json");
+                    config = defaultValues;
+               } else {
+                    config = doc.object();
+                    bool needsUpdate = false;
+                    QJsonObject newConfig;
+                    for (auto it = defaultValues.constBegin(); it != defaultValues.constEnd(); ++it) {
+                        newConfig[it.key()] = config.contains(it.key()) ? config[it.key()] : it.value();
+                        if (!config.contains(it.key())) needsUpdate = true;
+                    }
+                    for (const QString& key : config.keys()) {
+                        if (!defaultValues.contains(key)) {
+                            logfile("Obsolete key found: " + key);
+                            needsUpdate = true;
+                        }
+                    }
+                    config = newConfig;
+                    if (needsUpdate) {
+                        QFile tempFile(databasedir + "/adblink.json.tmp");
+                        if (writeJsonFile(tempFile, config)) {
+                            QFile::remove(kJsonFileName);
+                            tempFile.rename(kJsonFileName);
+                        }
+                    }
+               }
             }
+        } else {
+            logfile("Failed to read adblink.json");
         }
    } else {
-        logfile("Failed to read adblink.json");
+        config = defaultValues;
+        writeJsonFile(jsonFile, config);
    }
-} else {
-   // Create new JSON file with default values
-   obj = defaultValues;
 
-   if (jsonFile.open(QIODevice::WriteOnly)) {
-        QJsonDocument doc(obj);
-        jsonFile.write(doc.toJson());
-        jsonFile.close();
-   } else {
-        logfile("Failed to create adblink.json");
-   }
- }
+
+   bool startView = config["startview"].toBool(true);
+   currentStack = startView ? 0 : 1;
+
 }
 
+
+
+//////////////////////////////////
 
 void MainWindow::setupMenus()
 {
@@ -7545,7 +7372,7 @@ gridWidget2 = new QWidget();
 gridLayout2 = new QGridLayout(gridWidget2);
 gridLayout2->setSpacing(0);
 gridLayout2->setContentsMargins(0, 0, 0, 0);
-for (int i = 0; i < 16; ++i) {
+for (int i = 0; i < 12; ++i) {
    grid2Buttons[i] = new QPushButton();
    grid2Buttons[i]->setFixedSize(buttonsize);
    // Set font size for grid2Buttons based on windowSizeSelector
@@ -7614,6 +7441,8 @@ for (int i = 0; i < 16; ++i) {
         grid2Buttons[i]->setToolTip("Mirror and control device screen (Ctrl+S)");
         connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::scpyButton_clicked);
         break;
+
+/*
    case 12:
         grid2Buttons[i]->setText("Button 35");
         grid2Buttons[i]->setToolTip("View information");
@@ -7634,11 +7463,14 @@ for (int i = 0; i < 16; ++i) {
         grid2Buttons[i]->setToolTip("View information");
         connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
         break;
-   }
+*/
+
+  }
 }
 
+
 stackedWidget->addWidget(gridWidget2);
-stackedWidget->setCurrentIndex(0);
+stackedWidget->setCurrentIndex(currentStack);
 
 deviceTable->show();
 buttonGridWidget->show();
@@ -7806,6 +7638,7 @@ void MainWindow::switchSize()
 
  setFixedSize(windowsize);
  windowSizeSelector = !windowSizeSelector;
+ qDebug() << currentStack;
  setupUI();
 }
 
@@ -7830,12 +7663,13 @@ void MainWindow::initialWindowSize()
    windowsize = mMainWindowSize;
    buttonsize = mGridButtonSize;
    ebuttonsize = m6ButtonSize;
-   windowSizeSelector = false; // Medium size
+   windowSizeSelector = false;
+
  } else {
    windowsize = bMainWindowSize;
    buttonsize = bGridButtonSize;
    ebuttonsize = b6ButtonSize;
-   windowSizeSelector = true; // Big size
+   windowSizeSelector = true;
  }
 
  setFixedSize(windowsize); // Apply initial size

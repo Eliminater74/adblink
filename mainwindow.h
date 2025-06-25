@@ -432,6 +432,7 @@ private slots:
     QString scrcpydir;
     QString dbstring = "";
     QString jsonstring = "";
+    int currentStack;
 
     // Member variables for widgets
     QWidget *centralWidget;
