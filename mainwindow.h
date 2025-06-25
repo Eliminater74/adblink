@@ -419,7 +419,7 @@ private slots:
     const QString version = "6.7";
 
 
-    bool windowSizeSelector;
+    int windowSizeSelector;
     QString apphome =  "";
     QString scriptdir = "";
     QString aapt = "";

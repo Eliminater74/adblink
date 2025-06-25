@@ -56,7 +56,6 @@ adbprefDialog::~adbprefDialog()
     // Qt handles child deletion automatically
 }
 
-
 void adbprefDialog::setupUiManual()
 {
     this->setWindowTitle("Preferences");
@@ -78,9 +77,10 @@ void adbprefDialog::setupUiManual()
     startViewCheckBox->setObjectName("startview");
     mainLayout->addWidget(startViewCheckBox);
 
-    defaultWindowCheckBox = new QCheckBox("Default window size", this);
-    defaultWindowCheckBox->setObjectName("defaultwindow");
-    mainLayout->addWidget(defaultWindowCheckBox);
+    defaultWindowCombo = new QComboBox(this); // Changed to QComboBox
+    defaultWindowCombo->setObjectName("defaultwindow");
+    defaultWindowCombo->addItems({"Small display", "Medium display", "Large display"}); // Options for 0, 1, 2
+    mainLayout->addWidget(defaultWindowCombo);
 
     // --- Platform dropdowns ---
     macTermCombo = new QComboBox(this);
@@ -157,9 +157,6 @@ void adbprefDialog::setupUiManual()
     connect(okButton, &QPushButton::clicked, this, &adbprefDialog::accept);
     connect(checkButton, &QPushButton::clicked, this, &adbprefDialog::on_checkButton_clicked);
 }
-
-
-// --- Slots implementations ---
 
 void adbprefDialog::on_checkButton_clicked()
 {
@@ -267,11 +264,9 @@ QString adbprefDialog::donation() const { return donationEdit->text(); }
 bool adbprefDialog::versioncheck() const { return versionCheckBox->isChecked(); }
 bool adbprefDialog::scrcpyargs() const { return scrcpyArgsCheckBox->isChecked(); }
 bool adbprefDialog::startview() const { return startViewCheckBox->isChecked(); }
-bool adbprefDialog::defaultwindow() const { return defaultWindowCheckBox->isChecked(); }
-
+int adbprefDialog::defaultwindow() const { return defaultWindowCombo->currentIndex(); }
 int adbprefDialog::linterm() const { return linTermCombo->currentIndex(); }
 int adbprefDialog::macterm() const { return macTermCombo->currentIndex(); }
-
 
 // --- Setters ---
 
@@ -284,8 +279,6 @@ void adbprefDialog::setdonation(const QString &code) { donationEdit->setText(cod
 void adbprefDialog::setversioncheck(bool val) { versionCheckBox->setChecked(val); }
 void adbprefDialog::setscrcpyargs(bool val) { scrcpyArgsCheckBox->setChecked(val); }
 void adbprefDialog::setstartview(bool val) { startViewCheckBox->setChecked(val); }
-void adbprefDialog::setdefaultwindow(bool val) { defaultWindowCheckBox->setChecked(val); }
-
+void adbprefDialog::setdefaultwindow(int index) { defaultWindowCombo->setCurrentIndex(index); }
 void adbprefDialog::setlinterm(int index) { linTermCombo->setCurrentIndex(index); }
 void adbprefDialog::setmacterm(int index) { macTermCombo->setCurrentIndex(index); }
-

@@ -27,10 +27,9 @@ public:
     bool versioncheck() const;
     bool scrcpyargs() const;
     bool startview() const;
-    bool defaultwindow() const;
+    int defaultwindow() const; // Changed from bool to int
     int linterm() const;
     int macterm() const;
-
 
     // Setters
     void setdownloaddir(const QString &dir);
@@ -41,10 +40,9 @@ public:
     void setversioncheck(bool val);
     void setscrcpyargs(bool val);
     void setstartview(bool val);
-    void setdefaultwindow(bool val);
+    void setdefaultwindow(int index); // Changed from bool to int
     void setlinterm(int index);
     void setmacterm(int index);
-
 
 protected:
     void accept() override;
@@ -60,16 +58,13 @@ private slots:
 private:
     void setupUiManual();
 
-  //  QLabel *versionLabel;
-
     QCheckBox *versionCheckBox;
     QCheckBox *scrcpyArgsCheckBox;
     QCheckBox *startViewCheckBox;
-    QCheckBox *defaultWindowCheckBox;
+    QComboBox *defaultWindowCombo; // Changed from QCheckBox to QComboBox
 
     QComboBox *macTermCombo;
     QComboBox *linTermCombo;
-
 
     QLineEdit *donationEdit;
     QLineEdit *downloadPathEdit;
@@ -88,7 +83,6 @@ private:
 
     QNetworkAccessManager *m_networkManager;
     QString version2;  // To track current version text
-
 };
 
 #endif // ADBPREFDIALOG_H
