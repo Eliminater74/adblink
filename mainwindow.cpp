@@ -6868,48 +6868,53 @@ void MainWindow::on_infoArchitecture_triggered()
 
 void MainWindow::on_actionSwitch_View_triggered()
 {
+   // Read existing JSON to preserve other data
+   QJsonObject jsonObj;
+   QFile jsonFile(databasedir + "/adblink.json");
+   if (jsonFile.open(QIODevice::ReadOnly)) {
+        QJsonDocument doc = QJsonDocument::fromJson(jsonFile.readAll());
+        if (!doc.isNull()) {
+            jsonObj = doc.object();
+        }
+        jsonFile.close();
+   } else {
+        logfile("Failed to read adblink.json for updating");
+   }
 
    if (stackedWidget->currentIndex() == 0) {
-
-
-
         stackedWidget->setCurrentIndex(1);
         currentStack = 1;
         menuKodi->menuAction()->setVisible(false);
 
-
-
         infoArchitecture2->setEnabled(false);
         infoArchitecture2->setVisible(false);
 
-/*
-               for (int i = 12; i <= 15; ++i) {
-              if (grid2Buttons[i]) { // Check for null to avoid crashes
-               grid2Buttons[i]->setVisible(false); // Make invisible
-               grid2Buttons[i]->setEnabled(false); // Make inactive
-             }}
-*/
-
-   }
 
 
-   else {
-
-
-
+        // Set startview to false when currentStack is 1
+        jsonObj["startview"] = false;
+   } else {
         stackedWidget->setCurrentIndex(0);
         currentStack = 0;
         menuKodi->menuAction()->setVisible(true);
 
-
-
         infoArchitecture2->setEnabled(true);
         infoArchitecture2->setVisible(true);
+
+        // Set startview to true when currentStack is 0
+        jsonObj["startview"] = true;
    }
 
+   // Write updated JSON back to file
+   if (jsonFile.open(QIODevice::WriteOnly)) {
+        QJsonDocument doc(jsonObj);
+        jsonFile.write(doc.toJson());
+        jsonFile.close();
+   } else {
+        logfile("Failed to write to adblink.json");
+        qDebug() << "Failed to write to adblink.json";
+   }
 }
-
-
 
 ///////////////////////////////////
 
@@ -7037,6 +7042,8 @@ void MainWindow::createjson() {
 
    bool startView = config["startview"].toBool(true);
    currentStack = startView ? 0 : 1;
+
+
 
 }
 
@@ -7621,16 +7628,16 @@ void MainWindow::loadDeviceTableX(QTableWidget* table) {
 
 
 }
+
 void MainWindow::switchSize()
 {
-
  if (windowSizeSelector) {
-   // default size
+   // Default size
    windowsize = mMainWindowSize;
    buttonsize = mGridButtonSize;
    ebuttonsize = m6ButtonSize;
  } else {
-   // larger size
+   // Larger size
    windowsize = bMainWindowSize;
    buttonsize = bGridButtonSize;
    ebuttonsize = b6ButtonSize;
@@ -7638,10 +7645,37 @@ void MainWindow::switchSize()
 
  setFixedSize(windowsize);
  windowSizeSelector = !windowSizeSelector;
- qDebug() << currentStack;
+
+ // Save windowSizeSelector as defaultwindow to JSON file
+ QFile jsonFile(databasedir + "/adblink.json");
+ QJsonObject jsonObj;
+
+ // Read existing JSON to preserve other data
+ if (jsonFile.open(QIODevice::ReadOnly)) {
+   QJsonDocument doc = QJsonDocument::fromJson(jsonFile.readAll());
+   if (!doc.isNull()) {
+        jsonObj = doc.object();
+   }
+   jsonFile.close();
+ } else {
+   logfile("Failed to read adblink.json for updating");
+ }
+
+ // Update the defaultwindow value
+ jsonObj["defaultwindow"] = !windowSizeSelector; // Inverse because windowSizeSelector is toggled
+
+ // Write updated JSON back to file
+ if (jsonFile.open(QIODevice::WriteOnly)) {
+   QJsonDocument doc(jsonObj);
+   jsonFile.write(doc.toJson());
+   jsonFile.close();
+ } else {
+   logfile("Failed to write to adblink.json");
+   qDebug() << "Failed to write to adblink.json";
+ }
+
  setupUI();
 }
-
 
 void MainWindow::initialWindowSize()
 {
