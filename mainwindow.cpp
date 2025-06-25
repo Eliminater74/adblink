@@ -7998,26 +7998,26 @@ void MainWindow::loadDeviceTableX(QTableWidget* table) {
 void MainWindow::switchSize()
 {
  // Determine the next size based on current windowsize
- if (windowsize == mMainWindowSize) {
-   windowsize = bMainWindowSize;
-   buttonsize = bGridButtonSize;
-   ebuttonsize = b6ButtonSize;
-   windowSizeSelector = 1; // bMainWindowSize
- } else if (windowsize == bMainWindowSize) {
-   windowsize = cMainWindowSize;
-   buttonsize = cGridButtonSize; // Assume cGridButtonSize exists
-   ebuttonsize = c6ButtonSize;   // Assume c6ButtonSize exists
-   windowSizeSelector = 2; // cMainWindowSize
- } else if (windowsize == cMainWindowSize) {
+ if (windowsize == sMainWindowSize) {
    windowsize = mMainWindowSize;
    buttonsize = mGridButtonSize;
    ebuttonsize = m6ButtonSize;
+   windowSizeSelector = 1; // bMainWindowSize
+ } else if (windowsize == mMainWindowSize) {
+   windowsize = lMainWindowSize;
+   buttonsize = lGridButtonSize; // Assume cGridButtonSize exists
+   ebuttonsize = l6ButtonSize;   // Assume c6ButtonSize exists
+   windowSizeSelector = 2; // cMainWindowSize
+ } else if (windowsize == lMainWindowSize) {
+   windowsize = sMainWindowSize;
+   buttonsize = sGridButtonSize;
+   ebuttonsize = s6ButtonSize;
    windowSizeSelector = 0; // mMainWindowSize
  } else {
    // Default to mMainWindowSize if windowsize is unknown
-   windowsize = mMainWindowSize;
-   buttonsize = mGridButtonSize;
-   ebuttonsize = m6ButtonSize;
+   windowsize = sMainWindowSize;
+   buttonsize = sGridButtonSize;
+   ebuttonsize = s6ButtonSize;
    windowSizeSelector = 0; // mMainWindowSize
  }
 
@@ -8111,30 +8111,53 @@ void MainWindow::switchSize()
 void MainWindow::initialWindowSize()
 {
  QFile jsonFile(databasedir + "/adblink.json");
- bool defaultWindow = true; // Default fallback value
+ int defaultWindow = 0; // Default to Small (index 0) as fallback
+
  if (jsonFile.open(QIODevice::ReadOnly)) {
    QJsonDocument doc = QJsonDocument::fromJson(jsonFile.readAll());
    jsonFile.close();
    QJsonObject obj = doc.object();
    if (obj.contains("defaultwindow")) {
-        defaultWindow = obj["defaultwindow"].toBool();
+        QJsonValue value = obj["defaultwindow"];
+        if (value.isDouble()) {
+               // Integer index (0=Small, 1=Medium, 2=Large)
+               defaultWindow = value.toInt(0); // Fallback to 0 if invalid
+               if (defaultWindow < 0 || defaultWindow > 2) {
+                    defaultWindow = 0; // Ensure valid index
+               }
+        }
    }
  } else {
    logfile("Failed to read adblink.json");
-   defaultWindow = true; // Explicitly set fallback
+   defaultWindow = 0; // Explicitly set fallback to Small
  }
 
- if (defaultWindow) {
+ // Set sizes based on defaultWindow index
+ switch (defaultWindow) {
+ case 0: // Small
+   windowsize = sMainWindowSize;
+   buttonsize = sGridButtonSize;
+   ebuttonsize = s6ButtonSize;
+   windowSizeSelector = false;
+   break;
+ case 1: // Medium
    windowsize = mMainWindowSize;
    buttonsize = mGridButtonSize;
    ebuttonsize = m6ButtonSize;
-   windowSizeSelector = false;
-
- } else {
-   windowsize = bMainWindowSize;
-   buttonsize = bGridButtonSize;
-   ebuttonsize = b6ButtonSize;
    windowSizeSelector = true;
+   break;
+ case 2: // Large
+   windowsize = lMainWindowSize;
+   buttonsize = lGridButtonSize;
+   ebuttonsize = l6ButtonSize;
+   windowSizeSelector = true;
+   break;
+ default: // Fallback to Small
+   windowsize = sMainWindowSize;
+   buttonsize = sGridButtonSize;
+   ebuttonsize = s6ButtonSize;
+   windowSizeSelector = false;
+   break;
  }
 
  setFixedSize(windowsize); // Apply initial size
