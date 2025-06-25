@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
     if (fontId != -1) {
         QString family = QFontDatabase::applicationFontFamilies(fontId).at(0);
         QFont font(family);
-        font.setPixelSize(12); // Set global default size
+        font.setPixelSize(12);
         a.setFont(font);
     }
 

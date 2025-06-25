@@ -275,6 +275,8 @@
 
             setFixedSize(windowsize);
 
+
+
             setupUI();
             do_versioncheck();
 
@@ -7045,12 +7047,14 @@ void MainWindow::on_actionSwitch_View_triggered()
 
    if (stackedWidget->currentIndex() == 0) {
 
+   /*
         QMessageBox::StandardButton reply;
         reply = QMessageBox::question(this, "Kodi", "Switch to Android View?",
                                       QMessageBox::Yes | QMessageBox::No);
         if (reply == QMessageBox::No) {
             return;
         }
+  */
 
         stackedWidget->setCurrentIndex(1);
         menuKodi->menuAction()->setVisible(false);
@@ -7330,72 +7334,69 @@ connect(actionHelp,                 &QAction::triggered, this, &MainWindow::on_a
 ///////////////////////////////////////
 
 void MainWindow::setupUI() {
- centralWidget = new QWidget(this);
- setCentralWidget(centralWidget);
- mainLayout = new QVBoxLayout(centralWidget);
- mainLayout->setContentsMargins(0, 0, 0, 0);
- mainLayout->setSpacing(0);
+centralWidget = new QWidget(this);
+setCentralWidget(centralWidget);
+mainLayout = new QVBoxLayout(centralWidget);
+mainLayout->setContentsMargins(0, 0, 0, 0);
+mainLayout->setSpacing(0);
 
- topWidget = new QWidget();
- topWidget->setFixedHeight(180);
- upperLayout = new QHBoxLayout(topWidget);
- upperLayout->setSpacing(0);
- upperLayout->setContentsMargins(28, 0, 0, 0);
- upperLayout->setAlignment(Qt::AlignTop);
+topWidget = new QWidget();
+topWidget->setFixedHeight(180);
+upperLayout = new QHBoxLayout(topWidget);
+upperLayout->setSpacing(0);
+upperLayout->setContentsMargins(28, 0, 0, 0);
+upperLayout->setAlignment(Qt::AlignTop);
 
- deviceTable = new NoHScrollTableWidget(0, 3);
+deviceTable = new NoHScrollTableWidget(0, 3);
+deviceTable->setFixedSize(390, 160);
+deviceTable->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+deviceTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+deviceTable->horizontalHeader()->setMinimumSectionSize(130);
+deviceTable->horizontalHeader()->setMaximumSectionSize(130);
+deviceTable->horizontalHeader()->setVisible(true);
+deviceTable->verticalHeader()->setVisible(false);
+deviceTable->setColumnWidth(0, 130);
+deviceTable->setColumnWidth(1, 130);
+deviceTable->setColumnWidth(2, 130);
+deviceTable->setSelectionMode(QAbstractItemView::SingleSelection);
+deviceTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+deviceTable->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
+deviceTable->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+deviceTable->setFocusPolicy(Qt::NoFocus);
+deviceTable->setShowGrid(true);
+deviceTable->setStyleSheet("");
+deviceTable->setWordWrap(false);
+deviceTable->setTextElideMode(Qt::ElideRight);
 
+// Set deviceTable font size to 12 pixels
+QFont tableFont = deviceTable->font();
+tableFont.setPixelSize(12);
+deviceTable->setFont(tableFont);
+upperLayout->addWidget(deviceTable);
 
+cosmeticGap = new QSpacerItem(12, 0, QSizePolicy::Fixed, QSizePolicy::Minimum);
+upperLayout->addItem(cosmeticGap);
 
- deviceTable->setFixedSize(390, 160);
+rightColumnWidget = new QWidget();
+rightColumnWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+rightLayout = new QVBoxLayout(rightColumnWidget);
+rightLayout->setSpacing(0);
+rightLayout->setContentsMargins(0, 0, 0, 0);
+rightLayout->setAlignment(Qt::AlignTop);
 
+buttonGridWidget = new QWidget();
+buttonGridWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+buttonGridLayout = new QGridLayout(buttonGridWidget);
+buttonGridLayout->setSpacing(6);
+buttonGridLayout->setContentsMargins(0, 0, 0, 0);
 
- deviceTable->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
- deviceTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-
- deviceTable->horizontalHeader()->setMinimumSectionSize(130);
- deviceTable->horizontalHeader()->setMaximumSectionSize(130);
-
-
- deviceTable->horizontalHeader()->setVisible(true);
- deviceTable->verticalHeader()->setVisible(false);
-
- deviceTable->setColumnWidth(0, 130);
- deviceTable->setColumnWidth(1, 130);
- deviceTable->setColumnWidth(2, 130);
-
-
- deviceTable->setSelectionMode(QAbstractItemView::SingleSelection);
- deviceTable->setSelectionBehavior(QAbstractItemView::SelectRows);
- deviceTable->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
- deviceTable->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
- deviceTable->setFocusPolicy(Qt::NoFocus);
- deviceTable->setShowGrid(true);
- deviceTable->setStyleSheet("");
- deviceTable->setWordWrap(false);
- deviceTable->setTextElideMode(Qt::ElideRight);
-
- upperLayout->addWidget(deviceTable);
-
- cosmeticGap = new QSpacerItem(12, 0, QSizePolicy::Fixed, QSizePolicy::Minimum);
- upperLayout->addItem(cosmeticGap);
-
- rightColumnWidget = new QWidget();
- rightColumnWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
- rightLayout = new QVBoxLayout(rightColumnWidget);
- rightLayout->setSpacing(0);
- rightLayout->setContentsMargins(0, 0, 0, 0);
- rightLayout->setAlignment(Qt::AlignTop);
-
- buttonGridWidget = new QWidget();
- buttonGridWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
- buttonGridLayout = new QGridLayout(buttonGridWidget);
- buttonGridLayout->setSpacing(6);
- buttonGridLayout->setContentsMargins(0, 0, 0, 0);
-
- for (int i = 0; i < 6; ++i) {
+for (int i = 0; i < 6; ++i) {
    buttons[i] = new QPushButton();
    buttons[i]->setFixedSize(ebuttonsize);
+   // Set font size for the 6 buttons based on windowSizeSelector
+   QFont buttonFont = buttons[i]->font();
+   buttonFont.setPixelSize(windowSizeSelector ? 15 : 12);
+   buttons[i]->setFont(buttonFont);
    buttonGridLayout->addWidget(buttons[i], i / 2, i % 2);
    switch (i) {
    case 0:
@@ -7423,32 +7424,36 @@ void MainWindow::setupUI() {
         connect(buttons[i], &QPushButton::clicked, this, &MainWindow::on_clearAdhocButton_clicked);
         break;
    }
- }
+}
 
- rightLayout->addWidget(buttonGridWidget);
+rightLayout->addWidget(buttonGridWidget);
 
- vSpacer = new QSpacerItem(0, 15, QSizePolicy::Minimum, QSizePolicy::Fixed);
- rightLayout->addItem(vSpacer);
+vSpacer = new QSpacerItem(0, 15, QSizePolicy::Minimum, QSizePolicy::Fixed);
+rightLayout->addItem(vSpacer);
 
- adhoc_ip = new QLineEdit();
- adhoc_ip->setPlaceholderText("ip address<:port>");
- adhoc_ip->setMaximumWidth(250);
- adhoc_ip->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
- rightLayout->addWidget(adhoc_ip);
+adhoc_ip = new QLineEdit();
+adhoc_ip->setPlaceholderText("ip address<:port>");
+adhoc_ip->setMaximumWidth(250);
+adhoc_ip->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+rightLayout->addWidget(adhoc_ip);
 
- upperLayout->addWidget(rightColumnWidget);
- mainLayout->addWidget(topWidget);
+upperLayout->addWidget(rightColumnWidget);
+mainLayout->addWidget(topWidget);
 
- stackedWidget = new QStackedWidget();
- mainLayout->addWidget(stackedWidget);
+stackedWidget = new QStackedWidget();
+mainLayout->addWidget(stackedWidget);
 
- gridWidget1 = new QWidget();
- gridLayout1 = new QGridLayout(gridWidget1);
- gridLayout1->setSpacing(0);
- gridLayout1->setContentsMargins(0, 0, 0, 0);
- for (int i = 0; i < 16; ++i) {
+gridWidget1 = new QWidget();
+gridLayout1 = new QGridLayout(gridWidget1);
+gridLayout1->setSpacing(0);
+gridLayout1->setContentsMargins(0, 0, 0, 0);
+for (int i = 0; i < 16; ++i) {
    grid1Buttons[i] = new QPushButton();
    grid1Buttons[i]->setFixedSize(buttonsize);
+   // Set font size for grid1Buttons based on windowSizeSelector
+   QFont grid1ButtonFont = grid1Buttons[i]->font();
+   grid1ButtonFont.setPixelSize(windowSizeSelector ? 15 : 12);
+   grid1Buttons[i]->setFont(grid1ButtonFont);
    gridLayout1->addWidget(grid1Buttons[i], i / 4, i % 4);
    switch (i) {
    case 0:
@@ -7532,18 +7537,21 @@ void MainWindow::setupUI() {
         connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::stopapp_clicked);
         break;
    }
- }
+}
 
- stackedWidget->addWidget(gridWidget1);
+stackedWidget->addWidget(gridWidget1);
 
- gridWidget2 = new QWidget();
- gridLayout2 = new QGridLayout(gridWidget2);
- gridLayout2->setSpacing(0);
- gridLayout2->setContentsMargins(0, 0, 0, 0);
-
- for (int i = 0; i < 16; ++i) {
+gridWidget2 = new QWidget();
+gridLayout2 = new QGridLayout(gridWidget2);
+gridLayout2->setSpacing(0);
+gridLayout2->setContentsMargins(0, 0, 0, 0);
+for (int i = 0; i < 16; ++i) {
    grid2Buttons[i] = new QPushButton();
    grid2Buttons[i]->setFixedSize(buttonsize);
+   // Set font size for grid2Buttons based on windowSizeSelector
+   QFont grid2ButtonFont = grid2Buttons[i]->font();
+   grid2ButtonFont.setPixelSize(windowSizeSelector ? 15 : 12);
+   grid2Buttons[i]->setFont(grid2ButtonFont);
    gridLayout2->addWidget(grid2Buttons[i], i / 4, i % 4);
    switch (i) {
    case 0:
@@ -7627,24 +7635,22 @@ void MainWindow::setupUI() {
         connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
         break;
    }
- }
-
-
- stackedWidget->addWidget(gridWidget2);
- stackedWidget->setCurrentIndex(0);
-
- deviceTable->show();
- buttonGridWidget->show();
- adhoc_ip->show();
-
- loadDeviceTableX(deviceTable);
-
- centralWidget->layout()->activate();
- centralWidget->update();
- deviceTable->updateGeometry();
- deviceTable->viewport()->update();
 }
 
+stackedWidget->addWidget(gridWidget2);
+stackedWidget->setCurrentIndex(0);
+
+deviceTable->show();
+buttonGridWidget->show();
+adhoc_ip->show();
+
+loadDeviceTableX(deviceTable);
+
+centralWidget->layout()->activate();
+centralWidget->update();
+deviceTable->updateGeometry();
+deviceTable->viewport()->update();
+}
 
 
 //////////////////////////////////////////////////////////
