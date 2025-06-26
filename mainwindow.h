@@ -416,7 +416,7 @@ private slots:
     const QString vqurl = "http://www.jocala.com/version.txt";
     const QString busypath="/data/local/tmp/adblink/";
     const QString tempdir = "/data/local/tmp/";
-    const QString version = "6.7";
+    const QString version = "BETA";
 
 
     int windowSizeSelector;
