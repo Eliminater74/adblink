@@ -161,7 +161,7 @@
         new QShortcut(QKeySequence("Ctrl+U"), this, SLOT(uninstall_Button_clicked()));
         new QShortcut(QKeySequence("Ctrl+V"), this, SLOT(sideload_Button_clicked()));
         new QShortcut(QKeySequence("Ctrl+X"), this, SLOT(displayOff()));
-        new QShortcut(QKeySequence("Ctrl+Z"), this, SLOT(switchSize()));
+        new QShortcut(QKeySequence("Ctrl++"), this, SLOT(switchSize()));
 
 
         connect(qApp, &QCoreApplication::aboutToQuit, this, &MainWindow::onApplicationQuit);
