@@ -79,7 +79,7 @@ void adbprefDialog::setupUiManual()
 
     defaultWindowCombo = new QComboBox(this); // Changed to QComboBox
     defaultWindowCombo->setObjectName("defaultwindow");
-    defaultWindowCombo->addItems({"Small display", "Medium display", "Large display"}); // Options for 0, 1, 2
+    defaultWindowCombo->addItems({"Small display", "Medium display", "Medium-large display","Large display"}); // Options for 0, 1, 2
     mainLayout->addWidget(defaultWindowCombo);
 
     // --- Platform dropdowns ---
