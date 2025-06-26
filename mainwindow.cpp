@@ -7217,6 +7217,10 @@ case 1:
 case 2:
         tableFont.setPixelSize(15);
         break;
+case 3:
+        tableFont.setPixelSize(15);
+        break;
+
 default:
         tableFont.setPixelSize(12);
         break;
@@ -7257,6 +7261,12 @@ for (int i = 0; i < 6; ++i) {
         case 2:
             buttonFont.setPixelSize(18);
             break;
+
+        case 3:
+            buttonFont.setPixelSize(20);
+            break;
+
+
         default:
             buttonFont.setPixelSize(12); // Fallback
             break;
@@ -7334,6 +7344,10 @@ for (int i = 0; i < 16; ++i) {
         case 2:
             grid1ButtonFont.setPixelSize(18);
             break;
+        case 3:
+            grid1ButtonFont.setPixelSize(20);
+            break;
+
         default:
             grid1ButtonFont.setPixelSize(12); // Fallback
             break;
@@ -7667,7 +7681,6 @@ void MainWindow::loadDeviceTableX(QTableWidget* table) {
 
 }
 
-
 void MainWindow::switchSize()
 {
  // Determine the next size based on current windowsize
@@ -7675,23 +7688,28 @@ void MainWindow::switchSize()
    windowsize = mMainWindowSize;
    buttonsize = mGridButtonSize;
    ebuttonsize = m6ButtonSize;
-   windowSizeSelector = 1; // bMainWindowSize
+   windowSizeSelector = 1; // Medium
  } else if (windowsize == mMainWindowSize) {
+   windowsize = mlMainWindowSize;
+   buttonsize = mlGridButtonSize;
+   ebuttonsize = ml6ButtonSize;
+   windowSizeSelector = 2; // Medium-Large
+ } else if (windowsize == mlMainWindowSize) {
    windowsize = lMainWindowSize;
-   buttonsize = lGridButtonSize; // Assume cGridButtonSize exists
-   ebuttonsize = l6ButtonSize;   // Assume c6ButtonSize exists
-   windowSizeSelector = 2; // cMainWindowSize
+   buttonsize = lGridButtonSize;
+   ebuttonsize = l6ButtonSize;
+   windowSizeSelector = 3; // Large
  } else if (windowsize == lMainWindowSize) {
    windowsize = sMainWindowSize;
    buttonsize = sGridButtonSize;
    ebuttonsize = s6ButtonSize;
-   windowSizeSelector = 0; // mMainWindowSize
+   windowSizeSelector = 0; // Small
  } else {
-   // Default to mMainWindowSize if windowsize is unknown
+   // Default to Small if windowsize is unknown
    windowsize = sMainWindowSize;
    buttonsize = sGridButtonSize;
    ebuttonsize = s6ButtonSize;
-   windowSizeSelector = 0; // mMainWindowSize
+   windowSizeSelector = 0; // Small
  }
 
  // Apply the new window size
@@ -7741,9 +7759,9 @@ void MainWindow::setWindowSize()
    if (obj.contains("defaultwindow")) {
         QJsonValue value = obj["defaultwindow"];
         if (value.isDouble()) {
-               // Integer index (0=Small, 1=Medium, 2=Large)
+               // Integer index (0=Small, 1=Medium, 2=Medium-Large, 3=Large)
                defaultWindow = value.toInt(0); // Fallback to 0 if invalid
-               if (defaultWindow < 0 || defaultWindow > 2) {
+               if (defaultWindow < 0 || defaultWindow > 3) {
                     defaultWindow = 0; // Ensure valid index
                }
         }
@@ -7759,25 +7777,31 @@ void MainWindow::setWindowSize()
    windowsize = sMainWindowSize;
    buttonsize = sGridButtonSize;
    ebuttonsize = s6ButtonSize;
-   windowSizeSelector = false;
+   windowSizeSelector = 0; // Small
    break;
  case 1: // Medium
    windowsize = mMainWindowSize;
    buttonsize = mGridButtonSize;
    ebuttonsize = m6ButtonSize;
-   windowSizeSelector = true;
+   windowSizeSelector = 1; // Medium
    break;
- case 2: // Large
+ case 2: // Medium-Large
+   windowsize = mlMainWindowSize;
+   buttonsize = mlGridButtonSize;
+   ebuttonsize = ml6ButtonSize;
+   windowSizeSelector = 2; // Medium-Large
+   break;
+ case 3: // Large
    windowsize = lMainWindowSize;
    buttonsize = lGridButtonSize;
    ebuttonsize = l6ButtonSize;
-   windowSizeSelector = true;
+   windowSizeSelector = 3; // Large
    break;
  default: // Fallback to Small
    windowsize = sMainWindowSize;
    buttonsize = sGridButtonSize;
    ebuttonsize = s6ButtonSize;
-   windowSizeSelector = false;
+   windowSizeSelector = 0; // Small
    break;
  }
 
