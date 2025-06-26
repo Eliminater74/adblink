@@ -267,7 +267,7 @@
             setupMenus();
 
 
-            initialWindowSize();
+            setWindowSize();
 
 
             setFixedSize(windowsize);
@@ -2836,7 +2836,7 @@
          bool checkversion = doc.object()["checkversion"].toBool();
          bool scrcpy = doc.object()["scrcpy"].toBool();
          bool startview = doc.object()["startview"].toBool();
-         bool defaultwindow = doc.object()["defaultwindow"].toBool();
+         int defaultwindow = doc.object()["defaultwindow"].toInt();
 
          file.close();
 
@@ -2861,15 +2861,14 @@
              dialog.setstartview(false);
 
 
-         if (defaultwindow)
-             dialog.setdefaultwindow(true);
-         else
-             dialog.setdefaultwindow(false);
 
+
+
+         dialog.setdefaultwindow(defaultwindow);
 
          dialog.setlinterm(dropdown.toInt());
          dialog.setmacterm(dropdown.toInt());
-     //   dialog.setwinterm(dropdown.toInt());
+
 
          dialog.setdownloaddir(download);
          dialog.setlocaladb(localadb);
@@ -2913,6 +2912,8 @@
 
 
               setDonateButtonActive(dialog.donation() != "jocala.com");
+
+             setWindowSize();
 
          }
     }
@@ -7529,334 +7530,6 @@ deviceTable->updateGeometry();
 deviceTable->viewport()->update();
 }
 
-
-/*
-void MainWindow::setupUI() {
-centralWidget = new QWidget(this);
-setCentralWidget(centralWidget);
-mainLayout = new QVBoxLayout(centralWidget);
-mainLayout->setContentsMargins(0, 0, 0, 0);
-mainLayout->setSpacing(0);
-
-topWidget = new QWidget();
-topWidget->setFixedHeight(180);
-upperLayout = new QHBoxLayout(topWidget);
-upperLayout->setSpacing(0);
-upperLayout->setContentsMargins(28, 0, 0, 0);
-upperLayout->setAlignment(Qt::AlignTop);
-
-deviceTable = new NoHScrollTableWidget(0, 3);
-deviceTable->setFixedSize(390, 160);
-deviceTable->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-deviceTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-deviceTable->horizontalHeader()->setMinimumSectionSize(130);
-deviceTable->horizontalHeader()->setMaximumSectionSize(130);
-deviceTable->horizontalHeader()->setVisible(true);
-deviceTable->verticalHeader()->setVisible(false);
-deviceTable->setColumnWidth(0, 130);
-deviceTable->setColumnWidth(1, 130);
-deviceTable->setColumnWidth(2, 130);
-deviceTable->setSelectionMode(QAbstractItemView::SingleSelection);
-deviceTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-deviceTable->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
-deviceTable->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-deviceTable->setFocusPolicy(Qt::NoFocus);
-deviceTable->setShowGrid(true);
-deviceTable->setStyleSheet("");
-deviceTable->setWordWrap(false);
-deviceTable->setTextElideMode(Qt::ElideRight);
-
-// Set deviceTable font size to 12 pixels
-QFont tableFont = deviceTable->font();
-tableFont.setPixelSize(12);
-deviceTable->setFont(tableFont);
-upperLayout->addWidget(deviceTable);
-
-cosmeticGap = new QSpacerItem(12, 0, QSizePolicy::Fixed, QSizePolicy::Minimum);
-upperLayout->addItem(cosmeticGap);
-
-rightColumnWidget = new QWidget();
-rightColumnWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-rightLayout = new QVBoxLayout(rightColumnWidget);
-rightLayout->setSpacing(0);
-rightLayout->setContentsMargins(0, 0, 0, 0);
-rightLayout->setAlignment(Qt::AlignTop);
-
-buttonGridWidget = new QWidget();
-buttonGridWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-buttonGridLayout = new QGridLayout(buttonGridWidget);
-buttonGridLayout->setSpacing(6);
-buttonGridLayout->setContentsMargins(0, 0, 0, 0);
-
-for (int i = 0; i < 6; ++i) {
-   buttons[i] = new QPushButton();
-   buttons[i]->setFixedSize(ebuttonsize);
-   // Set font size for the 6 buttons based on windowSizeSelector
-   QFont buttonFont = buttons[i]->font();
-   buttonFont.setPixelSize(windowSizeSelector ? 15 : 12);
-   buttons[i]->setFont(buttonFont);
-   buttonGridLayout->addWidget(buttons[i], i / 2, i % 2);
-   switch (i) {
-   case 0:
-        buttons[i]->setText("Connect");
-        connect(buttons[i], &QPushButton::clicked, this, &MainWindow::connButton_clicked);
-        break;
-   case 1:
-        buttons[i]->setText("Disconnect");
-        connect(buttons[i], &QPushButton::clicked, this, &MainWindow::disButton_clicked);
-        break;
-   case 2:
-        buttons[i]->setText("New");
-        connect(buttons[i], &QPushButton::clicked, this, [this](bool) { dataentry(true); });
-        break;
-   case 3:
-        buttons[i]->setText("Edit");
-        connect(buttons[i], &QPushButton::clicked, this, [this](bool) { dataentry(false); });
-        break;
-   case 4:
-        buttons[i]->setText("Delete");
-        connect(buttons[i], &QPushButton::clicked, this, &MainWindow::delRecordButton_clicked);
-        break;
-   case 5:
-        buttons[i]->setText("Clear");
-        connect(buttons[i], &QPushButton::clicked, this, &MainWindow::on_clearAdhocButton_clicked);
-        break;
-   }
-}
-
-rightLayout->addWidget(buttonGridWidget);
-
-vSpacer = new QSpacerItem(0, 15, QSizePolicy::Minimum, QSizePolicy::Fixed);
-rightLayout->addItem(vSpacer);
-
-adhoc_ip = new QLineEdit();
-adhoc_ip->setPlaceholderText("ip address<:port>");
-adhoc_ip->setMaximumWidth(250);
-adhoc_ip->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-rightLayout->addWidget(adhoc_ip);
-
-upperLayout->addWidget(rightColumnWidget);
-mainLayout->addWidget(topWidget);
-
-stackedWidget = new QStackedWidget();
-mainLayout->addWidget(stackedWidget);
-
-gridWidget1 = new QWidget();
-gridLayout1 = new QGridLayout(gridWidget1);
-gridLayout1->setSpacing(0);
-gridLayout1->setContentsMargins(0, 0, 0, 0);
-for (int i = 0; i < 16; ++i) {
-   grid1Buttons[i] = new QPushButton();
-   grid1Buttons[i]->setFixedSize(buttonsize);
-   // Set font size for grid1Buttons based on windowSizeSelector
-   QFont grid1ButtonFont = grid1Buttons[i]->font();
-   grid1ButtonFont.setPixelSize(windowSizeSelector ? 15 : 12);
-   grid1Buttons[i]->setFont(grid1ButtonFont);
-   gridLayout1->addWidget(grid1Buttons[i], i / 4, i % 4);
-   switch (i) {
-   case 0:
-        grid1Buttons[i]->setText("File Manager");
-        grid1Buttons[i]->setToolTip("Open the file manager (Ctrl+F)");
-        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::fmButton_clicked);
-        break;
-   case 1:
-        grid1Buttons[i]->setText("ADB Shell");
-        grid1Buttons[i]->setToolTip("Open an ADB shell (Ctrl+A)");
-        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::adbshellButton_clicked);
-        break;
-   case 2:
-        grid1Buttons[i]->setText("Backup");
-        grid1Buttons[i]->setToolTip("Backup device data (Ctrl+B)");
-        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::backupButton_clicked);
-        break;
-   case 3:
-        grid1Buttons[i]->setText("Restore");
-        grid1Buttons[i]->setToolTip("Restore device data (Ctrl+R)");
-        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::restoreButton_clicked);
-        break;
-   case 4:
-        grid1Buttons[i]->setText("Install APK");
-        grid1Buttons[i]->setToolTip("Install an APK file (Ctrl+V)");
-        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::sideload_Button_clicked);
-        break;
-   case 5:
-        grid1Buttons[i]->setText("Uninstall APK");
-        grid1Buttons[i]->setToolTip("Uninstall an APK (Ctrl+U)");
-        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::uninstall_Button_clicked);
-        break;
-   case 6:
-        grid1Buttons[i]->setText("Move Kodi Data");
-        grid1Buttons[i]->setToolTip("Move Kodi data to another location");
-        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::mvdataButton_clicked);
-        break;
-   case 7:
-        grid1Buttons[i]->setText("Edit Timers");
-        grid1Buttons[i]->setToolTip("Edit device timers");
-        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::pushTimers_clicked);
-        break;
-   case 8:
-        grid1Buttons[i]->setText("Screen Capture");
-        grid1Buttons[i]->setToolTip("Capture the device screen (Ctrl+C)");
-        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::screenCap);
-        break;
-   case 9:
-        grid1Buttons[i]->setText("Stop ADB");
-        grid1Buttons[i]->setToolTip("Stop the ADB server");
-        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::killServer_clicked);
-        break;
-   case 10:
-        grid1Buttons[i]->setText("Scrcpy");
-        grid1Buttons[i]->setToolTip("Mirror and control device screen (Ctrl+S)");
-        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::scpyButton_clicked);
-        break;
-   case 11:
-        grid1Buttons[i]->setText("Edit Cache");
-        grid1Buttons[i]->setToolTip("Manage device cache");
-        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::cacheButton_clicked);
-        break;
-   case 12:
-        grid1Buttons[i]->setText("Console");
-        grid1Buttons[i]->setToolTip("Open the console (Ctrl+N)");
-        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::doConsole_clicked);
-        break;
-   case 13:
-        grid1Buttons[i]->setText("Keypad");
-        grid1Buttons[i]->setToolTip("Access virtual keypad (Ctrl+K)");
-        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::keypadButton_clicked);
-        break;
-   case 14:
-        grid1Buttons[i]->setText("Start App");
-        grid1Buttons[i]->setToolTip("Launch an application (Ctrl+O)");
-        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::startapp_clicked);
-        break;
-   case 15:
-        grid1Buttons[i]->setText("Stop App");
-        grid1Buttons[i]->setToolTip("Stop a running application (Ctrl+P)");
-        connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::stopapp_clicked);
-        break;
-   }
-}
-
-stackedWidget->addWidget(gridWidget1);
-
-gridWidget2 = new QWidget();
-gridLayout2 = new QGridLayout(gridWidget2);
-gridLayout2->setSpacing(0);
-gridLayout2->setContentsMargins(0, 0, 0, 0);
-for (int i = 0; i < 12; ++i) {
-   grid2Buttons[i] = new QPushButton();
-   grid2Buttons[i]->setFixedSize(buttonsize);
-   // Set font size for grid2Buttons based on windowSizeSelector
-   QFont grid2ButtonFont = grid2Buttons[i]->font();
-   grid2ButtonFont.setPixelSize(windowSizeSelector ? 15 : 12);
-   grid2Buttons[i]->setFont(grid2ButtonFont);
-   gridLayout2->addWidget(grid2Buttons[i], i / 4, i % 4);
-   switch (i) {
-   case 0:
-        grid2Buttons[i]->setText("File Manager");
-        grid2Buttons[i]->setToolTip("Open the file manager (Ctrl+F)");
-        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::fmButton_clicked);
-        break;
-   case 1:
-        grid2Buttons[i]->setText("Install APK");
-        grid2Buttons[i]->setToolTip("Install an APK file (Ctrl+V)");
-        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::sideload_Button_clicked);
-        break;
-   case 2:
-        grid2Buttons[i]->setText("Uninstall APK");
-        grid2Buttons[i]->setToolTip("Uninstall an APK (Ctrl+U)");
-        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::uninstall_Button_clicked);
-        break;
-   case 3:
-        grid2Buttons[i]->setText("System Info");
-        grid2Buttons[i]->setToolTip("Display system information");
-        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::infoArchitecture);
-        break;
-   case 4:
-        grid2Buttons[i]->setText("Screen Capture");
-        grid2Buttons[i]->setToolTip("Capture the device screen (Ctrl+C)");
-        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::screenCap);
-        break;
-   case 5:
-        grid2Buttons[i]->setText("Stop ADB");
-        grid2Buttons[i]->setToolTip("Stop the ADB server");
-        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::killServer_clicked);
-        break;
-   case 6:
-        grid2Buttons[i]->setText("Start App");
-        grid2Buttons[i]->setToolTip("Launch an application (Ctrl+O)");
-        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::startapp_clicked);
-        break;
-   case 7:
-        grid2Buttons[i]->setText("Stop App");
-        grid2Buttons[i]->setToolTip("Stop a running application (Ctrl+P)");
-        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::stopapp_clicked);
-        break;
-   case 8:
-        grid2Buttons[i]->setText("ADB Shell");
-        grid2Buttons[i]->setToolTip("Open an ADB shell (Ctrl+A)");
-        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::adbshellButton_clicked);
-        break;
-   case 9:
-        grid2Buttons[i]->setText("Console");
-        grid2Buttons[i]->setToolTip("Open the console (Ctrl+N)");
-        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::doConsole_clicked);
-        break;
-   case 10:
-        grid2Buttons[i]->setText("Send Text");
-        grid2Buttons[i]->setToolTip("Send text to the device (Ctrl+T)");
-        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionSend_text_triggered);
-        break;
-   case 11:
-        grid2Buttons[i]->setText("ScrCpy");
-        grid2Buttons[i]->setToolTip("Mirror and control device screen (Ctrl+S)");
-        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::scpyButton_clicked);
-        break;
-
-
-   case 12:
-        grid2Buttons[i]->setText("Button 35");
-        grid2Buttons[i]->setToolTip("View information");
-        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-        break;
-   case 13:
-        grid2Buttons[i]->setText("Button 36");
-        grid2Buttons[i]->setToolTip("View information");
-        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-        break;
-   case 14:
-        grid2Buttons[i]->setText("Button 37");
-        grid2Buttons[i]->setToolTip("View information");
-        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-        break;
-   case 15:
-        grid2Buttons[i]->setText("Button 38");
-        grid2Buttons[i]->setToolTip("View information");
-        connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionAbout_triggered);
-        break;
-
-
-  }
-}
-
-
-stackedWidget->addWidget(gridWidget2);
-stackedWidget->setCurrentIndex(currentStack);
-
-deviceTable->show();
-buttonGridWidget->show();
-adhoc_ip->show();
-
-loadDeviceTableX(deviceTable);
-
-centralWidget->layout()->activate();
-centralWidget->update();
-deviceTable->updateGeometry();
-deviceTable->viewport()->update();
-}
-
-*/
-
 //////////////////////////////////////////////////////////
 
 void MainWindow::loadDeviceTableX(QTableWidget* table) {
@@ -8056,59 +7729,7 @@ void MainWindow::switchSize()
 }
 
 
-/*
-
-void MainWindow::switchSize()
-{
- if (windowSizeSelector) {
-   // Default size
-   windowsize = mMainWindowSize;
-   buttonsize = mGridButtonSize;
-   ebuttonsize = m6ButtonSize;
- } else {
-   // Larger size
-   windowsize = bMainWindowSize;
-   buttonsize = bGridButtonSize;
-   ebuttonsize = b6ButtonSize;
- }
-
- setFixedSize(windowsize);
- windowSizeSelector = !windowSizeSelector;
-
- // Save windowSizeSelector as defaultwindow to JSON file
- QFile jsonFile(databasedir + "/adblink.json");
- QJsonObject jsonObj;
-
- // Read existing JSON to preserve other data
- if (jsonFile.open(QIODevice::ReadOnly)) {
-   QJsonDocument doc = QJsonDocument::fromJson(jsonFile.readAll());
-   if (!doc.isNull()) {
-        jsonObj = doc.object();
-   }
-   jsonFile.close();
- } else {
-   logfile("Failed to read adblink.json for updating");
- }
-
- // Update the defaultwindow value
- jsonObj["defaultwindow"] = !windowSizeSelector; // Inverse because windowSizeSelector is toggled
-
- // Write updated JSON back to file
- if (jsonFile.open(QIODevice::WriteOnly)) {
-   QJsonDocument doc(jsonObj);
-   jsonFile.write(doc.toJson());
-   jsonFile.close();
- } else {
-   logfile("Failed to write to adblink.json");
-   qDebug() << "Failed to write to adblink.json";
- }
-
- setupUI();
-}
-
-*/
-
-void MainWindow::initialWindowSize()
+void MainWindow::setWindowSize()
 {
  QFile jsonFile(databasedir + "/adblink.json");
  int defaultWindow = 0; // Default to Small (index 0) as fallback

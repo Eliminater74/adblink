@@ -135,7 +135,7 @@ private slots:
     void sideload_Button_clicked();
 
 
-     void initialWindowSize();
+     void setWindowSize();
 
     void disButton_clicked();
 
