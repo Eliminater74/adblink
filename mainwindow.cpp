@@ -275,6 +275,8 @@
 
 
             setupUI();
+
+
             do_versioncheck();
 
 
@@ -7183,16 +7185,16 @@ upperLayout->setContentsMargins(28, 0, 0, 0);
 upperLayout->setAlignment(Qt::AlignTop);
 
 deviceTable = new NoHScrollTableWidget(0, 3);
-deviceTable->setFixedSize(390, 160);
+deviceTable->setFixedSize(420, 140);
 deviceTable->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 deviceTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-deviceTable->horizontalHeader()->setMinimumSectionSize(130);
-deviceTable->horizontalHeader()->setMaximumSectionSize(130);
+deviceTable->horizontalHeader()->setMinimumSectionSize(140);
+deviceTable->horizontalHeader()->setMaximumSectionSize(140);
 deviceTable->horizontalHeader()->setVisible(true);
 deviceTable->verticalHeader()->setVisible(false);
-deviceTable->setColumnWidth(0, 130);
-deviceTable->setColumnWidth(1, 130);
-deviceTable->setColumnWidth(2, 130);
+deviceTable->setColumnWidth(0, 140);
+deviceTable->setColumnWidth(1, 140);
+deviceTable->setColumnWidth(2, 140);
 deviceTable->setSelectionMode(QAbstractItemView::SingleSelection);
 deviceTable->setSelectionBehavior(QAbstractItemView::SelectRows);
 deviceTable->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
@@ -7209,20 +7211,18 @@ QFont tableFont = deviceTable->font();
 
 switch (windowSizeSelector) {
 case 0:
-        tableFont.setPixelSize(12);
+        tableFont.setPixelSize(16);
         break;
 case 1:
-        tableFont.setPixelSize(15);
+        tableFont.setPixelSize(18);
         break;
 case 2:
-        tableFont.setPixelSize(15);
-        break;
-case 3:
-        tableFont.setPixelSize(15);
+        tableFont.setPixelSize(24);
         break;
 
+
 default:
-        tableFont.setPixelSize(12);
+        tableFont.setPixelSize(16);
         break;
 }
 
@@ -7262,9 +7262,7 @@ for (int i = 0; i < 6; ++i) {
             buttonFont.setPixelSize(18);
             break;
 
-        case 3:
-            buttonFont.setPixelSize(20);
-            break;
+
 
 
         default:
@@ -7307,13 +7305,14 @@ vSpacer = new QSpacerItem(0, 15, QSizePolicy::Minimum, QSizePolicy::Fixed);
 rightLayout->addItem(vSpacer);
 
 adhoc_ip = new QLineEdit();
-adhoc_ip->setPlaceholderText("ip address<:port>");
-
+adhoc_ip->setPlaceholderText("ip<:port>");
+adhoc_ip->setToolTip("Ad hoc IP: enter IP address then press connect. Add optional port if required.");
+/*
 if (windowSizeSelector < 2)
 adhoc_ip->setMaximumWidth(250);
 else
 adhoc_ip->setMaximumWidth(350);
-
+*/
 
 
 adhoc_ip->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -7570,7 +7569,7 @@ void MainWindow::loadDeviceTableX(QTableWidget* table) {
  table->setSelectionBehavior(QAbstractItemView::SelectRows);
  table->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
  table->setStyleSheet("QTableWidget { margin: 0px; padding: 0px; } QHeaderView::section { padding: 0px; }");
- table->verticalHeader()->setDefaultSectionSize(30);
+ table->verticalHeader()->setDefaultSectionSize(40);
 
  if (scrollArea) {
    scrollArea->setWidgetResizable(false);
@@ -7609,12 +7608,12 @@ void MainWindow::loadDeviceTableX(QTableWidget* table) {
    row++;
  }
 
- int totalWidth = 400;
+ int totalWidth = 480;
  totalWidth -= 2 * table->frameWidth();
  if (table->verticalScrollBar()->isVisible()) {
    totalWidth -= table->verticalScrollBar()->width();
  }
- totalWidth = qMax(totalWidth, 390);
+ totalWidth = qMax(totalWidth, 420);
 
  int colWidth = totalWidth / 3;
  table->setColumnWidth(0, colWidth);
@@ -7690,15 +7689,10 @@ void MainWindow::switchSize()
    ebuttonsize = m6ButtonSize;
    windowSizeSelector = 1; // Medium
  } else if (windowsize == mMainWindowSize) {
-   windowsize = mlMainWindowSize;
-   buttonsize = mlGridButtonSize;
-   ebuttonsize = ml6ButtonSize;
-   windowSizeSelector = 2; // Medium-Large
- } else if (windowsize == mlMainWindowSize) {
    windowsize = lMainWindowSize;
    buttonsize = lGridButtonSize;
    ebuttonsize = l6ButtonSize;
-   windowSizeSelector = 3; // Large
+   windowSizeSelector = 2; // Medium-Large
  } else if (windowsize == lMainWindowSize) {
    windowsize = sMainWindowSize;
    buttonsize = sGridButtonSize;
@@ -7746,7 +7740,6 @@ void MainWindow::switchSize()
  setupUI();
 }
 
-
 void MainWindow::setWindowSize()
 {
  QFile jsonFile(databasedir + "/adblink.json");
@@ -7759,7 +7752,7 @@ void MainWindow::setWindowSize()
    if (obj.contains("defaultwindow")) {
         QJsonValue value = obj["defaultwindow"];
         if (value.isDouble()) {
-               // Integer index (0=Small, 1=Medium, 2=Medium-Large, 3=Large)
+
                defaultWindow = value.toInt(0); // Fallback to 0 if invalid
                if (defaultWindow < 0 || defaultWindow > 3) {
                     defaultWindow = 0; // Ensure valid index
@@ -7768,43 +7761,37 @@ void MainWindow::setWindowSize()
    }
  } else {
    logfile("Failed to read adblink.json");
-   defaultWindow = 0; // Explicitly set fallback to Small
+   defaultWindow = 0;
  }
 
- // Set sizes based on defaultWindow index
+
  switch (defaultWindow) {
- case 0: // Small
+ case 0:
    windowsize = sMainWindowSize;
    buttonsize = sGridButtonSize;
    ebuttonsize = s6ButtonSize;
-   windowSizeSelector = 0; // Small
+   windowSizeSelector = 0;
    break;
- case 1: // Medium
+ case 1:
    windowsize = mMainWindowSize;
    buttonsize = mGridButtonSize;
    ebuttonsize = m6ButtonSize;
-   windowSizeSelector = 1; // Medium
+   windowSizeSelector = 1;
    break;
- case 2: // Medium-Large
-   windowsize = mlMainWindowSize;
-   buttonsize = mlGridButtonSize;
-   ebuttonsize = ml6ButtonSize;
-   windowSizeSelector = 2; // Medium-Large
-   break;
- case 3: // Large
+ case 2:
    windowsize = lMainWindowSize;
    buttonsize = lGridButtonSize;
    ebuttonsize = l6ButtonSize;
-   windowSizeSelector = 3; // Large
+   windowSizeSelector = 2;
    break;
  default: // Fallback to Small
    windowsize = sMainWindowSize;
    buttonsize = sGridButtonSize;
    ebuttonsize = s6ButtonSize;
-   windowSizeSelector = 0; // Small
+   windowSizeSelector = 0;
    break;
  }
 
- setFixedSize(windowsize); // Apply initial size
- setupUI(); // Ensure UI is set up with initial sizes
+ setFixedSize(windowsize);
+ setupUI();
 }
