@@ -7186,8 +7186,8 @@ deviceTable = new NoHScrollTableWidget(0, 3);
 deviceTable->setFixedSize(450, 150);
 deviceTable->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 deviceTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-deviceTable->horizontalHeader()->setMinimumSectionSize(140);
-deviceTable->horizontalHeader()->setMaximumSectionSize(140);
+deviceTable->horizontalHeader()->setMinimumSectionSize(150);
+deviceTable->horizontalHeader()->setMaximumSectionSize(150);
 deviceTable->horizontalHeader()->setVisible(true);
 deviceTable->verticalHeader()->setVisible(false);
 deviceTable->setColumnWidth(0, 150);
@@ -7237,6 +7237,9 @@ rightLayout = new QVBoxLayout(rightColumnWidget);
 rightLayout->setSpacing(0);
 rightLayout->setContentsMargins(0, 0, 0, 0);
 rightLayout->setAlignment(Qt::AlignTop);
+
+//QSpacerItem *topSpacer = new QSpacerItem(0, 10, QSizePolicy::Minimum, QSizePolicy::Fixed);
+//rightLayout->addItem(topSpacer);
 
 buttonGridWidget = new QWidget();
 buttonGridWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -7300,24 +7303,49 @@ vSpacer = new QSpacerItem(0, 15, QSizePolicy::Minimum, QSizePolicy::Fixed);
 rightLayout->addItem(vSpacer);
 
 
+QHBoxLayout *adhocLayout = new QHBoxLayout();
+adhocLayout->setSpacing(6); // Small spacing between label and QLineEdit
+adhocLayout->setContentsMargins(0, 0, 0, 0);
+
+
+QSpacerItem *labelSpacer = new QSpacerItem(0, 0, QSizePolicy::Fixed, QSizePolicy::Minimum); // Adjust if needed
+adhocLayout->addItem(labelSpacer);
+
+
+QLabel *adhocLabel = new QLabel("Ad hoc IP:");
+adhocLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+QFont labelFont = adhocLabel->font();
+switch (windowSizeSelector) {
+case 0:
+        labelFont.setPixelSize(12);
+        break;
+case 1:
+        labelFont.setPixelSize(15);
+        break;
+case 2:
+        labelFont.setPixelSize(18);
+        break;
+default:
+        labelFont.setPixelSize(12);
+        break;
+}
+adhocLabel->setFont(labelFont);
+adhocLayout->addWidget(adhocLabel);
+
 
 adhoc_ip = new QLineEdit();
-adhoc_ip->setPlaceholderText("ip<:port>");
+adhoc_ip->setPlaceholderText("IP Address:port");
 adhoc_ip->setToolTip("Ad hoc IP: enter IP address then press connect. Add optional port if required.");
-
-
-
-
-/*
-if (windowSizeSelector < 2)
-adhoc_ip->setMaximumWidth(250);
-else
-adhoc_ip->setMaximumWidth(350);
-*/
-
-
 adhoc_ip->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-rightLayout->addWidget(adhoc_ip);
+adhocLayout->addWidget(adhoc_ip);
+
+// Add stretch to prevent stretching of the layout
+adhocLayout->addStretch();
+
+// Add the horizontal layout to rightLayout
+rightLayout->addLayout(adhocLayout);
+
 
 upperLayout->addWidget(rightColumnWidget);
 mainLayout->addWidget(topWidget);

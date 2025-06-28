@@ -501,15 +501,15 @@ private slots:
 
     const QSize lMainWindowSize = QSize(850, 525);
     const QSize lGridButtonSize = QSize(180, 62);
-    const QSize l6ButtonSize = QSize(160, 42);
+    const QSize l6ButtonSize = QSize(160, 32);
 
     const QSize mMainWindowSize = QSize(750, 425);
     const QSize mGridButtonSize = QSize(130, 42);
-    const QSize m6ButtonSize = QSize(110, 42);
+    const QSize m6ButtonSize = QSize(110, 32);
 
     const QSize sMainWindowSize = QSize(710, 375);
     const QSize sGridButtonSize = QSize(110, 32);
-    const QSize s6ButtonSize = QSize(80, 42);
+    const QSize s6ButtonSize = QSize(100, 32);
 
 
     QSize buttonsize;
