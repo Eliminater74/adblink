@@ -7100,10 +7100,10 @@ void MainWindow::setupMenus()
  View_Changelog = new QAction("View changelog", this);
  actionWireless_ADBD = new QAction("Wireless ADBD", this);
  actionReboot = new QAction("Reboot device", this);
- actionSize = new QAction("Toggle UI Size", this);
+// actionSize = new QAction("Toggle UI Size", this);
 
  menuUtility->addAction(actionSwitch_View);
- menuUtility->addAction(actionSize);
+// menuUtility->addAction(actionSize);
  menuUtility->addAction(actionReiinstall_Busybox);
  menuUtility->addAction(infoArchitecture2);
   menuUtility->addAction(actionOculus);
@@ -7147,7 +7147,7 @@ void MainWindow::setupMenus()
  connect(actionKodi_data_usage,      &QAction::triggered, this, &MainWindow::on_actionKodi_data_usage_triggered);
  connect(actionCreate_kodi_data,     &QAction::triggered, this, &MainWindow::on_actionCreate_kodi_data_triggered);
  connect(actionSwitch_View,          &QAction::triggered, this, &MainWindow::on_actionSwitch_View_triggered);
- connect(actionSize,                 &QAction::triggered, this, &MainWindow::switchSize);
+// connect(actionSize,                 &QAction::triggered, this, &MainWindow::switchSize);
 
  connect(actionReiinstall_Busybox,   &QAction::triggered, this, &MainWindow::on_actionReiinstall_Busybox_triggered);
  connect(infoArchitecture2,           &QAction::triggered, this, &MainWindow::on_infoArchitecture_triggered);
