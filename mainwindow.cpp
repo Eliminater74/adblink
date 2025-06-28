@@ -7254,17 +7254,17 @@ for (int i = 0; i < 6; ++i) {
         QFont buttonFont = buttons[i]->font();
         switch (windowSizeSelector) {
         case 0:
-            buttonFont.setPixelSize(12);
+            buttonFont.setPixelSize(14);
             break;
         case 1:
-            buttonFont.setPixelSize(15);
+            buttonFont.setPixelSize(16);
             break;
         case 2:
             buttonFont.setPixelSize(18);
             break;
 
         default:
-            buttonFont.setPixelSize(12); // Fallback
+            buttonFont.setPixelSize(14); // Fallback
             break;
         }
         buttons[i]->setFont(buttonFont);
@@ -7318,16 +7318,16 @@ adhocLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 QFont labelFont = adhocLabel->font();
 switch (windowSizeSelector) {
 case 0:
-        labelFont.setPixelSize(12);
+        labelFont.setPixelSize(14);
         break;
 case 1:
-        labelFont.setPixelSize(15);
+        labelFont.setPixelSize(16);
         break;
 case 2:
         labelFont.setPixelSize(18);
         break;
 default:
-        labelFont.setPixelSize(12);
+        labelFont.setPixelSize(14);
         break;
 }
 adhocLabel->setFont(labelFont);
@@ -7364,17 +7364,17 @@ for (int i = 0; i < 16; ++i) {
         QFont grid1ButtonFont = grid1Buttons[i]->font();
         switch (windowSizeSelector) {
         case 0:
-            grid1ButtonFont.setPixelSize(12);
+            grid1ButtonFont.setPixelSize(14);
             break;
         case 1:
-            grid1ButtonFont.setPixelSize(15);
+            grid1ButtonFont.setPixelSize(16);
             break;
         case 2:
             grid1ButtonFont.setPixelSize(18);
             break;
 
         default:
-            grid1ButtonFont.setPixelSize(12); // Fallback
+            grid1ButtonFont.setPixelSize(14); // Fallback
             break;
         }
         grid1Buttons[i]->setFont(grid1ButtonFont);
@@ -7411,7 +7411,7 @@ for (int i = 0; i < 16; ++i) {
             connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::uninstall_Button_clicked);
             break;
         case 6:
-            grid1Buttons[i]->setText("Move Kodi Data");
+            grid1Buttons[i]->setText("Move Kodi");
             grid1Buttons[i]->setToolTip("Move Kodi data to another location");
             connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::mvdataButton_clicked);
             break;
@@ -7421,7 +7421,7 @@ for (int i = 0; i < 16; ++i) {
             connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::pushTimers_clicked);
             break;
         case 8:
-            grid1Buttons[i]->setText("Screen Capture");
+            grid1Buttons[i]->setText("Screencap");
             grid1Buttons[i]->setToolTip("Capture the device screen (Ctrl+C)");
             connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::screenCap);
             break;
@@ -7476,16 +7476,16 @@ for (int i = 0; i < 12; ++i) {
         QFont grid2ButtonFont = grid2Buttons[i]->font();
         switch (windowSizeSelector) {
         case 0:
-            grid2ButtonFont.setPixelSize(12);
+            grid2ButtonFont.setPixelSize(14);
             break;
         case 1:
-            grid2ButtonFont.setPixelSize(15);
+            grid2ButtonFont.setPixelSize(16);
             break;
         case 2:
             grid2ButtonFont.setPixelSize(18);
             break;
         default:
-            grid2ButtonFont.setPixelSize(12); // Fallback
+            grid2ButtonFont.setPixelSize(14); // Fallback
             break;
         }
         grid2Buttons[i]->setFont(grid2ButtonFont);
@@ -7512,7 +7512,7 @@ for (int i = 0; i < 12; ++i) {
             connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::infoArchitecture);
             break;
         case 4:
-            grid2Buttons[i]->setText("Screen Capture");
+            grid2Buttons[i]->setText("Screencap");
             grid2Buttons[i]->setToolTip("Capture the device screen (Ctrl+C)");
             connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::screenCap);
             break;
