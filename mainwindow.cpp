@@ -270,11 +270,9 @@
             setWindowSize();
 
 
-            setFixedSize(windowsize);
 
-
-
-            setupUI();
+          // setFixedSize(windowsize);
+          //  setupUI();
 
 
             do_versioncheck();
@@ -7185,16 +7183,16 @@ upperLayout->setContentsMargins(28, 0, 0, 0);
 upperLayout->setAlignment(Qt::AlignTop);
 
 deviceTable = new NoHScrollTableWidget(0, 3);
-deviceTable->setFixedSize(420, 140);
+deviceTable->setFixedSize(450, 150);
 deviceTable->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 deviceTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 deviceTable->horizontalHeader()->setMinimumSectionSize(140);
 deviceTable->horizontalHeader()->setMaximumSectionSize(140);
 deviceTable->horizontalHeader()->setVisible(true);
 deviceTable->verticalHeader()->setVisible(false);
-deviceTable->setColumnWidth(0, 140);
-deviceTable->setColumnWidth(1, 140);
-deviceTable->setColumnWidth(2, 140);
+deviceTable->setColumnWidth(0, 150);
+deviceTable->setColumnWidth(1, 150);
+deviceTable->setColumnWidth(2, 150);
 deviceTable->setSelectionMode(QAbstractItemView::SingleSelection);
 deviceTable->setSelectionBehavior(QAbstractItemView::SelectRows);
 deviceTable->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
@@ -7217,7 +7215,7 @@ case 1:
         tableFont.setPixelSize(18);
         break;
 case 2:
-        tableFont.setPixelSize(24);
+        tableFont.setPixelSize(20);
         break;
 
 
@@ -7262,9 +7260,6 @@ for (int i = 0; i < 6; ++i) {
             buttonFont.setPixelSize(18);
             break;
 
-
-
-
         default:
             buttonFont.setPixelSize(12); // Fallback
             break;
@@ -7304,9 +7299,15 @@ rightLayout->addWidget(buttonGridWidget);
 vSpacer = new QSpacerItem(0, 15, QSizePolicy::Minimum, QSizePolicy::Fixed);
 rightLayout->addItem(vSpacer);
 
+
+
 adhoc_ip = new QLineEdit();
 adhoc_ip->setPlaceholderText("ip<:port>");
 adhoc_ip->setToolTip("Ad hoc IP: enter IP address then press connect. Add optional port if required.");
+
+
+
+
 /*
 if (windowSizeSelector < 2)
 adhoc_ip->setMaximumWidth(250);
@@ -7342,9 +7343,6 @@ for (int i = 0; i < 16; ++i) {
             break;
         case 2:
             grid1ButtonFont.setPixelSize(18);
-            break;
-        case 3:
-            grid1ButtonFont.setPixelSize(20);
             break;
 
         default:
@@ -7608,12 +7606,14 @@ void MainWindow::loadDeviceTableX(QTableWidget* table) {
    row++;
  }
 
- int totalWidth = 480;
+ //int totalWidth = 480;
+ int totalWidth = 450;
+
  totalWidth -= 2 * table->frameWidth();
  if (table->verticalScrollBar()->isVisible()) {
    totalWidth -= table->verticalScrollBar()->width();
  }
- totalWidth = qMax(totalWidth, 420);
+ totalWidth = qMax(totalWidth, 450);
 
  int colWidth = totalWidth / 3;
  table->setColumnWidth(0, colWidth);
