@@ -7182,8 +7182,6 @@ if (centralWidget) {
 }
 
 
-static bool connectionsInitialized = false;
-
 centralWidget = new QWidget(this);
 setCentralWidget(centralWidget);
 mainLayout = new QVBoxLayout(centralWidget);
@@ -7532,10 +7530,9 @@ for (int i = 0; i < 12; ++i) {
 stackedWidget->addWidget(gridWidget2);
 stackedWidget->setCurrentIndex(currentStack);
 
-if (!connectionsInitialized) {
-        initGridConnections();
-        connectionsInitialized = true;
-}
+
+ initGridConnections();
+
 
 deviceTable->show();
 buttonGridWidget->show();

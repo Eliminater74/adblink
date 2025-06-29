@@ -1,12 +1,14 @@
 07/XX/25
 
-Version 6.7
+Version 6.7-BETA
 
 Base UI enlarged.
-Scaling primary window using Ctrl++ added
-deviceTable columns and rows refactored.
 setupUI function made memory-safe.
-Experimental Quest headset functions re-added
+deviceTable refactored. Column widths are now fixed.
+Scaling primary window and widgets using Ctrl++ added
+Chosen scale remembered between runs
+
+
 
 
 06/10/25
