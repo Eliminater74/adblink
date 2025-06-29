@@ -137,6 +137,8 @@ private slots:
 
      void setWindowSize();
 
+    void initGridConnections();
+
     void disButton_clicked();
 
     void on_actionQuit_triggered();

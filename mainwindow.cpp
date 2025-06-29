@@ -147,6 +147,7 @@
 
 
 
+
         new QShortcut(QKeySequence("Ctrl+A"), this, SLOT(adbshellButton_clicked()));
         new QShortcut(QKeySequence("Ctrl+B"), this, SLOT(backupButton_clicked()));
         new QShortcut(QKeySequence("Ctrl+C"), this, SLOT(screenCap()));
@@ -160,10 +161,14 @@
         new QShortcut(QKeySequence("Ctrl+T"), this, SLOT(on_actionSend_text_triggered()));
         new QShortcut(QKeySequence("Ctrl+U"), this, SLOT(uninstall_Button_clicked()));
         new QShortcut(QKeySequence("Ctrl+V"), this, SLOT(sideload_Button_clicked()));
+        new QShortcut(QKeySequence("Ctrl+D"), this, SLOT(connButton_clicked()));
+        new QShortcut(QKeySequence("Ctrl+E"), this, SLOT(disButton_clicked()));
+        new QShortcut(QKeySequence("Ctrl+G"), this, [this]() { dataentry(true); });
+        new QShortcut(QKeySequence("Ctrl+W"), this, [this]() { dataentry(false); });
+        new QShortcut(QKeySequence("Ctrl+I"), this, SLOT(delRecordButton_clicked()));
+        new QShortcut(QKeySequence("Ctrl+J"), this, SLOT(on_clearAdhocButton_clicked()));
         new QShortcut(QKeySequence("Ctrl+X"), this, SLOT(displayOff()));
         new QShortcut(QKeySequence("Ctrl++"), this, SLOT(switchSize()));
-
-
         connect(qApp, &QCoreApplication::aboutToQuit, this, &MainWindow::onApplicationQuit);
 
 
@@ -7169,6 +7174,8 @@ connect(actionHelp,                 &QAction::triggered, this, &MainWindow::on_a
 ///////////////////////////////////////
 
 void MainWindow::setupUI() {
+static bool connectionsInitialized = false;
+
 centralWidget = new QWidget(this);
 setCentralWidget(centralWidget);
 mainLayout = new QVBoxLayout(centralWidget);
@@ -7197,16 +7204,13 @@ deviceTable->setSelectionMode(QAbstractItemView::SingleSelection);
 deviceTable->setSelectionBehavior(QAbstractItemView::SelectRows);
 deviceTable->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
 deviceTable->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-deviceTable->setFocusPolicy(Qt::NoFocus);
+deviceTable->setFocusPolicy(Qt::ClickFocus);
 deviceTable->setShowGrid(true);
 deviceTable->setStyleSheet("");
 deviceTable->setWordWrap(false);
 deviceTable->setTextElideMode(Qt::ElideRight);
 
-
 QFont tableFont = deviceTable->font();
-
-
 switch (windowSizeSelector) {
 case 0:
         tableFont.setPixelSize(16);
@@ -7217,14 +7221,10 @@ case 1:
 case 2:
         tableFont.setPixelSize(20);
         break;
-
-
 default:
         tableFont.setPixelSize(16);
         break;
 }
-
-
 deviceTable->setFont(tableFont);
 upperLayout->addWidget(deviceTable);
 
@@ -7238,9 +7238,6 @@ rightLayout->setSpacing(0);
 rightLayout->setContentsMargins(0, 0, 0, 0);
 rightLayout->setAlignment(Qt::AlignTop);
 
-//QSpacerItem *topSpacer = new QSpacerItem(0, 10, QSizePolicy::Minimum, QSizePolicy::Fixed);
-//rightLayout->addItem(topSpacer);
-
 buttonGridWidget = new QWidget();
 buttonGridWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 buttonGridLayout = new QGridLayout(buttonGridWidget);
@@ -7250,7 +7247,7 @@ buttonGridLayout->setContentsMargins(0, 0, 0, 0);
 for (int i = 0; i < 6; ++i) {
         buttons[i] = new QPushButton();
         buttons[i]->setFixedSize(ebuttonsize);
-        // Set font size for the 6 buttons based on windowSizeSelector
+
         QFont buttonFont = buttons[i]->font();
         switch (windowSizeSelector) {
         case 0:
@@ -7262,37 +7259,38 @@ for (int i = 0; i < 6; ++i) {
         case 2:
             buttonFont.setPixelSize(18);
             break;
-
         default:
-            buttonFont.setPixelSize(14); // Fallback
+            buttonFont.setPixelSize(14);
             break;
         }
         buttons[i]->setFont(buttonFont);
+
         buttonGridLayout->addWidget(buttons[i], i / 2, i % 2);
+
         switch (i) {
         case 0:
             buttons[i]->setText("Connect");
-            connect(buttons[i], &QPushButton::clicked, this, &MainWindow::connButton_clicked);
+            buttons[i]->setToolTip("Connect selected device (Ctrl+D)");
             break;
         case 1:
             buttons[i]->setText("Disconnect");
-            connect(buttons[i], &QPushButton::clicked, this, &MainWindow::disButton_clicked);
+            buttons[i]->setToolTip("Disconnect selected device (Ctrl+E)");
             break;
         case 2:
             buttons[i]->setText("New");
-            connect(buttons[i], &QPushButton::clicked, this, [this](bool) { dataentry(true); });
+            buttons[i]->setToolTip("Add new device (Ctrl+G)");
             break;
         case 3:
             buttons[i]->setText("Edit");
-            connect(buttons[i], &QPushButton::clicked, this, [this](bool) { dataentry(false); });
+            buttons[i]->setToolTip("Edit selected device (Ctrl+W)");
             break;
         case 4:
             buttons[i]->setText("Delete");
-            connect(buttons[i], &QPushButton::clicked, this, &MainWindow::delRecordButton_clicked);
+            buttons[i]->setToolTip("Delete selected device (Ctrl+I)");
             break;
         case 5:
             buttons[i]->setText("Clear");
-            connect(buttons[i], &QPushButton::clicked, this, &MainWindow::on_clearAdhocButton_clicked);
+            buttons[i]->setToolTip("Clear ad hoc IP field (Ctrl+J)");
             break;
         }
 }
@@ -7302,15 +7300,12 @@ rightLayout->addWidget(buttonGridWidget);
 vSpacer = new QSpacerItem(0, 15, QSizePolicy::Minimum, QSizePolicy::Fixed);
 rightLayout->addItem(vSpacer);
 
-
 QHBoxLayout *adhocLayout = new QHBoxLayout();
-adhocLayout->setSpacing(6); // Small spacing between label and QLineEdit
+adhocLayout->setSpacing(6);
 adhocLayout->setContentsMargins(0, 0, 0, 0);
 
-
-QSpacerItem *labelSpacer = new QSpacerItem(0, 0, QSizePolicy::Fixed, QSizePolicy::Minimum); // Adjust if needed
+QSpacerItem *labelSpacer = new QSpacerItem(0, 0, QSizePolicy::Fixed, QSizePolicy::Minimum);
 adhocLayout->addItem(labelSpacer);
-
 
 QLabel *adhocLabel = new QLabel("Ad hoc IP:");
 adhocLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -7333,19 +7328,14 @@ default:
 adhocLabel->setFont(labelFont);
 adhocLayout->addWidget(adhocLabel);
 
-
 adhoc_ip = new QLineEdit();
 adhoc_ip->setPlaceholderText("IP Address:port");
 adhoc_ip->setToolTip("Ad hoc IP: enter IP address then press connect. Add optional port if required.");
 adhoc_ip->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 adhocLayout->addWidget(adhoc_ip);
 
-// Add stretch to prevent stretching of the layout
 adhocLayout->addStretch();
-
-// Add the horizontal layout to rightLayout
 rightLayout->addLayout(adhocLayout);
-
 
 upperLayout->addWidget(rightColumnWidget);
 mainLayout->addWidget(topWidget);
@@ -7357,10 +7347,11 @@ gridWidget1 = new QWidget();
 gridLayout1 = new QGridLayout(gridWidget1);
 gridLayout1->setSpacing(0);
 gridLayout1->setContentsMargins(0, 0, 0, 0);
+
 for (int i = 0; i < 16; ++i) {
         grid1Buttons[i] = new QPushButton();
         grid1Buttons[i]->setFixedSize(buttonsize);
-        // Set font size for grid1Buttons based on windowSizeSelector
+
         QFont grid1ButtonFont = grid1Buttons[i]->font();
         switch (windowSizeSelector) {
         case 0:
@@ -7372,93 +7363,78 @@ for (int i = 0; i < 16; ++i) {
         case 2:
             grid1ButtonFont.setPixelSize(18);
             break;
-
         default:
-            grid1ButtonFont.setPixelSize(14); // Fallback
+            grid1ButtonFont.setPixelSize(14);
             break;
         }
         grid1Buttons[i]->setFont(grid1ButtonFont);
+
         gridLayout1->addWidget(grid1Buttons[i], i / 4, i % 4);
+
         switch (i) {
         case 0:
             grid1Buttons[i]->setText("File Manager");
             grid1Buttons[i]->setToolTip("Open the file manager (Ctrl+F)");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::fmButton_clicked);
             break;
         case 1:
             grid1Buttons[i]->setText("ADB Shell");
             grid1Buttons[i]->setToolTip("Open an ADB shell (Ctrl+A)");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::adbshellButton_clicked);
             break;
         case 2:
             grid1Buttons[i]->setText("Backup");
             grid1Buttons[i]->setToolTip("Backup device data (Ctrl+B)");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::backupButton_clicked);
             break;
         case 3:
             grid1Buttons[i]->setText("Restore");
             grid1Buttons[i]->setToolTip("Restore device data (Ctrl+R)");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::restoreButton_clicked);
             break;
         case 4:
             grid1Buttons[i]->setText("Install APK");
             grid1Buttons[i]->setToolTip("Install an APK file (Ctrl+V)");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::sideload_Button_clicked);
             break;
         case 5:
             grid1Buttons[i]->setText("Uninstall APK");
             grid1Buttons[i]->setToolTip("Uninstall an APK (Ctrl+U)");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::uninstall_Button_clicked);
             break;
         case 6:
             grid1Buttons[i]->setText("Move Kodi");
             grid1Buttons[i]->setToolTip("Move Kodi data to another location");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::mvdataButton_clicked);
             break;
         case 7:
             grid1Buttons[i]->setText("Edit Timers");
             grid1Buttons[i]->setToolTip("Edit device timers");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::pushTimers_clicked);
             break;
         case 8:
             grid1Buttons[i]->setText("Screencap");
             grid1Buttons[i]->setToolTip("Capture the device screen (Ctrl+C)");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::screenCap);
             break;
         case 9:
             grid1Buttons[i]->setText("Stop ADB");
             grid1Buttons[i]->setToolTip("Stop the ADB server");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::killServer_clicked);
             break;
         case 10:
             grid1Buttons[i]->setText("Scrcpy");
             grid1Buttons[i]->setToolTip("Mirror and control device screen (Ctrl+S)");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::scpyButton_clicked);
             break;
         case 11:
             grid1Buttons[i]->setText("Edit Cache");
             grid1Buttons[i]->setToolTip("Manage device cache");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::cacheButton_clicked);
             break;
         case 12:
             grid1Buttons[i]->setText("Console");
             grid1Buttons[i]->setToolTip("Open the console (Ctrl+N)");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::doConsole_clicked);
             break;
         case 13:
             grid1Buttons[i]->setText("Keypad");
             grid1Buttons[i]->setToolTip("Access virtual keypad (Ctrl+K)");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::keypadButton_clicked);
             break;
         case 14:
             grid1Buttons[i]->setText("Start App");
             grid1Buttons[i]->setToolTip("Launch an application (Ctrl+O)");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::startapp_clicked);
             break;
         case 15:
             grid1Buttons[i]->setText("Stop App");
             grid1Buttons[i]->setToolTip("Stop a running application (Ctrl+P)");
-            connect(grid1Buttons[i], &QPushButton::clicked, this, &MainWindow::stopapp_clicked);
             break;
         }
 }
@@ -7469,10 +7445,11 @@ gridWidget2 = new QWidget();
 gridLayout2 = new QGridLayout(gridWidget2);
 gridLayout2->setSpacing(0);
 gridLayout2->setContentsMargins(0, 0, 0, 0);
+
 for (int i = 0; i < 12; ++i) {
         grid2Buttons[i] = new QPushButton();
         grid2Buttons[i]->setFixedSize(buttonsize);
-        // Set font size for grid2Buttons based on windowSizeSelector
+
         QFont grid2ButtonFont = grid2Buttons[i]->font();
         switch (windowSizeSelector) {
         case 0:
@@ -7485,77 +7462,72 @@ for (int i = 0; i < 12; ++i) {
             grid2ButtonFont.setPixelSize(18);
             break;
         default:
-            grid2ButtonFont.setPixelSize(14); // Fallback
+            grid2ButtonFont.setPixelSize(14);
             break;
         }
         grid2Buttons[i]->setFont(grid2ButtonFont);
+
         gridLayout2->addWidget(grid2Buttons[i], i / 4, i % 4);
+
         switch (i) {
         case 0:
             grid2Buttons[i]->setText("File Manager");
             grid2Buttons[i]->setToolTip("Open the file manager (Ctrl+F)");
-            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::fmButton_clicked);
             break;
         case 1:
             grid2Buttons[i]->setText("Install APK");
             grid2Buttons[i]->setToolTip("Install an APK file (Ctrl+V)");
-            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::sideload_Button_clicked);
             break;
         case 2:
             grid2Buttons[i]->setText("Uninstall APK");
             grid2Buttons[i]->setToolTip("Uninstall an APK (Ctrl+U)");
-            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::uninstall_Button_clicked);
             break;
         case 3:
             grid2Buttons[i]->setText("System Info");
             grid2Buttons[i]->setToolTip("Display system information");
-            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::infoArchitecture);
             break;
         case 4:
             grid2Buttons[i]->setText("Screencap");
             grid2Buttons[i]->setToolTip("Capture the device screen (Ctrl+C)");
-            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::screenCap);
             break;
         case 5:
             grid2Buttons[i]->setText("Stop ADB");
             grid2Buttons[i]->setToolTip("Stop the ADB server");
-            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::killServer_clicked);
             break;
         case 6:
             grid2Buttons[i]->setText("Start App");
             grid2Buttons[i]->setToolTip("Launch an application (Ctrl+O)");
-            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::startapp_clicked);
             break;
         case 7:
             grid2Buttons[i]->setText("Stop App");
             grid2Buttons[i]->setToolTip("Stop a running application (Ctrl+P)");
-            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::stopapp_clicked);
             break;
         case 8:
             grid2Buttons[i]->setText("ADB Shell");
             grid2Buttons[i]->setToolTip("Open an ADB shell (Ctrl+A)");
-            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::adbshellButton_clicked);
             break;
         case 9:
             grid2Buttons[i]->setText("Console");
             grid2Buttons[i]->setToolTip("Open the console (Ctrl+N)");
-            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::doConsole_clicked);
             break;
         case 10:
             grid2Buttons[i]->setText("Send Text");
             grid2Buttons[i]->setToolTip("Send text to the device (Ctrl+T)");
-            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::on_actionSend_text_triggered);
             break;
         case 11:
             grid2Buttons[i]->setText("ScrCpy");
             grid2Buttons[i]->setToolTip("Mirror and control device screen (Ctrl+S)");
-            connect(grid2Buttons[i], &QPushButton::clicked, this, &MainWindow::scpyButton_clicked);
             break;
         }
 }
 
 stackedWidget->addWidget(gridWidget2);
 stackedWidget->setCurrentIndex(currentStack);
+
+if (!connectionsInitialized) {
+        initGridConnections();
+        connectionsInitialized = true;
+}
 
 deviceTable->show();
 buttonGridWidget->show();
@@ -7568,6 +7540,7 @@ centralWidget->update();
 deviceTable->updateGeometry();
 deviceTable->viewport()->update();
 }
+
 
 //////////////////////////////////////////////////////////
 
@@ -7822,4 +7795,46 @@ void MainWindow::setWindowSize()
 
  setFixedSize(windowsize);
  setupUI();
+}
+
+void MainWindow::initGridConnections() {
+ // Connect statements for buttons in buttonGridLayout
+ connect(buttons[0], &QPushButton::clicked, this, &MainWindow::connButton_clicked);
+ connect(buttons[1], &QPushButton::clicked, this, &MainWindow::disButton_clicked);
+ connect(buttons[2], &QPushButton::clicked, this, [this](bool) { dataentry(true); });
+ connect(buttons[3], &QPushButton::clicked, this, [this](bool) { dataentry(false); });
+ connect(buttons[4], &QPushButton::clicked, this, &MainWindow::delRecordButton_clicked);
+ connect(buttons[5], &QPushButton::clicked, this, &MainWindow::on_clearAdhocButton_clicked);
+
+ // Connect statements for grid1Buttons
+ connect(grid1Buttons[0], &QPushButton::clicked, this, &MainWindow::fmButton_clicked);
+ connect(grid1Buttons[1], &QPushButton::clicked, this, &MainWindow::adbshellButton_clicked);
+ connect(grid1Buttons[2], &QPushButton::clicked, this, &MainWindow::backupButton_clicked);
+ connect(grid1Buttons[3], &QPushButton::clicked, this, &MainWindow::restoreButton_clicked);
+ connect(grid1Buttons[4], &QPushButton::clicked, this, &MainWindow::sideload_Button_clicked);
+ connect(grid1Buttons[5], &QPushButton::clicked, this, &MainWindow::uninstall_Button_clicked);
+ connect(grid1Buttons[6], &QPushButton::clicked, this, &MainWindow::mvdataButton_clicked);
+ connect(grid1Buttons[7], &QPushButton::clicked, this, &MainWindow::pushTimers_clicked);
+ connect(grid1Buttons[8], &QPushButton::clicked, this, &MainWindow::screenCap);
+ connect(grid1Buttons[9], &QPushButton::clicked, this, &MainWindow::killServer_clicked);
+ connect(grid1Buttons[10], &QPushButton::clicked, this, &MainWindow::scpyButton_clicked);
+ connect(grid1Buttons[11], &QPushButton::clicked, this, &MainWindow::cacheButton_clicked);
+ connect(grid1Buttons[12], &QPushButton::clicked, this, &MainWindow::doConsole_clicked);
+ connect(grid1Buttons[13], &QPushButton::clicked, this, &MainWindow::keypadButton_clicked);
+ connect(grid1Buttons[14], &QPushButton::clicked, this, &MainWindow::startapp_clicked);
+ connect(grid1Buttons[15], &QPushButton::clicked, this, &MainWindow::stopapp_clicked);
+
+ // Connect statements for grid2Buttons
+ connect(grid2Buttons[0], &QPushButton::clicked, this, &MainWindow::fmButton_clicked);
+ connect(grid2Buttons[1], &QPushButton::clicked, this, &MainWindow::sideload_Button_clicked);
+ connect(grid2Buttons[2], &QPushButton::clicked, this, &MainWindow::uninstall_Button_clicked);
+ connect(grid2Buttons[3], &QPushButton::clicked, this, &MainWindow::infoArchitecture);
+ connect(grid2Buttons[4], &QPushButton::clicked, this, &MainWindow::screenCap);
+ connect(grid2Buttons[5], &QPushButton::clicked, this, &MainWindow::killServer_clicked);
+ connect(grid2Buttons[6], &QPushButton::clicked, this, &MainWindow::startapp_clicked);
+ connect(grid2Buttons[7], &QPushButton::clicked, this, &MainWindow::stopapp_clicked);
+ connect(grid2Buttons[8], &QPushButton::clicked, this, &MainWindow::adbshellButton_clicked);
+ connect(grid2Buttons[9], &QPushButton::clicked, this, &MainWindow::doConsole_clicked);
+ connect(grid2Buttons[10], &QPushButton::clicked, this, &MainWindow::on_actionSend_text_triggered);
+ connect(grid2Buttons[11], &QPushButton::clicked, this, &MainWindow::scpyButton_clicked);
 }
