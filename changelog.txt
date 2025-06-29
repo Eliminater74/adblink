@@ -8,7 +8,6 @@ deviceTable columns and rows refactored.
 setupUI function made memory-safe.
 Experimental Quest headset functions re-added
 
-
 06/10/25
 
 Version 6.6
