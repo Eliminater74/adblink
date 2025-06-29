@@ -7174,6 +7174,14 @@ connect(actionHelp,                 &QAction::triggered, this, &MainWindow::on_a
 ///////////////////////////////////////
 
 void MainWindow::setupUI() {
+
+if (centralWidget) {
+        setCentralWidget(nullptr);
+        centralWidget->deleteLater();
+        centralWidget = nullptr;
+}
+
+
 static bool connectionsInitialized = false;
 
 centralWidget = new QWidget(this);
