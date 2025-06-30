@@ -3,6 +3,7 @@
 Version 6.7-BETA
 
 Base UI enlarged.
+Custom scrcpy arguments per device
 setupUI function made memory-safe.
 deviceTable refactored. Column widths are now fixed.
 Scaling primary window and widgets using Ctrl++ added
