@@ -1587,144 +1587,146 @@
 
     void MainWindow::dataentry(bool isNewRecord)
     {
-             QString cstring;
-             QString command;
-             QStringList mstringlist;
-             QStringList dstringlist;
-             QString selectedDescription;
-             DeviceRecord device;
+       QString cstring;
+       QString command;
+       QStringList mstringlist;
+       QStringList dstringlist;
+       QString selectedDescription;
+       DeviceRecord device;
 
-             cstring = getadbpath() + " devices";
-             command = getadbOutput(cstring);
-             QThread::sleep(2);
+       cstring = getadbpath() + " devices";
+       command = getadbOutput(cstring);
+       QThread::sleep(2);
 
-             mstringlist = command.split(QRegExp("[\t\n\r]"), QString::SkipEmptyParts);
+       mstringlist = command.split(QRegExp("[\t\n\r]"), QString::SkipEmptyParts);
 
-             if (command.contains("List of devices attached"))
-             {
-             mstringlist.removeFirst();
-             for (int a = 0; a < mstringlist.size(); a = a + 2)
-             {
+       if (command.contains("List of devices attached"))
+       {
+            mstringlist.removeFirst();
+            for (int a = 0; a < mstringlist.size(); a = a + 2)
+            {
                    QStringList pieces = mstringlist.at(a).split(":", QString::SkipEmptyParts);
                    if (!mstringlist.at(a).contains("daemon"))
-                   dstringlist << pieces.at(0);
-             }
-             }
+                  dstringlist << pieces.at(0);
+            }
+       }
 
-             // For update, get selected description from deviceTable
-             if (!isNewRecord)
-             {
-             int selectedRow = deviceTable->currentRow();
-             if (selectedRow >= 0 && deviceTable->item(selectedRow, 0))
-             {
+       // For update, get selected description from deviceTable
+       if (!isNewRecord)
+       {
+            int selectedRow = deviceTable->currentRow();
+            if (selectedRow >= 0 && deviceTable->item(selectedRow, 0))
+            {
                    selectedDescription = deviceTable->item(selectedRow, 0)->text();
-                   device = queryDeviceRecord(selectedDescription);                 
-             }
-             else
-             {
+                   device = queryDeviceRecord(selectedDescription);
+            }
+            else
+            {
                    QMessageBox::critical(this, "", "No device selected in table");
                    return;
-             }
-             }
+            }
+       }
 
-             bool iskodi;
+       bool iskodi;
 
-             if (stackedWidget->currentIndex() == 0)
-             iskodi = true;
-             else
-             iskodi = false;
+       if (stackedWidget->currentIndex() == 0)
+            iskodi = true;
+       else
+            iskodi = false;
 
-             preferencesDialog dialog(this, iskodi);
+       preferencesDialog dialog(this, iskodi);
 
-             dialog.setWindowModality(Qt::WindowModal);
+       dialog.setWindowModality(Qt::WindowModal);
 
-             dialog.setversionLabel(version);
-             dialog.setdevicelist(dstringlist);
+       dialog.setversionLabel(version);
+       dialog.setdevicelist(dstringlist);
 
-             // Initialize dialog fields based on insert or update
-             if (isNewRecord)
-             {
-             // Default values for new record (insert)
-             dialog.setPackagename("org.xbmc.kodi");
-             dialog.setPulldir("");
-             dialog.setfilepath("/files/.kodi");
-             dialog.setdataroot("/sdcard/");
-             dialog.setostype("0");
-             dialog.setdescription("");
-             dialog.setdisableroot(0);
-             dialog.setport("5555");
-             dialog.setscope(false);
-             dialog.setwsa(false);
-             dialog.setdaddr("");
-             dialog.setisusb(false);
-             }
-             else
-             {
-             // Populate with database values for update
-             dialog.setPackagename(device.xbmcpackage);
-             dialog.setPulldir(device.pulldir);
-             dialog.setfilepath(device.filepath);
-             dialog.setdataroot(device.data_root);
-             dialog.setostype("0");
-             dialog.setdescription(device.description);
-             dialog.setdisableroot(device.disableroot);
-             if (device.isusb)
+       // Initialize dialog fields based on insert or update
+       if (isNewRecord)
+       {
+            // Default values for new record (insert)
+            dialog.setPackagename("org.xbmc.kodi");
+            dialog.setPulldir("");
+            dialog.setfilepath("/files/.kodi");
+            dialog.setdataroot("/sdcard/");
+            dialog.setostype("0");
+            dialog.setdescription("");
+            dialog.setscrcpy("");
+            dialog.setdisableroot(0);
+            dialog.setport("5555");
+            dialog.setscope(false);
+            dialog.setwsa(false);
+            dialog.setdaddr("");
+            dialog.setisusb(false);
+       }
+       else
+       {
+            // Populate with database values for update
+            dialog.setPackagename(device.xbmcpackage);
+            dialog.setPulldir(device.pulldir);
+            dialog.setfilepath(device.filepath);
+            dialog.setscrcpy(device.scrcpyarg);
+            dialog.setdataroot(device.data_root);
+            dialog.setostype("0");
+            dialog.setdescription(device.description);
+            dialog.setdisableroot(device.disableroot);
+            if (device.isusb)
                    dialog.setport("");
-             else
-             dialog.setport(device.port);
-             dialog.setdaddr(device.daddr);
-             dialog.setisusb(device.isusb);
-             }
+            else
+                   dialog.setport(device.port);
+            dialog.setdaddr(device.daddr);
+            dialog.setisusb(device.isusb);
+       }
 
+       dialog.setModal(true);
 
+       int result = dialog.exec();
+       if (result == QDialog::Accepted)
+       {
+            // Retrieve values from dialog
+            QString data_root = dialog.data_root();
+            QString xbmcpackage = dialog.xbmcpackageName();
+            QString pulldir = dialog.pulldir();
+            QString description = dialog.description();
+            QString filepath = dialog.filepath();
+            QString port = dialog.port();
+            QString daddr = dialog.daddr();
+            bool isusb = dialog.isusb();
+            QString ostype = dialog.ostype();
+            int disableroot = dialog.disableroot();
+            QString scrcpy = dialog.scrcpy();
 
+            logfile("scrcpy value: " + scrcpy);
 
-             dialog.setModal(true);
-
-             int result = dialog.exec();
-             if (result == QDialog::Accepted)
-             {
-             // Retrieve values from dialog
-             QString data_root = dialog.data_root();
-             QString xbmcpackage = dialog.xbmcpackageName();
-             QString pulldir = dialog.pulldir();
-             QString description = dialog.description();
-             QString filepath = dialog.filepath();
-             QString port = dialog.port();
-             QString daddr = dialog.daddr();
-             bool isusb = dialog.isusb();
-             QString ostype = dialog.ostype();
-             int disableroot = dialog.disableroot();
-
-             // Validate description (non-empty)
-             if (description.isEmpty())
-             {
+            // Validate description (non-empty)
+            if (description.isEmpty())
+            {
                    QMessageBox::critical(this, "", "Description cannot be empty.");
                    return;
-             }
+            }
 
-             // Check for duplicate description during insert
-             if (isNewRecord)
-             {
+            // Check for duplicate description during insert
+            if (isNewRecord)
+            {
                    QSqlQuery checkQuery;
                    checkQuery.prepare("SELECT COUNT(*) FROM device WHERE description = ?");
                    checkQuery.addBindValue(description);
                    if (checkQuery.exec() && checkQuery.first() && checkQuery.value(0).toInt() > 0)
                    {
-                   QMessageBox::critical(this, "", "A device with this description already exists.");
-                   return;
+                  QMessageBox::critical(this, "", "A device with this description already exists.");
+                  return;
                    }
-             }
+            }
 
-             QSqlQuery query;
-             QString sqlstatement;
+            QSqlQuery query;
+            QString sqlstatement;
 
-             if (isNewRecord)
-             {
+            if (isNewRecord)
+            {
                    // Insert new record
                    sqlstatement = "INSERT INTO device (description, daddr, port, isusb, ostype, "
-                                  "data_root, xbmcpackage, pulldir, disableroot, filepath) "
-                                  "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                                  "data_root, xbmcpackage, pulldir, disableroot, filepath, flag5) "
+                                  "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                    query.prepare(sqlstatement);
                    query.addBindValue(description);
                    query.addBindValue(daddr);
@@ -1736,12 +1738,13 @@
                    query.addBindValue(pulldir);
                    query.addBindValue(disableroot);
                    query.addBindValue(filepath);
-             }
-             else
-             {
+                   query.addBindValue(scrcpy); // Bind scrcpy to flag5
+            }
+            else
+            {
                    // Update existing record
                    sqlstatement = "UPDATE device SET description = ?, daddr = ?, port = ?, isusb = ?, ostype = ?, "
-                                  "data_root = ?, xbmcpackage = ?, pulldir = ?, disableroot = ?, filepath = ? "
+                                  "data_root = ?, xbmcpackage = ?, pulldir = ?, disableroot = ?, filepath = ?, flag5 = ? "
                                   "WHERE description = ?";
                    query.prepare(sqlstatement);
                    query.addBindValue(description);
@@ -1754,23 +1757,26 @@
                    query.addBindValue(pulldir);
                    query.addBindValue(disableroot);
                    query.addBindValue(filepath);
+                   query.addBindValue(scrcpy); // Bind scrcpy to flag5
                    query.addBindValue(selectedDescription);
-             }
+            }
 
-             if (!query.exec())
-             {
-                   logfile("Query error: " + query.lastError().text());
+            if (!query.exec())
+            {
+                   logfile(QString("Query error: ") + query.lastError().text());
+                   logfile(QString("SQL statement: ") + sqlstatement);
+                   logfile(QString("Bound values: description=%1, scrcpy=%2").arg(description, scrcpy));
                    QMessageBox::critical(this, "", (isNewRecord ? "Failed to insert into database: " : "Failed to update database: ") + query.lastError().text());
                    return;
-             }
+            }
+            else
+            {
+                   logfile(QString("Query executed successfully for ") + (isNewRecord ? "INSERT" : "UPDATE"));
+            }
+       }
 
-
-             }
-
-
-             QSqlDatabase::database().commit();
-             loadDeviceTableX(deviceTable);;
-
+       QSqlDatabase::database().commit();
+       loadDeviceTableX(deviceTable);
     }
 
 
@@ -3845,6 +3851,9 @@
 
 
 
+              if (!device.scrcpyarg.isEmpty())
+                 line=device.scrcpyarg;
+
 
 
               sernum = " -s " + daddr +  " ";
@@ -3937,9 +3946,6 @@
                     QMessageBox::critical(this, "", "Error creating script!");
                     return;
                  }
-
-
-
 
 
                  QTextStream out(&file);
@@ -6179,6 +6185,9 @@ QString MainWindow::getadb()
 }
 
 ///////////////////////////////////////////////////
+
+/*
+
 DeviceRecord MainWindow::queryDeviceRecord(const QString& description) {
  DeviceRecord record;
  QString quotedDescription = "\"" + description + "\"";
@@ -6216,6 +6225,44 @@ DeviceRecord MainWindow::queryDeviceRecord(const QString& description) {
  return record;
 }
 
+*/
+
+DeviceRecord MainWindow::queryDeviceRecord(const QString& description) {
+ DeviceRecord record;
+ QString quotedDescription = "\"" + description + "\"";
+ QSqlQuery query;
+
+ QString sqlstatement = "SELECT Id, daddr, pulldir, xbmcpackage, data_root, buffermode, buffersize, "
+                        "bufferfactor, description, filepath, port, isusb, disableroot, flag1, flag2, ostype, flag5 "
+                        "FROM device WHERE description=" + quotedDescription;
+ query.exec(sqlstatement);
+ while (query.next()) {
+               record.id = query.value("Id").toInt();
+               record.daddr = query.value("daddr").toString();
+               record.pulldir = query.value("pulldir").toString();
+               record.xbmcpackage = query.value("xbmcpackage").toString();
+               record.data_root = query.value("data_root").toString();
+               record.buffermode = query.value("buffermode").toInt();
+               record.buffersize = query.value("buffersize").toString();
+               record.bufferfactor = query.value("bufferfactor").toString();
+               record.description = query.value("description").toString();
+               record.filepath = query.value("filepath").toString();
+               record.port = query.value("port").toString();
+               record.isusb = query.value("isusb").toBool();
+               record.disableroot = query.value("disableroot").toBool();
+               record.scoped = query.value("flag1").toBool();
+               record.wsa = query.value("flag2").toBool();
+               record.ostype = query.value("ostype").toString();
+               record.scrcpyarg = query.value("flag5").toString(); // Map flag5 to scrcpyarg
+ }
+ if (query.lastError().isValid()) {
+               logfile(sqlstatement);
+               logfile("SqLite error:" + query.lastError().text());
+               logfile("SqLite error code:" + QString::number(query.lastError().number()));
+ }
+
+ return record;
+}
 ///////////////////////////////////////
 
 
@@ -6568,7 +6615,7 @@ void MainWindow::createTables()
                                              "flag2 TEXT, "
                                              "flag3 TEXT, "
                                              "flag4 TEXT, "
-                                             "flag5 TEXT)";
+                                             "flag5 TEXT)"; // scrcpy arg
 
                       QSqlQuery query(db);
                       if (!query.exec(sqlstatement)) {

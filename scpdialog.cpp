@@ -22,6 +22,8 @@ QString scpDialog::scpArgs() {
 
 
 
+
+
 void scpDialog::setArgs(QString myargs)
 {
     ui->scpargs->setText(myargs);

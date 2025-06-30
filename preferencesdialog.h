@@ -27,6 +27,7 @@ public:
     void setdevicelist(const QStringList &dstringlist);
     void setdescription(const QString &description);
     void setfilepath(const QString &filepath);
+    void setscrcpy(const QString &scrcpy);
     void setdataroot(const QString &data_root);
     void setport(const QString &port);
     void setadb_pref(const QString &adb_pref);
@@ -41,6 +42,7 @@ public:
     QString daddr();
     QString description();
     QString filepath();
+    QString scrcpy();
     QString data_root();
     QString port();
     QString ostype();

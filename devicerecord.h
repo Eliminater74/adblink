@@ -18,4 +18,5 @@ struct DeviceRecord {
     bool scoped = false; // flag1
     bool wsa = false;    // flag2
     QString ostype = "0"; // Default after validation
+    QString scrcpyarg; // flag5
 };

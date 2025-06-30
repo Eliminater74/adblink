@@ -81,6 +81,11 @@ QString preferencesDialog::xbmcpackageName() {
     return ui->packagename->text();
 }
 
+
+///////////////////////////////////////////////////
+QString preferencesDialog::scrcpy() {
+    return ui->scrcpy->text();
+}
 ///////////////////////////////////////////////////
 QString preferencesDialog::data_root() {
     return ui->data_root->text();
@@ -156,6 +161,14 @@ void preferencesDialog::setPackagename(const QString &packagename)
 void preferencesDialog::setPulldir(const QString &pulldir)
 {
     ui->pulldir->setText(pulldir);
+}
+
+
+
+///////////////////////////////////////////////////
+void preferencesDialog::setscrcpy(const QString &scrcpy)
+{
+    ui->scrcpy->setText(scrcpy);
 }
 
 ////////////////////////////////////////////////////////
