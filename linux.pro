@@ -118,16 +118,29 @@ FORMS    +=  about.ui \
     oculusdialog.ui
 
 
+QMAKE_CXXFLAGS += -Wno-deprecated
+
 ICON = adblink.icns
 RC_FILE = adblink.rc
 
-CONFIG += debug
-CONFIG -= release
-CONFIG += sdk_no_version_check
+# QMAKE_APPLE_DEVICE_ARCHS=arm64
+
+# QMAKE_MAC_SDK = macosx12.3
+
+# QMAKE_MAC_SDK = macosx13.0
+
+#linux 
+# {
+    #QMAKE_LFLAGS += -no-pie
+    #QMAKE_CXXFLAGS_DEBUG += -g -O0
+    #QMAKE_CXXFLAGS_RELEASE += -O2 -g
+# }
+
+QMAKE_CXXFLAGS_DEBUG += -g -O0
 
 QMAKE_CXXFLAGS += -Wno-deprecated-declarations
 
-linux {
-    QMAKE_LFLAGS += -no-pie
-    QMAKE_CXXFLAGS_DEBUG += -g -O0
-}
+CONFIG += debug
+CONFIG -= release
+
+

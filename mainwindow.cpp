@@ -7175,11 +7175,17 @@ connect(actionHelp,                 &QAction::triggered, this, &MainWindow::on_a
 
 void MainWindow::setupUI() {
 
+/*
 if (centralWidget) {
         setCentralWidget(nullptr);
         centralWidget->deleteLater();
         centralWidget = nullptr;
 }
+
+*/
+
+centralWidget = new QWidget(this);
+setCentralWidget(centralWidget);
 
 
 centralWidget = new QWidget(this);
@@ -7306,6 +7312,7 @@ rightLayout->addWidget(buttonGridWidget);
 vSpacer = new QSpacerItem(0, 15, QSizePolicy::Minimum, QSizePolicy::Fixed);
 rightLayout->addItem(vSpacer);
 
+
 QHBoxLayout *adhocLayout = new QHBoxLayout();
 adhocLayout->setSpacing(6);
 adhocLayout->setContentsMargins(0, 0, 0, 0);
@@ -7342,6 +7349,7 @@ adhocLayout->addWidget(adhoc_ip);
 
 adhocLayout->addStretch();
 rightLayout->addLayout(adhocLayout);
+
 
 upperLayout->addWidget(rightColumnWidget);
 mainLayout->addWidget(topWidget);
