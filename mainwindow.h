@@ -513,6 +513,10 @@ private slots:
     const QSize sGridButtonSize = QSize(110, 36);
     const QSize s6ButtonSize = QSize(100, 32);
 
+    int lfontsize=22;
+    int mfontsize=20;
+    int sfontsize=18;
+
 
     QSize buttonsize;
     QSize windowsize;

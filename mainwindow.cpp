@@ -7222,15 +7222,6 @@ connect(actionHelp,                 &QAction::triggered, this, &MainWindow::on_a
 
 void MainWindow::setupUI() {
 
-/*
-if (centralWidget) {
-        setCentralWidget(nullptr);
-        centralWidget->deleteLater();
-        centralWidget = nullptr;
-}
-
-*/
-
 centralWidget = new QWidget(this);
 setCentralWidget(centralWidget);
 
@@ -7272,16 +7263,16 @@ deviceTable->setTextElideMode(Qt::ElideRight);
 QFont tableFont = deviceTable->font();
 switch (windowSizeSelector) {
 case 0:
-        tableFont.setPixelSize(16);
+        tableFont.setPixelSize(sfontsize);
         break;
 case 1:
-        tableFont.setPixelSize(18);
+        tableFont.setPixelSize(mfontsize);
         break;
 case 2:
-        tableFont.setPixelSize(20);
+        tableFont.setPixelSize(lfontsize);
         break;
 default:
-        tableFont.setPixelSize(16);
+        tableFont.setPixelSize(sfontsize);
         break;
 }
 deviceTable->setFont(tableFont);
@@ -7310,16 +7301,16 @@ for (int i = 0; i < 6; ++i) {
         QFont buttonFont = buttons[i]->font();
         switch (windowSizeSelector) {
         case 0:
-            buttonFont.setPixelSize(14);
+            buttonFont.setPixelSize(sfontsize);
             break;
         case 1:
-            buttonFont.setPixelSize(16);
+            buttonFont.setPixelSize(mfontsize);
             break;
         case 2:
-            buttonFont.setPixelSize(18);
+            buttonFont.setPixelSize(lfontsize);
             break;
         default:
-            buttonFont.setPixelSize(14);
+            buttonFont.setPixelSize(sfontsize);
             break;
         }
         buttons[i]->setFont(buttonFont);
@@ -7373,16 +7364,16 @@ adhocLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 QFont labelFont = adhocLabel->font();
 switch (windowSizeSelector) {
 case 0:
-        labelFont.setPixelSize(14);
+        labelFont.setPixelSize(sfontsize);
         break;
 case 1:
-        labelFont.setPixelSize(16);
+        labelFont.setPixelSize(mfontsize);
         break;
 case 2:
-        labelFont.setPixelSize(18);
+        labelFont.setPixelSize(lfontsize);
         break;
 default:
-        labelFont.setPixelSize(14);
+        labelFont.setPixelSize(sfontsize);
         break;
 }
 adhocLabel->setFont(labelFont);
@@ -7514,16 +7505,16 @@ for (int i = 0; i < 12; ++i) {
         QFont grid2ButtonFont = grid2Buttons[i]->font();
         switch (windowSizeSelector) {
         case 0:
-            grid2ButtonFont.setPixelSize(14);
+            grid2ButtonFont.setPixelSize(sfontsize);
             break;
         case 1:
-            grid2ButtonFont.setPixelSize(16);
+            grid2ButtonFont.setPixelSize(mfontsize);
             break;
         case 2:
-            grid2ButtonFont.setPixelSize(18);
+            grid2ButtonFont.setPixelSize(lfontsize);
             break;
         default:
-            grid2ButtonFont.setPixelSize(14);
+            grid2ButtonFont.setPixelSize(sfontsize);
             break;
         }
         grid2Buttons[i]->setFont(grid2ButtonFont);
