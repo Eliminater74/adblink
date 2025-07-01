@@ -446,7 +446,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>30</x>
@@ -590,7 +590,7 @@
        </size>
       </property>
       <property name="toolTip">
-       <string>Scrcpy argument for this device</string>
+       <string>Scrcpy argument for this device: e.g. --record c:\file.mp4</string>
       </property>
      </widget>
     </item>
