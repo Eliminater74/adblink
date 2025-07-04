@@ -7238,6 +7238,7 @@ upperLayout->setAlignment(Qt::AlignTop);
 deviceTable = new NoHScrollTableWidget(0, 3);
 deviceTable->setFixedSize(450, 150);
 deviceTable->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
 deviceTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 deviceTable->horizontalHeader()->setMinimumSectionSize(150);
 deviceTable->horizontalHeader()->setMaximumSectionSize(150);
@@ -7592,141 +7593,147 @@ deviceTable->viewport()->update();
 //////////////////////////////////////////////////////////
 
 void MainWindow::loadDeviceTableX(QTableWidget* table) {
- QScrollArea *scrollArea = qobject_cast<QScrollArea*>(table->parentWidget());
+QScrollArea *scrollArea = qobject_cast<QScrollArea*>(table->parentWidget());
 
- QSet<QString> connectedDeviceIds;
- for (int row = 0; row < table->rowCount(); ++row) {
-   if (table->item(row, 2) &&
-       table->item(row, 2)->text() == "Connected" &&
-       table->item(row, 0)) {
-        connectedDeviceIds.insert(table->item(row, 0)->data(Qt::UserRole).toString());
-   }
- }
-
- table->clearContents();
- table->setRowCount(0);
- table->setColumnCount(3);
- table->setHorizontalHeaderLabels(QStringList() << "Device" << "IP" << "Status");
- table->verticalHeader()->setVisible(false);
- table->setEditTriggers(QAbstractItemView::NoEditTriggers);
- table->setShowGrid(true);
- table->setSortingEnabled(false);
- table->setSelectionMode(QAbstractItemView::SingleSelection);
- table->setSelectionBehavior(QAbstractItemView::SelectRows);
- table->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
- table->setStyleSheet("QTableWidget { margin: 0px; padding: 0px; } QHeaderView::section { padding: 0px; }");
- table->verticalHeader()->setDefaultSectionSize(40);
-
- if (scrollArea) {
-   scrollArea->setWidgetResizable(false);
-   scrollArea->setWidget(table);
-   scrollArea->show();
- }
-
- QString sqlstatement = "SELECT id, description, daddr, isusb FROM device";
- QSqlQuery query;
- if (!query.exec(sqlstatement)) {
-   logfile("Query failed: " + query.lastError().text());
-   return;
- }
-
- int row = 0;
- while (query.next()) {
-   table->insertRow(row);
-   QString deviceId = query.value(0).toString();
-   QString description = query.value(1).toString();
-   QTableWidgetItem* descItem = new QTableWidgetItem(description);
-   descItem->setData(Qt::UserRole, deviceId);
-   descItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-   table->setItem(row, 0, descItem);
-
-   bool isUsb = query.value(3).toBool();
-   QString ip = isUsb ? "USB" : (query.value(2).toString().isEmpty() ? "N/A" : query.value(2).toString());
-   table->setItem(row, 1, new IpTableWidgetItem(ip));
-
-   QString status;
-   if (isUsb) {
-        status = usbConnected(query.value(2).toString()) ? "Connected" : "Disconnected";
-   } else {
-        status = connectedDeviceIds.contains(deviceId) ? "Connected" : "Disconnected";
-   }
-   table->setItem(row, 2, new QTableWidgetItem(status));
-   row++;
- }
-
- //int totalWidth = 480;
- int totalWidth = 450;
-
- totalWidth -= 2 * table->frameWidth();
- if (table->verticalScrollBar()->isVisible()) {
-   totalWidth -= table->verticalScrollBar()->width();
- }
- totalWidth = qMax(totalWidth, 450);
-
- int colWidth = totalWidth / 3;
- table->setColumnWidth(0, colWidth);
- table->setColumnWidth(1, colWidth);
- table->setColumnWidth(2, colWidth);
-
- table->setMinimumWidth(totalWidth);
- table->setMaximumWidth(totalWidth);
- if (scrollArea) {
-   scrollArea->setMinimumWidth(totalWidth + scrollArea->frameWidth() * 2);
-   scrollArea->horizontalScrollBar()->setValue(0);
- }
-
- for (int col = 0; col < 3; ++col) {
-   table->showColumn(col);
- }
-
- for (int row = 0; row < table->rowCount(); ++row) {
-   if (QTableWidgetItem* item = table->item(row, 0)) {
-        item->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-   }
- }
-
- table->show();
- if (scrollArea) {
-   scrollArea->show();
- }
-
- QSettings settings("YourCompany", "YourApp");
-
- // QSettings settings("jocala", "adblink");
-
- int sortColumn = settings.value("DeviceTableSortColumn", 0).toInt();
- Qt::SortOrder sortOrder = static_cast<Qt::SortOrder>(settings.value("DeviceTableSortOrder", Qt::AscendingOrder).toInt());
-
- table->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
- table->setSortingEnabled(true);
- table->sortItems(sortColumn, sortOrder);
-
- if (scrollArea) {
-   scrollArea->updateGeometry();
-   scrollArea->viewport()->update();
-   scrollArea->update();
-   scrollArea->horizontalScrollBar()->setValue(0);
- }
- table->updateGeometry();
- table->viewport()->update();
- table->update();
- if (centralWidget) {
-   centralWidget->updateGeometry();
-   centralWidget->update();
- }
-
- disconnect(table->horizontalHeader(), &QHeaderView::sectionClicked, nullptr, nullptr);
- connect(table->horizontalHeader(), &QHeaderView::sectionClicked, this, [table, scrollArea](int logicalIndex) {
-      QSettings settings("YourCompany", "YourApp");
-     settings.setValue("DeviceTableSortColumn", logicalIndex);
-     settings.setValue("DeviceTableSortOrder", table->horizontalHeader()->sortIndicatorOrder());
-     if (scrollArea) {
-         scrollArea->horizontalScrollBar()->setValue(0);
-     }
- });
-
-
+QSet<QString> connectedDeviceIds;
+for (int row = 0; row < table->rowCount(); ++row) {
+        if (table->item(row, 2) &&
+            table->item(row, 2)->text() == "Connected" &&
+            table->item(row, 0)) {
+            connectedDeviceIds.insert(table->item(row, 0)->data(Qt::UserRole).toString());
+        }
 }
+
+table->clearContents();
+table->setRowCount(0);
+table->setColumnCount(3);
+table->setHorizontalHeaderLabels(QStringList() << "Device" << "IP" << "Status");
+table->verticalHeader()->setVisible(false);
+table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+table->setShowGrid(true);
+table->setSortingEnabled(false);
+table->setSelectionMode(QAbstractItemView::SingleSelection);
+table->setSelectionBehavior(QAbstractItemView::SelectRows);
+table->setStyleSheet("QTableWidget { margin: 0px; padding: 0px; } QHeaderView::section { padding: 0px; }");
+table->verticalHeader()->setDefaultSectionSize(40);
+
+// Set table size based on windowSizeSelector
+int tableWidth, tableHeight;
+switch (windowSizeSelector) {
+case 0: // small
+        tableWidth = sMainWindowSize.width() * 0.63;
+        tableHeight = sMainWindowSize.height() * 0.40;
+        break;
+case 1: // medium
+        tableWidth = mMainWindowSize.width() * 0.63;
+        tableHeight = mMainWindowSize.height() * 0.40;
+        break;
+case 2: // large
+        tableWidth = lMainWindowSize.width() * 0.55;
+        tableHeight = lMainWindowSize.height() * 0.40;
+        break;
+default:
+        tableWidth = sMainWindowSize.width() * 0.63;
+        tableHeight = sMainWindowSize.height() * 0.40;
+        break;
+}
+
+table->setMinimumSize(tableWidth, tableHeight);
+table->setMaximumSize(tableWidth, tableHeight);
+table->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+if (scrollArea) {
+        scrollArea->setWidgetResizable(false);
+        scrollArea->setWidget(table);
+        scrollArea->show();
+}
+
+QString sqlstatement = "SELECT id, description, daddr, isusb FROM device";
+QSqlQuery query;
+if (!query.exec(sqlstatement)) {
+        logfile("Query failed: " + query.lastError().text());
+        return;
+}
+
+int row = 0;
+while (query.next()) {
+        table->insertRow(row);
+        QString deviceId = query.value(0).toString();
+        QString description = query.value(1).toString();
+        QTableWidgetItem* descItem = new QTableWidgetItem(description);
+        descItem->setData(Qt::UserRole, deviceId);
+        descItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+        table->setItem(row, 0, descItem);
+
+        bool isUsb = query.value(3).toBool();
+        QString ip = isUsb ? "USB" : (query.value(2).toString().isEmpty() ? "N/A" : query.value(2).toString());
+        table->setItem(row, 1, new IpTableWidgetItem(ip));
+
+        QString status;
+        if (isUsb) {
+            status = usbConnected(query.value(2).toString()) ? "Connected" : "Disconnected";
+        } else {
+            status = connectedDeviceIds.contains(deviceId) ? "Connected" : "Disconnected";
+        }
+        table->setItem(row, 2, new QTableWidgetItem(status));
+        row++;
+}
+
+int colWidth = tableWidth / 3;
+table->setColumnWidth(0, colWidth);
+table->setColumnWidth(1, colWidth);
+table->setColumnWidth(2, colWidth);
+
+for (int col = 0; col < 3; ++col) {
+        table->showColumn(col);
+}
+
+for (int row = 0; row < table->rowCount(); ++row) {
+        if (QTableWidgetItem* item = table->item(row, 0)) {
+            item->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+        }
+}
+
+table->show();
+if (scrollArea) scrollArea->show();
+
+QSettings settings("YourCompany", "YourApp");
+int sortColumn = settings.value("DeviceTableSortColumn", 0).toInt();
+Qt::SortOrder sortOrder = static_cast<Qt::SortOrder>(settings.value("DeviceTableSortOrder", Qt::AscendingOrder).toInt());
+
+table->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+table->setSortingEnabled(true);
+table->sortItems(sortColumn, sortOrder);
+
+if (scrollArea) {
+        scrollArea->updateGeometry();
+        scrollArea->viewport()->update();
+        scrollArea->update();
+        scrollArea->horizontalScrollBar()->setValue(0);
+}
+
+table->updateGeometry();
+table->viewport()->update();
+table->update();
+
+if (centralWidget) {
+        centralWidget->updateGeometry();
+        centralWidget->update();
+}
+
+disconnect(table->horizontalHeader(), &QHeaderView::sectionClicked, nullptr, nullptr);
+connect(table->horizontalHeader(), &QHeaderView::sectionClicked, this, [table, scrollArea](int logicalIndex) {
+    QSettings settings("YourCompany", "YourApp");
+    settings.setValue("DeviceTableSortColumn", logicalIndex);
+    settings.setValue("DeviceTableSortOrder", table->horizontalHeader()->sortIndicatorOrder());
+    if (scrollArea) {
+        scrollArea->horizontalScrollBar()->setValue(0);
+    }
+});
+}
+
+
+
 
 void MainWindow::switchSize()
 {
