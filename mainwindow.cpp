@@ -7224,10 +7224,6 @@ void MainWindow::setupUI() {
 
 centralWidget = new QWidget(this);
 setCentralWidget(centralWidget);
-
-
-centralWidget = new QWidget(this);
-setCentralWidget(centralWidget);
 mainLayout = new QVBoxLayout(centralWidget);
 mainLayout->setContentsMargins(0, 0, 0, 0);
 mainLayout->setSpacing(0);
