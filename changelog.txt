@@ -1,6 +1,6 @@
-07/XX/25
+07/07/25
 
-Version 6.7-BETA
+Version 6.7
 
 Base UI enlarged.
 Custom scrcpy arguments per device
