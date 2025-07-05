@@ -41,7 +41,7 @@
 
 /////////////////////////////////////////////////////
 
-#include <QTableWidget>
+
 
 class IpTableWidgetItem : public QTableWidgetItem {
 public:
@@ -71,6 +71,28 @@ public:
     }
 };
 
+
+class NoHScrollTableWidget : public QTableWidget {
+    Q_OBJECT
+public:
+    using QTableWidget::QTableWidget;
+
+    NoHScrollTableWidget(QWidget *parent = nullptr) : QTableWidget(parent) {
+        setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    }
+
+    NoHScrollTableWidget(int rows, int columns, QWidget *parent = nullptr) : QTableWidget(rows, columns, parent) {
+        setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    }
+
+    void scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible) override {
+        int hVal = horizontalScrollBar()->value();
+        QTableWidget::scrollTo(index, hint);
+        horizontalScrollBar()->setValue(hVal);
+    }
+};
+
+
 ///////////////////////////////////////
 
 
@@ -93,16 +115,6 @@ DeviceRecord queryDeviceRecord(const QString& description);
 
 private slots:
 
-
-/*
-    void connections();
-
-     void buttonsetup();
-
-   void updateButtonProperties();
-
-    void gridsetup();
-*/
 
     bool validateIPAddress(const QString& ipAddress);
 
@@ -523,27 +535,5 @@ private slots:
     QSize ebuttonsize;
 };
 
-#include <QTableWidget>
-#include <QScrollBar>
-
-class NoHScrollTableWidget : public QTableWidget {
-    Q_OBJECT
-public:
-    using QTableWidget::QTableWidget;
-
-    NoHScrollTableWidget(QWidget *parent = nullptr) : QTableWidget(parent) {
-        setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    }
-
-    NoHScrollTableWidget(int rows, int columns, QWidget *parent = nullptr) : QTableWidget(rows, columns, parent) {
-        setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    }
-
-    void scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible) override {
-        int hVal = horizontalScrollBar()->value();
-        QTableWidget::scrollTo(index, hint);
-        horizontalScrollBar()->setValue(hVal);
-    }
-};
 
 #endif // MAINWINDOW_H
