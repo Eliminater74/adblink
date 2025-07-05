@@ -453,7 +453,9 @@ private slots:
     QVBoxLayout *mainLayout;
     QWidget *topWidget;
     QHBoxLayout *upperLayout;
-    QTableWidget *deviceTable;
+
+    NoHScrollTableWidget *deviceTable;
+
     QScrollArea *scrollArea;
     QSpacerItem *cosmeticGap;
     QWidget *rightColumnWidget;

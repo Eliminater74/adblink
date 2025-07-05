@@ -267,6 +267,8 @@
              return;
          }
 
+            deviceTable = new NoHScrollTableWidget(this);
+
             createTables();
             createjson();
             setupMenus();
@@ -7235,7 +7237,8 @@ upperLayout->setSpacing(0);
 upperLayout->setContentsMargins(28, 0, 0, 0);
 upperLayout->setAlignment(Qt::AlignTop);
 
-deviceTable = new NoHScrollTableWidget(0, 3);
+
+
 deviceTable->setFixedSize(450, 150);
 deviceTable->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
