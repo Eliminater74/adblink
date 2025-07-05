@@ -5,7 +5,10 @@ Version 6.7
 Base UI enlarged.
 Custom scrcpy arguments per device
 setupUI function made memory-safe.
-deviceTable refactored. Column widths are now fixed.
+deviceTable refactored:
+  Column widths are now fixed
+  init occurs in constructor
+  Device status retained post-resize
 Scaling primary window and widgets using Ctrl++ added
 Chosen scale remembered between runs
 
