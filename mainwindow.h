@@ -21,27 +21,14 @@
 #include <QStatusBar>
 #include <QProgressBar>
 #include <QScrollBar>
-
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QTableWidget>
-#include <QScrollArea>
 #include <QSpacerItem>
-
-
-#include <QGridLayout>
-
 #include <QMenuBar>
 #include <QMenu>
 #include <QAction>
 #include <QSize>
-
 #include "devicerecord.h"
 
-
 /////////////////////////////////////////////////////
-
-
 
 class IpTableWidgetItem : public QTableWidgetItem {
 public:
@@ -71,7 +58,6 @@ public:
     }
 };
 
-
 class NoHScrollTableWidget : public QTableWidget {
     Q_OBJECT
 public:
@@ -92,15 +78,7 @@ public:
     }
 };
 
-
 ///////////////////////////////////////
-
-
-namespace Ui {
-class MainWindow;
-}
-
-
 
 class MainWindow : public QMainWindow
 {
@@ -110,331 +88,135 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-
-DeviceRecord queryDeviceRecord(const QString& description);
+    DeviceRecord queryDeviceRecord(const QString& description);
 
 private slots:
-
-
     bool validateIPAddress(const QString& ipAddress);
-
     bool renameColumn(const QString& oldColumnName, const QString& newColumnName);
-
-     void onApplicationQuit();
-
-     void serverlabel();
-
+    void onApplicationQuit();
+    void serverlabel();
     bool validateDeviceSelection(QString& selectedDescription);
-
     bool usbConnected(QString daddr);
-
-
     void loadDeviceTableX(QTableWidget* table);
-
-
     void handleFilemanagerFinished();
-
     void onReqCompleted();
-
     void adhocip();
-
     void on_actionAbout_triggered();
-
     void connButton_clicked();
-
     void displayOff();
-
     void sideload_Button_clicked();
-
-
-     void setWindowSize();
-
+    void setWindowSize();
     void initGridConnections();
-
     void disButton_clicked();
-
     void on_actionQuit_triggered();
-
     void uninstall_Button_clicked();
-
     bool installAPK(QString filename);
-
     void on_actionHelp_triggered();
-
     void backupButton_clicked();
-
     void restoreButton_clicked();
     void dos_shell();
-
-   QString battery();
-
-
-
-
+    QString battery();
     void adbshellButton_clicked();
-
-
-
-
-
-
-
     void delay(int secs);
-
-
-
-   void busybox_permissions();
-
-   void createTables();
-
-
-
-
-
-   QString getadb();
-
-  QString manufacturer();
-  QString devicename();
-
-   int getandroid();
-   int getperms(QString dir);
-   bool isScoped();
-
-
-
-
-   void writeBackup (QString dir);
-
-   QString readBackup (QString databasedir);
-
-   QString checkslash (QString qpath);
-
-
-   void writeInstall (QString dir);
-
-   QString readInstall (QString databasedir);
-
-   void TimerEvent();
-   void delayTimer(int rdelay);
-
-
-   QString RunLongProcess(QString cstring, QString jobname);
-
-   QString readDonationValue();
-
-
-   void usbbuttons(bool isusb);
-
-   void rotate_logfile();
-
-   void logfile2(QString line);
-
-   void rebootDevice(QString reboot);
-
-   bool mount_system(QString mnt);
-
-   bool fileExists(QString path);
-
-   bool is_su();
-
-   bool is_busybox();
-
-
-     QString strip (QString str);
-
-   void kill_server();
-
-   bool start_server();
-
-
-
-   bool is_package(QString package);
-
-
-     void createjson();
-
-
+    void busybox_permissions();
+    void createTables();
+    QString getadb();
+    QString manufacturer();
+    QString devicename();
+    int getandroid();
+    int getperms(QString dir);
+    bool isScoped();
+    void writeBackup(QString dir);
+    QString readBackup(QString databasedir);
+    QString checkslash(QString qpath);
+    void writeInstall(QString dir);
+    QString readInstall(QString databasedir);
+    void TimerEvent();
+    void delayTimer(int rdelay);
+    QString RunLongProcess(QString cstring, QString jobname);
+    QString readDonationValue();
+    void usbbuttons(bool isusb);
+    void rotate_logfile();
+    void logfile2(QString line);
+    void rebootDevice(QString reboot);
+    bool mount_system(QString mnt);
+    bool fileExists(QString path);
+    bool is_su();
+    bool is_busybox();
+    QString strip(QString str);
+    void kill_server();
+    bool start_server();
+    bool is_package(QString package);
+    void createjson();
     void androidLog();
-
-
-
     void on_actionReboot_triggered();
-
-
-
     void deleteRecord(QString descrip);
-
     bool isConnectedToNetwork();
-
-
     void on_donate_clicked();
-
-   void do_versioncheck();
-
-
-
-
+    void do_versioncheck();
     void on_actionDownload_Kodi_triggered();
-
-
-
     void dataentry(bool isNewRecord);
-    //void newentry(bool isNewRecord);
-
-
-  //   void move_kodi_data(QString externallocation, int choice);
-
-
-
-
     void doConsole_clicked();
-
     void killServer_clicked();
-
-
-
-
-   void  screenCap();
-
-
-   void delRecordButton_clicked();
-
-
-   void cacheButton_clicked();
-
- //  void on_splashButton_clicked();
-
-   void mvdataButton_clicked();
-
-   void on_actionView_Kodi_Log_triggered();
-
-   void on_actionView_adbLink_Log_triggered();
-
-
-   void stopapp_clicked();
-
-
-
-
-  // void on_actionEdit_XML_files_triggered();
-
-
-   void on_actionPaste_path_triggered();
-
-   void on_actionStop_Application_triggered();
-
-   void on_actionStart_Application_triggered();
-
-   void keypadButton_clicked();
-
-
-
-   void fmButton_clicked();
-
-
-
-   void on_actionMount_system_RO_triggered();
-
-   void on_actionMount_system_RW_triggered();
-
-   void on_actionWireless_ADBD_triggered();
-
-   void on_actionKodi_data_usage_triggered();
-
-
-  void on_clearAdhocButton_clicked();
-
-
-
-  void on_actionPreferences_triggered();
-
-
-
-  void on_actionReiinstall_Busybox_triggered();
-
-  void infoArchitecture();
-
-
-
-  void on_actiondelthumb_triggered();
-
-  void on_actionPush_remote_triggered();
-
-
-  void on_actionCreate_kodi_data_triggered();
-
-
-
-  void scpyButton_clicked();
-
-
-
-
-  void pushTimers_clicked();
-
-
-
-
-  void on_actionView_Changelog_triggered();
-
-  void  startapp_clicked();
-
-  void on_actionSplash_Screen_triggered();
-
-  void on_View_Changelog_triggered();
-
-  void on_Erase_adbLink_database_triggered();
-
- void on_actionSet_Kodi_permissions_triggered();
-
-  void on_actionGet_UID_from_APK_file_triggered();
-
-  void on_actionOculus_VR_triggered();
-
-  void on_actionSend_text_triggered();
-
-  void setupUI();
-
-
-
-  void on_actionEdit_XML_triggered();
-
-  void on_actionScreen_Capture_triggered();
-
-  void on_actionKeypad_triggered();
-
-
-  void on_actionSwitch_View_triggered();
-
-
-  void switchSize();
-
-  void on_actionReload_devices_triggered();
-
-  void on_infoArchitecture_triggered();
-
-   void setupMenus();
-
-  private:
-    Ui::MainWindow *ui;
+    void screenCap();
+    void delRecordButton_clicked();
+    void cacheButton_clicked();
+    void mvdataButton_clicked();
+    void on_actionView_Kodi_Log_triggered();
+    void on_actionView_adbLink_Log_triggered();
+    void stopapp_clicked();
+    void on_actionPaste_path_triggered();
+    void on_actionStop_Application_triggered();
+    void on_actionStart_Application_triggered();
+    void keypadButton_clicked();
+    void fmButton_clicked();
+    void on_actionMount_system_RO_triggered();
+    void on_actionMount_system_RW_triggered();
+    void on_actionWireless_ADBD_triggered();
+    void on_actionKodi_data_usage_triggered();
+    void on_clearAdhocButton_clicked();
+    void on_actionPreferences_triggered();
+    void on_actionReiinstall_Busybox_triggered();
+    void infoArchitecture();
+    void on_actiondelthumb_triggered();
+    void on_actionPush_remote_triggered();
+    void on_actionCreate_kodi_data_triggered();
+    void scpyButton_clicked();
+    void pushTimers_clicked();
+    void on_actionView_Changelog_triggered();
+    void startapp_clicked();
+    void on_actionSplash_Screen_triggered();
+    void on_View_Changelog_triggered();
+    void on_Erase_adbLink_database_triggered();
+    void on_actionSet_Kodi_permissions_triggered();
+    void on_actionGet_UID_from_APK_file_triggered();
+    void on_actionOculus_VR_triggered();
+    void on_actionSend_text_triggered();
+    void setupUI();
+    void on_actionEdit_XML_triggered();
+    void on_actionScreen_Capture_triggered();
+    void on_actionKeypad_triggered();
+    void on_actionSwitch_View_triggered();
+    void switchSize();
+    void on_actionReload_devices_triggered();
+    void on_infoArchitecture_triggered();
+    void setupMenus();
+
+private:
     QNetworkAccessManager *m_networkManager;
     usbfileDialog *fmdialog;
     QStringList RunProcessList;
-    //QPushButton* setupDonateButton(QWidget* parent, int x, int y);
     QPushButton* setupDonateButton(QWidget* parent);
-
     QPushButton* donateButton;
     void setDonateButtonActive(bool active);
 
-
     const QString vqurl = "http://www.jocala.com/version.txt";
-    const QString busypath="/data/local/tmp/adblink/";
+    const QString busypath = "/data/local/tmp/adblink/";
     const QString tempdir = "/data/local/tmp/";
     const QString version = "6.7";
 
-
     int windowSizeSelector;
-    QString apphome =  "";
+    QString apphome = "";
     QString scriptdir = "";
     QString aapt = "";
     QString xmldir = "";
@@ -448,14 +230,11 @@ private slots:
     QString jsonstring = "";
     int currentStack;
 
-    // Member variables for widgets
     QWidget *centralWidget;
     QVBoxLayout *mainLayout;
     QWidget *topWidget;
     QHBoxLayout *upperLayout;
-
     NoHScrollTableWidget *deviceTable;
-
     QScrollArea *scrollArea;
     QSpacerItem *cosmeticGap;
     QWidget *rightColumnWidget;
@@ -513,8 +292,6 @@ private slots:
     QAction *actionOculus;
     QAction *actionSize;
 
-
-
     const QSize lMainWindowSize = QSize(850, 525);
     const QSize lGridButtonSize = QSize(180, 66);
     const QSize l6ButtonSize = QSize(160, 32);
@@ -527,15 +304,13 @@ private slots:
     const QSize sGridButtonSize = QSize(110, 36);
     const QSize s6ButtonSize = QSize(100, 32);
 
-    int lfontsize=22;
-    int mfontsize=20;
-    int sfontsize=18;
-
+    int lfontsize = 22;
+    int mfontsize = 20;
+    int sfontsize = 18;
 
     QSize buttonsize;
     QSize windowsize;
     QSize ebuttonsize;
 };
-
 
 #endif // MAINWINDOW_H
