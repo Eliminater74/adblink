@@ -88,6 +88,7 @@ HEADERS  += mainwindow.h \
     setpdialog.h \
     detachableprocess.h \
     adbstring.h \
+    version.h \
     oculusdialog.h 
  
 

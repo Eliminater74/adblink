@@ -1,4 +1,5 @@
 #include "adbprefdialog.h"
+#include "version.h"
 
 #include <QLabel>
 #include <QCheckBox>
@@ -181,7 +182,7 @@ void adbprefDialog::onRequestCompleted()
     }
 
     QString newVersion = QString::fromUtf8(reply->readAll()).trimmed();
-    if (version2 != newVersion) {
+    if (version != newVersion) {
         QDialog dialog(this);
         QVBoxLayout *layout = new QVBoxLayout(&dialog);
         QLabel *messageLabel = new QLabel("adblink version " + newVersion + " is ready. Download?", &dialog);

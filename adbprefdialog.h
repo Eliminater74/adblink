@@ -82,7 +82,7 @@ private:
     QPushButton *adbButton;
 
     QNetworkAccessManager *m_networkManager;
-    QString version2;  // To track current version text
+    const QString version2 = "6.7";
 };
 
 #endif // ADBPREFDIALOG_H

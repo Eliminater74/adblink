@@ -1,3 +1,13 @@
+XX/XX/XX
+
+adblink version 6.8
+
+version number regression fixed. bugfix
+slipstreamed into 6.7 binary download
+
+
+
+
 07/07/25
 
 Version 6.7

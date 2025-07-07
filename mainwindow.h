@@ -1,10 +1,12 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "usbfiledialog.h"
+
 #include <QMainWindow>
 #include <QProcess>
 #include <QMessageBox>
-#include "usbfiledialog.h"
+
 #include <QTextEdit>
 #include <QNetworkAccessManager>
 #include <QTableWidget>
@@ -213,7 +215,7 @@ private:
     const QString vqurl = "http://www.jocala.com/version.txt";
     const QString busypath = "/data/local/tmp/adblink/";
     const QString tempdir = "/data/local/tmp/";
-    const QString version = "6.7";
+
 
     int windowSizeSelector;
     QString apphome = "";

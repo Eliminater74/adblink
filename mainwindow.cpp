@@ -26,6 +26,7 @@
     #include "setpdialog.h"
     #include "adbutils.h"
     #include "getlocaladb.h"
+    #include "version.h"
 
     #ifdef __WIN32__
       #include "windows.h"
