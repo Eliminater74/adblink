@@ -105,7 +105,7 @@ void adbprefDialog::setupUiManual()
     mainLayout->addLayout(donationRow);
 
     // --- Button rows ---
-    const int buttonWidth = 80;
+    const int buttonWidth = 90;
     auto addRow = [&](QPushButton *&button, QLineEdit *&edit,
                       const QString &btnText, const QString &btnObjectName, const QString &btnTooltip,
                       const QString &editObjectName, const QString &editTooltip,
@@ -113,6 +113,9 @@ void adbprefDialog::setupUiManual()
         QHBoxLayout *row = new QHBoxLayout();
         button = new QPushButton(btnText, this);
         button->setObjectName(btnObjectName);
+
+
+
         button->setToolTip(btnTooltip);
         button->setFixedWidth(buttonWidth);
 
