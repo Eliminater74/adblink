@@ -1,6 +1,6 @@
 #ifndef VERSION_H
 #define VERSION_H
-#include <QTextEdit>
+#include <QString>
 
 const QString version = "6.8";
 
