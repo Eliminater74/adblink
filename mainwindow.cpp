@@ -2945,26 +2945,29 @@
 
 
             switch (dialog.lgfont()) {
-              case 0:  lfontsize=22; break;
-              case 1: lfontsize=18; break;
-              case 2:lfontsize=16; break;
-              default:lfontsize=22; break;
+              case 0:lfontsize=16; break;
+              case 1:lfontsize=18; break;
+              case 2:lfontsize=20; break;
+              case 3:lfontsize=22; break;
+              default:lfontsize=16; break;
               }
 
 
             switch (dialog.mdfont()) {
-              case 0:  mfontsize=20; break;
-              case 1: mfontsize=18; break;
-              case 2:mfontsize=14; break;
-              default:mfontsize=20; break;
+              case 0:mfontsize=12; break;
+              case 1:mfontsize=14; break;
+              case 2:mfontsize=16; break;
+              case 3:mfontsize=18; break;
+              default:mfontsize=14; break;
               }
 
 
             switch (dialog.smfont()) {
-              case 0: sfontsize=18; break;
-              case 1: sfontsize=14; break;
-              case 2:sfontsize=12; break;
-              default:sfontsize=18; break;
+              case 0:sfontsize=10; break;
+              case 1:sfontsize=12; break;
+              case 2:sfontsize=14; break;
+              case 3:sfontsize=16; break;
+              default:sfontsize=12; break;
               }
 
 
@@ -7144,33 +7147,33 @@ void MainWindow::createjson() {
    currentStack = startView ? 0 : 1;
 
 
-
-
    int lgfont = config["lgfont"].toInt(0);
    int mdfont = config["mdfont"].toInt(0);
    int smfont = config["smfont"].toInt(0);
 
    switch (lgfont) {
-   case 0:  lfontsize = 22; break;
-   case 1:  lfontsize = 18; break;
-   case 2:  lfontsize = 16; break;
-   default: lfontsize = 22; break;
+   case 0:  lfontsize = 14; break;
+   case 1:  lfontsize = 16; break;
+   case 2:  lfontsize = 18; break;
+   case 3:  lfontsize = 20; break;
+   default: lfontsize = 16; break;
    }
 
    switch (mdfont) {
-   case 0:  mfontsize = 20; break;
-   case 1:  mfontsize = 18; break;
-   case 2:  mfontsize = 14; break;
-   default: mfontsize = 20; break;
+   case 0:  mfontsize = 12; break;
+   case 1:  mfontsize = 14; break;
+   case 2:  mfontsize = 16; break;
+   case 3:  mfontsize = 18; break;
+   default: mfontsize = 14; break;
    }
 
    switch (smfont) {
-   case 0:  sfontsize = 18; break;
-   case 1:  sfontsize = 14; break;
-   case 2:  sfontsize = 12; break;
-   default: sfontsize = 18; break;
+   case 0:  sfontsize = 10; break;
+   case 1:  sfontsize = 12; break;
+   case 2:  sfontsize = 14; break;
+   case 3:  sfontsize = 16; break;
+   default: sfontsize = 12; break;
    }
-
 
 
 
@@ -7481,16 +7484,16 @@ for (int i = 0; i < 16; ++i) {
         QFont grid1ButtonFont = grid1Buttons[i]->font();
         switch (windowSizeSelector) {
         case 0:
-            grid1ButtonFont.setPixelSize(14);
+            grid1ButtonFont.setPixelSize(sfontsize);
             break;
         case 1:
-            grid1ButtonFont.setPixelSize(16);
+            grid1ButtonFont.setPixelSize(mfontsize);
             break;
         case 2:
-            grid1ButtonFont.setPixelSize(18);
+            grid1ButtonFont.setPixelSize(lfontsize);
             break;
         default:
-            grid1ButtonFont.setPixelSize(14);
+            grid1ButtonFont.setPixelSize(sfontsize);
             break;
         }
         grid1Buttons[i]->setFont(grid1ButtonFont);

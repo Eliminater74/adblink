@@ -100,7 +100,7 @@ void adbprefDialog::setupUiManual()
 
     lgfontCombo = new QComboBox(this);
     lgfontCombo->setObjectName("lgfontselect");
-    lgfontCombo->addItems({"22", "18", "16"});
+    lgfontCombo->addItems({"14","16","18","20"});
 
     QHBoxLayout *lfontRow = new QHBoxLayout;
     QLabel *lfontLabel = new QLabel("Large scale font:", this);
@@ -111,7 +111,7 @@ void adbprefDialog::setupUiManual()
 
     mdfontCombo = new QComboBox(this);
     mdfontCombo->setObjectName("mdfontselect");
-    mdfontCombo->addItems({"20", "18", "14"});
+    mdfontCombo->addItems({"12","14","16","18"});
 
     QHBoxLayout *mfontRow = new QHBoxLayout;
     QLabel *mfontLabel = new QLabel("Medium scale font:", this);
@@ -122,7 +122,7 @@ void adbprefDialog::setupUiManual()
 
     smfontCombo = new QComboBox(this);
     smfontCombo->setObjectName("smfontselect");
-    smfontCombo->addItems({"18", "14", "12"});
+    smfontCombo->addItems({"10","12","14","16"});
 
     QHBoxLayout *sfontRow = new QHBoxLayout;
     QLabel *sfontLabel = new QLabel("Small scale font:", this);
