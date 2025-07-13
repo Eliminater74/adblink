@@ -33,7 +33,7 @@ adbprefDialog::adbprefDialog(QWidget *parent)
     m_networkManager(new QNetworkAccessManager(this))
 {
     setupUiManual();
-    this->setFixedSize(300, 500);
+    this->setFixedSize(300, 700);
 
     // Platform-specific combo box visibility/positioning
     if (osp == 0) { // Linux
@@ -80,7 +80,7 @@ void adbprefDialog::setupUiManual()
 
     defaultWindowCombo = new QComboBox(this); // Changed to QComboBox
     defaultWindowCombo->setObjectName("defaultwindow");
-    defaultWindowCombo->addItems({"Small display", "Medium display", "Large display"}); // Options for 0, 1, 2
+    defaultWindowCombo->addItems({"Small scale", "Medium scale", "Large scale"});
     mainLayout->addWidget(defaultWindowCombo);
 
     // --- Platform dropdowns ---
@@ -93,6 +93,52 @@ void adbprefDialog::setupUiManual()
     linTermCombo->setObjectName("linTerm");
     linTermCombo->addItems({"Gnome Terminal", "XFCE4 Terminal", "KDE Konsole"});
     mainLayout->addWidget(linTermCombo);
+
+    /*
+    int lfontsize = 22;
+    int mfontsize = 20;
+    int sfontsize = 18;
+    */
+
+    lgfontCombo = new QComboBox(this);
+    lgfontCombo->setObjectName("lgfontselect");
+    lgfontCombo->addItems({"22", "18", "16"});
+
+
+
+
+    QHBoxLayout *lfontRow = new QHBoxLayout;
+    QLabel *lfontLabel = new QLabel("Large scale font:", this);
+    lfontRow->addWidget(lfontLabel);
+    lfontRow->addWidget(lgfontCombo);
+//    lfontRow->setSpacing(1);
+    mainLayout->addLayout(lfontRow);
+
+
+    mdfontCombo = new QComboBox(this);
+    mdfontCombo->setObjectName("mdfontselect");
+    mdfontCombo->addItems({"20", "18", "14"});
+
+    QHBoxLayout *mfontRow = new QHBoxLayout;
+    QLabel *mfontLabel = new QLabel("Medium scale font:", this);
+    mfontRow->addWidget(mfontLabel);
+    mfontRow->addWidget(mdfontCombo);
+    mfontRow->setSpacing(1);
+    mainLayout->addLayout(mfontRow);
+
+    smfontCombo = new QComboBox(this);
+    smfontCombo->setObjectName("smfontselect");
+    smfontCombo->addItems({"18", "14", "12"});
+
+    QHBoxLayout *sfontRow = new QHBoxLayout;
+    QLabel *sfontLabel = new QLabel("Small scale font:", this);
+    sfontRow->addWidget(sfontLabel);
+    sfontRow->addWidget(smfontCombo);
+    sfontRow->setSpacing(1);
+    mainLayout->addLayout(sfontRow);
+
+
+
 
     // --- Donation code row as horizontal layout ---
     QHBoxLayout *donationRow = new QHBoxLayout();

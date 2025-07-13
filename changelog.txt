@@ -1,11 +1,14 @@
-XX/XX/XX
+07/XX/25
 
 adblink version 6.8
 
 version number regression fixed. bugfix
 slipstreamed into 6.7 binary download
 
+Use default adb if external adb is specified
+but not available at runtime.
 
+Per scale font size selection added
 
 
 07/07/25

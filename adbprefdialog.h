@@ -61,7 +61,10 @@ private:
     QCheckBox *versionCheckBox;
     QCheckBox *scrcpyArgsCheckBox;
     QCheckBox *startViewCheckBox;
-    QComboBox *defaultWindowCombo; // Changed from QCheckBox to QComboBox
+    QComboBox *defaultWindowCombo;
+    QComboBox *lgfontCombo;
+    QComboBox *mdfontCombo;
+    QComboBox *smfontCombo;
 
     QComboBox *macTermCombo;
     QComboBox *linTermCombo;
