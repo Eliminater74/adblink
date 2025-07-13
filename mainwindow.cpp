@@ -2847,12 +2847,19 @@
          QString localadb = obj["localadb"].toString();
 
 
+
          bool checkversion = doc.object()["checkversion"].toBool();
          bool scrcpy = doc.object()["scrcpy"].toBool();
          bool startview = doc.object()["startview"].toBool();
          int defaultwindow = doc.object()["defaultwindow"].toInt();
 
+         int lgfont = doc.object()["lgfont"].toInt();
+         int smfont = doc.object()["smfont"].toInt();
+         int mdfont = doc.object()["mdfont"].toInt();
+
+
          file.close();
+
 
          if (checkversion)
              dialog.setversioncheck(true);
@@ -2877,7 +2884,6 @@
 
 
 
-
          dialog.setdefaultwindow(defaultwindow);
 
          dialog.setlinterm(dropdown.toInt());
@@ -2890,6 +2896,9 @@
          dialog.setbackupdir(backup);
           dialog.setdonation(donation);
 
+         dialog.setlgfont(lgfont);
+         dialog.setmdfont(mdfont);
+         dialog.setsmfont(smfont);
 
 
          dialog.setModal(true);
@@ -2916,6 +2925,12 @@
              obj["backup"] = dialog.backupdir();
              obj["localadb"] = dialog.localadb();
 
+             // Update font values in the JSON object
+             obj["lgfont"] = dialog.lgfont();
+             obj["mdfont"] = dialog.mdfont();
+             obj["smfont"] = dialog.smfont();
+
+
 
              QJsonDocument doc(obj);
 
@@ -2927,7 +2942,33 @@
 
               setDonateButtonActive(dialog.donation() != "jocala.com");
 
-             setWindowSize();
+
+
+            switch (dialog.lgfont()) {
+              case 0:  lfontsize=22; break;
+              case 1: lfontsize=18; break;
+              case 2:lfontsize=16; break;
+              default:lfontsize=22; break;
+              }
+
+
+            switch (dialog.mdfont()) {
+              case 0:  mfontsize=20; break;
+              case 1: mfontsize=18; break;
+              case 2:mfontsize=14; break;
+              default:mfontsize=20; break;
+              }
+
+
+            switch (dialog.smfont()) {
+              case 0: sfontsize=18; break;
+              case 1: sfontsize=14; break;
+              case 2:sfontsize=12; break;
+              default:sfontsize=18; break;
+              }
+
+
+   setWindowSize();
 
          }
     }
@@ -7031,6 +7072,9 @@ void MainWindow::createjson() {
    defaultValues["startview"] = true;
    defaultValues["defaultwindow"] = true;
    defaultValues["dropdown"] = "0";
+   defaultValues["lgfont"] = 0;
+   defaultValues["mdfont"] = 0;
+   defaultValues["smfont"] = 0;
    defaultValues["download"] = QDir::homePath();
    defaultValues["install"] = QDir::homePath();
    defaultValues["backup"] = QDir::homePath();
@@ -7098,6 +7142,35 @@ void MainWindow::createjson() {
 
    bool startView = config["startview"].toBool(true);
    currentStack = startView ? 0 : 1;
+
+
+
+
+   int lgfont = config["lgfont"].toInt(0);
+   int mdfont = config["mdfont"].toInt(0);
+   int smfont = config["smfont"].toInt(0);
+
+   switch (lgfont) {
+   case 0:  lfontsize = 22; break;
+   case 1:  lfontsize = 18; break;
+   case 2:  lfontsize = 16; break;
+   default: lfontsize = 22; break;
+   }
+
+   switch (mdfont) {
+   case 0:  mfontsize = 20; break;
+   case 1:  mfontsize = 18; break;
+   case 2:  mfontsize = 14; break;
+   default: mfontsize = 20; break;
+   }
+
+   switch (smfont) {
+   case 0:  sfontsize = 18; break;
+   case 1:  sfontsize = 14; break;
+   case 2:  sfontsize = 12; break;
+   default: sfontsize = 18; break;
+   }
+
 
 
 

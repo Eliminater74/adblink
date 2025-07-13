@@ -31,6 +31,10 @@ public:
     int linterm() const;
     int macterm() const;
 
+    int lgfont() const;
+    int mdfont() const;
+    int smfont() const;
+
     // Setters
     void setdownloaddir(const QString &dir);
     void setinstalldir(const QString &dir);
@@ -40,7 +44,12 @@ public:
     void setversioncheck(bool val);
     void setscrcpyargs(bool val);
     void setstartview(bool val);
-    void setdefaultwindow(int index); // Changed from bool to int
+    void setdefaultwindow(int index);
+
+   void setlgfont(int index);
+   void setmdfont(int index);
+   void setsmfont(int index);
+
     void setlinterm(int index);
     void setmacterm(int index);
 

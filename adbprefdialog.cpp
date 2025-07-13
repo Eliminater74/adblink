@@ -33,7 +33,7 @@ adbprefDialog::adbprefDialog(QWidget *parent)
     m_networkManager(new QNetworkAccessManager(this))
 {
     setupUiManual();
-    this->setFixedSize(300, 700);
+    this->setFixedSize(300, 500);
 
     // Platform-specific combo box visibility/positioning
     if (osp == 0) { // Linux
@@ -80,38 +80,32 @@ void adbprefDialog::setupUiManual()
 
     defaultWindowCombo = new QComboBox(this); // Changed to QComboBox
     defaultWindowCombo->setObjectName("defaultwindow");
-    defaultWindowCombo->addItems({"Small scale", "Medium scale", "Large scale"});
+    defaultWindowCombo->addItems({"Small", "Medium", "Large"});
     mainLayout->addWidget(defaultWindowCombo);
 
-    // --- Platform dropdowns ---
-    macTermCombo = new QComboBox(this);
-    macTermCombo->setObjectName("macTerm");
-    macTermCombo->addItems({"macOS Terminal", "iTerm2 Terminal"});
-    mainLayout->addWidget(macTermCombo);
+    QHBoxLayout *scaleRow = new QHBoxLayout;
+    QLabel *scaleLabel = new QLabel("Default scale:", this);
+    scaleRow->addWidget(scaleLabel);
+    scaleRow->addWidget(defaultWindowCombo);
+    mainLayout->addLayout(scaleRow);
 
-    linTermCombo = new QComboBox(this);
-    linTermCombo->setObjectName("linTerm");
-    linTermCombo->addItems({"Gnome Terminal", "XFCE4 Terminal", "KDE Konsole"});
-    mainLayout->addWidget(linTermCombo);
 
-    /*
-    int lfontsize = 22;
-    int mfontsize = 20;
-    int sfontsize = 18;
-    */
+
+
+
+
+
+
+
 
     lgfontCombo = new QComboBox(this);
     lgfontCombo->setObjectName("lgfontselect");
     lgfontCombo->addItems({"22", "18", "16"});
 
-
-
-
     QHBoxLayout *lfontRow = new QHBoxLayout;
     QLabel *lfontLabel = new QLabel("Large scale font:", this);
     lfontRow->addWidget(lfontLabel);
     lfontRow->addWidget(lgfontCombo);
-//    lfontRow->setSpacing(1);
     mainLayout->addLayout(lfontRow);
 
 
@@ -138,6 +132,17 @@ void adbprefDialog::setupUiManual()
     mainLayout->addLayout(sfontRow);
 
 
+
+    // --- Platform dropdowns ---
+    macTermCombo = new QComboBox(this);
+    macTermCombo->setObjectName("macTerm");
+    macTermCombo->addItems({"macOS Terminal", "iTerm2 Terminal"});
+    mainLayout->addWidget(macTermCombo);
+
+    linTermCombo = new QComboBox(this);
+    linTermCombo->setObjectName("linTerm");
+    linTermCombo->addItems({"Gnome Terminal", "XFCE4 Terminal", "KDE Konsole"});
+    mainLayout->addWidget(linTermCombo);
 
 
     // --- Donation code row as horizontal layout ---
@@ -318,6 +323,10 @@ int adbprefDialog::defaultwindow() const { return defaultWindowCombo->currentInd
 int adbprefDialog::linterm() const { return linTermCombo->currentIndex(); }
 int adbprefDialog::macterm() const { return macTermCombo->currentIndex(); }
 
+int adbprefDialog::lgfont() const { return lgfontCombo->currentIndex(); }
+int adbprefDialog::mdfont() const { return mdfontCombo->currentIndex(); }
+int adbprefDialog::smfont() const { return smfontCombo->currentIndex(); }
+
 // --- Setters ---
 
 void adbprefDialog::setdownloaddir(const QString &dir) { downloadPathEdit->setText(dir); }
@@ -332,3 +341,8 @@ void adbprefDialog::setstartview(bool val) { startViewCheckBox->setChecked(val);
 void adbprefDialog::setdefaultwindow(int index) { defaultWindowCombo->setCurrentIndex(index); }
 void adbprefDialog::setlinterm(int index) { linTermCombo->setCurrentIndex(index); }
 void adbprefDialog::setmacterm(int index) { macTermCombo->setCurrentIndex(index); }
+
+void adbprefDialog::setlgfont(int index) { lgfontCombo->setCurrentIndex(index); }
+void adbprefDialog::setmdfont(int index) { mdfontCombo->setCurrentIndex(index); }
+void adbprefDialog::setsmfont(int index) { smfontCombo->setCurrentIndex(index); }
+
