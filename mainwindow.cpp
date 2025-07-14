@@ -277,7 +277,7 @@
 
             setWindowSize();
 
-
+      //      qDebug() << getlocaladb();
 
           // setFixedSize(windowsize);
           //  setupUI();

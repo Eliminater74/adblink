@@ -289,13 +289,42 @@ void adbprefDialog::on_backupButton_clicked()
     }
 }
 
+
+
 void adbprefDialog::on_adbButton_clicked()
 {
-    QString file = QFileDialog::getOpenFileName(this, "Select ADB executable");
-    if (!file.isEmpty()) {
-        localAdbEdit->setText(file);
+    QFileDialog dialog(this, "Select ADB executable");
+    dialog.setOption(QFileDialog::DontUseNativeDialog, true);
+    dialog.setFileMode(QFileDialog::ExistingFile);
+    dialog.setDirectory(QDir::rootPath());
+    dialog.setViewMode(QFileDialog::Detail);
+    dialog.setFilter(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden);
+
+#ifdef Q_OS_WIN
+    dialog.setNameFilter("ADB Executable (adb.exe)");
+#else
+    dialog.setNameFilter("ADB Executable (adb)");
+#endif
+
+    if (dialog.exec() == QDialog::Accepted) {
+        QString adbFilePath = dialog.selectedFiles().value(0);
+
+        QFileInfo adbInfo(adbFilePath);
+        if (adbInfo.exists() && adbInfo.isFile()
+#ifdef Q_OS_UNIX
+            && adbInfo.isExecutable()
+#endif
+            ) {
+            QString adbDir = adbInfo.absolutePath();
+            localAdbEdit->setText(adbDir);
+            return;
+        }
     }
 }
+
+
+
+
 
 void adbprefDialog::accept()
 {

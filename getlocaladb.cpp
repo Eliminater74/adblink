@@ -29,6 +29,9 @@ QString getlocaladb()
 #ifdef Q_OS_WIN
                     adbPath += ".exe";
 #endif
+
+
+
                     if (QFileInfo::exists(adbPath)) {
                         return adbPath;
                     }
