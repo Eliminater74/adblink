@@ -331,7 +331,7 @@
       donateButton->setVisible(active);
       donateButton->setEnabled(active);
          } else {
-      qDebug() << "Error: donateButton is not initialized";
+      // qDebug() << "Error: donateButton is not initialized";
          }
     }
 
@@ -348,7 +348,7 @@
       file.close();
       return obj["donation"].toString();
          } else {
-      qDebug() << "Error: Could not open adblink.json for reading";
+      // qDebug() << "Error: Could not open adblink.json for reading";
       return QString(); // Return empty string on error
          }
     }
@@ -383,7 +383,7 @@
 
         command=getadbOutput(cstring);
 
-        qDebug() << command;
+        // qDebug() << command;
 
          int permissions = command.toInt();
 
@@ -1086,7 +1086,7 @@
 
         else return;
 
-        qDebug() << package;
+        // qDebug() << package;
 
         if (package.isEmpty())
            {
@@ -1352,11 +1352,11 @@
                               QJsonObject obj = doc.object();
                               donation = obj["donation"].toString();
             } else {
-                              qDebug() << "Error: Invalid JSON in adblink.json";
+                              // qDebug() << "Error: Invalid JSON in adblink.json";
             }
             file.close();
              } else {
-            qDebug() << "Error: Could not open adblink.json at" << databasedir;
+            // qDebug() << "Error: Could not open adblink.json at" << databasedir;
              }
 
              // Create Dialog2 and pass the donation value
@@ -1542,7 +1542,6 @@
     void MainWindow::on_donate_clicked()
     {
 
-            qDebug() << "xxxx";
 
        QString link = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=GKZMW456H6E5W";
        QDesktopServices::openUrl(QUrl(link));
@@ -2075,7 +2074,7 @@
           xpath = mcpath+"/temp/";
 
 
-          qDebug() << xpath;
+          // qDebug() << xpath;
 
           cstring = getadb() + " shell "+busypath+"busybox find " +xpath+ " -maxdepth 1 -name kodi.log ";
 
@@ -6036,7 +6035,7 @@ void MainWindow::on_actionEdit_XML_triggered()
 
  xpath = mcpath+"/userdata/";
 
- qDebug() << xpath;
+ // qDebug() << xpath;
 
  cstring = getadb() + " shell "+busypath+"busybox find " +xpath+ " -maxdepth 1 -name *.xml ";
 
@@ -6438,7 +6437,7 @@ bool MainWindow::renameColumn(const QString& oldColumnName, const QString& newCo
       query.prepare("PRAGMA table_info(device)");
 
       if (!query.exec()) {
-               qDebug() << "Failed to query table info for device table:" << query.lastError().text();
+               // qDebug() << "Failed to query table info for device table:" << query.lastError().text();
                return false;
       }
 
@@ -6459,14 +6458,14 @@ bool MainWindow::renameColumn(const QString& oldColumnName, const QString& newCo
                QString sql = QString("ALTER TABLE device RENAME COLUMN %1 TO %2")
                                  .arg(oldColumnName, newColumnName);
                if (!query.exec(sql)) {
-              qDebug() << "Failed to rename column:" << query.lastError().text();
+              // qDebug() << "Failed to rename column:" << query.lastError().text();
               return false;
                }
-               qDebug() << "Successfully renamed column" << oldColumnName << "to" << newColumnName << "in device table";
+               // qDebug() << "Successfully renamed column" << oldColumnName << "to" << newColumnName << "in device table";
       } else if (!oldColumnExists) {
-               qDebug() << "Column" << oldColumnName << "does not exist in device table";
+               // qDebug() << "Column" << oldColumnName << "does not exist in device table";
       } else if (newColumnExists) {
-               qDebug() << "Column" << newColumnName << "already exists in device table";
+               // qDebug() << "Column" << newColumnName << "already exists in device table";
       }
 
       return true;
@@ -7012,7 +7011,7 @@ void MainWindow::on_actionSwitch_View_triggered()
         jsonFile.close();
    } else {
         logfile("Failed to write to adblink.json");
-        qDebug() << "Failed to write to adblink.json";
+        // qDebug() << "Failed to write to adblink.json";
    }
 }
 
@@ -7024,7 +7023,7 @@ QPushButton* MainWindow::setupDonateButton(QWidget* parent) {
    donateButton = new QPushButton(parent); // Assign to member variable
    QPixmap pix(":/assets/donatel.png");
    if (pix.isNull()) {
-        qDebug() << "Error: Failed to load :/assets/donatel.png";
+        // qDebug() << "Error: Failed to load :/assets/donatel.png";
         donateButton->setText("Donate");
    } else {
         QIcon icon(pix);
@@ -7046,7 +7045,7 @@ QPushButton* MainWindow::setupDonateButton(QWidget* parent) {
    if (QMetaObject::checkConnectArgs(SIGNAL(clicked()), SLOT(on_donate_clicked()))) {
         connect(donateButton, &QPushButton::clicked, this, &MainWindow::on_donate_clicked);
    } else {
-        qDebug() << "Warning: on_donate_clicked slot not found";
+        // qDebug() << "Warning: on_donate_clicked slot not found";
    }
 
    QString donation = readDonationValue();
@@ -7869,7 +7868,7 @@ void MainWindow::switchSize()
    jsonFile.close();
  } else {
    logfile("Failed to write to adblink.json");
-   qDebug() << "Failed to write to adblink.json";
+   // qDebug() << "Failed to write to adblink.json";
  }
 
  setupUI();
