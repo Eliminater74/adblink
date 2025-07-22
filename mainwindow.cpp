@@ -2562,7 +2562,11 @@
         QString s = jobname;
         RunProcessList << s;
         container->setHidden(true);
-        server_running->setText(s);
+
+        if (RunProcessList.count() > 1)
+           server_running->setText("parallel processes running");
+        else
+           server_running->setText(s);
 
         int tsvalue = 4000;
 
@@ -2579,6 +2583,7 @@
            //activityIcon(true);
            progressBar->setHidden(false);
            progressBar->setValue(0);
+           server_running->setText("");
         }
         else
         {
@@ -2588,6 +2593,9 @@
            progressBar->setValue(0);
            server_running->setText("");
         }
+
+
+
 
         serverlabel();
 
@@ -7537,8 +7545,8 @@ for (int i = 0; i < 16; ++i) {
             grid1Buttons[i]->setToolTip("Capture the device screen (Ctrl+C)");
             break;
         case 9:
-            grid1Buttons[i]->setText("Stop ADB");
-            grid1Buttons[i]->setToolTip("Stop the ADB server");
+            grid1Buttons[i]->setText("Reset ADB");
+            grid1Buttons[i]->setToolTip("Reset the ADB server");
             break;
         case 10:
             grid1Buttons[i]->setText("Scrcpy");
@@ -7619,8 +7627,8 @@ for (int i = 0; i < 12; ++i) {
             grid2Buttons[i]->setToolTip("Capture the device screen (Ctrl+C)");
             break;
         case 5:
-            grid2Buttons[i]->setText("Stop ADB");
-            grid2Buttons[i]->setToolTip("Stop the ADB server");
+            grid2Buttons[i]->setText("Reset ADB");
+            grid2Buttons[i]->setToolTip("Reset the ADB server");
             break;
         case 6:
             grid2Buttons[i]->setText("Start App");
