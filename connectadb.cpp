@@ -3,6 +3,8 @@
 #include <QProcess>
 #include <QCoreApplication>
 #include <QTimer>
+#include <QFileInfo>
+
 #include "logfile.h"
 
 #ifdef Q_OS_WIN
@@ -25,6 +27,11 @@ QString connectadb(const QString &cstring)
     if (!run_command.waitForStarted())
     {
         logfile("Failed to start the process.");
+
+        logfile("Attempting to run adb");
+        logfile("PATH: " + qgetenv("PATH"));
+        logfile("adb exists: " + QFileInfo("adb").exists());
+        logfile("QProcess error: " + run_command.errorString());
         return QString();
     }
 

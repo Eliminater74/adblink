@@ -6520,6 +6520,9 @@ void MainWindow::on_actionSet_Kodi_permissions_triggered()
                       else
                           flag="deny";
 
+//    adb shell appops set --uid org.xbmc.kodi MANAGE_EXTERNAL_STORAGE allow
+//    adb shell appops get --uid org.xbmc.kodi MANAGE_EXTERNAL_STORAGE
+
 
                       cstring = getadb()+ " shell appops set --uid "+  dialog.getpname() +" MANAGE_EXTERNAL_STORAGE "+flag;
 
