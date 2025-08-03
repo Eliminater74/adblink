@@ -1196,8 +1196,21 @@
                       port = device.port.isEmpty() ? "5555" : device.port;
                       daddr = device.daddr + ":" + port;
 
-                      cstring = getadbpath() + " connect " + daddr;
-                      command = connectadb(cstring);
+                     // cstring = getadbpath() + " connect " + daddr;
+
+                      logfile(getadbpath() );
+                      logfile(daddr);
+                     // command = connectadb(cstring);
+
+                     // QString adbPath = getadbpath(); // e.g. "C:/Program Files/adblink/adbfiles/adb.exe"
+                      //QString daddr = "192.168.178.62:5555";
+
+                     // logfile("adbPath: " + adbPath);
+                     // logfile("Target IP: " + daddr);
+
+                      command = connectadb(getadbpath(), QStringList() << "connect" << daddr);
+
+
 
                       if (command.contains("failed to authenticate") || command.contains("offline")) {
 
@@ -1206,7 +1219,8 @@
                             logfile(cstring);
                             logfile(command);
                             QString cstring = getadbpath() + " disconnect " + daddr;
-                            command = connectadb(cstring);
+                            command = connectadb(getadbpath(), QStringList() << "disconnect" << daddr);
+                            // command = connectadb(cstring);
                             return;
                       }
 
@@ -2405,6 +2419,8 @@
     void MainWindow::fmButton_clicked()
     {
 
+
+
          QString selectedDescription;
          if (!validateDeviceSelection(selectedDescription)) {
             return;
@@ -2475,26 +2491,31 @@
 
 
 
-
-
-
          fmdialog->setkodiPath(mcpath);
 
+/*
          if (!adhoc_ip->text().isEmpty())
          {
             fmdialog->setData(adhoc_ip->text());
-            fmdialog->setADB(getadbpath());
+            // fmdialog->setADB(getadbpath());
+            fmdialog->setADB(QString("\"%1\" -s %2").arg(getadbpath(), adhoc_ip->text()));
+
          }
          else
          {
 
 
 
-            fmdialog->setADB(getadbpath() + " -s " + daddr);
+          //  fmdialog->setADB(getadbpath() + " -s " + daddr);
+
+            fmdialog->setADB(QString("\"%1\" -s %2").arg(getadbpath(), daddr));
             fmdialog->setData(selectedDescription);
          }
 
+*/
 
+         fmdialog->setADB(QString("\"%1\" -s %2").arg(getadbpath(), daddr));
+         fmdialog->setData(selectedDescription);
 
 
          QString kp = device.data_root;
@@ -2517,11 +2538,23 @@
             fmpullpath = QDir::homePath();
          }
 
-         fmdialog->setPath1("/sdcard/");
-         fmdialog->setPath2("/sdcard/");
+         logfile("pass 5");
+
+          fmdialog->setPath1("/sdcard/");
+          fmdialog->setPath2("/sdcard/");
+
+          logfile("pass 6");
+
          fmdialog->setuProgram(kp);
          fmdialog->setPulldir(fmpullpath);
+
+           logfile("pass 7");
+
          fmdialog->setAdbdir(apphome);
+
+
+
+
 
          connect(fmdialog, &QDialog::finished, this, &MainWindow::handleFilemanagerFinished);
 
@@ -2534,6 +2567,8 @@
          } else {
             // qDebug() << "No saved geometry found";
          }
+
+
 
          fmdialog->show();
     }
