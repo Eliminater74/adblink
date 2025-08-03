@@ -90,6 +90,8 @@
     #include <QMenuBar>
     #include <QMenu>
     #include <QAction>
+    #include <QCoreApplication>
+
 
     #ifdef Q_OS_LINUX
      int os=0;
@@ -308,7 +310,11 @@
     void MainWindow::onApplicationQuit() {
 
 
-     QString cstring = getadbpath() + " kill-server";
+    // QString cstring = getadbpath() + " kill-server";
+
+     QString adbPath = getadbpath();
+     QString cstring = QString("\"%1\" kill-server").arg(adbPath);
+
      QString command=getadbOutput(cstring);
      logfile("server stopped");
 
@@ -2538,17 +2544,15 @@
             fmpullpath = QDir::homePath();
          }
 
-         logfile("pass 5");
+
 
           fmdialog->setPath1("/sdcard/");
           fmdialog->setPath2("/sdcard/");
 
-          logfile("pass 6");
 
          fmdialog->setuProgram(kp);
          fmdialog->setPulldir(fmpullpath);
 
-           logfile("pass 7");
 
          fmdialog->setAdbdir(apphome);
 
