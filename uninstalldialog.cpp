@@ -66,9 +66,9 @@ void uninstallDialog::on_applyButton_clicked() {
         else
             argument = " -s " + m_daddr + ":" + m_port + " shell pm list packages | grep " + ui->lineEdit->text();
 
-        cstr = getadbpath() + argument;
 
 
+         cstr = QString("\"%1\"").arg(getadbpath()) + argument;
 
     } else {
         loadList();
@@ -84,7 +84,11 @@ void uninstallDialog::loadList() {
     else
         argument = " -s " + m_daddr + ":" + m_port + " shell pm list packages";
 
-    cstr = getadbpath() + argument;
+
+
+     cstr = QString("\"%1\"").arg(getadbpath()) + argument;
+
+
 }
 
 void uninstallDialog::makeFile() {

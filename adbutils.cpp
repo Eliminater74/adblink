@@ -30,5 +30,8 @@ QString getadbpath()
     if (!getlocaladb().isEmpty())
         adbPath=getlocaladb();
 
-    return adbPath;
+   return adbPath;
+
+   //  return QString("\"%1\"").arg(adbPath);
+
 }

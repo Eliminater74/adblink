@@ -1205,7 +1205,12 @@
                      // cstring = getadbpath() + " connect " + daddr;
 
                       logfile(getadbpath() );
+
+
+
                       logfile(daddr);
+
+
                      // command = connectadb(cstring);
 
                      // QString adbPath = getadbpath(); // e.g. "C:/Program Files/adblink/adbfiles/adb.exe"
@@ -1214,8 +1219,7 @@
                      // logfile("adbPath: " + adbPath);
                      // logfile("Target IP: " + daddr);
 
-                      command = connectadb(getadbpath(), QStringList() << "connect" << daddr);
-
+                       command = connectadb(getadbpath(), QStringList() << "connect" << daddr);
 
 
                       if (command.contains("failed to authenticate") || command.contains("offline")) {
@@ -1946,12 +1950,19 @@
                    cstring = getadb() + " shell ls "+mcpath;
 
 
+
+
                    QString filename1 = "advancedsettings.xml";
-                   QString filename2 = apphome+filename1;
+                   QString filename2 = scriptdir+filename1;
 
 
+                 //      cstr = QString("\"%1\"").arg(getadbpath()) + argument;
 
-                   cstring = getadb() + " shell ls "+mcpath;
+                //   cstring = QString("\"%1\"").arg(getadb()) + " shell ls "+mcpath;
+
+                  cstring = getadb() + " shell ls "+mcpath;
+
+
                    command=getadbOutput(cstring);
                    if (command.contains("No such file or directory"))
                    {
@@ -1960,8 +1971,14 @@
                    }
 
 
+                  //   cstring = QString("\"%1\"").arg(getadb()) + " shell ls "+xpath+filename1;
 
-                   cstring = getadb() + " shell ls "+xpath+filename1;
+                  cstring = getadb() + " shell ls "+xpath+filename1;
+
+
+
+
+
                    command=getadbOutput(cstring);
 
                    // logfile(cstring);
@@ -1980,7 +1997,12 @@
                         } else {
                             logfile("continue xml write");
                             logfile("backup advancedsettings.xml");
-                            cstring = getadb() + " shell cp "+xpath+filename1+" "+xpath+filename1+".old";
+
+                           cstring = getadb() + " shell cp "+xpath+filename1+" "+xpath+filename1+".old";
+
+                           // cstring = QString("\"%1\"").arg(getadb()) + " shell cp "+xpath+filename1+" "+xpath+filename1+".old";
+
+
                             command=getadbOutput(cstring);
                         }
                    }  // end if exists
@@ -2009,14 +2031,25 @@
                    file.flush();
                    file.close();
 
-                   cstring = getadb() + " push "+filename2+ " "+xpath+filename1;
+
+                   logfile( getadb());
+
+                  cstring = getadb() + " push "+filename2+ " "+xpath+filename1;
+
+
+
                    command=getadbOutput(cstring);
+
+                   logfile("PUSH "+command);
 
                    if (!command.contains("bytes"))
                    {
+
+                       logfile("error pushing xml script to device!");
+                        logfile(cstring);
                         logfile(command);
-                        logfile("error pushing xml script to device!");
-                        QMessageBox::critical(this,"","Error pushing xml from PC to device!");
+                        logfile("=============");
+                        QMessageBox::critical(this,"","See log: error pushing xml from PC to device");
                         return;
                    }
                    else {
@@ -3676,8 +3709,10 @@
 
 
                      if(getlocaladb() == "")
-                        out  << "export PATH="+pathdir+":$PATH" << endl;
+                       // out  << "export PATH="+pathdir+":$PATH" << endl;
 
+
+                        out << "export PATH=\"" + pathdir + "\":$PATH" << Qt::endl;
 
 
                      out  << "/bin/sh" << endl;
@@ -3811,8 +3846,15 @@
 
 
                   out << "#!/bin/sh" << endl;
-                   cstring = getadbpath() + " -s " + daddr + " shell -t \"export PATH=\\$PATH:/data/local/tmp/adblink; sh -i\"";
-                   out << cstring << endl;
+
+
+                  QString adbPath = getadbpath();
+                  out << "\"" + adbPath + "\" -s " + daddr + " shell -t \"export PATH=\\$PATH:/data/local/tmp/adblink; sh -i\"" << Qt::endl;
+
+                  // cstring = getadbpath() + " -s " + daddr + " shell -t \"export PATH=\\$PATH:/data/local/tmp/adblink; sh -i\"";
+
+
+                  out << cstring << endl;
 
 
 
@@ -6272,7 +6314,10 @@ QString MainWindow::getadb()
 
 
 
-        gadb = getadbpath() + " -s " + daddr;
+   //     gadb = getadbpath() + " -s " + daddr;
+
+        gadb = QString("\"%1\" -s %2").arg(getadbpath(), daddr);
+
 
  return gadb;
 }
@@ -7230,122 +7275,6 @@ void MainWindow::createjson() {
 
 
 
-//////////////////////////////////
-
-void MainWindow::setupMenus()
-{
- menuBar = new QMenuBar(this);
- setMenuBar(menuBar);
-
- // File Menu
- menuFile = new QMenu("File", this);
- actionPreferences = new QAction("Preferences", this);
- actionView_adbLink_Log = new QAction("View adblink Log", this);
- actionQuit = new QAction("Quit", this);
- menuFile->addAction(actionPreferences);
- menuFile->addAction(actionView_adbLink_Log);
- menuFile->addSeparator();
- menuFile->addAction(actionQuit);
-
- // Kodi Menu
- menuKodi = new QMenu("Kodi", this);
- actionView_Kodi_Log = new QAction("View Kodi Log", this);
- actionEdit_XML = new QAction("Edit XML", this);
- actionSplash_Screen = new QAction("Splash Screen", this);
- actiondelthumb = new QAction("Delete thumbnails", this);
- actionPush_remote = new QAction("Push remote", this);
- actionDownload_Kodi = new QAction("Download Kodi", this);
- actionKodi_data_usage = new QAction("Kodi data usage", this);
- actionCreate_kodi_data = new QAction("Create kodi_data", this);
- menuKodi->addAction(actionView_Kodi_Log);
- menuKodi->addAction(actionEdit_XML);
- menuKodi->addAction(actionSplash_Screen);
- menuKodi->addAction(actiondelthumb);
- menuKodi->addAction(actionPush_remote);
- menuKodi->addAction(actionDownload_Kodi);
- menuKodi->addAction(actionKodi_data_usage);
- menuKodi->addAction(actionCreate_kodi_data);
-
- // Utility Menu
- menuUtility = new QMenu("Utility", this);
- actionSwitch_View = new QAction("Switch View", this);
- actionReiinstall_Busybox = new QAction("Reinstall Busybox", this);
- infoArchitecture2 = new QAction("System information", this);
- actionOculus = new QAction("Oculus Headset", this);
- actionSet_Kodi_permissions = new QAction("Set app permissions", this);
- Erase_adbLink_database = new QAction("Erase device database", this);
- actionSend_text = new QAction("Send text to device", this);
- actionGet_UID_from_APK_file = new QAction("Get package name", this);
- actionReload_devices = new QAction("Reload devices", this);
- View_Changelog = new QAction("View changelog", this);
- actionWireless_ADBD = new QAction("Wireless ADBD", this);
- actionReboot = new QAction("Reboot device", this);
-// actionSize = new QAction("Toggle UI Size", this);
-
- menuUtility->addAction(actionSwitch_View);
-// menuUtility->addAction(actionSize);
- menuUtility->addAction(actionReiinstall_Busybox);
- menuUtility->addAction(infoArchitecture2);
-  menuUtility->addAction(actionOculus);
- menuUtility->addAction(actionSet_Kodi_permissions);
- menuUtility->addAction(Erase_adbLink_database);
- menuUtility->addAction(actionSend_text);
- menuUtility->addAction(actionGet_UID_from_APK_file);
- menuUtility->addAction(actionReload_devices);
- menuUtility->addAction(View_Changelog);
- menuUtility->addAction(actionWireless_ADBD);
- menuUtility->addAction(actionReboot);
-
-
-
- // About Menu
- menuAbout = new QMenu("About", this);
- actionAbout = new QAction("About", this);
- menuAbout->addAction(actionAbout);
-
- // Help Menu
- menuHelp = new QMenu("Help", this);
- actionHelp = new QAction("Help", this);
- menuHelp->addAction(actionHelp);
-
- // Add menus to menubar
- menuBar->addMenu(menuFile);
- menuBar->addMenu(menuKodi);
- menuBar->addMenu(menuUtility);
- menuBar->addMenu(menuAbout);
- menuBar->addMenu(menuHelp);
-
- connect(actionPreferences,           &QAction::triggered, this, &MainWindow::on_actionPreferences_triggered);
- connect(actionView_adbLink_Log,     &QAction::triggered, this, &MainWindow::on_actionView_adbLink_Log_triggered);
- connect(actionQuit,                 &QAction::triggered, this, &MainWindow::on_actionQuit_triggered);
- connect(actionView_Kodi_Log,        &QAction::triggered, this, &MainWindow::on_actionView_Kodi_Log_triggered);
- connect(actionEdit_XML,             &QAction::triggered, this, &MainWindow::on_actionEdit_XML_triggered);
- connect(actionSplash_Screen,        &QAction::triggered, this, &MainWindow::on_actionSplash_Screen_triggered);
- connect(actiondelthumb,             &QAction::triggered, this, &MainWindow::on_actiondelthumb_triggered);
- connect(actionPush_remote,          &QAction::triggered, this, &MainWindow::on_actionPush_remote_triggered);
- connect(actionDownload_Kodi,        &QAction::triggered, this, &MainWindow::on_actionDownload_Kodi_triggered);
- connect(actionKodi_data_usage,      &QAction::triggered, this, &MainWindow::on_actionKodi_data_usage_triggered);
- connect(actionCreate_kodi_data,     &QAction::triggered, this, &MainWindow::on_actionCreate_kodi_data_triggered);
- connect(actionSwitch_View,          &QAction::triggered, this, &MainWindow::on_actionSwitch_View_triggered);
-// connect(actionSize,                 &QAction::triggered, this, &MainWindow::switchSize);
-
- connect(actionReiinstall_Busybox,   &QAction::triggered, this, &MainWindow::on_actionReiinstall_Busybox_triggered);
- connect(infoArchitecture2,           &QAction::triggered, this, &MainWindow::on_infoArchitecture_triggered);
- connect(actionSet_Kodi_permissions, &QAction::triggered, this, &MainWindow::on_actionSet_Kodi_permissions_triggered);
- connect(Erase_adbLink_database,     &QAction::triggered, this, &MainWindow::on_Erase_adbLink_database_triggered);
- connect(actionSend_text,            &QAction::triggered, this, &MainWindow::on_actionSend_text_triggered);
- connect(actionGet_UID_from_APK_file,&QAction::triggered, this, &MainWindow::on_actionGet_UID_from_APK_file_triggered);
- connect(actionReload_devices,       &QAction::triggered, this, &MainWindow::on_actionReload_devices_triggered);
- connect(View_Changelog,             &QAction::triggered, this, &MainWindow::on_View_Changelog_triggered);
- connect(actionWireless_ADBD,        &QAction::triggered, this, &MainWindow::on_actionWireless_ADBD_triggered);
- connect(actionReboot,               &QAction::triggered, this, &MainWindow::on_actionReboot_triggered);
- connect(actionAbout,                &QAction::triggered, this, &MainWindow::on_actionAbout_triggered);
- connect(actionOculus,                 &QAction::triggered, this, &MainWindow::on_actionOculus_VR_triggered);
-connect(actionHelp,                 &QAction::triggered, this, &MainWindow::on_actionHelp_triggered);
-
-
-}
-
 ///////////////////////////////////////
 
 void MainWindow::setupUI() {
@@ -8020,4 +7949,121 @@ void MainWindow::initGridConnections() {
  connect(grid2Buttons[9], &QPushButton::clicked, this, &MainWindow::doConsole_clicked);
  connect(grid2Buttons[10], &QPushButton::clicked, this, &MainWindow::on_actionSend_text_triggered);
  connect(grid2Buttons[11], &QPushButton::clicked, this, &MainWindow::scpyButton_clicked);
+}
+
+
+//////////////////////////////////
+
+void MainWindow::setupMenus()
+{
+ menuBar = new QMenuBar(this);
+ setMenuBar(menuBar);
+
+ // File Menu
+ menuFile = new QMenu("File", this);
+ actionPreferences = new QAction("Preferences", this);
+ actionView_adbLink_Log = new QAction("View adblink Log", this);
+ actionQuit = new QAction("Quit", this);
+ menuFile->addAction(actionPreferences);
+ menuFile->addAction(actionView_adbLink_Log);
+ menuFile->addSeparator();
+ menuFile->addAction(actionQuit);
+
+ // Kodi Menu
+ menuKodi = new QMenu("Kodi", this);
+ actionView_Kodi_Log = new QAction("View Kodi Log", this);
+ actionEdit_XML = new QAction("Edit XML", this);
+ actionSplash_Screen = new QAction("Splash Screen", this);
+ actiondelthumb = new QAction("Delete thumbnails", this);
+ actionPush_remote = new QAction("Push remote", this);
+ actionDownload_Kodi = new QAction("Download Kodi", this);
+ actionKodi_data_usage = new QAction("Kodi data usage", this);
+ actionCreate_kodi_data = new QAction("Create kodi_data", this);
+ menuKodi->addAction(actionView_Kodi_Log);
+ menuKodi->addAction(actionEdit_XML);
+ menuKodi->addAction(actionSplash_Screen);
+ menuKodi->addAction(actiondelthumb);
+ menuKodi->addAction(actionPush_remote);
+ menuKodi->addAction(actionDownload_Kodi);
+ menuKodi->addAction(actionKodi_data_usage);
+ menuKodi->addAction(actionCreate_kodi_data);
+
+ // Utility Menu
+ menuUtility = new QMenu("Utility", this);
+ actionSwitch_View = new QAction("Switch View", this);
+ actionReiinstall_Busybox = new QAction("Reinstall Busybox", this);
+ infoArchitecture2 = new QAction("System information", this);
+ actionOculus = new QAction("Oculus Headset", this);
+ actionSet_Kodi_permissions = new QAction("Set app permissions", this);
+ Erase_adbLink_database = new QAction("Erase device database", this);
+ actionSend_text = new QAction("Send text to device", this);
+ actionGet_UID_from_APK_file = new QAction("Get package name", this);
+ actionReload_devices = new QAction("Reload devices", this);
+ View_Changelog = new QAction("View changelog", this);
+ actionWireless_ADBD = new QAction("Wireless ADBD", this);
+ actionReboot = new QAction("Reboot device", this);
+ // actionSize = new QAction("Toggle UI Size", this);
+
+ menuUtility->addAction(actionSwitch_View);
+ // menuUtility->addAction(actionSize);
+ menuUtility->addAction(actionReiinstall_Busybox);
+ menuUtility->addAction(infoArchitecture2);
+ menuUtility->addAction(actionOculus);
+ menuUtility->addAction(actionSet_Kodi_permissions);
+ menuUtility->addAction(Erase_adbLink_database);
+ menuUtility->addAction(actionSend_text);
+ menuUtility->addAction(actionGet_UID_from_APK_file);
+ menuUtility->addAction(actionReload_devices);
+ menuUtility->addAction(View_Changelog);
+ menuUtility->addAction(actionWireless_ADBD);
+ menuUtility->addAction(actionReboot);
+
+
+
+ // About Menu
+ menuAbout = new QMenu("About", this);
+ actionAbout = new QAction("About", this);
+ menuAbout->addAction(actionAbout);
+
+ // Help Menu
+ menuHelp = new QMenu("Help", this);
+ actionHelp = new QAction("Help", this);
+ menuHelp->addAction(actionHelp);
+
+ // Add menus to menubar
+ menuBar->addMenu(menuFile);
+ menuBar->addMenu(menuKodi);
+ menuBar->addMenu(menuUtility);
+ menuBar->addMenu(menuAbout);
+ menuBar->addMenu(menuHelp);
+
+ connect(actionPreferences,           &QAction::triggered, this, &MainWindow::on_actionPreferences_triggered);
+ connect(actionView_adbLink_Log,     &QAction::triggered, this, &MainWindow::on_actionView_adbLink_Log_triggered);
+ connect(actionQuit,                 &QAction::triggered, this, &MainWindow::on_actionQuit_triggered);
+ connect(actionView_Kodi_Log,        &QAction::triggered, this, &MainWindow::on_actionView_Kodi_Log_triggered);
+ connect(actionEdit_XML,             &QAction::triggered, this, &MainWindow::on_actionEdit_XML_triggered);
+ connect(actionSplash_Screen,        &QAction::triggered, this, &MainWindow::on_actionSplash_Screen_triggered);
+ connect(actiondelthumb,             &QAction::triggered, this, &MainWindow::on_actiondelthumb_triggered);
+ connect(actionPush_remote,          &QAction::triggered, this, &MainWindow::on_actionPush_remote_triggered);
+ connect(actionDownload_Kodi,        &QAction::triggered, this, &MainWindow::on_actionDownload_Kodi_triggered);
+ connect(actionKodi_data_usage,      &QAction::triggered, this, &MainWindow::on_actionKodi_data_usage_triggered);
+ connect(actionCreate_kodi_data,     &QAction::triggered, this, &MainWindow::on_actionCreate_kodi_data_triggered);
+ connect(actionSwitch_View,          &QAction::triggered, this, &MainWindow::on_actionSwitch_View_triggered);
+ // connect(actionSize,                 &QAction::triggered, this, &MainWindow::switchSize);
+
+ connect(actionReiinstall_Busybox,   &QAction::triggered, this, &MainWindow::on_actionReiinstall_Busybox_triggered);
+ connect(infoArchitecture2,           &QAction::triggered, this, &MainWindow::on_infoArchitecture_triggered);
+ connect(actionSet_Kodi_permissions, &QAction::triggered, this, &MainWindow::on_actionSet_Kodi_permissions_triggered);
+ connect(Erase_adbLink_database,     &QAction::triggered, this, &MainWindow::on_Erase_adbLink_database_triggered);
+ connect(actionSend_text,            &QAction::triggered, this, &MainWindow::on_actionSend_text_triggered);
+ connect(actionGet_UID_from_APK_file,&QAction::triggered, this, &MainWindow::on_actionGet_UID_from_APK_file_triggered);
+ connect(actionReload_devices,       &QAction::triggered, this, &MainWindow::on_actionReload_devices_triggered);
+ connect(View_Changelog,             &QAction::triggered, this, &MainWindow::on_View_Changelog_triggered);
+ connect(actionWireless_ADBD,        &QAction::triggered, this, &MainWindow::on_actionWireless_ADBD_triggered);
+ connect(actionReboot,               &QAction::triggered, this, &MainWindow::on_actionReboot_triggered);
+ connect(actionAbout,                &QAction::triggered, this, &MainWindow::on_actionAbout_triggered);
+ connect(actionOculus,                 &QAction::triggered, this, &MainWindow::on_actionOculus_VR_triggered);
+ connect(actionHelp,                 &QAction::triggered, this, &MainWindow::on_actionHelp_triggered);
+
+
 }
