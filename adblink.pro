@@ -14,6 +14,7 @@ TARGET = adblink
 TEMPLATE = app
 
 SOURCES += main.cpp\
+    adboutput.cpp \
     adbutils.cpp \
     connectadb.cpp \
     customlistwidget.cpp \
@@ -25,6 +26,7 @@ SOURCES += main.cpp\
     mainwindow.cpp \
     about.cpp \
     helpdialog.cpp \
+    returncode.cpp \
     scpdialog.cpp \
     uninstalldialog.cpp \
     preferencesdialog.cpp \
@@ -55,6 +57,7 @@ RESOURCES = adbLink.qrc
 
 HEADERS  += mainwindow.h \
     about.h \
+    adboutput.h \
     adbutils.h \
     connectadb.h \
     customlistwidget.h \
@@ -65,6 +68,7 @@ HEADERS  += mainwindow.h \
     getreturncode.h \
     helpdialog.h \
     logfile.h \
+    returncode.h \
     scpdialog.h \
     uninstalldialog.h \
     preferencesdialog.h \

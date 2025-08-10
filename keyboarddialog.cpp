@@ -99,7 +99,14 @@ keyboardDialog::~keyboardDialog()
 void keyboardDialog::setdaddr(const QString &daddress)
 {
 
-    cstring = getadbpath() + " -s " + daddress;
+
+
+   // cstring = getadbpath() + " -s " + daddress;
+
+     cstring = " -s " + daddress;
+
+
+   // qDebug() << cstring;
 
 }
 
@@ -118,13 +125,17 @@ void keyboardDialog::on_downButton_clicked()
 
 void keyboardDialog::on_leftButton_clicked()
 {
+
+   qDebug() << cstring;
    QString command=getadbOutput(cstring+"21");
+   qDebug() << command;
+
 }
 
 void keyboardDialog::on_rightButton_clicked()
 {
    QString command=getadbOutput(cstring+"22");
-   qDebug() << cstring;
+
 
 }
 

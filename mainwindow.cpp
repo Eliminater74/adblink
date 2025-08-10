@@ -14,10 +14,12 @@
     #include "backupdialog.h"
     #include "forcequitdialog.h"
     #include "restdialog.h"
+    #include "adboutput.h"
     #include "klogdialog.h"
     #include "tcpipdialog.h"
     #include "adbprefdialog.h"
     #include "sleepdialog.h"
+    #include "returncode.h"
     #include "oculusdialog.h"
     #include "scpdialog.h"
     #include "program.h"
@@ -4294,8 +4296,12 @@ void MainWindow::backupButton_clicked()
 
     logfile("Starting backup for " + device.daddr); // Log start
 
-    cstring = adbPrefix + "shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
-    QString s = getadbOutput(cstring);
+   // cstring = adbPrefix + "shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
+    cstring = "shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
+
+
+    QStringList args = QProcess::splitCommand(cstring);
+    QString s = getadbOutput2(getadbpath(),args);
     QStringList list = s.split('\n');
 
     for (int i = 0; i < list.size(); i++) {
@@ -4414,8 +4420,17 @@ void MainWindow::restoreButton_clicked() {
     logfile("Starting restore for " + device.daddr); // Log restore start
 
     // Check for xbmc_env.properties
-    cstring = adbPrefix + "shell ls /sdcard/xbmc_env.properties";
-    if (getreturncode(cstring)) {
+    // cstring = adbPrefix + "shell ls /sdcard/xbmc_env.properties";
+
+     cstring = "shell ls /sdcard/xbmc_env.properties";
+     QStringList args = QProcess::splitCommand(cstring);
+
+
+
+
+//   if (getreturncode(cstring)) {
+
+     if (  returncode(getadbpath(), args)    ) {
                                    cstring = adbPrefix + "shell cat /sdcard/xbmc_env.properties";
                                    command = getadbOutput(cstring);
                                    command.replace(QRegExp("[\r\n]"), "");
@@ -4436,6 +4451,10 @@ void MainWindow::restoreButton_clicked() {
                   return;
                                    }
     }
+
+
+
+
 
     // Check if Kodi is running
     cstring = adbPrefix + "shell ps | grep " + device.xbmcpackage;
