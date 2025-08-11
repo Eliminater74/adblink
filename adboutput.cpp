@@ -9,7 +9,7 @@ QString getadbOutput2(const QString &adbPath, const QStringList &args)
 {
 
 
-    qDebug() << args;
+
     QProcess run_command;
     run_command.setProcessChannelMode(QProcess::MergedChannels);
 
