@@ -2,10 +2,14 @@
 #include "adboutput.h"
 #include "logfile.h"
 #include <QProcess>
+#include <QDebug>
 #include <QCoreApplication>
 
 QString getadbOutput2(const QString &adbPath, const QStringList &args)
 {
+
+
+    qDebug() << args;
     QProcess run_command;
     run_command.setProcessChannelMode(QProcess::MergedChannels);
 

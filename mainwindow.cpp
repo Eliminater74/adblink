@@ -4457,9 +4457,13 @@ void MainWindow::restoreButton_clicked() {
 
 
     // Check if Kodi is running
-    cstring = adbPrefix + "shell ps | grep " + device.xbmcpackage;
-    command = getadbOutput(cstring);
-    if (command.contains(device.xbmcpackage)) {
+
+     cstring =  "shell ps | grep " + device.xbmcpackage;
+     args = QProcess::splitCommand(cstring);
+     command = getadbOutput2(getadbpath(),args);
+
+
+     if (command.contains(device.xbmcpackage)) {
                                    QMessageBox::StandardButton reply;
                                    reply = QMessageBox::question(this, "Stop Kodi", "Cannot restore while Kodi is running on " + device.daddr + ".\n Stop " + device.xbmcpackage + "?",
                                                                  QMessageBox::Yes | QMessageBox::No);
@@ -4475,8 +4479,12 @@ void MainWindow::restoreButton_clicked() {
 
     // Determine storage root and path if no xbmc_env.properties
     if (!xbmc_env) {
-                                   cstring = adbPrefix + "shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
-                                   QString storageOutput = getadbOutput(cstring);
+                                   cstring = "shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
+                                   args = QProcess::splitCommand(cstring);
+                                   QString storageOutput = getadbOutput2(getadbpath(),args);
+
+                                  // qDebug() << storageOutput;
+
                                    QStringList storageList = storageOutput.split('\n');
 
                                    for (int i = 0; i < storageList.size(); i++) {
