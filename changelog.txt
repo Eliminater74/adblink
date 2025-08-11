@@ -1,6 +1,17 @@
 08/XX/25
 
-adblink version 6.9
+adblink version 7.0
+
+Regression bug with
+embedded spaces in paths
+fixed.
+
+Override pull directory
+is now honored and additional
+code defaults pull to user 
+home if needed.
+
+
 
 
 

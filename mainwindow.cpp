@@ -2561,8 +2561,9 @@
 
          QString kp = device.data_root;
 
-
-
+/*
+         if (device.pulldir.isEmpty() && download.isEmpty())
+            fmpullpath = QDir::homePath();
 
 
 
@@ -2579,6 +2580,35 @@
             fmpullpath = QDir::homePath();
          }
 
+         fmpullpath = device.pulldir;
+*/
+
+         // Initialize fmpullpath
+         fmpullpath = QDir::homePath(); // Default fallback
+
+         // Check if device.pulldir is non-empty and exists
+         if (!device.pulldir.isEmpty()) {
+            QDir pulldir(device.pulldir);
+            if (pulldir.exists()) {
+              fmpullpath = device.pulldir;
+            } else {
+              logfile("Pull path: " + device.pulldir + " not found");
+            }
+         }
+         // If device.pulldir is empty or invalid, try download
+         else if (!download.isEmpty()) {
+            QDir downloaddir(download);
+            if (downloaddir.exists()) {
+              fmpullpath = download;
+            } else {
+              logfile("Download path: " + download + " not found");
+            }
+         }
+
+         // If neither device.pulldir nor download is valid, fmpullpath remains QDir::homePath()
+         if (fmpullpath == QDir::homePath() && (device.pulldir.isEmpty() && download.isEmpty())) {
+            logfile("Defaulting to home directory: " + QDir::homePath());
+         }
 
 
           fmdialog->setPath1("/sdcard/");
@@ -4530,8 +4560,13 @@ void MainWindow::restoreButton_clicked() {
                   kbase = n_data_root + "kodi_data/";
                   mcpath = kbase + device.xbmcpackage;
                   // Create kodi_data area
-                  cstring = adbPrefix + "shell mkdir -p " + kbase;
-                  command = getadbOutput(cstring);
+
+
+                  cstring =  "shell mkdir -p " + kbase;
+                  args = QProcess::splitCommand(cstring);
+                  command = getadbOutput2(getadbpath(),args);
+
+
                   if (command.contains("No such file or directory")) {
                     QMessageBox::critical(this, "", "Failed to create kodi_data directory on " + device.daddr);
                     logfile(device.daddr + ": Error creating kodi_data: " + command); // Log error
