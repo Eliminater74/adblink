@@ -4498,8 +4498,11 @@ void MainWindow::restoreButton_clicked() {
                                    reply = QMessageBox::question(this, "Stop Kodi", "Cannot restore while Kodi is running on " + device.daddr + ".\n Stop " + device.xbmcpackage + "?",
                                                                  QMessageBox::Yes | QMessageBox::No);
                                    if (reply == QMessageBox::Yes) {
-                  cstring = adbPrefix + "shell am force-stop " + device.xbmcpackage;
-                  command = getadbOutput(cstring);
+                  cstring = "shell am force-stop " + device.xbmcpackage;
+                  args = QProcess::splitCommand(cstring);
+                  command = getadbOutput2(getadbpath(),args);
+
+
                   // Removed intermediate logging of force-stop command
                                    } else {
                   logfile(device.daddr + ": Error: " + device.xbmcpackage + " running. Restore failed"); // Log error
@@ -4610,6 +4613,9 @@ void MainWindow::restoreButton_clicked() {
 
     cstring = adbPrefix + "shell rm -r " + mcpath;
     command = RunLongProcess(cstring, "preparing target for " + device.daddr);
+
+
+
     // Removed intermediate logging of rm command
 
     cstring = adbPrefix + "shell ls " + mcpath;
