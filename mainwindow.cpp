@@ -3425,6 +3425,7 @@
 
             if(dialog.exec() == QDialog::Accepted)
             {
+
                 QString screenval = dialog.screenValue();
                 QString sleepval = dialog.sleepValue();
 
@@ -3474,6 +3475,9 @@
 
 
                 QMessageBox::information(this,"","Sleep/Screensaver values adjusted");
+                logfile("Sleep/Screensaver values adjusted");
+                logfile("Screensaver:"+screenval) ;
+                logfile("Sleep:"+sleepval);
 
 
             }
@@ -4377,7 +4381,7 @@ void MainWindow::backupButton_clicked()
 
 
 
-    logfile("Starting backup for " + device.daddr); // Log start
+    logfile("Starting backup for " + device.daddr);
 
    // cstring = adbPrefix + "shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
 
@@ -4437,8 +4441,13 @@ void MainWindow::backupButton_clicked()
                                    kbase = n_data_root + "Android/data/";
     }
 
+
+
+
     cstring = adbPrefix + "shell ls " + mcpath + "/files/.kodi";
-    if (!getreturncode(cstring)) {
+    if (!getreturncode(cstring))
+
+    {
                                    QMessageBox::critical(this, "", "Kodi's files not found at " + mcpath);
                                    logfile(device.daddr + ": Error: Kodi's files not found at " + mcpath); // Log error with device.daddr
                                    return;
