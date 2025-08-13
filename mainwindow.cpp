@@ -4671,8 +4671,13 @@ void MainWindow::restoreButton_clicked() {
 
     // Removed intermediate logging of rm command
 
-    cstring = adbPrefix + "shell ls " + mcpath;
-    command = getadbOutput(cstring);
+ //   cstring = adbPrefix + "shell ls " + mcpath;
+ //   command = getadbOutput(cstring);
+
+    cstring =  " -s "+ device.daddr + " shell ls " + mcpath;
+    args = QProcess::splitCommand(cstring);
+    command = getadbOutput2(getadbpath(),args);
+
 
     if (command.contains("No such file or directory")) {
                                    cstring = adbPrefix + "shell mkdir -p " + mcpath + "/files/.kodi";
