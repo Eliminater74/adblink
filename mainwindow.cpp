@@ -4696,7 +4696,7 @@ void MainWindow::restoreButton_clicked() {
                                    cstring =  " -s "+ device.daddr + " shell ls " + mcpath + "/files/.kodi";
                                    args = QProcess::splitCommand(cstring);
                                    command = getadbOutput2(getadbpath(),args);
-
+// restore commit #4
 
 
 
@@ -4715,9 +4715,17 @@ void MainWindow::restoreButton_clicked() {
     // Removed intermediate logging of push command
 
     // Check restore success
+
+    // restore commit #5
+
     if (command.contains("bytes")) {
-                                   cstring = adbPrefix + "shell rm /sdcard/xbmc_env.properties";
-                                   command = getadbOutput(cstring);
+                                 //  cstring = adbPrefix + "shell rm /sdcard/xbmc_env.properties";
+                                //   command = getadbOutput(cstring);
+
+                                   cstring =  " -s "+ device.daddr +  " shell rm /sdcard/xbmc_env.properties";
+                                   args = QProcess::splitCommand(cstring);
+                                   command = getadbOutput2(getadbpath(),args);
+
 
                                    // Always create xbmc_env.properties for scoped devices
 
