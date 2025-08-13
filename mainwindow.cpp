@@ -4680,14 +4680,22 @@ void MainWindow::restoreButton_clicked() {
 
 
     if (command.contains("No such file or directory")) {
-                                   cstring = adbPrefix + "shell mkdir -p " + mcpath + "/files/.kodi";
-                                   command = getadbOutput(cstring);
+                                  // cstring = adbPrefix + "shell mkdir -p " + mcpath + "/files/.kodi";
+                                 //  command = getadbOutput(cstring);
+
+                                   cstring =  " -s "+ device.daddr + " shell mkdir -p " + mcpath + "/files/.kodi";
+                                   args = QProcess::splitCommand(cstring);
+                                   command = getadbOutput2(getadbpath(),args);
+
+// restore commit #3
+
+
                                    // Removed intermediate logging of mkdir command
                                    QString errorOutput = command;
                                    cstring = adbPrefix + "shell ls " + mcpath + "/files/.kodi";
                                    command = getadbOutput(cstring);
 
-                                   if (command.contains("No such file or directory")) {
+         if (command.contains("No such file or directory")) {
                   QMessageBox::critical(this, "", "Error creating restore point on " + device.daddr);
                   logfile(device.daddr + ": Error creating restore point: " + errorOutput); // Log error
                   return;
@@ -4706,7 +4714,10 @@ void MainWindow::restoreButton_clicked() {
                                    command = getadbOutput(cstring);
 
                                    // Always create xbmc_env.properties for scoped devices
-                                   if (isScoped()) {
+
+
+
+             if (isScoped()) {
                   cstring = adbPrefix + "shell echo xbmc.data=" + mcpath + "/files > /sdcard/xbmc_env.properties";
                   command = getadbOutput(cstring);
                   // Removed intermediate logging of xbmc_env.properties creation
