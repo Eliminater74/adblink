@@ -4730,10 +4730,21 @@ void MainWindow::restoreButton_clicked() {
                                    // Always create xbmc_env.properties for scoped devices
 
 
+// restore commit #6
+
 
              if (isScoped()) {
-                  cstring = adbPrefix + "shell echo xbmc.data=" + mcpath + "/files > /sdcard/xbmc_env.properties";
-                  command = getadbOutput(cstring);
+                //  cstring = adbPrefix + "shell echo xbmc.data=" + mcpath + "/files > /sdcard/xbmc_env.properties";
+                //  command = getadbOutput(cstring);
+
+                  cstring =  " -s "+ device.daddr +  " shell echo xbmc.data=" + mcpath + "/files > /sdcard/xbmc_env.properties";
+                  args = QProcess::splitCommand(cstring);
+                  command = getadbOutput2(getadbpath(),args);
+
+
+
+
+
                   // Removed intermediate logging of xbmc_env.properties creation
                   if (command.contains("No such file or directory") || !command.isEmpty()) {
                     QMessageBox::critical(this, "", "Failed to create xbmc_env.properties on " + device.daddr);
