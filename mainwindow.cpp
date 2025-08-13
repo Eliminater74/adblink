@@ -4502,10 +4502,7 @@ void MainWindow::restoreButton_clicked() {
 
     logfile("Starting restore for " + device.daddr); // Log restore start
 
-    // Check for xbmc_env.properties
-    // cstring = adbPrefix + "shell ls /sdcard/xbmc_env.properties";
-
-     cstring = "shell ls /sdcard/xbmc_env.properties";
+     cstring = " -s "+ device.daddr + " shell ls /sdcard/xbmc_env.properties";
      QStringList args = QProcess::splitCommand(cstring);
 
 
@@ -4514,8 +4511,10 @@ void MainWindow::restoreButton_clicked() {
 //   if (getreturncode(cstring)) {
 
      if (  returncode(getadbpath(), args)    ) {
-                                   cstring = adbPrefix + "shell cat /sdcard/xbmc_env.properties";
-                                   command = getadbOutput(cstring);
+                                   cstring = " -s "+ device.daddr + " shell cat /sdcard/xbmc_env.properties";
+                                   args = QProcess::splitCommand(cstring);
+                                   command = getadbOutput2(getadbpath(),args);
+
                                    command.replace(QRegExp("[\r\n]"), "");
 
                                    int startIndex = command.indexOf("=") + 1;
@@ -4551,7 +4550,7 @@ void MainWindow::restoreButton_clicked() {
                                    reply = QMessageBox::question(this, "Stop Kodi", "Cannot restore while Kodi is running on " + device.daddr + ".\n Stop " + device.xbmcpackage + "?",
                                                                  QMessageBox::Yes | QMessageBox::No);
                                    if (reply == QMessageBox::Yes) {
-                  cstring = "shell am force-stop " + device.xbmcpackage;
+                  cstring =  " -s "+ device.daddr + " shell am force-stop " + device.xbmcpackage;
                   args = QProcess::splitCommand(cstring);
                   command = getadbOutput2(getadbpath(),args);
 
@@ -4565,7 +4564,7 @@ void MainWindow::restoreButton_clicked() {
 
     // Determine storage root and path if no xbmc_env.properties
     if (!xbmc_env) {
-                                   cstring = "shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
+                                   cstring =  " -s "+ device.daddr + " shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
                                    args = QProcess::splitCommand(cstring);
                                    QString storageOutput = getadbOutput2(getadbpath(),args);
 
@@ -4618,7 +4617,7 @@ void MainWindow::restoreButton_clicked() {
                   // Create kodi_data area
 
 
-                  cstring =  "shell mkdir -p " + kbase;
+                  cstring =  " -s "+ device.daddr +  " shell mkdir -p " + kbase;
                   args = QProcess::splitCommand(cstring);
                   command = getadbOutput2(getadbpath(),args);
 
