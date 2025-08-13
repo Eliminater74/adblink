@@ -4507,9 +4507,6 @@ void MainWindow::restoreButton_clicked() {
 
 
 
-
-//   if (getreturncode(cstring)) {
-
      if (  returncode(getadbpath(), args)    ) {
                                    cstring = " -s "+ device.daddr + " shell cat /sdcard/xbmc_env.properties";
                                    args = QProcess::splitCommand(cstring);
@@ -4555,7 +4552,6 @@ void MainWindow::restoreButton_clicked() {
                   command = getadbOutput2(getadbpath(),args);
 
 
-                  // Removed intermediate logging of force-stop command
                                    } else {
                   logfile(device.daddr + ": Error: " + device.xbmcpackage + " running. Restore failed"); // Log error
                   return;
@@ -4669,10 +4665,6 @@ void MainWindow::restoreButton_clicked() {
 
 
 
-    // Removed intermediate logging of rm command
-
- //   cstring = adbPrefix + "shell ls " + mcpath;
- //   command = getadbOutput(cstring);
 
     cstring =  " -s "+ device.daddr + " shell ls " + mcpath;
     args = QProcess::splitCommand(cstring);
@@ -4680,24 +4672,16 @@ void MainWindow::restoreButton_clicked() {
 
 
     if (command.contains("No such file or directory")) {
-                                  // cstring = adbPrefix + "shell mkdir -p " + mcpath + "/files/.kodi";
-                                 //  command = getadbOutput(cstring);
 
                                    cstring =  " -s "+ device.daddr + " shell mkdir -p " + mcpath + "/files/.kodi";
                                    args = QProcess::splitCommand(cstring);
                                    command = getadbOutput2(getadbpath(),args);
                                    QString errorOutput = command;
-// restore commit #3
-
-                                  // cstring = adbPrefix + "shell ls " + mcpath + "/files/.kodi";
-                                 //  command = getadbOutput(cstring);
 
 
                                    cstring =  " -s "+ device.daddr + " shell ls " + mcpath + "/files/.kodi";
                                    args = QProcess::splitCommand(cstring);
                                    command = getadbOutput2(getadbpath(),args);
-// restore commit #4
-
 
 
 
@@ -4712,15 +4696,9 @@ void MainWindow::restoreButton_clicked() {
 
     cstring = adbPrefix + "push \"" + dir + "\" " + mcpath + "/files/.kodi/";
     command = RunLongProcess(cstring, "restore running for " + device.daddr);
-    // Removed intermediate logging of push command
 
-    // Check restore success
-
-    // restore commit #5
 
     if (command.contains("bytes")) {
-                                 //  cstring = adbPrefix + "shell rm /sdcard/xbmc_env.properties";
-                                //   command = getadbOutput(cstring);
 
                                    cstring =  " -s "+ device.daddr +  " shell rm /sdcard/xbmc_env.properties";
                                    args = QProcess::splitCommand(cstring);
@@ -4730,12 +4708,8 @@ void MainWindow::restoreButton_clicked() {
                                    // Always create xbmc_env.properties for scoped devices
 
 
-// restore commit #6
-
 
              if (isScoped()) {
-                //  cstring = adbPrefix + "shell echo xbmc.data=" + mcpath + "/files > /sdcard/xbmc_env.properties";
-                //  command = getadbOutput(cstring);
 
                   cstring =  " -s "+ device.daddr +  " shell echo xbmc.data=" + mcpath + "/files > /sdcard/xbmc_env.properties";
                   args = QProcess::splitCommand(cstring);
@@ -4743,18 +4717,20 @@ void MainWindow::restoreButton_clicked() {
 
 
 
-
-
-                  // Removed intermediate logging of xbmc_env.properties creation
                   if (command.contains("No such file or directory") || !command.isEmpty()) {
                     QMessageBox::critical(this, "", "Failed to create xbmc_env.properties on " + device.daddr);
                     logfile(device.daddr + ": Error creating xbmc_env.properties: " + command); // Log error
                     return;
                   }
                                    } else if (n_data_root != "/sdcard/") {
-                  cstring = adbPrefix + "shell echo xbmc.data=" + mcpath + "/files > /sdcard/xbmc_env.properties";
-                  command = getadbOutput(cstring);
-                  // Removed intermediate logging of xbmc_env.properties creation
+
+
+                  cstring =  " -s "+ device.daddr +  " shell echo xbmc.data=" + mcpath + "/files > /sdcard/xbmc_env.properties";
+                  args = QProcess::splitCommand(cstring);
+                  command = getadbOutput2(getadbpath(),args);
+
+
+
                                    }
 
                                    writeBackup(dir);
