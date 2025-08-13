@@ -4380,11 +4380,17 @@ void MainWindow::backupButton_clicked()
     logfile("Starting backup for " + device.daddr); // Log start
 
    // cstring = adbPrefix + "shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
-    cstring = "shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
+
+  // backup commit #1
 
 
+    cstring = " -s "+ device.daddr + " shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
     QStringList args = QProcess::splitCommand(cstring);
     QString s = getadbOutput2(getadbpath(),args);
+
+
+
+
     QStringList list = s.split('\n');
 
     for (int i = 0; i < list.size(); i++) {
