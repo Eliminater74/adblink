@@ -136,6 +136,8 @@ private slots:
     void TimerEvent();
     void delayTimer(int rdelay);
     QString RunLongProcess(QString cstring, QString jobname);
+    QString RunLongProcess2(QString cstring, QString jobname);
+
     QString readDonationValue();
     void usbbuttons(bool isusb);
     void rotate_logfile();

@@ -2660,6 +2660,8 @@
 
     QString MainWindow::RunLongProcess(QString cstring, QString jobname)
     {
+
+
         progressBar->setHidden(false);
         progressBar->setValue(0);
         QString command;
@@ -2705,6 +2707,57 @@
 
         return command;
     }
+
+
+
+    QString MainWindow::RunLongProcess2(QString cstring, QString jobname)
+    {
+        progressBar->setHidden(false);
+        progressBar->setValue(0);
+        QString command;
+        QString s = jobname;
+        RunProcessList << s;
+        container->setHidden(true);
+
+        if (RunProcessList.count() > 1)
+           server_running->setText("parallel processes running");
+        else
+           server_running->setText(s);
+
+        int tsvalue = 4000;
+
+        QTimer *timer = new QTimer(this);
+        connect(timer, SIGNAL(timeout()), this, SLOT(TimerEvent()));
+        timer->start(tsvalue);
+
+        command = getadbOutput(cstring);
+
+        RunProcessList.removeAll(s);
+
+        if (RunProcessList.count() > 0)
+        {
+           //activityIcon(true);
+           progressBar->setHidden(false);
+           progressBar->setValue(0);
+           server_running->setText("");
+        }
+        else
+        {
+           //activityIcon(false);
+           progressBar->setHidden(true);
+           container->setHidden(false);
+           progressBar->setValue(0);
+           server_running->setText("");
+        }
+
+
+
+
+        serverlabel();
+
+        return command;
+    }
+
 
    ////////////////////////////////////////////////////////
 
@@ -4611,8 +4664,9 @@ void MainWindow::restoreButton_clicked() {
                                    return;
     }
 
-    cstring = adbPrefix + "shell rm -r " + mcpath;
-    command = RunLongProcess(cstring, "preparing target for " + device.daddr);
+     cstring = adbPrefix + "shell rm -r " + mcpath;
+
+     command = RunLongProcess(cstring, "preparing target for " + device.daddr);
 
 
 
@@ -6541,10 +6595,14 @@ void MainWindow::screenCap()
       QString dtstr = dateTime.toString("yyyyMMdd_HHmmss");
       dtstr = dtstr + ".png";
 
-      QString cstring = getadbpath() + " -s " + daddr + " shell screencap -p " + "/data/local/tmp/"+dtstr;
+      QString cstring = " -s " + daddr + " shell screencap -p " + "/data/local/tmp/"+dtstr;
+
+      QStringList args = QProcess::splitCommand(cstring);
+      QString command = getadbOutput2(getadbpath(),args);
+
+
       logfile(cstring);
 
-      QString command = getadbOutput(cstring);
       if (!command.isEmpty()) {
                logfile(command);
                QMessageBox::critical(this, "", "Screenshot failed: " + command);
@@ -6557,12 +6615,14 @@ void MainWindow::screenCap()
 
 
 
-      cstring = getadb() + " pull "+ "/data/local/tmp/"+dtstr + " " + pulldir;
-      command = getadbOutput(cstring);
+      cstring = " -s " + device.daddr +  " pull "+ "/data/local/tmp/"+dtstr + " " + pulldir;
+       args = QProcess::splitCommand(cstring);
+      command = getadbOutput2(getadbpath(),args);
+
       logfile(cstring);
       logfile(command);
 
-      // Check if the pulled file exists
+
       QString localFilePath = pulldir + "/" + dtstr;
       QFileInfo fileInfo(localFilePath);
       if (!fileInfo.exists()) {
@@ -6571,8 +6631,9 @@ void MainWindow::screenCap()
                return;
       }
 
-      cstring = getadb() + " shell rm " + "/data/local/tmp/"+dtstr;
-      command = getadbOutput(cstring);
+      cstring =  cstring = " -s " + device.daddr +   " shell rm " + "/data/local/tmp/"+dtstr;
+      args = QProcess::splitCommand(cstring);
+      command = getadbOutput2(getadbpath(),args);
 
       logfile(cstring);
       logfile(command);
