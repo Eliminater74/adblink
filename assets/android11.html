@@ -13,27 +13,21 @@
      startup, and reads it to find the location for its data.
 <p>
 
-     When adblink connects to a device it will detect if scoped storage
-     is in effect.
-     <p>
-     If scoped, and /sdcard/xbmc_env.properties does not exist, adblink will offer
-     to create it and the /sdcard/kodi_data/ root folder for Kodi's data. This
-     check at connection can be turned off in adblink's preferences.
-     <p>
-     You may also manually create /sdcard/kodi_data/ and xbmc_env.properties
-     via the kodi menu function, Create kodi_data.
-     <p>
-     When adblink creates the alternate location for Kodi's data,
-     adblink will set the MANAGE_EXTERNAL_STORAGE permission to
-     "allow" which will permit Kodi to read the xbmc_env.properties
-     file at startup. Otherwise Kodi is not permitted to access local
-     files outside of its sandbox.
-     <p>
-     
-     If you need to grant or revoke the MANAGE_EXTERNAL_STORAGE permission manually,
-     you can do this for Kodi or any app  via adblink's Utility menu
-     function: "Set app permissions".
-      
+<p>
+You can create /sdcard/kodi_data/ and xbmc_env.properties
+via the kodi menu function, Create kodi_data. adblink
+will also create the file and directory when restoring
+a backup to a scoped storage device.
+<p>
+  Finally, in order  for Kodi to access local storage outside of
+  its sandbox the MANAGE_EXTERNAL_STORAGE permission must be
+  set to "allow" which will permit Kodi to read the xbmc_env.properties
+  file at startup. Kodi should ask for this permission at first run but
+  if you miss doing this you may have to change the permission  via the
+  device's applications settings routine.
+  <p>
+
+
      <p>
 
 If you have questions or comments, please email jocala@jocala.com or visit one of the forums. adbLink produces a log file, adblink.log, with each run. Include it in your email or post if you're having problems.<p>

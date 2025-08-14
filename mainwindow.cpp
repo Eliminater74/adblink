@@ -8151,7 +8151,7 @@ void MainWindow::setupMenus()
  actionReiinstall_Busybox = new QAction("Reinstall Busybox", this);
  infoArchitecture2 = new QAction("System information", this);
  actionOculus = new QAction("Oculus Headset", this);
- actionSet_Kodi_permissions = new QAction("Set app permissions", this);
+// actionSet_Kodi_permissions = new QAction("Set app permissions", this);
  Erase_adbLink_database = new QAction("Erase device database", this);
  actionSend_text = new QAction("Send text to device", this);
  actionGet_UID_from_APK_file = new QAction("Get package name", this);
@@ -8166,7 +8166,7 @@ void MainWindow::setupMenus()
  menuUtility->addAction(actionReiinstall_Busybox);
  menuUtility->addAction(infoArchitecture2);
  menuUtility->addAction(actionOculus);
- menuUtility->addAction(actionSet_Kodi_permissions);
+// menuUtility->addAction(actionSet_Kodi_permissions);
  menuUtility->addAction(Erase_adbLink_database);
  menuUtility->addAction(actionSend_text);
  menuUtility->addAction(actionGet_UID_from_APK_file);
@@ -8210,7 +8210,9 @@ void MainWindow::setupMenus()
 
  connect(actionReiinstall_Busybox,   &QAction::triggered, this, &MainWindow::on_actionReiinstall_Busybox_triggered);
  connect(infoArchitecture2,           &QAction::triggered, this, &MainWindow::on_infoArchitecture_triggered);
- connect(actionSet_Kodi_permissions, &QAction::triggered, this, &MainWindow::on_actionSet_Kodi_permissions_triggered);
+
+ // connect(actionSet_Kodi_permissions, &QAction::triggered, this, &MainWindow::on_actionSet_Kodi_permissions_triggered);
+
  connect(Erase_adbLink_database,     &QAction::triggered, this, &MainWindow::on_Erase_adbLink_database_triggered);
  connect(actionSend_text,            &QAction::triggered, this, &MainWindow::on_actionSend_text_triggered);
  connect(actionGet_UID_from_APK_file,&QAction::triggered, this, &MainWindow::on_actionGet_UID_from_APK_file_triggered);
