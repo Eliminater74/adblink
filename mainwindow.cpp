@@ -2903,42 +2903,48 @@
     void MainWindow::on_actionKodi_data_usage_triggered()
     {
               QString kodidata;
-
-
+              QString cstring;
+              QString command;
+              QString xbmcpath;
 
               QString selectedDescription;
               if (!validateDeviceSelection(selectedDescription)) {
                 return;
               }
 
-              DeviceRecord device = queryDeviceRecord(selectedDescription);
+                DeviceRecord device = queryDeviceRecord(selectedDescription);
 
-              backupDialog dialog;
+                cstring = " -s "+ device.daddr + " shell ls /sdcard/xbmc_env.properties";
+                QStringList args = QProcess::splitCommand(cstring);
 
-             QString n_data_root;
+      if (  returncode(getadbpath(), args)    ) {
+              cstring = " -s "+ device.daddr + " shell cat /sdcard/xbmc_env.properties";
+              args = QProcess::splitCommand(cstring);
+              command = getadbOutput2(getadbpath(),args);
 
-              dialog.setadb_backup(getadb(),device.data_root);
+              command.replace(QRegExp("[\r\n]"), "");
 
-               dialog.setModal(true);
+              int startIndex = command.indexOf("=") + 1;
+              int endIndex = command.indexOf(".kodi") + 5;
+                xbmcpath = command.mid(startIndex, endIndex - startIndex);
 
-               dialog.setWindowTitle("Kodi Data Size");
+                }
 
-           if(dialog.exec() == QDialog::Accepted)
-           {
+           else
 
-
-
-               n_data_root = dialog.return_data_root();
-
-                if(!n_data_root.startsWith("/"))
-                   n_data_root.prepend("/");
-
-                if(!n_data_root.endsWith("/"))
-                   n_data_root.append("/") ;
+                {
 
 
-                QString cstring = getadb() + " shell du -sh " + n_data_root +"Android/data/"+device.xbmcpackage;
-                QString command=RunLongProcess(cstring,"calculating data size");
+
+                xbmcpath = "/sdcard/Android/data/"+device.xbmcpackage;
+
+             }
+
+
+              cstring = getadb() + " shell du -sh " + xbmcpath;
+
+
+                 command=RunLongProcess(cstring,"calculating data size");
 
 
                 if (command.contains("No such file"))
@@ -2965,18 +2971,9 @@
 
                 }
 
+         QMessageBox::information(0,"Kodi Data","Kodi data size:  " + kodidata);
 
-
-                QMessageBox::information(0,"Kodi Data","Kodi data size:  " + kodidata);
-
-
-
-
-
-              }
-
-
-    }
+     }
 
     ////////////////////////////////////////////////////////////////////////
 
