@@ -7805,11 +7805,8 @@ deviceTable->viewport()->update();
 }
 
 
-//////////////////////////////////////////////////////////
-
 void MainWindow::loadDeviceTableX(QTableWidget* table) {
-QScrollArea *scrollArea = qobject_cast<QScrollArea*>(table->parentWidget());
-
+// Preserve connected devices
 QSet<QString> connectedDeviceIds;
 for (int row = 0; row < table->rowCount(); ++row) {
         if (table->item(row, 2) &&
@@ -7819,6 +7816,7 @@ for (int row = 0; row < table->rowCount(); ++row) {
         }
 }
 
+// Reset table
 table->clearContents();
 table->setRowCount(0);
 table->setColumnCount(3);
@@ -7829,40 +7827,18 @@ table->setShowGrid(true);
 table->setSortingEnabled(false);
 table->setSelectionMode(QAbstractItemView::SingleSelection);
 table->setSelectionBehavior(QAbstractItemView::SelectRows);
-table->setStyleSheet("QTableWidget { margin: 0px; padding: 0px; } QHeaderView::section { padding: 0px; }");
-table->verticalHeader()->setDefaultSectionSize(40);
 
-// Set table size based on windowSizeSelector
-int tableWidth, tableHeight;
+// Set font size based on windowSizeSelector
+QFont tableFont = table->font();
 switch (windowSizeSelector) {
-case 0: // small
-        tableWidth = sMainWindowSize.width() * 0.63;
-        tableHeight = sMainWindowSize.height() * 0.40;
-        break;
-case 1: // medium
-        tableWidth = mMainWindowSize.width() * 0.63;
-        tableHeight = mMainWindowSize.height() * 0.40;
-        break;
-case 2: // large
-        tableWidth = lMainWindowSize.width() * 0.55;
-        tableHeight = lMainWindowSize.height() * 0.40;
-        break;
-default:
-        tableWidth = sMainWindowSize.width() * 0.63;
-        tableHeight = sMainWindowSize.height() * 0.40;
-        break;
+case 0: tableFont.setPixelSize(sfontsize); break;
+case 1: tableFont.setPixelSize(mfontsize); break;
+case 2: tableFont.setPixelSize(lfontsize); break;
+default: tableFont.setPixelSize(sfontsize); break;
 }
+table->setFont(tableFont);
 
-table->setMinimumSize(tableWidth, tableHeight);
-table->setMaximumSize(tableWidth, tableHeight);
-table->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-if (scrollArea) {
-        scrollArea->setWidgetResizable(false);
-        scrollArea->setWidget(table);
-        scrollArea->show();
-}
-
+// Populate table from database
 QString sqlstatement = "SELECT id, description, daddr, isusb FROM device";
 QSqlQuery query;
 if (!query.exec(sqlstatement)) {
@@ -7873,8 +7849,10 @@ if (!query.exec(sqlstatement)) {
 int row = 0;
 while (query.next()) {
         table->insertRow(row);
+
         QString deviceId = query.value(0).toString();
         QString description = query.value(1).toString();
+
         QTableWidgetItem* descItem = new QTableWidgetItem(description);
         descItem->setData(Qt::UserRole, deviceId);
         descItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
@@ -7885,69 +7863,68 @@ while (query.next()) {
         table->setItem(row, 1, new IpTableWidgetItem(ip));
 
         QString status;
-        if (isUsb) {
+        if (isUsb)
             status = usbConnected(query.value(2).toString()) ? "Connected" : "Disconnected";
-        } else {
+        else
             status = connectedDeviceIds.contains(deviceId) ? "Connected" : "Disconnected";
-        }
+
         table->setItem(row, 2, new QTableWidgetItem(status));
         row++;
 }
 
+// Adjust column widths
+int tableWidth;
+switch (windowSizeSelector) {
+case 0: tableWidth = sMainWindowSize.width() * 0.63; break;
+case 1: tableWidth = mMainWindowSize.width() * 0.63; break;
+case 2: tableWidth = lMainWindowSize.width() * 0.55; break;
+default: tableWidth = sMainWindowSize.width() * 0.63; break;
+}
 int colWidth = tableWidth / 3;
-table->setColumnWidth(0, colWidth);
-table->setColumnWidth(1, colWidth);
-table->setColumnWidth(2, colWidth);
+for (int i = 0; i < 3; ++i) table->setColumnWidth(i, colWidth);
 
-for (int col = 0; col < 3; ++col) {
-        table->showColumn(col);
-}
+// Make sure row heights match font
+table->resizeRowsToContents();
 
-for (int row = 0; row < table->rowCount(); ++row) {
-        if (QTableWidgetItem* item = table->item(row, 0)) {
-            item->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-        }
-}
+// Let QTableWidget manage scrollbars automatically
+table->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+table->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
+table->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+table->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+table->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
-table->show();
-if (scrollArea) scrollArea->show();
-
+// Restore saved sort
 QSettings settings("YourCompany", "YourApp");
 int sortColumn = settings.value("DeviceTableSortColumn", 0).toInt();
 Qt::SortOrder sortOrder = static_cast<Qt::SortOrder>(settings.value("DeviceTableSortOrder", Qt::AscendingOrder).toInt());
-
 table->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 table->setSortingEnabled(true);
 table->sortItems(sortColumn, sortOrder);
 
-if (scrollArea) {
-        scrollArea->updateGeometry();
-        scrollArea->viewport()->update();
-        scrollArea->update();
-        scrollArea->horizontalScrollBar()->setValue(0);
-}
-
+// Update geometry
 table->updateGeometry();
 table->viewport()->update();
 table->update();
-
 if (centralWidget) {
         centralWidget->updateGeometry();
         centralWidget->update();
 }
 
+// Persist header click sort
 disconnect(table->horizontalHeader(), &QHeaderView::sectionClicked, nullptr, nullptr);
-connect(table->horizontalHeader(), &QHeaderView::sectionClicked, this, [table, scrollArea](int logicalIndex) {
+connect(table->horizontalHeader(), &QHeaderView::sectionClicked, this, [table](int logicalIndex) {
     QSettings settings("YourCompany", "YourApp");
     settings.setValue("DeviceTableSortColumn", logicalIndex);
     settings.setValue("DeviceTableSortOrder", table->horizontalHeader()->sortIndicatorOrder());
-    if (scrollArea) {
-        scrollArea->horizontalScrollBar()->setValue(0);
-    }
 });
 }
 
 
+
+
+
+
+///////////////////////////////////////////////////////////
 
 
 void MainWindow::switchSize()
