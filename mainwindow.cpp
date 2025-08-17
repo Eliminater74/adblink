@@ -2885,7 +2885,7 @@
         tcpipDialog dialog;
 
         // 2. Check current TCP port
-        cstring = " shell getprop persist.adb.tcp.port";
+        cstring = " -s "+device.daddr+" shell getprop persist.adb.tcp.port";
         args = QProcess::splitCommand(cstring);
         command = getadbOutput2(getadbpath(), args);
         logfile("shell getprop persist.adb.tcp.port: " + command);
@@ -2916,11 +2916,11 @@
                         QMessageBox::information(this, "Success",
                                                  "Wireless ADB enabled for " + ip);
 
-                        // Optionally disconnect
-                        QString cstring2 = "disconnect " + ip + ":5555";
-                        QStringList args2 = QProcess::splitCommand(cstring2);
-                        QString command2 = getadbOutput2(getadbpath(), args2);
-                        logfile("adb disconnect: " + command2);
+
+                         cstring = "disconnect " + ip + ":5555";
+                        args = QProcess::splitCommand(cstring);
+                        command = getadbOutput2(getadbpath(), args);
+                        logfile("adb disconnect: " + command);
                     }
                     else
                     {
