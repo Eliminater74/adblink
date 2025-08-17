@@ -1622,9 +1622,16 @@
        QString selectedDescription;
        DeviceRecord device;
 
-       cstring = getadbpath() + " devices";
-       command = getadbOutput(cstring);
-       QThread::sleep(2);
+     //  cstring = getadbpath() + " devices";
+   //    command = getadbOutput(cstring);
+    //   QThread::sleep(2);
+
+     cstring =  "devices";
+     QStringList args = QProcess::splitCommand(cstring);
+     command = getadbOutput2(getadbpath(),args);
+
+
+
 
        mstringlist = command.split(QRegExp("[\t\n\r]"), QString::SkipEmptyParts);
 
@@ -6789,8 +6796,17 @@ void MainWindow::on_actionSet_Kodi_permissions_triggered()
 
 void MainWindow::serverlabel()
 {
-           QString cstring = getadbpath() + " devices";
-           getadbOutput(cstring);
+         //   QString cstring = getadbpath() + " devices";
+        //   getadbOutput(cstring);
+
+
+
+           QString cstring =  "devices";
+           QStringList args = QProcess::splitCommand(cstring);
+           QString command = getadbOutput2(getadbpath(),args);
+
+
+
 
 }
 
@@ -7192,8 +7208,11 @@ bool MainWindow::usbConnected(QString daddr)
 {
 
 
- QString cstring = getadbpath() + " devices";
-   QString command = getadbOutput(cstring);
+   QString cstring =  "devices";
+   QStringList args = QProcess::splitCommand(cstring);
+   QString command = getadbOutput2(getadbpath(),args);
+
+
    return command.contains(daddr);
 }
 
