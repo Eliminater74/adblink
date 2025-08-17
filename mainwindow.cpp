@@ -2848,6 +2848,7 @@
 
     ///////////////////////////////////////////////////////
 
+
     void MainWindow::on_actionWireless_ADBD_triggered()
     {
         QString selectedDescription;
@@ -2857,48 +2858,80 @@
 
         DeviceRecord device = queryDeviceRecord(selectedDescription);
 
-        QString port;
-        QString daddr;
-
-
-        if (device.isusb) {
-                port = "";
-                daddr = device.daddr;
-        } else {
-                port = device.port.isEmpty() ? "5555" : device.port;
-                daddr = device.daddr + ":" + port;
+        if (!device.isusb) {
+                QMessageBox::critical(this, "", "USB devices only!");
+                return;
         }
 
+        QStringList args;
+        QString command;
+        QString cstring;
 
+        // 1. Get device IP over USB
+        cstring = " shell ip route";
+        args = QProcess::splitCommand(cstring);
+        command = getadbOutput2(getadbpath(), args);
 
+        QString ip;
+        {
+                QRegularExpression re(R"(src\s+(\d+\.\d+\.\d+\.\d+))");
+                QRegularExpressionMatch match = re.match(command);
+                if (match.hasMatch())
+              ip = match.captured(1);
+        }
 
+        logfile("Device IP: " + ip);
 
-       tcpipDialog dialog;
+        tcpipDialog dialog;
 
+        // 2. Check current TCP port
+        cstring = " shell getprop persist.adb.tcp.port";
+        args = QProcess::splitCommand(cstring);
+        command = getadbOutput2(getadbpath(), args);
+        logfile("shell getprop persist.adb.tcp.port: " + command);
 
-       QString tcpstatus = getadb() +   " shell getprop persist.adb.tcp.port 5555";
-           QString command=getadbOutput(tcpstatus);
+        dialog.settcplabel("Device IP: " + ip);
 
-           logfile(command);
-
-           if (command.contains("5555"))
-             dialog.settcplabel("ADB/WIFI is enabled");
-           else
-            dialog.settcplabel("ADB/WIFI is disabled");
-
-
-
-
-
-           QString cstring = getadb() +  " tcpip "+port;
-           command=getadbOutput(cstring);
-
-            if(dialog.exec() == QDialog::Accepted)
-             {
-                QString command=getadbOutput(cstring);
+        // 3. Show dialog
+        if(dialog.exec() == QDialog::Accepted)
+        {
+                // Enable TCP/IP
+                cstring = " tcpip 5555";
+                args = QProcess::splitCommand(cstring);
+                command = getadbOutput2(getadbpath(), args);
                 logfile(command);
-              }
+
+                // Wait 2 seconds, then attempt to connect
+                QTimer::singleShot(2000, this, [this, ip]() {
+
+                    // Connect over Wi-Fi
+                    QString cstring = "connect " + ip + ":5555";
+                    QStringList args = QProcess::splitCommand(cstring);
+                    QString command = getadbOutput2(getadbpath(), args);
+                    logfile("adb connect: " + command);
+
+                    // Check result
+                    if (command.contains("connected to"))
+                    {
+                        QMessageBox::information(this, "Success",
+                                                 "Wireless ADB enabled for " + ip);
+
+                        // Optionally disconnect
+                        QString cstring2 = "disconnect " + ip + ":5555";
+                        QStringList args2 = QProcess::splitCommand(cstring2);
+                        QString command2 = getadbOutput2(getadbpath(), args2);
+                        logfile("adb disconnect: " + command2);
+                    }
+                    else
+                    {
+                        QMessageBox::warning(this, "Failure",
+                                             "Failed to connect over TCP/IP to " + ip);
+                    }
+                });
+        }
     }
+
+
 
 
     ////////////////////////////////////////////////////////
