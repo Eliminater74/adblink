@@ -1287,6 +1287,8 @@
 
     void MainWindow::disButton_clicked()
     {
+
+
              QString daddr;
              int selectedRow = deviceTable->currentRow();
 
@@ -1319,11 +1321,19 @@
             return;
              }
 
-             // Execute disconnect command
-             QString cstring = getadbpath() + " disconnect " + daddr;
-             QString command = getadbOutput(cstring);
+
+             QString cstring =  " disconnect " + daddr;
+             QStringList args = QProcess::splitCommand(cstring);
+             QString command = getadbOutput2(getadbpath(),args);
+
+
              logfile(command);
              logfile("disconnect: " + daddr);
+
+
+
+
+
 
              // Update status column (column 2) to "Disconnected"
              if (selectedRow >= 0 && deviceTable->item(selectedRow, 2)) {
