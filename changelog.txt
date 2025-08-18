@@ -2,18 +2,12 @@
 
 adblink version 7.0
 
-Regression bug with
-embedded spaces in paths
-fixed.
-
-Override pull directory
-is now honored and additional
-code defaults pull to user 
-home if needed.
-
-
-
-
+Embedded spaces error
+Pull directory override
+Large scale, last row is out of viewport
+USB detection
+wireless adb via USB
+Other misc fixes
 
 
 07/29/25
