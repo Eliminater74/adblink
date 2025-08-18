@@ -312,12 +312,10 @@
     void MainWindow::onApplicationQuit() {
 
 
-    // QString cstring = getadbpath() + " kill-server";
-
-     QString adbPath = getadbpath();
-     QString cstring = QString("\"%1\" kill-server").arg(adbPath);
-
-     QString command=getadbOutput(cstring);
+     QString cstring = " kill-server";
+     QStringList args = QProcess::splitCommand(cstring);
+     QString command = getadbOutput2(getadbpath(),args);
+     logfile(command);
      logfile("server stopped");
 
 
@@ -377,34 +375,6 @@
 
 
     }
-
-
-    //////////////////////////////////////////////
-    int MainWindow::getperms(QString dir)
-
-    {
-
-        QString cstring;
-        QString command;
-
-        cstring = getadb() +   " shell stat -c %a "+dir;
-
-        command=getadbOutput(cstring);
-
-        // qDebug() << command;
-
-         int permissions = command.toInt();
-
-         if (command.isEmpty()) {
-            permissions = 0;
-          }
-
-
-       return permissions;
-
-
-    }
-
 
 
 ///////////////////////////////////////
@@ -5285,8 +5255,10 @@ void MainWindow::on_actionSend_text_triggered()
  if (ok && !text.isEmpty()) {
 
             text.replace(" ", "%s");
-            cstring = getadb() + " shell input text " + text;
-            command=getadbOutput(cstring);
+            cstring = "-s " +device.daddr+ " shell input text " + text;
+            QStringList args = QProcess::splitCommand(cstring);
+            command = getadbOutput2(getadbpath(),args);
+
             logfile(cstring);
             logfile(command);
  }
@@ -8241,8 +8213,17 @@ void MainWindow::setupMenus()
  connect(actionWireless_ADBD,        &QAction::triggered, this, &MainWindow::on_actionWireless_ADBD_triggered);
  connect(actionReboot,               &QAction::triggered, this, &MainWindow::on_actionReboot_triggered);
  connect(actionAbout,                &QAction::triggered, this, &MainWindow::on_actionAbout_triggered);
- connect(actionOculus,                 &QAction::triggered, this, &MainWindow::on_actionOculus_VR_triggered);
+ connect(actionOculus,               &QAction::triggered, this, &MainWindow::on_actionOculus_VR_triggered);
  connect(actionHelp,                 &QAction::triggered, this, &MainWindow::on_actionHelp_triggered);
 
 
 }
+
+/*
+
+     cstring = "-s " +device.daddr+ " shell ps | grep " + device.xbmcpackage;
+     args = QProcess::splitCommand(cstring);
+     command = getadbOutput2(getadbpath(),args);
+
+
+*/

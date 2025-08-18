@@ -126,7 +126,6 @@ private slots:
     QString manufacturer();
     QString devicename();
     int getandroid();
-    int getperms(QString dir);
     bool isScoped();
     void writeBackup(QString dir);
     QString readBackup(QString databasedir);
