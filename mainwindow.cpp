@@ -2847,8 +2847,9 @@
         QString command;
         QString cstring;
 
-        // 1. Get device IP over USB
-        cstring = " shell ip route";
+
+
+        cstring = "-s " +device.daddr+ " shell ip route";
         args = QProcess::splitCommand(cstring);
         command = getadbOutput2(getadbpath(), args);
 
@@ -2864,7 +2865,7 @@
 
         tcpipDialog dialog;
 
-        // 2. Check current TCP port
+
         cstring = " -s "+device.daddr+" shell getprop persist.adb.tcp.port";
         args = QProcess::splitCommand(cstring);
         command = getadbOutput2(getadbpath(), args);
@@ -2872,11 +2873,11 @@
 
         dialog.settcplabel("Device IP: " + ip);
 
-        // 3. Show dialog
+
         if(dialog.exec() == QDialog::Accepted)
         {
                 // Enable TCP/IP
-                cstring = " tcpip 5555";
+                cstring = " -s "+device.daddr+" tcpip 5555";
                 args = QProcess::splitCommand(cstring);
                 command = getadbOutput2(getadbpath(), args);
                 logfile(command);
