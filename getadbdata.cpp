@@ -1,5 +1,6 @@
 #include "getadbdata.h"
-// #include "logfile.h"
+#include "adbutils.h"
+#include "logfile.h"
 #include <QDebug>
 #include <QProcess>
 #include <QCoreApplication>
@@ -13,9 +14,26 @@ struct adbReturn {
 QString getadbOutput(const QString &cstring)
 {
 
+  QString program=getadbpath();
+  QStringList args = QProcess::splitCommand(cstring);
+
+  args.removeFirst();
+
+  qDebug() << cstring;
+  qDebug() << args;
+  qDebug() << program;
+
+
+
+
   QProcess run_command;
+
+
   run_command.setProcessChannelMode(QProcess::MergedChannels);
-  run_command.start(cstring);
+
+  //run_command.start(cstring);
+
+  run_command.start(program,args);
 
   run_command.waitForStarted();
 
