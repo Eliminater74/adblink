@@ -19,12 +19,6 @@ QString getadbOutput(const QString &cstring)
 
   args.removeFirst();
 
-  qDebug() << cstring;
-  qDebug() << args;
-  qDebug() << program;
-
-
-
 
   QProcess run_command;
 
