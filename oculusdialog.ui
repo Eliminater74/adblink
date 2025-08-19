@@ -34,7 +34,7 @@
     <rect>
      <x>30</x>
      <y>30</y>
-     <width>300</width>
+     <width>500</width>
      <height>16</height>
     </rect>
    </property>
@@ -46,7 +46,7 @@
    </property>
    <property name="maximumSize">
     <size>
-     <width>300</width>
+     <width>500</width>
      <height>16</height>
     </size>
    </property>
@@ -730,7 +730,7 @@
     </property>
    </item>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>34</x>
