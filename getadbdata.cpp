@@ -27,7 +27,7 @@ QString getadbOutput(const QString &cstring)
 
  // run_command.start(cstring);
 
-  run_command.start(program,args);
+ run_command.start(program,args);
 
   run_command.waitForStarted();
 

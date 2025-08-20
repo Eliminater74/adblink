@@ -3791,6 +3791,12 @@
                 {
 
 
+                       QFileDevice::Permissions permissions = QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner |
+                                                              QFileDevice::ReadGroup | QFileDevice::ExeGroup |
+                                                              QFileDevice::ReadOther | QFileDevice::ExeOther;
+
+
+
 
                   QString commstr = scriptdir+"cpath.sh";
 
@@ -3825,8 +3831,13 @@
                       file.close();
 
 
-                      cstring = "chmod 0755 " + commstr ;
-                      QString command=getadbOutput(cstring);
+                     // cstring = "chmod 0755 " + commstr ;
+                     // QString command=getadbOutput(cstring);
+
+                      if (!file.setPermissions(permissions)) {
+                        logfile("Failed to set permissions for " + commstr);
+                        return;
+                      }
 
 
 
@@ -3964,10 +3975,24 @@
                  file.flush();
                  file.close();
 
-                 cstring = "chmod 0755 " + commstr;
-                 QString command = getadbOutput(cstring);
 
-                 QString shelldir = '"' + scriptdir + "console.sh" + '"';
+                  QString shelldir = '"' + scriptdir + "console.sh" + '"';
+
+                 //      cstring = "chmod 0755 " + commstr;
+                 //      QString command = getadbOutput(cstring);
+
+                 QFileDevice::Permissions permissions = QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner |
+                                                        QFileDevice::ReadGroup | QFileDevice::ExeGroup |
+                                                        QFileDevice::ReadOther | QFileDevice::ExeOther;
+
+                 if (!file.setPermissions(permissions)) {
+                    logfile("Failed to set permissions for " + shelldir);
+                    return;
+                 }
+
+
+
+
 
                  if (os == 0)
                  {
@@ -4193,8 +4218,20 @@
                  file.flush();
                  file.close();
 
-                 cstring = "chmod 0755 " + commstr;
-                 QString command = getadbOutput(cstring);
+                 //cstring = "chmod 0755 " + commstr;
+                 //QString command = getadbOutput(cstring);
+
+                 QFileDevice::Permissions permissions = QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner |
+                                                        QFileDevice::ReadGroup | QFileDevice::ExeGroup |
+                                                        QFileDevice::ReadOther | QFileDevice::ExeOther;
+
+                 if (!file.setPermissions(permissions)) {
+                    logfile("Failed to set permissions for " + commstr);
+                    return;
+                 }
+
+
+
               }
 
               if (os == 2)
