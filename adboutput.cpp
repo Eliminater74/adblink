@@ -28,7 +28,7 @@ QString getadbOutput2(const QString &adbPath, const QStringList &args)
     }
 
     QString output = QString::fromUtf8(run_command.readAll());
-    logfile("ADB output: " + output);
+//    logfile("ADB output: " + output);
 
     return output;
 }

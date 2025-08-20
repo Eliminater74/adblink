@@ -402,7 +402,10 @@
            QString output = process.readAllStandardOutput().trimmed();
            QString error = process.readAllStandardError().trimmed();
            if (process.exitCode() != 0 || !error.isEmpty()) {
-               logfile("Issue: ADB command failed: " + command + " Error: " + error);
+
+                // if (!command.contains("Permission denied"))
+                //   logfile("Issue: ADB command failed: " + command + " Error: " + error);
+
                return error.isEmpty() ? "Unknown error" : error;
            }
            return output;
@@ -413,13 +416,16 @@
        bool ok;
        int apiLevel = apiOutput.toInt(&ok);
        if (!ok || apiOutput.isEmpty()) {
-            logfile("Issue: Invalid or empty API level output: " + apiOutput);
+            //logfile("Issue: Invalid or empty API level output: " + apiOutput);
             return false;
        }
        if (apiLevel < 29) {
-            logfile("Issue: API level too low for scoped storage: " + QString::number(apiLevel));
+         //   logfile("Issue: API level too low for scoped storage: " + QString::number(apiLevel));
             return false;
        }
+
+
+
 
        // Test storage access
        bool restrictedAccess = false;
@@ -430,7 +436,7 @@
        } else {
             restrictedAccess = touchOutput.contains("Permission denied", Qt::CaseInsensitive);
             if (!restrictedAccess && !touchOutput.isEmpty()) {
-                 logfile("Issue: Unexpected touch output for primary path: " + touchOutput);
+              //   logfile("Issue: Unexpected touch output for primary path: " + touchOutput);
             }
        }
 
@@ -443,7 +449,7 @@
             } else {
                  restrictedAccess = touchOutput.contains("Permission denied", Qt::CaseInsensitive);
                  if (!restrictedAccess && !touchOutput.isEmpty()) {
-                    logfile("Issue: Unexpected touch output for DCIM path: " + touchOutput);
+                   // logfile("Issue: Unexpected touch output for DCIM path: " + touchOutput);
                  }
             }
        }
@@ -451,11 +457,11 @@
        // Check filesystem permissions
        QString lsOutput = runAdbCommand("shell ls -ld /sdcard/");
        if (lsOutput.isEmpty()) {
-            logfile("Issue: Failed to get /sdcard/ permissions");
+           logfile("Issue: Failed to get /sdcard/ permissions");
        } else {
             bool permissiveFs = lsOutput.contains("rwxrwxrwx");
             if (permissiveFs) {
-                 logfile("Issue: Permissive /sdcard/ permissions, vendor may bypass scoped storage");
+               logfile("Issue: Permissive /sdcard/ permissions, vendor may bypass scoped storage");
                  restrictedAccess = false;
             }
        }
@@ -735,11 +741,11 @@
 
 
         QString command=getadbOutput(cstring);
-        logfile ("package: "+cstring);
+        // logfile ("package: "+cstring);
 
             if (command.contains(package))
                 {
-                logfile(package+ " is installed");
+                //logfile(package+ " is installed");
                 is_packageInstalled = true;
                 }
                 else
@@ -4800,7 +4806,7 @@ void MainWindow::restoreButton_clicked() {
                                    }
 
                                    writeBackup(dir);
-                                   QMessageBox::information(this, "", "Restore complete for " + device.daddr);
+                                  // QMessageBox::information(this, "", "Restore complete for " + device.daddr);
                                    logfile("Restore completed successfully for " + device.daddr); // Log successful completion
     } else {
                                    QMessageBox::critical(this, "", "Restore failed for " + device.daddr + ". See log.");
