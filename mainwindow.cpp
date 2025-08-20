@@ -326,7 +326,7 @@
                     QString filePath = dir.absoluteFilePath(dirFile);
                     QFile file(filePath);
                     file.setPermissions(QFile::WriteUser | QFile::ReadUser);
-                    file.remove();
+//                    file.remove();
        }
     }
 
@@ -1182,11 +1182,11 @@
 
                      // cstring = getadbpath() + " connect " + daddr;
 
-                      logfile(getadbpath() );
+                 //     logfile(getadbpath() );
 
 
 
-                      logfile(daddr);
+                 //     logfile(daddr);
 
 
                      // command = connectadb(cstring);
@@ -1212,8 +1212,8 @@
                             return;
                       }
 
-                      logfile(cstring);
-                      logfile(command);
+                    //  logfile(cstring);
+                     // logfile(command);
 
                       if (command.contains("connected to")) {
 
@@ -4531,7 +4531,7 @@ void MainWindow::backupButton_clicked()
                   command = RunLongProcess(cstring, "backup running for " + device.daddr);
                   if (QDir(dir + "userdata").exists()) { // Preserved original validation
                     writeBackup(dir);
-                    QMessageBox::information(this, "", "Backup complete for " + device.daddr); // Added device.daddr
+                    // QMessageBox::information(this, "", "Backup complete for " + device.daddr); // Added device.daddr
                     logfile("Backup completed successfully for " + device.daddr); // Log success
                   } else {
                     QMessageBox::critical(this, "", "Backup failed for " + device.daddr + ". See log."); // Added device.daddr
@@ -6961,7 +6961,7 @@ void MainWindow::createTables()
    bool tableExists = false;
    if (checkQuery.exec("SELECT name FROM sqlite_master WHERE type='table' AND name='device';") && checkQuery.next()) {
                       tableExists = true;
-                      logfile("Device table already exists");
+                      //logfile("Device table already exists");
    } else if (checkQuery.lastError().isValid()) {
                       logfile("Error checking for device table: " + checkQuery.lastError().text());
                       return;

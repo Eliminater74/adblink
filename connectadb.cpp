@@ -17,12 +17,12 @@ QString connectadb(const QString &adbPath, const QStringList &arguments)
 {
     logfile("Starting connection process");
 
-    logfile("Executable: " + adbPath);
-    logfile("Arguments: " + arguments.join(" "));
+   // logfile("Executable: " + adbPath);
+   // logfile("Arguments: " + arguments.join(" "));
 
     QFileInfo adbInfo(adbPath);
-    logfile("adb exists: " + QString::number(adbInfo.exists()));
-    logfile("adb is executable: " + QString::number(adbInfo.isExecutable()));
+    //logfile("adb exists: " + QString::number(adbInfo.exists()));
+    //logfile("adb is executable: " + QString::number(adbInfo.isExecutable()));
 
     QProcess run_command;
     run_command.setProcessChannelMode(QProcess::MergedChannels);
@@ -35,7 +35,7 @@ QString connectadb(const QString &adbPath, const QStringList &arguments)
         return QString();
     }
 
-    logfile("Attempting to connect ...");
+    //logfile("Attempting to connect ...");
 
     bool forceTerminated = false;
     QTimer timer;
@@ -66,7 +66,7 @@ QString connectadb(const QString &adbPath, const QStringList &arguments)
     QObject::connect(&run_command, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
                      [&](int, QProcess::ExitStatus) {
                          if (!forceTerminated) {
-                             logfile("Process exited normally during connect.");
+                            // logfile("Process exited normally during connect.");
                          }
                          loop.quit();
                      });
@@ -79,8 +79,8 @@ QString connectadb(const QString &adbPath, const QStringList &arguments)
     }
 
     QString output = run_command.readAll();
-    logfile("Process output:");
-    logfile(output.trimmed());
+ //   logfile("Process output:");
+  //  logfile(output.trimmed());
 
     return output;
 }
