@@ -5217,7 +5217,15 @@ void MainWindow::on_actionGet_UID_from_APK_file_triggered()
  {
 
             cstring = aapt + " dump badging  " + '"'+ filename+'"';
-            command=getadbOutput(cstring);
+        //    command=getadbOutput(cstring);
+
+            QProcess run_command;
+            run_command.setProcessChannelMode(QProcess::MergedChannels);
+            run_command.start(cstring);
+            run_command.waitForStarted();
+            while(run_command.state() != QProcess::NotRunning)
+            qApp->processEvents();
+            QString command=run_command.readAll();
 
 
 
