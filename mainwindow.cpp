@@ -6683,11 +6683,14 @@ void MainWindow::screenCap()
       QString pulldir = obj["download"].toString();
       file.close();
 
-
+      QString daddr;
 
       DeviceRecord device = queryDeviceRecord(selectedDescription);
       QString port = device.port.isEmpty() ? "5555" : device.port;
-      QString daddr = device.daddr + ":" + port;
+
+      if (device.isusb)
+          daddr = device.daddr;
+      else  daddr = device.daddr + ":" + port;
 
       QDateTime dateTime = QDateTime::currentDateTime();
       QString dtstr = dateTime.toString("yyyyMMdd_HHmmss");
