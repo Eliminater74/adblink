@@ -2,7 +2,11 @@
 
 adblink 7.1
 
+Download current Kodi version
 
+Check device Kodi version &
+compare to stable version.
+ 
 
 
 08/21/25
