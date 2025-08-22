@@ -3169,89 +3169,8 @@
     void MainWindow::on_actionDownload_Kodi_triggered()
     {
 
-/*
-         QJsonObject obj;
-         QJsonDocument doc(obj);
-         QFile jsonFile(databasedir + "adblink.json");
-         if (jsonFile.open(QIODevice::ReadOnly)) {
-           doc = QJsonDocument::fromJson(jsonFile.readAll());
-           obj = doc.object();
-           jsonFile.close();
-         } else {
-           logfile("Failed to open adblink.json");
-         }
+         //  adb shell dumpsys package org.xbmc.kodi | grep versionName
 
-         QString downloadDir = obj["download"].toString();
-         if (downloadDir.isEmpty()) {
-             downloadDir = QDir::homePath();
-         }
-
-         QDir().mkpath(downloadDir);
-
-         QDialog dialog(nullptr);
-         dialog.setWindowTitle("Select Option");
-         QVBoxLayout *layout = new QVBoxLayout(&dialog);
-         QButtonGroup *group = new QButtonGroup(&dialog);
-         QRadioButton *optV7a = new QRadioButton("Download Kodi v7a (32Bit)");
-         QRadioButton *optV8a = new QRadioButton("Download Kodi v8a (64Bit)");
-         QRadioButton *optWebsite = new QRadioButton("Open Kodi website");
-         optV7a->setChecked(true);
-         group->addButton(optV7a, 0);
-         group->addButton(optV8a, 1);
-         group->addButton(optWebsite, 2);
-         layout->addWidget(optV7a);
-         layout->addWidget(optV8a);
-         layout->addWidget(optWebsite);
-         QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-         layout->addWidget(buttons);
-         connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
-         connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
-         if (dialog.exec() != QDialog::Accepted) {
-   return;
-         }
-
-         int selected = group->checkedId();
-         if (selected == 2) {
-   QDesktopServices::openUrl(QUrl("https://kodi.tv/download/android/"));
-   return;
-         }
-
-         QNetworkAccessManager *manager = new QNetworkAccessManager(this);
-         QUrl url(selected == 0 ? "https://mirrors.kodi.tv/releases/android/arm/kodi-21.2-Omega-armeabi-v7a.apk" :
-                      "https://mirrors.kodi.tv/releases/android/arm64-v8a/kodi-21.2-Omega-arm64-v8a.apk");
-         QNetworkRequest request(url);
-         request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
-         QString filename = (selected == 0 ? "kodi-21.2-Omega-armeabi-v7a.apk" : "kodi-21.2-Omega-arm64-v8a.apk");
-         QString filePath = QDir(downloadDir).filePath(filename);
-         QFile *file = new QFile(filePath);
-         if (file->open(QIODevice::WriteOnly)) {
-   QNetworkReply *reply = manager->get(request);
-   connect(reply, &QNetworkReply::readyRead, [=]() {
-       file->write(reply->readAll());
-   });
-   connect(reply, &QNetworkReply::finished, [=]() {
-       file->close();
-       if (reply->error() == QNetworkReply::NoError) {
-           QMessageBox::information(nullptr, "Download Success", "Kodi downloaded. See log for details");
-           logfile("The Kodi APK file has been downloaded successfully to:\n" + filePath);
-       } else {
-           QMessageBox::critical(nullptr, "Download Failed", "Failed to download Kodi. See log");
-           logfile("Kodi download failed\n" + reply->errorString());
-       }
-       file->deleteLater();
-       reply->deleteLater();
-   });
-   connect(reply, &QNetworkReply::errorOccurred, [=](QNetworkReply::NetworkError) {
-       file->close();
-       file->deleteLater();
-       reply->deleteLater();
-   });
-         } else {
-   QMessageBox::critical(nullptr, "File Error", "Failed to open file for writing at:\n" + filePath);
-   file->deleteLater();
-         }
-
-*/
 
          QJsonObject obj;
          QJsonDocument doc(obj);
@@ -3296,7 +3215,8 @@
          loop.exec();
 
          QDialog dialog(nullptr);
-         dialog.setWindowTitle("Select Option");
+         dialog.setWindowTitle("Select Download Option");
+         dialog.setFixedWidth(250);
          QVBoxLayout *layout = new QVBoxLayout(&dialog);
          QLabel *label = new QLabel("Kodi " + kodiVersion);
          QButtonGroup *group = new QButtonGroup(&dialog);
