@@ -1,7 +1,15 @@
-08/XX/25
+09/XX/25
+
+adblink 7.1
+
+
+
+
+08/21/25
 
 adblink version 7.0
 
+Fixes:
 Embedded spaces error
 Pull directory override
 Large scale, last row is out of viewport

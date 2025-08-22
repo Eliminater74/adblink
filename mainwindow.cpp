@@ -3167,14 +3167,49 @@
     void MainWindow::on_actionDownload_Kodi_triggered()
     {
 
+         QStringList options = {"v7a", "v8a", "Website"};
+         bool ok = false;
+         QString choice = QInputDialog::getItem(nullptr, "Select Option", "Choose an action:", options, 0, false, &ok);
+         if (!ok) {
+   return;
+         }
 
+         if (choice == "Website") {
+   QDesktopServices::openUrl(QUrl("https://kodi.tv/download/android/"));
+   return;
+         }
 
-
-        QString link = "https://kodi.tv/download";
-
-        QDesktopServices::openUrl(QUrl(link));
-
-
+         QNetworkAccessManager *manager = new QNetworkAccessManager(this);
+         QUrl url(choice == "v7a" ? "https://mirrors.kodi.tv/releases/android/arm/kodi-21.2-Omega-armeabi-v7a.apk" :
+                      "https://mirrors.kodi.tv/releases/android/arm64-v8a/kodi-21.2-Omega-arm64-v8a.apk");
+         QNetworkRequest request(url);
+         request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
+         QFile *file = new QFile(choice == "v7a" ? "kodi-21.2-Omega-armeabi-v7a.apk" : "kodi-21.2-Omega-arm64-v8a.apk");
+         if (file->open(QIODevice::WriteOnly)) {
+   QNetworkReply *reply = manager->get(request);
+   connect(reply, &QNetworkReply::readyRead, [=]() {
+       file->write(reply->readAll());
+   });
+   connect(reply, &QNetworkReply::finished, [=]() {
+       file->close();
+       if (reply->error() == QNetworkReply::NoError) {
+           qDebug() << "Download completed, file size:" << file->size() << "bytes";
+       } else {
+           qDebug() << "Download failed:" << reply->errorString();
+       }
+       file->deleteLater();
+       reply->deleteLater();
+   });
+   connect(reply, &QNetworkReply::errorOccurred, [=](QNetworkReply::NetworkError) {
+       qDebug() << "Error:" << reply->errorString();
+       file->close();
+       file->deleteLater();
+       reply->deleteLater();
+   });
+         } else {
+   qDebug() << "Failed to open file for writing";
+   file->deleteLater();
+         }
 
     }
 
