@@ -3000,6 +3000,103 @@
 
      }
 
+
+
+     ////////////////////////////////////////////////////////
+
+     void MainWindow::on_actionKodi_version()
+     {
+
+                QString selectedDescription;
+                if (!validateDeviceSelection(selectedDescription)) {
+                 return;
+                }
+
+
+                DeviceRecord device = queryDeviceRecord(selectedDescription);
+                QString cstring = " -s " + device.daddr + " shell dumpsys package org.xbmc.kodi | grep versionName";
+                QStringList args = QProcess::splitCommand(cstring);
+                QString command = getadbOutput2(getadbpath(), args);
+
+                QString installedVersion = command;
+
+                installedVersion = installedVersion.replace("versionName=", "").trimmed();
+
+                if (installedVersion.isEmpty()) {
+                 installedVersion = "Unknown";
+                 logfile("Failed to retrieve installed Kodi version.");
+                } else {
+                 logfile("Installed Kodi version: " + installedVersion);
+                }
+
+
+                QNetworkAccessManager *manager = new QNetworkAccessManager(this);
+                QNetworkRequest versionRequest(QUrl("https://api.github.com/repos/xbmc/xbmc/releases/latest"));
+                versionRequest.setHeader(QNetworkRequest::UserAgentHeader, "adblink/1.0");
+                QNetworkReply *versionReply = manager->get(versionRequest);
+                QString latestVersion = "Unknown";
+                QString releaseName = "Unknown";
+                QEventLoop loop;
+                connect(versionReply, &QNetworkReply::finished, [&]() {
+                    if (versionReply->error() == QNetworkReply::NoError) {
+                        QJsonDocument versionDoc = QJsonDocument::fromJson(versionReply->readAll());
+                        if (!versionDoc.isNull() && versionDoc.isObject()) {
+                            latestVersion = versionDoc.object()["tag_name"].toString();
+                            releaseName = versionDoc.object()["name"].toString();
+                            latestVersion.remove('v'); // Remove 'v' from version if present
+                        } else {
+                            logfile("Failed to parse Kodi version JSON");
+                        }
+                    } else {
+                        logfile("Failed to fetch latest Kodi version: " + versionReply->errorString());
+                    }
+                    versionReply->deleteLater();
+                    loop.quit();
+                });
+                loop.exec();
+
+                // Compare versions and prepare message
+                QString message;
+                if (installedVersion == "Unknown" || latestVersion == "Unknown") {
+                 message = "Cannot compare versions.\nInstalled Kodi Version: " + installedVersion +
+                           "\nLatest Stable Version: " + latestVersion;
+                } else {
+
+                 QStringList installedParts = installedVersion.split('.');
+                 QStringList latestParts = latestVersion.split('.');
+                 bool isUpToDate = true;
+
+                 if (installedParts.size() >= 2 && latestParts.size() >= 2) {
+                        int installedMajor = installedParts[0].toInt();
+                        int installedMinor = installedParts[1].toInt();
+                        int latestMajor = latestParts[0].toInt();
+                        int latestMinor = latestParts[1].toInt();
+
+                        if (installedMajor < latestMajor || (installedMajor == latestMajor && installedMinor < latestMinor)) {
+                            isUpToDate = false;
+                        }
+                 } else {
+                        isUpToDate = (installedVersion == latestVersion);
+                 }
+
+                 message = "Installed Kodi Version: " + installedVersion +
+                           "\nLatest Stable Version: " + latestVersion;
+                 if (isUpToDate) {
+                        message += "\nYour Kodi version is up to date.";
+                 } else {
+                        message += "\nA newer version of Kodi is available.";
+                 }
+                }
+
+
+                logfile(message);
+                QMessageBox::information(this, "Kodi Version Check", message);
+
+
+                manager->deleteLater();
+         }
+
+
     ////////////////////////////////////////////////////////////////////////
 
     void MainWindow::on_clearAdhocButton_clicked()
@@ -3169,7 +3266,7 @@
     void MainWindow::on_actionDownload_Kodi_triggered()
     {
 
-         //  adb shell dumpsys package org.xbmc.kodi | grep versionName
+
 
 
          QJsonObject obj;
@@ -8304,6 +8401,8 @@ void MainWindow::setupMenus()
  actionPush_remote = new QAction("Push remote", this);
  actionDownload_Kodi = new QAction("Download Kodi", this);
  actionKodi_data_usage = new QAction("Kodi data usage", this);
+ actionKodi_version = new QAction("Device Kodi version", this);
+
  actionCreate_kodi_data = new QAction("Create kodi_data", this);
  menuKodi->addAction(actionView_Kodi_Log);
  menuKodi->addAction(actionEdit_XML);
@@ -8312,6 +8411,7 @@ void MainWindow::setupMenus()
  menuKodi->addAction(actionPush_remote);
  menuKodi->addAction(actionDownload_Kodi);
  menuKodi->addAction(actionKodi_data_usage);
+ menuKodi->addAction(actionKodi_version);
  menuKodi->addAction(actionCreate_kodi_data);
 
  // Utility Menu
@@ -8373,7 +8473,9 @@ void MainWindow::setupMenus()
  connect(actionPush_remote,          &QAction::triggered, this, &MainWindow::on_actionPush_remote_triggered);
  connect(actionDownload_Kodi,        &QAction::triggered, this, &MainWindow::on_actionDownload_Kodi_triggered);
  connect(actionKodi_data_usage,      &QAction::triggered, this, &MainWindow::on_actionKodi_data_usage_triggered);
+ connect(actionKodi_version   ,      &QAction::triggered, this, &MainWindow::on_actionKodi_version);
  connect(actionCreate_kodi_data,     &QAction::triggered, this, &MainWindow::on_actionCreate_kodi_data_triggered);
+
  connect(actionSwitch_View,          &QAction::triggered, this, &MainWindow::on_actionSwitch_View_triggered);
  // connect(actionSize,                 &QAction::triggered, this, &MainWindow::switchSize);
 
@@ -8397,10 +8499,10 @@ void MainWindow::setupMenus()
 }
 
 /*
-
+on_actionKodi_version()
      cstring = "-s " +device.daddr+ " shell ps | grep " + device.xbmcpackage;
      args = QProcess::splitCommand(cstring);
      command = getadbOutput2(getadbpath(),args);
-
+    //  adb shell dumpsys package org.xbmc.kodi | grep versionName
 
 */

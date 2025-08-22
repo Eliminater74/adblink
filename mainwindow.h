@@ -177,6 +177,8 @@ private slots:
     void on_actionMount_system_RW_triggered();
     void on_actionWireless_ADBD_triggered();
     void on_actionKodi_data_usage_triggered();
+    void on_actionKodi_version();
+
     void on_clearAdhocButton_clicked();
     void on_actionPreferences_triggered();
     void on_actionReiinstall_Busybox_triggered();
@@ -277,6 +279,7 @@ private:
     QAction *actionView_adbLink_Log;
     QAction *actionWireless_ADBD;
     QAction *actionKodi_data_usage;
+    QAction *actionKodi_version;
     QAction *actionPreferences;
     QAction *infoArchitecture2;
     QAction *actiondelthumb;
