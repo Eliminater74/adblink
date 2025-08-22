@@ -93,7 +93,9 @@
     #include <QMenu>
     #include <QAction>
     #include <QCoreApplication>
-
+#include <QButtonGroup>
+#include <QRadioButton>
+#include <QDialogButtonBox>
 
     #ifdef Q_OS_LINUX
      int os=0;
@@ -3167,24 +3169,61 @@
     void MainWindow::on_actionDownload_Kodi_triggered()
     {
 
-         QStringList options = {"v7a", "v8a", "Website"};
-         bool ok = false;
-         QString choice = QInputDialog::getItem(nullptr, "Select Option", "Choose an action:", options, 0, false, &ok);
-         if (!ok) {
+/*
+         QJsonObject obj;
+         QJsonDocument doc(obj);
+         QFile jsonFile(databasedir + "adblink.json");
+         if (jsonFile.open(QIODevice::ReadOnly)) {
+           doc = QJsonDocument::fromJson(jsonFile.readAll());
+           obj = doc.object();
+           jsonFile.close();
+         } else {
+           logfile("Failed to open adblink.json");
+         }
+
+         QString downloadDir = obj["download"].toString();
+         if (downloadDir.isEmpty()) {
+             downloadDir = QDir::homePath();
+         }
+
+         QDir().mkpath(downloadDir);
+
+         QDialog dialog(nullptr);
+         dialog.setWindowTitle("Select Option");
+         QVBoxLayout *layout = new QVBoxLayout(&dialog);
+         QButtonGroup *group = new QButtonGroup(&dialog);
+         QRadioButton *optV7a = new QRadioButton("Download Kodi v7a (32Bit)");
+         QRadioButton *optV8a = new QRadioButton("Download Kodi v8a (64Bit)");
+         QRadioButton *optWebsite = new QRadioButton("Open Kodi website");
+         optV7a->setChecked(true);
+         group->addButton(optV7a, 0);
+         group->addButton(optV8a, 1);
+         group->addButton(optWebsite, 2);
+         layout->addWidget(optV7a);
+         layout->addWidget(optV8a);
+         layout->addWidget(optWebsite);
+         QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+         layout->addWidget(buttons);
+         connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+         connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+         if (dialog.exec() != QDialog::Accepted) {
    return;
          }
 
-         if (choice == "Website") {
+         int selected = group->checkedId();
+         if (selected == 2) {
    QDesktopServices::openUrl(QUrl("https://kodi.tv/download/android/"));
    return;
          }
 
          QNetworkAccessManager *manager = new QNetworkAccessManager(this);
-         QUrl url(choice == "v7a" ? "https://mirrors.kodi.tv/releases/android/arm/kodi-21.2-Omega-armeabi-v7a.apk" :
+         QUrl url(selected == 0 ? "https://mirrors.kodi.tv/releases/android/arm/kodi-21.2-Omega-armeabi-v7a.apk" :
                       "https://mirrors.kodi.tv/releases/android/arm64-v8a/kodi-21.2-Omega-arm64-v8a.apk");
          QNetworkRequest request(url);
          request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
-         QFile *file = new QFile(choice == "v7a" ? "kodi-21.2-Omega-armeabi-v7a.apk" : "kodi-21.2-Omega-arm64-v8a.apk");
+         QString filename = (selected == 0 ? "kodi-21.2-Omega-armeabi-v7a.apk" : "kodi-21.2-Omega-arm64-v8a.apk");
+         QString filePath = QDir(downloadDir).filePath(filename);
+         QFile *file = new QFile(filePath);
          if (file->open(QIODevice::WriteOnly)) {
    QNetworkReply *reply = manager->get(request);
    connect(reply, &QNetworkReply::readyRead, [=]() {
@@ -3193,23 +3232,141 @@
    connect(reply, &QNetworkReply::finished, [=]() {
        file->close();
        if (reply->error() == QNetworkReply::NoError) {
-           qDebug() << "Download completed, file size:" << file->size() << "bytes";
+           QMessageBox::information(nullptr, "Download Success", "Kodi downloaded. See log for details");
+           logfile("The Kodi APK file has been downloaded successfully to:\n" + filePath);
        } else {
-           qDebug() << "Download failed:" << reply->errorString();
+           QMessageBox::critical(nullptr, "Download Failed", "Failed to download Kodi. See log");
+           logfile("Kodi download failed\n" + reply->errorString());
        }
        file->deleteLater();
        reply->deleteLater();
    });
    connect(reply, &QNetworkReply::errorOccurred, [=](QNetworkReply::NetworkError) {
-       qDebug() << "Error:" << reply->errorString();
        file->close();
        file->deleteLater();
        reply->deleteLater();
    });
          } else {
-   qDebug() << "Failed to open file for writing";
+   QMessageBox::critical(nullptr, "File Error", "Failed to open file for writing at:\n" + filePath);
    file->deleteLater();
          }
+
+*/
+
+         QJsonObject obj;
+         QJsonDocument doc(obj);
+         QFile jsonFile(databasedir + "adblink.json");
+         if (jsonFile.open(QIODevice::ReadOnly)) {
+   doc = QJsonDocument::fromJson(jsonFile.readAll());
+   obj = doc.object();
+   jsonFile.close();
+         } else {
+   logfile("Failed to open adblink.json");
+         }
+
+         QString downloadDir = obj["download"].toString();
+         if (downloadDir.isEmpty()) {
+   downloadDir = QDir::homePath();
+         }
+
+         QDir().mkpath(downloadDir);
+
+         QNetworkAccessManager *manager = new QNetworkAccessManager(this);
+         QNetworkRequest versionRequest(QUrl("https://api.github.com/repos/xbmc/xbmc/releases/latest"));
+         versionRequest.setHeader(QNetworkRequest::UserAgentHeader, "adblink/1.0");
+         QNetworkReply *versionReply = manager->get(versionRequest);
+         QString kodiVersion = "Unknown";
+         QEventLoop loop;
+         connect(versionReply, &QNetworkReply::finished, [&]() {
+             if (versionReply->error() == QNetworkReply::NoError) {
+                 QJsonDocument versionDoc = QJsonDocument::fromJson(versionReply->readAll());
+                 if (!versionDoc.isNull() && versionDoc.isObject()) {
+                     kodiVersion = versionDoc.object()["name"].toString();
+                     if (kodiVersion.isEmpty()) {
+                         kodiVersion = versionDoc.object()["tag_name"].toString();
+                     }
+                     kodiVersion.remove('v'); // Remove 'v' from version if present
+                 }
+             } else {
+                 logfile("Failed to fetch Kodi version: " + versionReply->errorString());
+             }
+             versionReply->deleteLater();
+             loop.quit();
+         });
+         loop.exec();
+
+         QDialog dialog(nullptr);
+         dialog.setWindowTitle("Select Option");
+         QVBoxLayout *layout = new QVBoxLayout(&dialog);
+         QLabel *label = new QLabel("Kodi " + kodiVersion);
+         QButtonGroup *group = new QButtonGroup(&dialog);
+         QRadioButton *optV7a = new QRadioButton("Download v7a (32Bit)");
+         QRadioButton *optV8a = new QRadioButton("Download v8a (64Bit)");
+         QRadioButton *optWebsite = new QRadioButton("Open website");
+         optV7a->setChecked(true);
+         group->addButton(optV7a, 0);
+         group->addButton(optV8a, 1);
+         group->addButton(optWebsite, 2);
+         layout->addWidget(label);
+         layout->addWidget(optV7a);
+         layout->addWidget(optV8a);
+         layout->addWidget(optWebsite);
+         QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+         layout->addWidget(buttons);
+         connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+         connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+         if (dialog.exec() != QDialog::Accepted) {
+   return;
+         }
+
+         int selected = group->checkedId();
+         if (selected == 2) {
+   QDesktopServices::openUrl(QUrl("https://kodi.tv/download/android"));
+   return;
+         }
+
+         if (kodiVersion == "Unknown") {
+   QMessageBox::critical(nullptr, "Error", "Cannot download: Kodi version unknown. See log");
+   logfile("Download aborted: Unknown Kodi version");
+   return;
+         }
+
+         QString baseUrl = "https://mirrors.kodi.tv/releases/android/";
+         QString arch = (selected == 0 ? "arm/kodi-" : "arm64-v8a/kodi-");
+         QString filename = "kodi-" + kodiVersion + (selected == 0 ? "-armeabi-v7a.apk" : "-arm64-v8a.apk");
+         QUrl url(baseUrl + arch + kodiVersion + (selected == 0 ? "-armeabi-v7a.apk" : "-arm64-v8a.apk"));
+         QNetworkRequest request(url);
+         request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
+         QString filePath = QDir(downloadDir).filePath(filename);
+         QFile *file = new QFile(filePath);
+         if (file->open(QIODevice::WriteOnly)) {
+   QNetworkReply *reply = manager->get(request);
+   connect(reply, &QNetworkReply::readyRead, [=]() {
+       file->write(reply->readAll());
+   });
+   connect(reply, &QNetworkReply::finished, [=]() {
+       file->close();
+       if (reply->error() == QNetworkReply::NoError) {
+           QMessageBox::information(nullptr, "Download Success", "Kodi downloaded. See log for details");
+           logfile("The Kodi APK file has been downloaded successfully to:\n" + filePath);
+       } else {
+           QMessageBox::critical(nullptr, "Download Failed", "Failed to download Kodi. See log");
+           logfile("Kodi download failed\n" + reply->errorString());
+       }
+       file->deleteLater();
+       reply->deleteLater();
+   });
+   connect(reply, &QNetworkReply::errorOccurred, [=](QNetworkReply::NetworkError) {
+       file->close();
+       file->deleteLater();
+       reply->deleteLater();
+   });
+         } else {
+   QMessageBox::critical(nullptr, "File Error", "Failed to open file for writing at:\n" + filePath);
+   file->deleteLater();
+         }
+
+
 
     }
 
