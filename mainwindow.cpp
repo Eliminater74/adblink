@@ -314,9 +314,8 @@
     void MainWindow::onApplicationQuit() {
 
 
-     QString cstring = " kill-server";
-     QStringList args = QProcess::splitCommand(cstring);
-     QString command = getadbOutput2(getadbpath(),args);
+     QString cstring = "null kill-server";
+     QString command=getadbOutput(cstring);
      logfile(command);
      logfile("server stopped");
 
@@ -1330,10 +1329,9 @@
              }
 
 
-             QString cstring =  " disconnect " + daddr;
-             QStringList args = QProcess::splitCommand(cstring);
-             QString command = getadbOutput2(getadbpath(),args);
+             QString cstring =  "null disconnect " + daddr;
 
+             QString command=getadbOutput(cstring);
 
              logfile(command);
              logfile("disconnect: " + daddr);
@@ -1610,11 +1608,8 @@
        QString selectedDescription;
        DeviceRecord device;
 
-     cstring =  "devices";
-     QStringList args = QProcess::splitCommand(cstring);
-     command = getadbOutput2(getadbpath(),args);
-
-
+     cstring =  "null devices";
+     command=getadbOutput(cstring);
 
 
        mstringlist = command.split(QRegExp("[\t\n\r]"), QString::SkipEmptyParts);
@@ -2857,9 +2852,8 @@
 
 
 
-        cstring = "-s " +device.daddr+ " shell ip route";
-        args = QProcess::splitCommand(cstring);
-        command = getadbOutput2(getadbpath(), args);
+        cstring = "null -s " +device.daddr+ " shell ip route";
+        command = getadbOutput(cstring);
 
         QString ip;
         {
@@ -2874,9 +2868,8 @@
         tcpipDialog dialog;
 
 
-        cstring = " -s "+device.daddr+" shell getprop persist.adb.tcp.port";
-        args = QProcess::splitCommand(cstring);
-        command = getadbOutput2(getadbpath(), args);
+        cstring = "null  -s "+device.daddr+" shell getprop persist.adb.tcp.port";
+        command = getadbOutput(cstring);
         logfile("shell getprop persist.adb.tcp.port: " + command);
 
         dialog.settcplabel("Device IP: " + ip);
@@ -2884,31 +2877,28 @@
 
         if(dialog.exec() == QDialog::Accepted)
         {
-                // Enable TCP/IP
-                cstring = " -s "+device.daddr+" tcpip 5555";
-                args = QProcess::splitCommand(cstring);
-                command = getadbOutput2(getadbpath(), args);
+
+                cstring = "null -s "+device.daddr+" tcpip 5555";
+                command = getadbOutput(cstring);
                 logfile(command);
 
-                // Wait 2 seconds, then attempt to connect
+
                 QTimer::singleShot(2000, this, [this, ip]() {
 
                     // Connect over Wi-Fi
-                    QString cstring = "connect " + ip + ":5555";
-                    QStringList args = QProcess::splitCommand(cstring);
-                    QString command = getadbOutput2(getadbpath(), args);
+                    QString cstring = "null connect " + ip + ":5555";
+                    QString command = getadbOutput(cstring);
                     logfile("adb connect: " + command);
 
-                    // Check result
+
                     if (command.contains("connected to"))
                     {
                         QMessageBox::information(this, "Success",
                                                  "Wireless ADB enabled for " + ip);
 
 
-                         cstring = "disconnect " + ip + ":5555";
-                        args = QProcess::splitCommand(cstring);
-                        command = getadbOutput2(getadbpath(), args);
+                         cstring = "null disconnect " + ip + ":5555";
+                        command = getadbOutput(cstring);
                         logfile("adb disconnect: " + command);
                     }
                     else
@@ -2923,183 +2913,88 @@
 
 
 
+
     ////////////////////////////////////////////////////////
 
     void MainWindow::on_actionKodi_data_usage_triggered()
     {
-              QString kodidata;
-              QString cstring;
-              QString command;
-              QString xbmcpath;
+        QString kodidata;
+        QString cstring;
+        QString command;
+        QString xbmcpath;
 
-              QString selectedDescription;
-              if (!validateDeviceSelection(selectedDescription)) {
+        QString selectedDescription;
+        if (!validateDeviceSelection(selectedDescription)) {
                 return;
-              }
+        }
 
-                DeviceRecord device = queryDeviceRecord(selectedDescription);
+        DeviceRecord device = queryDeviceRecord(selectedDescription);
 
-                cstring = " -s "+ device.daddr + " shell ls /sdcard/xbmc_env.properties";
-                QStringList args = QProcess::splitCommand(cstring);
+        cstring = " -s "+ device.daddr + " shell ls /sdcard/xbmc_env.properties";
+        QStringList args = QProcess::splitCommand(cstring);
 
-      if (  returncode(getadbpath(), args)    ) {
-              cstring = " -s "+ device.daddr + " shell cat /sdcard/xbmc_env.properties";
-              args = QProcess::splitCommand(cstring);
-              command = getadbOutput2(getadbpath(),args);
+        if (  returncode(getadbpath(), args)    ) {
+                cstring = "null -s "+ device.daddr + " shell cat /sdcard/xbmc_env.properties";
+                command = getadbOutput(cstring);
 
-              command.replace(QRegExp("[\r\n]"), "");
 
-              int startIndex = command.indexOf("=") + 1;
-              int endIndex = command.indexOf(".kodi") + 5;
+                command.replace(QRegExp("[\r\n]"), "");
+
+                int startIndex = command.indexOf("=") + 1;
+                int endIndex = command.indexOf(".kodi") + 5;
                 xbmcpath = command.mid(startIndex, endIndex - startIndex);
 
-                }
+        }
 
-           else
+        else
 
-                {
+        {
 
 
 
                 xbmcpath = "/sdcard/Android/data/"+device.xbmcpackage;
 
-             }
+        }
 
 
-              cstring = getadb() + " shell du -sh " + xbmcpath;
+        cstring = getadb() + " shell du -sh " + xbmcpath;
 
 
-                 command=RunLongProcess(cstring,"calculating data size");
+        command=RunLongProcess(cstring,"calculating data size");
 
 
-                if (command.contains("No such file"))
-                {
-                    kodidata = "No data found";
-                }
+        if (command.contains("No such file"))
+        {
+                kodidata = "No data found";
+        }
 
-                else
-                {
+        else
+        {
 
 
 
                 int z = command.indexOf("G");
 
                 if (z==-1)
-                    z = command.indexOf("M");
+              z = command.indexOf("M");
 
                 if (z==-1)
-                    z = command.indexOf("K");
+              z = command.indexOf("K");
 
 
                 if (z != -1)
-                 kodidata = command.mid(0,z+1);
+              kodidata = command.mid(0,z+1);
 
-                }
+        }
 
-         QMessageBox::information(0,"Kodi Data","Kodi data size:  " + kodidata);
+        QMessageBox::information(0,"Kodi Data","Kodi data size:  " + kodidata);
 
-     }
+    }
+
 
 
 
      ////////////////////////////////////////////////////////
-
-     /*
-     void MainWindow::on_actionKodi_version()
-     {
-
-          // on_actionDownload_Kodi_triggered()
-
-
-               QString selectedDescription;
-                if (!validateDeviceSelection(selectedDescription)) {
-                 return;
-                }
-
-
-                DeviceRecord device = queryDeviceRecord(selectedDescription);
-                QString cstring = " -s " + device.daddr + " shell dumpsys package org.xbmc.kodi | grep versionName";
-                QStringList args = QProcess::splitCommand(cstring);
-                QString command = getadbOutput2(getadbpath(), args);
-
-                QString installedVersion = command;
-
-                installedVersion = installedVersion.replace("versionName=", "").trimmed();
-
-                if (installedVersion.isEmpty()) {
-                 installedVersion = "Unknown";
-                 logfile("Failed to retrieve installed Kodi version.");
-                } else {
-                 logfile("Installed Kodi version: " + installedVersion);
-                }
-
-
-                QNetworkAccessManager *manager = new QNetworkAccessManager(this);
-                QNetworkRequest versionRequest(QUrl("https://api.github.com/repos/xbmc/xbmc/releases/latest"));
-                versionRequest.setHeader(QNetworkRequest::UserAgentHeader, "adblink/1.0");
-                QNetworkReply *versionReply = manager->get(versionRequest);
-                QString latestVersion = "Unknown";
-                QString releaseName = "Unknown";
-                QEventLoop loop;
-                connect(versionReply, &QNetworkReply::finished, [&]() {
-                    if (versionReply->error() == QNetworkReply::NoError) {
-                        QJsonDocument versionDoc = QJsonDocument::fromJson(versionReply->readAll());
-                        if (!versionDoc.isNull() && versionDoc.isObject()) {
-                            latestVersion = versionDoc.object()["tag_name"].toString();
-                            releaseName = versionDoc.object()["name"].toString();
-                            latestVersion.remove('v'); // Remove 'v' from version if present
-                        } else {
-                            logfile("Failed to parse Kodi version JSON");
-                        }
-                    } else {
-                        logfile("Failed to fetch latest Kodi version: " + versionReply->errorString());
-                    }
-                    versionReply->deleteLater();
-                    loop.quit();
-                });
-                loop.exec();
-
-                // Compare versions and prepare message
-                QString message;
-                if (installedVersion == "Unknown" || latestVersion == "Unknown") {
-                 message = "Cannot compare versions.\nInstalled Kodi Version: " + installedVersion +
-                           "\nLatest Stable Version: " + latestVersion;
-                } else {
-
-                 QStringList installedParts = installedVersion.split('.');
-                 QStringList latestParts = latestVersion.split('.');
-                 bool isUpToDate = true;
-
-                 if (installedParts.size() >= 2 && latestParts.size() >= 2) {
-                        int installedMajor = installedParts[0].toInt();
-                        int installedMinor = installedParts[1].toInt();
-                        int latestMajor = latestParts[0].toInt();
-                        int latestMinor = latestParts[1].toInt();
-
-                        if (installedMajor < latestMajor || (installedMajor == latestMajor && installedMinor < latestMinor)) {
-                            isUpToDate = false;
-                        }
-                 } else {
-                        isUpToDate = (installedVersion == latestVersion);
-                 }
-
-                 message = "Installed Kodi Version: " + installedVersion +
-                           "\nLatest Stable Version: " + latestVersion;
-                 if (isUpToDate) {
-                        message += "\nYour Kodi version is up to date.";
-                 } else {
-                        message += "\nA newer version of Kodi is available.";
-                 }
-                }
-
-
-                logfile(message);
-                QMessageBox::information(this, "Kodi Version Check", message);
-
-
-                manager->deleteLater();
-         }
-*/
 
      void MainWindow::on_actionKodi_version()
      {
@@ -3109,9 +3004,9 @@
          }
 
          DeviceRecord device = queryDeviceRecord(selectedDescription);
-         QString cstring = " -s " + device.daddr + " shell dumpsys package org.xbmc.kodi | grep versionName";
-         QStringList args = QProcess::splitCommand(cstring);
-         QString command = getadbOutput2(getadbpath(), args);
+         QString cstring = "null -s " + device.daddr + " shell dumpsys package org.xbmc.kodi | grep versionName";
+         QString command = getadbOutput(cstring);
+
          QString kversion;
          QString installedVersion = command;
          installedVersion = installedVersion.replace("versionName=", "").trimmed();
@@ -4762,16 +4657,11 @@ void MainWindow::backupButton_clicked()
 
     logfile("Starting backup for " + device.daddr);
 
-   // cstring = adbPrefix + "shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
 
-  // backup commit #1
-
-
-    cstring = " -s "+ device.daddr + " shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
-    QStringList args = QProcess::splitCommand(cstring);
-    QString s = getadbOutput2(getadbpath(),args);
+    cstring = "null -s "+ device.daddr + " shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
 
 
+    QString s = getadbOutput(cstring);
 
 
     QStringList list = s.split('\n');
@@ -4902,10 +4792,9 @@ void MainWindow::restoreButton_clicked() {
 
 
      if (  returncode(getadbpath(), args)    ) {
-                                   cstring = " -s "+ device.daddr + " shell cat /sdcard/xbmc_env.properties";
-                                   args = QProcess::splitCommand(cstring);
-                                   command = getadbOutput2(getadbpath(),args);
+                                   cstring = "null -s "+ device.daddr + " shell cat /sdcard/xbmc_env.properties";
 
+                                   command = getadbOutput(cstring);
                                    command.replace(QRegExp("[\r\n]"), "");
 
                                    int startIndex = command.indexOf("=") + 1;
@@ -4929,11 +4818,11 @@ void MainWindow::restoreButton_clicked() {
 
 
 
-    // Check if Kodi is running
+     cstring = "null -s "+ device.daddr +  " shell ps | grep " + device.xbmcpackage;
 
-     cstring =  "shell ps | grep " + device.xbmcpackage;
-     args = QProcess::splitCommand(cstring);
-     command = getadbOutput2(getadbpath(),args);
+
+      command = getadbOutput(cstring);
+
 
 
      if (command.contains(device.xbmcpackage)) {
@@ -4941,10 +4830,9 @@ void MainWindow::restoreButton_clicked() {
                                    reply = QMessageBox::question(this, "Stop Kodi", "Cannot restore while Kodi is running on " + device.daddr + ".\n Stop " + device.xbmcpackage + "?",
                                                                  QMessageBox::Yes | QMessageBox::No);
                                    if (reply == QMessageBox::Yes) {
-                  cstring =  " -s "+ device.daddr + " shell am force-stop " + device.xbmcpackage;
-                  args = QProcess::splitCommand(cstring);
-                  command = getadbOutput2(getadbpath(),args);
+                  cstring =  "null -s "+ device.daddr + " shell am force-stop " + device.xbmcpackage;
 
+                  command = getadbOutput(cstring);
 
                                    } else {
                   logfile(device.daddr + ": Error: " + device.xbmcpackage + " running. Restore failed"); // Log error
@@ -4954,11 +4842,10 @@ void MainWindow::restoreButton_clicked() {
 
     // Determine storage root and path if no xbmc_env.properties
     if (!xbmc_env) {
-                                   cstring =  " -s "+ device.daddr + " shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
-                                   args = QProcess::splitCommand(cstring);
-                                   QString storageOutput = getadbOutput2(getadbpath(),args);
+                                   cstring =  "null -s "+ device.daddr + " shell /data/local/tmp/adblink/busybox find /storage -type d -maxdepth 1";
 
-                                  // qDebug() << storageOutput;
+                                   QString storageOutput = getadbOutput(cstring);
+
 
                                    QStringList storageList = storageOutput.split('\n');
 
@@ -5007,10 +4894,9 @@ void MainWindow::restoreButton_clicked() {
                   // Create kodi_data area
 
 
-                  cstring =  " -s "+ device.daddr +  " shell mkdir -p " + kbase;
-                  args = QProcess::splitCommand(cstring);
-                  command = getadbOutput2(getadbpath(),args);
+                  cstring =  "null -s "+ device.daddr +  " shell mkdir -p " + kbase;
 
+                  command = getadbOutput(cstring);
 
                   if (command.contains("No such file or directory")) {
                     QMessageBox::critical(this, "", "Failed to create kodi_data directory on " + device.daddr);
@@ -5060,30 +4946,29 @@ void MainWindow::restoreButton_clicked() {
 
 
 
-    cstring =  " -s "+ device.daddr + " shell ls " + mcpath;
-    args = QProcess::splitCommand(cstring);
-    command = getadbOutput2(getadbpath(),args);
+    cstring =  "null -s "+ device.daddr + " shell ls " + mcpath;
 
+    command = getadbOutput(cstring);
 
     if (command.contains("No such file or directory")) {
 
-                                   cstring =  " -s "+ device.daddr + " shell mkdir -p " + mcpath + "/files/.kodi";
-                                   args = QProcess::splitCommand(cstring);
-                                   command = getadbOutput2(getadbpath(),args);
+                                   cstring =  "null -s "+ device.daddr + " shell mkdir -p " + mcpath + "/files/.kodi";
+
+                                   command = getadbOutput(cstring);
                                    QString errorOutput = command;
 
 
-                                   cstring =  " -s "+ device.daddr + " shell ls " + mcpath + "/files/.kodi";
-                                   args = QProcess::splitCommand(cstring);
-                                   command = getadbOutput2(getadbpath(),args);
+                                   cstring =  "null -s "+ device.daddr + " shell ls " + mcpath + "/files/.kodi";
+
+                                   command = getadbOutput(cstring);
 
 
-
-                                   if (command.contains("No such file or directory")) {
+            if (command.contains("No such file or directory")) {
                   QMessageBox::critical(this, "", "Error creating restore point on " + device.daddr);
                   logfile(device.daddr + ": Error creating restore point: " + errorOutput); // Log error
                   return;
-                                   }
+                }
+
     }
 
     dir = dir + "/.";
@@ -5094,10 +4979,8 @@ void MainWindow::restoreButton_clicked() {
 
     if (command.contains("bytes")) {
 
-                                   cstring =  " -s "+ device.daddr +  " shell rm /sdcard/xbmc_env.properties";
-                                   args = QProcess::splitCommand(cstring);
-                                   command = getadbOutput2(getadbpath(),args);
-
+                                   cstring =  "null -s "+ device.daddr +  " shell rm /sdcard/xbmc_env.properties";
+                                   command = getadbOutput(cstring);
 
                                    // Always create xbmc_env.properties for scoped devices
 
@@ -5105,11 +4988,9 @@ void MainWindow::restoreButton_clicked() {
 
              if (isScoped()) {
 
-                  cstring =  " -s "+ device.daddr +  " shell echo xbmc.data=" + mcpath + "/files > /sdcard/xbmc_env.properties";
-                  args = QProcess::splitCommand(cstring);
-                  command = getadbOutput2(getadbpath(),args);
+                  cstring =  "null -s "+ device.daddr +  " shell echo xbmc.data=" + mcpath + "/files > /sdcard/xbmc_env.properties";
 
-
+                  command = getadbOutput(cstring);
 
                   if (command.contains("No such file or directory") || !command.isEmpty()) {
                     QMessageBox::critical(this, "", "Failed to create xbmc_env.properties on " + device.daddr);
@@ -5119,10 +5000,9 @@ void MainWindow::restoreButton_clicked() {
                                    } else if (n_data_root != "/sdcard/") {
 
 
-                  cstring =  " -s "+ device.daddr +  " shell echo xbmc.data=" + mcpath + "/files > /sdcard/xbmc_env.properties";
-                  args = QProcess::splitCommand(cstring);
-                  command = getadbOutput2(getadbpath(),args);
+                  cstring =  "null -s "+ device.daddr +  " shell echo xbmc.data=" + mcpath + "/files > /sdcard/xbmc_env.properties";
 
+                  command = getadbOutput(cstring);
 
 
                                    }
@@ -5639,10 +5519,9 @@ void MainWindow::on_actionSend_text_triggered()
  if (ok && !text.isEmpty()) {
 
             text.replace(" ", "%s");
-            cstring = "-s " +device.daddr+ " shell input text " + text;
-            QStringList args = QProcess::splitCommand(cstring);
-            command = getadbOutput2(getadbpath(),args);
+            cstring = "null -s " +device.daddr+ " shell input text " + text;
 
+            command = getadbOutput(cstring);
             logfile(cstring);
             logfile(command);
  }
@@ -7018,11 +6897,10 @@ void MainWindow::screenCap()
       QString dtstr = dateTime.toString("yyyyMMdd_HHmmss");
       dtstr = dtstr + ".png";
 
-      QString cstring = " -s " + daddr + " shell screencap -p " + "/data/local/tmp/"+dtstr;
+      QString cstring = "null -s " + daddr + " shell screencap -p " + "/data/local/tmp/"+dtstr;
 
-      QStringList args = QProcess::splitCommand(cstring);
-      QString command = getadbOutput2(getadbpath(),args);
 
+      QString command = getadbOutput(cstring);
 
       logfile(cstring);
 
@@ -7038,9 +6916,9 @@ void MainWindow::screenCap()
 
 
 
-      cstring = " -s " + device.daddr +  " pull "+ "/data/local/tmp/"+dtstr + " " + pulldir;
-       args = QProcess::splitCommand(cstring);
-      command = getadbOutput2(getadbpath(),args);
+      cstring = "null -s " + device.daddr +  " pull "+ "/data/local/tmp/"+dtstr + " " + pulldir;
+
+      command = getadbOutput(cstring);
 
       logfile(cstring);
       logfile(command);
@@ -7054,9 +6932,9 @@ void MainWindow::screenCap()
                return;
       }
 
-      cstring =  cstring = " -s " + device.daddr +   " shell rm " + "/data/local/tmp/"+dtstr;
-      args = QProcess::splitCommand(cstring);
-      command = getadbOutput2(getadbpath(),args);
+      cstring =  cstring = "null -s " + device.daddr +   " shell rm " + "/data/local/tmp/"+dtstr;
+
+      command = getadbOutput(cstring);
 
       logfile(cstring);
       logfile(command);
@@ -7186,11 +7064,8 @@ void MainWindow::serverlabel()
 {
 
 
-           QString cstring =  "devices";
-           QStringList args = QProcess::splitCommand(cstring);
-           QString command = getadbOutput2(getadbpath(),args);
-
-
+           QString cstring =  "null devices";
+           QString command = getadbOutput(cstring);
 
 
 }
@@ -7591,12 +7466,9 @@ void MainWindow::displayOff()
 
 bool MainWindow::usbConnected(QString daddr)
 {
-
-
-   QString cstring =  "devices";
-   QStringList args = QProcess::splitCommand(cstring);
-   QString command = getadbOutput2(getadbpath(),args);
-   return command.contains(daddr);
+    QString cstring =  "null devices";
+    QString command = getadbOutput(cstring);
+    return command.contains(daddr);
 }
 
 
@@ -8513,7 +8385,7 @@ void MainWindow::setupMenus()
  actiondelthumb = new QAction("Delete thumbnails", this);
  actionPush_remote = new QAction("Push remote", this);
  actionDownload_Kodi = new QAction("Download Kodi", this);
- actionKodi_data_usage = new QAction("Kodi data usage", this);
+ actionKodi_data_usage = new QAction("Kodi data size", this);
  actionKodi_version = new QAction("Check Kodi version", this);
 
  actionCreate_kodi_data = new QAction("Create kodi_data", this);
@@ -8612,12 +8484,3 @@ void MainWindow::setupMenus()
 
 
 }
-
-/*
-on_actionKodi_version()
-     cstring = "-s " +device.daddr+ " shell ps | grep " + device.xbmcpackage;
-     args = QProcess::splitCommand(cstring);
-     command = getadbOutput2(getadbpath(),args);
-    //  adb shell dumpsys package org.xbmc.kodi | grep versionName
-
-*/

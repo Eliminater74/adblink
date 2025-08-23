@@ -1,6 +1,6 @@
 #include "keyboarddialog.h"
 #include "ui_keyboarddialog.h"
-#include "adboutput.h"
+#include "getadbdata.h"
 #include <QMessageBox>
 #include <QProcess>
 #include <QDebug>
@@ -99,75 +99,75 @@ keyboardDialog::~keyboardDialog()
 
 void keyboardDialog::setdaddr(const QString &daddress)
 {
-     cstring = " -s " + daddress;
+     cstring = "null -s " + daddress;
 }
 
 
 
 void keyboardDialog::on_upButton_clicked()
 {
- QString command=getadbOutput2(getadbpath(), QProcess::splitCommand(cstring+"19"));
+ getadbOutput(cstring+"19");
 
 }
 
 void keyboardDialog::on_downButton_clicked()
 {
-    QString command=getadbOutput2(getadbpath(), QProcess::splitCommand(cstring+"20"));
+   getadbOutput(cstring+"20");
 }
 
 void keyboardDialog::on_leftButton_clicked()
 {
 
 
-   QString command=getadbOutput2(getadbpath(), QProcess::splitCommand(cstring+"21"));
+   getadbOutput(cstring+"21");
 
 
 }
 
 void keyboardDialog::on_rightButton_clicked()
 {
-   QString command=getadbOutput2(getadbpath(), QProcess::splitCommand(cstring+"22"));
+   getadbOutput(cstring+"22");
 
 
 }
 
 void keyboardDialog::on_homeButton_clicked()
 {
-   QString command=getadbOutput2(getadbpath(), QProcess::splitCommand(cstring+"3"));
+   getadbOutput(cstring+"3");
 }
 
 void keyboardDialog::on_selectButton_clicked()
 {
-   QString command=getadbOutput2(getadbpath(), QProcess::splitCommand(cstring+"23"));
+   getadbOutput(cstring+"23");
 }
 
 void keyboardDialog::on_menuButton_clicked()
 {
-   QString command=getadbOutput2(getadbpath(), QProcess::splitCommand(cstring+"82"));
+   getadbOutput(cstring+"82");
 }
 
 void keyboardDialog::on_backButton_clicked()
 {
-   QString command=getadbOutput2(getadbpath(), QProcess::splitCommand(cstring+"4"));
+   getadbOutput(cstring+"4");
 }
 
 void keyboardDialog::on_fastforwardButton_clicked()
 {
-    QString command=getadbOutput2(getadbpath(), QProcess::splitCommand(cstring+"90"));
+   getadbOutput(cstring+"90");
 }
 
 void keyboardDialog::on_rewindButton_clicked()
 {
-   QString command=getadbOutput2(getadbpath(), QProcess::splitCommand(cstring+"89"));
+   getadbOutput(cstring+"89");
 }
 
 void keyboardDialog::on_playpauseButton_clicked()
 {
-   QString command=getadbOutput2(getadbpath(), QProcess::splitCommand(cstring+"85"));
+  getadbOutput(cstring+"85");
 
 }
 
 void keyboardDialog::on_powerButton_clicked()
 {
-    QString command=getadbOutput2(getadbpath(), QProcess::splitCommand(cstring+"26"));
+  getadbOutput(cstring+"26");
 }
