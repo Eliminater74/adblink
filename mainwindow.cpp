@@ -3112,7 +3112,7 @@
          QString cstring = " -s " + device.daddr + " shell dumpsys package org.xbmc.kodi | grep versionName";
          QStringList args = QProcess::splitCommand(cstring);
          QString command = getadbOutput2(getadbpath(), args);
-
+         QString kversion;
          QString installedVersion = command;
          installedVersion = installedVersion.replace("versionName=", "").trimmed();
 
@@ -3171,8 +3171,10 @@
                  isUpToDate = (installedVersion == latestVersion);
                 }
 
+                kversion=latestVersion.section('-', 0, 0);
+
                 message = "Installed Kodi Version: " + installedVersion +
-                          "\nLatest Stable Version: " + latestVersion;
+                          "\nLatest Stable Version: " + kversion; //latestVersion;
                 if (isUpToDate) {
                  message += "\nYour Kodi version is up to date.";
                 } else {
@@ -3185,7 +3187,7 @@
          // Display dialog based on version status
          if (!isUpToDate && installedVersion != "Unknown" && latestVersion != "Unknown") {
 
-                QString kversion=latestVersion.section('-', 0, 0);
+
                 QMessageBox msgBox(this);
                 msgBox.setWindowTitle("Kodi Version Check");
                 msgBox.setText(message + "\n\nWould you like to download " + kversion+"?");
@@ -8512,7 +8514,7 @@ void MainWindow::setupMenus()
  actionPush_remote = new QAction("Push remote", this);
  actionDownload_Kodi = new QAction("Download Kodi", this);
  actionKodi_data_usage = new QAction("Kodi data usage", this);
- actionKodi_version = new QAction("Device Kodi version", this);
+ actionKodi_version = new QAction("Check Kodi version", this);
 
  actionCreate_kodi_data = new QAction("Create kodi_data", this);
  menuKodi->addAction(actionView_Kodi_Log);
@@ -8521,8 +8523,10 @@ void MainWindow::setupMenus()
  menuKodi->addAction(actiondelthumb);
  menuKodi->addAction(actionPush_remote);
  menuKodi->addAction(actionDownload_Kodi);
- menuKodi->addAction(actionKodi_data_usage);
+
  menuKodi->addAction(actionKodi_version);
+
+ menuKodi->addAction(actionKodi_data_usage);
  menuKodi->addAction(actionCreate_kodi_data);
 
  // Utility Menu
