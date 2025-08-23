@@ -3004,10 +3004,14 @@
 
      ////////////////////////////////////////////////////////
 
+     /*
      void MainWindow::on_actionKodi_version()
      {
 
-                QString selectedDescription;
+          // on_actionDownload_Kodi_triggered()
+
+
+               QString selectedDescription;
                 if (!validateDeviceSelection(selectedDescription)) {
                  return;
                 }
@@ -3095,6 +3099,113 @@
 
                 manager->deleteLater();
          }
+*/
+
+     void MainWindow::on_actionKodi_version()
+     {
+         QString selectedDescription;
+         if (!validateDeviceSelection(selectedDescription)) {
+                return;
+         }
+
+         DeviceRecord device = queryDeviceRecord(selectedDescription);
+         QString cstring = " -s " + device.daddr + " shell dumpsys package org.xbmc.kodi | grep versionName";
+         QStringList args = QProcess::splitCommand(cstring);
+         QString command = getadbOutput2(getadbpath(), args);
+
+         QString installedVersion = command;
+         installedVersion = installedVersion.replace("versionName=", "").trimmed();
+
+         if (installedVersion.isEmpty()) {
+                installedVersion = "Unknown";
+                logfile("Failed to retrieve installed Kodi version.");
+         } else {
+                logfile("Installed Kodi version: " + installedVersion);
+         }
+
+         QNetworkAccessManager *manager = new QNetworkAccessManager(this);
+         QNetworkRequest versionRequest(QUrl("https://api.github.com/repos/xbmc/xbmc/releases/latest"));
+         versionRequest.setHeader(QNetworkRequest::UserAgentHeader, "adblink/1.0");
+         QNetworkReply *versionReply = manager->get(versionRequest);
+         QString latestVersion = "Unknown";
+         QString releaseName = "Unknown";
+         QEventLoop loop;
+         connect(versionReply, &QNetworkReply::finished, [&]() {
+             if (versionReply->error() == QNetworkReply::NoError) {
+                 QJsonDocument versionDoc = QJsonDocument::fromJson(versionReply->readAll());
+                 if (!versionDoc.isNull() && versionDoc.isObject()) {
+                     latestVersion = versionDoc.object()["tag_name"].toString();
+                     releaseName = versionDoc.object()["name"].toString();
+                     latestVersion.remove('v'); // Remove 'v' from version if present
+                 } else {
+                     logfile("Failed to parse Kodi version JSON");
+                 }
+             } else {
+                 logfile("Failed to fetch latest Kodi version: " + versionReply->errorString());
+             }
+             versionReply->deleteLater();
+             loop.quit();
+         });
+         loop.exec();
+
+         // Compare versions and prepare message
+         QString message;
+         bool isUpToDate = true;
+         if (installedVersion == "Unknown" || latestVersion == "Unknown") {
+                message = "Cannot compare versions.\nInstalled Kodi Version: " + installedVersion +
+                          "\nLatest Stable Version: " + latestVersion;
+         } else {
+                QStringList installedParts = installedVersion.split('.');
+                QStringList latestParts = latestVersion.split('.');
+
+                if (installedParts.size() >= 2 && latestParts.size() >= 2) {
+                 int installedMajor = installedParts[0].toInt();
+                 int installedMinor = installedParts[1].toInt();
+                 int latestMajor = latestParts[0].toInt();
+                 int latestMinor = latestParts[1].toInt();
+
+                 if (installedMajor < latestMajor || (installedMajor == latestMajor && installedMinor < latestMinor)) {
+                        isUpToDate = false;
+                 }
+                } else {
+                 isUpToDate = (installedVersion == latestVersion);
+                }
+
+                message = "Installed Kodi Version: " + installedVersion +
+                          "\nLatest Stable Version: " + latestVersion;
+                if (isUpToDate) {
+                 message += "\nYour Kodi version is up to date.";
+                } else {
+                 message += "\nA newer version of Kodi is available.";
+                }
+         }
+
+         logfile(message);
+
+         // Display dialog based on version status
+         if (!isUpToDate && installedVersion != "Unknown" && latestVersion != "Unknown") {
+
+                QString kversion=latestVersion.section('-', 0, 0);
+                QMessageBox msgBox(this);
+                msgBox.setWindowTitle("Kodi Version Check");
+                msgBox.setText(message + "\n\nWould you like to download " + kversion+"?");
+                QPushButton *downloadButton = msgBox.addButton("Download", QMessageBox::ActionRole);
+                msgBox.addButton(QMessageBox::Cancel);
+                msgBox.setDefaultButton(downloadButton);
+
+
+                msgBox.exec();
+
+                if (msgBox.clickedButton() == downloadButton) {
+                 on_actionDownload_Kodi_triggered();
+                }
+         } else {
+                QMessageBox::information(this, "Kodi Version Check", message);
+         }
+
+         manager->deleteLater();
+     }
+
 
 
     ////////////////////////////////////////////////////////////////////////
