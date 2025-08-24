@@ -3286,7 +3286,7 @@
    logfile("Failed to open adblink.json");
          }
 
-         QString downloadDir = obj["download"].toString();
+         QString downloadDir = obj["install"].toString();
          if (downloadDir.isEmpty()) {
    downloadDir = QDir::homePath();
          }
@@ -3332,12 +3332,16 @@
          group->addButton(optV7a, 0);
          group->addButton(optV8a, 1);
          group->addButton(optWebsite, 2);
-         layout->addWidget(label);
+         layout->addWidget(label, 0, Qt::AlignHCenter);
          layout->addWidget(optV7a);
          layout->addWidget(optV8a);
          layout->addWidget(optWebsite);
          QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-         layout->addWidget(buttons);
+
+         buttons->setCenterButtons(true);
+         layout->addWidget(buttons, 0, Qt::AlignHCenter);
+
+
          connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
          connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
          if (dialog.exec() != QDialog::Accepted) {
@@ -7711,7 +7715,8 @@ void MainWindow::projectivyAccess()
                 } else {
                     file.write(dlReply->readAll());
                     file.close();
-                    QMessageBox::information(nullptr, "Download Complete", "Saved to: " + path);
+                    logfile("Download complete, saved to: " + path);
+                    QMessageBox::information(nullptr, "Download Complete", "Download complete, see log for details");
                 }
 
                 dlReply->deleteLater();
