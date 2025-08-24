@@ -3318,8 +3318,10 @@
          loop.exec();
 
          QDialog dialog(nullptr);
+         dialog.setStyleSheet("QDialog { border: 1px solid grey; }");
          dialog.setWindowTitle("Select Download Option");
          dialog.setFixedWidth(250);
+         dialog.setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint);
          QVBoxLayout *layout = new QVBoxLayout(&dialog);
          QLabel *label = new QLabel("Kodi " + kodiVersion);
          QButtonGroup *group = new QButtonGroup(&dialog);
@@ -8506,10 +8508,11 @@ QString p2 = "null  -s "+ device.daddr +" shell settings put secure enabled_acce
 QString cstring;
 
 QDialog dialog(nullptr);
+ dialog.setStyleSheet("QDialog { border: 1px solid grey; }");
 dialog.setWindowTitle("Accessibility");
 dialog.setFixedWidth(250);
 QVBoxLayout *layout = new QVBoxLayout(&dialog);
-QLabel *label = new QLabel("Set Projectivy Accessibility");
+QLabel *label = new QLabel("Projectivy Launcher Accessibility");
 QButtonGroup *group = new QButtonGroup(&dialog);
 QRadioButton *penable = new QRadioButton("Enable");
 QRadioButton *pdisable = new QRadioButton("Disable ");
@@ -8522,10 +8525,8 @@ layout->addWidget(label);
 layout->addWidget(penable);
 layout->addWidget(pdisable);
 
-//QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-//layout->addWidget(buttons);
-
 QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+dialog.setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint);
 buttons->setCenterButtons(true);
 layout->addWidget(buttons, 0, Qt::AlignHCenter);
 
@@ -8541,9 +8542,6 @@ if (selected == 0)
    cstring=p1;
 else
    cstring=p2;
-
-qDebug() << selected;
-
 
 QString command = getadbOutput(cstring);
 logfile(command);
