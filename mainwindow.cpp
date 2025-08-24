@@ -4586,15 +4586,24 @@ void MainWindow::writeBackup (QString dir) {
 
 ///////////////////////////////////////////////////////
 QString MainWindow::readInstall(QString databasedir) {
- QJsonObject obj;
- QJsonDocument doc(obj);
- QFile file(databasedir + "adblink.json");
- file.open(QIODevice::ReadOnly);
- doc = QJsonDocument::fromJson(file.readAll());
- obj = doc.object();
- QString install = obj["install"].toString();
- file.close();
- return install;
+     QJsonObject obj;
+     QJsonDocument doc(obj);
+     QFile file(databasedir + "adblink.json");
+
+     if (file.open(QIODevice::ReadOnly)) {
+     doc = QJsonDocument::fromJson(file.readAll());
+     obj = doc.object();
+     QString install = obj["install"].toString();
+     file.close();
+
+     // Return home directory if install is null or empty
+     if (install.isNull() || install.isEmpty()) {
+                    return QDir::homePath();
+     }
+     return install;
+     }
+
+     return QDir::homePath();
 }
 
 
@@ -7582,6 +7591,170 @@ QPushButton* MainWindow::setupDonateButton(QWidget* parent) {
    return donateButton;
 }
 
+/////////////////////////////////////////////////
+
+void MainWindow::projectivyAccess()
+{
+   QDialog dialog(nullptr);
+   dialog.setStyleSheet("QDialog { border: 1px solid grey; }");
+   dialog.setWindowTitle("Accessibility");
+   dialog.setFixedWidth(250);
+
+
+
+   QVBoxLayout *layout = new QVBoxLayout(&dialog);
+   QLabel *label = new QLabel("Projectivy Launcher");
+
+
+   QButtonGroup *group = new QButtonGroup(&dialog);
+   QRadioButton *penable   = new QRadioButton("Enable Accessibility");
+   QRadioButton *pdisable  = new QRadioButton("Disable Accessibility");
+   QRadioButton *pdownload = new QRadioButton("Download APK");
+   QRadioButton *pwebsite  = new QRadioButton("Projectivy Website");
+
+   penable->setChecked(true);
+   group->addButton(penable,   0);
+   group->addButton(pdisable,  1);
+   group->addButton(pdownload, 2);
+   group->addButton(pwebsite,  3);
+
+   layout->addWidget(label, 0, Qt::AlignHCenter);
+   layout->addWidget(penable);
+   layout->addWidget(pdisable);
+   layout->addWidget(pdownload);
+   layout->addWidget(pwebsite);
+
+   QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+   dialog.setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint);
+   buttons->setCenterButtons(true);
+   layout->addWidget(buttons, 0, Qt::AlignHCenter);
+
+   connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+   connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+
+   if (dialog.exec() != QDialog::Accepted) {
+        return;
+   }
+
+   int selected = group->checkedId();
+
+   QString projectivyEntry = "com.spocky.projengmenu/com.spocky.projengmenu.services.ProjectivyAccessibilityService";
+
+   QString apkdir = readInstall(databasedir);
+
+
+   if (selected == 2) {
+        QNetworkAccessManager *manager = new QNetworkAccessManager(this);
+        manager->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
+
+        QUrl apiUrl("https://api.github.com/repos/spocky/miproja1/releases/latest");
+        QNetworkRequest apiReq{apiUrl};
+        apiReq.setRawHeader("User-Agent", "QtApp");
+
+        QNetworkReply *reply = manager->get(apiReq);
+
+        connect(reply, &QNetworkReply::finished, this, [this, reply, manager, apkdir]() {
+            if (reply->error() != QNetworkReply::NoError) {
+                QMessageBox::critical(this, "API Error", reply->errorString());
+                reply->deleteLater();
+                return;
+            }
+
+            QJsonDocument doc = QJsonDocument::fromJson(reply->readAll());
+            reply->deleteLater();
+
+            if (!doc.isObject()) {
+                QMessageBox::critical(this, "Error", "Invalid JSON reply");
+                return;
+            }
+
+            QJsonObject obj = doc.object();
+            QJsonArray assets = obj["assets"].toArray();
+            if (assets.isEmpty()) {
+                QMessageBox::critical(this, "Error", "No assets found in release");
+                return;
+            }
+
+            QString apkUrl, apkName;
+            for (const QJsonValue &val : assets) {
+                QJsonObject asset = val.toObject();
+                QString name = asset["name"].toString();
+                if (name.endsWith(".apk")) {
+                    apkUrl = asset["browser_download_url"].toString();
+                    apkName = name;
+                    break;
+                }
+            }
+
+            if (apkUrl.isEmpty()) {
+                QMessageBox::critical(this, "Error", "No APK found in release assets");
+                return;
+            }
+
+            QNetworkRequest dlReq{QUrl(apkUrl)};
+            dlReq.setRawHeader("User-Agent", "QtApp");
+
+            QNetworkReply *dlReply = manager->get(dlReq);
+
+            connect(dlReply, &QNetworkReply::finished, this, [dlReply, apkName, apkdir]() {
+                if (dlReply->error() != QNetworkReply::NoError) {
+                    QMessageBox::critical(nullptr, "Download Failed", dlReply->errorString());
+                    dlReply->deleteLater();
+                    return;
+                }
+
+                QString path = apkdir + "/" + apkName;
+
+                QFile file(path);
+                if (!file.open(QIODevice::WriteOnly)) {
+                    QMessageBox::critical(nullptr, "File Error", "Cannot write to " + path);
+                } else {
+                    file.write(dlReply->readAll());
+                    file.close();
+                    QMessageBox::information(nullptr, "Download Complete", "Saved to: " + path);
+                }
+
+                dlReply->deleteLater();
+            });
+        });
+   }
+
+   else if (selected == 3) {
+        QDesktopServices::openUrl(QUrl("https://github.com/spocky/miproja1/releases"));
+   }
+
+   else if (selected == 0 || selected == 1) {
+        QString selectedDescription;
+        if (!validateDeviceSelection(selectedDescription)) {
+            return;
+        }
+
+        DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+
+        QString currentList = getadbOutput(
+                                  "null -s " + device.daddr + " shell settings get secure enabled_accessibility_services"
+                                  ).trimmed();
+
+        QStringList entries = currentList.split(':', Qt::SkipEmptyParts);
+
+        if (selected == 0) {
+
+            if (!entries.contains(projectivyEntry))
+                entries.append(projectivyEntry);
+        } else {
+
+            entries.removeAll(projectivyEntry);
+        }
+
+        QString newList = entries.join(':');
+
+
+        QString command = "null -s " + device.daddr +
+                          " shell settings put secure enabled_accessibility_services '" + newList + "'";
+        logfile(getadbOutput(command));
+   }
+}
 
 
 /////////////////////////////////////////
@@ -8409,7 +8582,7 @@ void MainWindow::setupMenus()
  actionReiinstall_Busybox = new QAction("Reinstall Busybox", this);
  infoArchitecture2 = new QAction("System information", this);
  actionOculus = new QAction("Oculus Headset", this);
- actionAccess = new QAction("Set Accessibility", this);
+ actionAccess = new QAction("Projectivy", this);
 // actionSet_Kodi_permissions = new QAction("Set app permissions", this);
  Erase_adbLink_database = new QAction("Erase device database", this);
  actionSend_text = new QAction("Send text to device", this);
@@ -8472,8 +8645,6 @@ void MainWindow::setupMenus()
  connect(actionReiinstall_Busybox,   &QAction::triggered, this, &MainWindow::on_actionReiinstall_Busybox_triggered);
  connect(infoArchitecture2,           &QAction::triggered, this, &MainWindow::on_infoArchitecture_triggered);
 
- // connect(actionSet_Kodi_permissions, &QAction::triggered, this, &MainWindow::on_actionSet_Kodi_permissions_triggered);
-
  connect(Erase_adbLink_database,     &QAction::triggered, this, &MainWindow::on_Erase_adbLink_database_triggered);
  connect(actionSend_text,            &QAction::triggered, this, &MainWindow::on_actionSend_text_triggered);
  connect(actionGet_UID_from_APK_file,&QAction::triggered, this, &MainWindow::on_actionGet_UID_from_APK_file_triggered);
@@ -8484,66 +8655,7 @@ void MainWindow::setupMenus()
  connect(actionAbout,                &QAction::triggered, this, &MainWindow::on_actionAbout_triggered);
  connect(actionOculus,               &QAction::triggered, this, &MainWindow::on_actionOculus_VR_triggered);
  connect(actionHelp,                 &QAction::triggered, this, &MainWindow::on_actionHelp_triggered);
-connect(actionAccess,               &QAction::triggered, this, &MainWindow::setAssess);
+connect(actionAccess,               &QAction::triggered, this, &MainWindow::projectivyAccess);
 
 }
 
-
-
-void MainWindow::setAssess()
-{
-
-
-QString selectedDescription;
-if (!validateDeviceSelection(selectedDescription)) {
-   return;
-}
-
-DeviceRecord device = queryDeviceRecord(selectedDescription);
-
-
-
-QString p1 = "null  -s "+ device.daddr +" shell settings put secure enabled_accessibility_services com.spocky.projengmenu/com.spocky.projengmenu.services.ProjectivyAccessibilityService";
-QString p2 = "null  -s "+ device.daddr +" shell settings put secure enabled_accessibility_services ''";
-QString cstring;
-
-QDialog dialog(nullptr);
- dialog.setStyleSheet("QDialog { border: 1px solid grey; }");
-dialog.setWindowTitle("Accessibility");
-dialog.setFixedWidth(250);
-QVBoxLayout *layout = new QVBoxLayout(&dialog);
-QLabel *label = new QLabel("Projectivy Launcher Accessibility");
-QButtonGroup *group = new QButtonGroup(&dialog);
-QRadioButton *penable = new QRadioButton("Enable");
-QRadioButton *pdisable = new QRadioButton("Disable ");
-
-penable->setChecked(true);
-group->addButton(penable, 0);
-group->addButton(pdisable, 1);
-
-layout->addWidget(label);
-layout->addWidget(penable);
-layout->addWidget(pdisable);
-
-QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-dialog.setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint);
-buttons->setCenterButtons(true);
-layout->addWidget(buttons, 0, Qt::AlignHCenter);
-
-
-connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
-connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
-if (dialog.exec() != QDialog::Accepted) {
-   return;
-}
-
-int selected = group->checkedId();
-if (selected == 0)
-   cstring=p1;
-else
-   cstring=p2;
-
-QString command = getadbOutput(cstring);
-logfile(command);
-
-}

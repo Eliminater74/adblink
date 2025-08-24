@@ -185,7 +185,7 @@ void adbprefDialog::setupUiManual()
     addRow(downloadButton, downloadPathEdit, "Pull", "downloadButton", "Default folder for pulled files",
            "dfilepath", "Default folder for pulled files", &adbprefDialog::on_downloadButton_clicked);
 
-    addRow(installButton, installPathEdit, "Install", "installButton", "Default folder for APK files",
+    addRow(installButton, installPathEdit, "APK files", "installButton", "Default folder for APK files",
            "ifilepath", "Default folder for APK files", &adbprefDialog::on_installButton_clicked);
 
     addRow(backupButton, backupPathEdit, "Backup", "backupButton", "Default folder for backup sets",

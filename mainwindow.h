@@ -168,7 +168,9 @@ private slots:
     void on_actionView_Kodi_Log_triggered();
     void on_actionView_adbLink_Log_triggered();
     void stopapp_clicked();
-    void setAssess();
+
+    void projectivyAccess();
+
     void on_actionPaste_path_triggered();
     void on_actionStop_Application_triggered();
     void on_actionStart_Application_triggered();
