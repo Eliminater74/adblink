@@ -11,10 +11,8 @@
     #include "deviceinfodialog.h"
     #include "cachedialog.h"
     #include "datadialog.h"
-    #include "backupdialog.h"
     #include "forcequitdialog.h"
     #include "restdialog.h"
-    #include "adboutput.h"
     #include "klogdialog.h"
     #include "tcpipdialog.h"
     #include "adbprefdialog.h"
@@ -7331,6 +7329,8 @@ void MainWindow::stopapp_clicked()
    }
 }
 
+
+
 /////////////////////////////////////////
 
 void MainWindow::startapp_clicked()
@@ -8407,6 +8407,7 @@ void MainWindow::setupMenus()
  actionReiinstall_Busybox = new QAction("Reinstall Busybox", this);
  infoArchitecture2 = new QAction("System information", this);
  actionOculus = new QAction("Oculus Headset", this);
+ actionAccess = new QAction("Set Accessibility", this);
 // actionSet_Kodi_permissions = new QAction("Set app permissions", this);
  Erase_adbLink_database = new QAction("Erase device database", this);
  actionSend_text = new QAction("Send text to device", this);
@@ -8422,7 +8423,7 @@ void MainWindow::setupMenus()
  menuUtility->addAction(actionReiinstall_Busybox);
  menuUtility->addAction(infoArchitecture2);
  menuUtility->addAction(actionOculus);
-// menuUtility->addAction(actionSet_Kodi_permissions);
+ menuUtility->addAction(actionAccess);
  menuUtility->addAction(Erase_adbLink_database);
  menuUtility->addAction(actionSend_text);
  menuUtility->addAction(actionGet_UID_from_APK_file);
@@ -8481,6 +8482,70 @@ void MainWindow::setupMenus()
  connect(actionAbout,                &QAction::triggered, this, &MainWindow::on_actionAbout_triggered);
  connect(actionOculus,               &QAction::triggered, this, &MainWindow::on_actionOculus_VR_triggered);
  connect(actionHelp,                 &QAction::triggered, this, &MainWindow::on_actionHelp_triggered);
+connect(actionAccess,               &QAction::triggered, this, &MainWindow::setAssess);
 
+}
+
+
+
+void MainWindow::setAssess()
+{
+
+
+QString selectedDescription;
+if (!validateDeviceSelection(selectedDescription)) {
+   return;
+}
+
+DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+
+
+QString p1 = "null  -s "+ device.daddr +" shell settings put secure enabled_accessibility_services com.spocky.projengmenu/com.spocky.projengmenu.services.ProjectivyAccessibilityService";
+QString p2 = "null  -s "+ device.daddr +" shell settings put secure enabled_accessibility_services ''";
+QString cstring;
+
+QDialog dialog(nullptr);
+dialog.setWindowTitle("Accessibility");
+dialog.setFixedWidth(250);
+QVBoxLayout *layout = new QVBoxLayout(&dialog);
+QLabel *label = new QLabel("Set Projectivy Accessibility");
+QButtonGroup *group = new QButtonGroup(&dialog);
+QRadioButton *penable = new QRadioButton("Enable");
+QRadioButton *pdisable = new QRadioButton("Disable ");
+
+penable->setChecked(true);
+group->addButton(penable, 0);
+group->addButton(pdisable, 1);
+
+layout->addWidget(label);
+layout->addWidget(penable);
+layout->addWidget(pdisable);
+
+//QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+//layout->addWidget(buttons);
+
+QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+buttons->setCenterButtons(true);
+layout->addWidget(buttons, 0, Qt::AlignHCenter);
+
+
+connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+if (dialog.exec() != QDialog::Accepted) {
+   return;
+}
+
+int selected = group->checkedId();
+if (selected == 0)
+   cstring=p1;
+else
+   cstring=p2;
+
+qDebug() << selected;
+
+
+QString command = getadbOutput(cstring);
+logfile(command);
 
 }
