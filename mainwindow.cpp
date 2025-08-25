@@ -281,11 +281,6 @@
 
             setWindowSize();
 
-      //      qDebug() << getlocaladb();
-
-          // setFixedSize(windowsize);
-          //  setupUI();
-
 
             do_versioncheck();
 
@@ -5499,6 +5494,7 @@ void MainWindow::on_actionGet_UID_from_APK_file_triggered()
               QRegExp rx("(\\')");
               QStringList query = item.split(rx);
               QString packagename = query.at(1);
+              logfile("package name query: "+packagename);
               QMessageBox::information(this, "",packagename);
               }
             }
@@ -7736,6 +7732,14 @@ void MainWindow::projectivyAccess()
 
         DeviceRecord device = queryDeviceRecord(selectedDescription);
 
+        if (!is_package("com.spocky.projengmenu"))
+        {
+            QMessageBox::information(nullptr, "", "Projectivy not installed");
+            return;
+
+
+        }
+
 
         QString currentList = getadbOutput(
                                   "null -s " + device.daddr + " shell settings get secure enabled_accessibility_services"
@@ -7755,11 +7759,24 @@ void MainWindow::projectivyAccess()
         QString newList = entries.join(':');
 
 
-        QString command = "null -s " + device.daddr +
-                          " shell settings put secure enabled_accessibility_services '" + newList + "'";
-        logfile(getadbOutput(command));
-   }
+        QString cstring = "null -s " + device.daddr + " shell settings put secure enabled_accessibility_services '" + newList + "'";
+        getadbOutput(cstring);
+
+        cstring = "null -s " + device.daddr + " shell dumpsys accessibility";
+        QString result=getadbOutput(cstring);
+
+bool bound = result.contains(QRegExp("Bound services:.*" + QRegExp::escape(projectivyEntry)));
+bool enabled = result.contains(QRegExp("Enabled services:.*" + QRegExp::escape(projectivyEntry)));
+
+if (bound || enabled) {
+    QMessageBox::information(nullptr, "Accessibility Status", "Service is active");
+    logfile("Projectivy service is active (bound or enabled).");
+} else {
+    QMessageBox::warning(nullptr, "Accessibility Status", "Service not active");
+    logfile("Projectivy service NOT active.");
 }
+
+} }
 
 
 /////////////////////////////////////////
@@ -8587,8 +8604,7 @@ void MainWindow::setupMenus()
  actionReiinstall_Busybox = new QAction("Reinstall Busybox", this);
  infoArchitecture2 = new QAction("System information", this);
  actionOculus = new QAction("Oculus Headset", this);
- actionAccess = new QAction("Projectivy", this);
-// actionSet_Kodi_permissions = new QAction("Set app permissions", this);
+ actionAccess = new QAction("Projectivy Launcher", this);
  Erase_adbLink_database = new QAction("Erase device database", this);
  actionSend_text = new QAction("Send text to device", this);
  actionGet_UID_from_APK_file = new QAction("Get package name", this);
@@ -8596,10 +8612,10 @@ void MainWindow::setupMenus()
  View_Changelog = new QAction("View changelog", this);
  actionWireless_ADBD = new QAction("Wireless ADBD", this);
  actionReboot = new QAction("Reboot device", this);
- // actionSize = new QAction("Toggle UI Size", this);
+
 
  menuUtility->addAction(actionSwitch_View);
- // menuUtility->addAction(actionSize);
+
  menuUtility->addAction(actionReiinstall_Busybox);
  menuUtility->addAction(infoArchitecture2);
  menuUtility->addAction(actionOculus);
@@ -8664,3 +8680,5 @@ connect(actionAccess,               &QAction::triggered, this, &MainWindow::proj
 
 }
 
+ // is_package("com.spocky.projengmenu")
+// SERVICE="com.spocky.projengmenu/com.spocky.projengmenu.services.ProjectivyAccessibilityService"; adb shell "settings put secure accessibility_enabled 1 && settings put secure enabled_accessibility_services $SERVICE && echo '--- SETTINGS ---' && settings get secure accessibility_enabled && settings get secure enabled_accessibility_services && echo '--- DUMPSYS ---' && dumpsys accessibility | grep -A5 'Active services'"
