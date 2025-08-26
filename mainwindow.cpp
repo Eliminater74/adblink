@@ -8615,11 +8615,16 @@ void MainWindow::setupMenus()
 
 
  menuUtility->addAction(actionSwitch_View);
-
  menuUtility->addAction(actionReiinstall_Busybox);
  menuUtility->addAction(infoArchitecture2);
  menuUtility->addAction(actionOculus);
- menuUtility->addAction(actionAccess);
+
+
+
+menuUtility->addAction(actionAccess);
+
+
+
  menuUtility->addAction(Erase_adbLink_database);
  menuUtility->addAction(actionSend_text);
  menuUtility->addAction(actionGet_UID_from_APK_file);
@@ -8661,7 +8666,6 @@ void MainWindow::setupMenus()
  connect(actionCreate_kodi_data,     &QAction::triggered, this, &MainWindow::on_actionCreate_kodi_data_triggered);
 
  connect(actionSwitch_View,          &QAction::triggered, this, &MainWindow::on_actionSwitch_View_triggered);
- // connect(actionSize,                 &QAction::triggered, this, &MainWindow::switchSize);
 
  connect(actionReiinstall_Busybox,   &QAction::triggered, this, &MainWindow::on_actionReiinstall_Busybox_triggered);
  connect(infoArchitecture2,           &QAction::triggered, this, &MainWindow::on_infoArchitecture_triggered);
@@ -8676,7 +8680,7 @@ void MainWindow::setupMenus()
  connect(actionAbout,                &QAction::triggered, this, &MainWindow::on_actionAbout_triggered);
  connect(actionOculus,               &QAction::triggered, this, &MainWindow::on_actionOculus_VR_triggered);
  connect(actionHelp,                 &QAction::triggered, this, &MainWindow::on_actionHelp_triggered);
-connect(actionAccess,               &QAction::triggered, this, &MainWindow::projectivyAccess);
+ connect(actionAccess,               &QAction::triggered, this, &MainWindow::projectivyAccess);
 
 }
 
