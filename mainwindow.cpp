@@ -2500,7 +2500,7 @@
          else
             iskodi=false;
 
-         fmdialog = new usbfileDialog(iskodi,this);
+         fmdialog = new usbfileDialog(iskodi,ffontsize, this);
 
          fmdialog->setWindowModality(Qt::NonModal);
 
@@ -2533,7 +2533,8 @@
 
 
 
-         fmdialog->setkodiPath(mcpath);
+         fmdialog->setkodiPath(mcpath);        
+         fmdialog->setfmfont(ffontsize);
 
 /*
          if (!adhoc_ip->text().isEmpty())
@@ -3159,6 +3160,7 @@
          bool startview = doc.object()["startview"].toBool();
          int defaultwindow = doc.object()["defaultwindow"].toInt();
 
+         int fmfont = doc.object()["fmfont"].toInt();
          int lgfont = doc.object()["lgfont"].toInt();
          int smfont = doc.object()["smfont"].toInt();
          int mdfont = doc.object()["mdfont"].toInt();
@@ -3200,8 +3202,9 @@
          dialog.setlocaladb(localadb);
          dialog.setinstalldir(install);
          dialog.setbackupdir(backup);
-          dialog.setdonation(donation);
+         dialog.setdonation(donation);
 
+         dialog.setfmfont(fmfont);
          dialog.setlgfont(lgfont);
          dialog.setmdfont(mdfont);
          dialog.setsmfont(smfont);
@@ -3232,6 +3235,8 @@
              obj["localadb"] = dialog.localadb();
 
              // Update font values in the JSON object
+
+             obj["fmfont"] = dialog.fmfont();
              obj["lgfont"] = dialog.lgfont();
              obj["mdfont"] = dialog.mdfont();
              obj["smfont"] = dialog.smfont();
@@ -3274,6 +3279,14 @@
               case 2:sfontsize=14; break;
               case 3:sfontsize=16; break;
               default:sfontsize=12; break;
+              }
+
+              switch (dialog.fmfont()) {
+              case 0:ffontsize=12; break;
+              case 1:ffontsize=16; break;
+              case 2:ffontsize=18; break;
+              case 3:ffontsize=22; break;
+              default:ffontsize=16; break;
               }
 
 
@@ -8182,6 +8195,7 @@ void MainWindow::createjson() {
    defaultValues["startview"] = true;
    defaultValues["defaultwindow"] = true;
    defaultValues["dropdown"] = "0";
+   defaultValues["fmfont"] = 0;
    defaultValues["lgfont"] = 0;
    defaultValues["mdfont"] = 0;
    defaultValues["smfont"] = 0;

@@ -317,6 +317,7 @@ private:
     int lfontsize = 22;
     int mfontsize = 20;
     int sfontsize = 18;
+    int ffontsize = 12;
 
     QSize buttonsize;
     QSize windowsize;

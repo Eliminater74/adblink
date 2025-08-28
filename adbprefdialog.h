@@ -31,6 +31,7 @@ public:
     int linterm() const;
     int macterm() const;
 
+    int fmfont() const;
     int lgfont() const;
     int mdfont() const;
     int smfont() const;
@@ -46,6 +47,7 @@ public:
     void setstartview(bool val);
     void setdefaultwindow(int index);
 
+   void setfmfont(int index);
    void setlgfont(int index);
    void setmdfont(int index);
    void setsmfont(int index);

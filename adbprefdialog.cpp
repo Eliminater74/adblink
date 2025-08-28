@@ -134,7 +134,7 @@ void adbprefDialog::setupUiManual()
 
     fmfontCombo = new QComboBox(this);
     fmfontCombo->setObjectName("smfontselect");
-    fmfontCombo->addItems({"10","12","14","16"});
+    fmfontCombo->addItems({"12","16","18","22"});
 
     QHBoxLayout *fmfontRow = new QHBoxLayout;
     QLabel *fmfontLabel = new QLabel("File Manager font:", this);
@@ -366,6 +366,7 @@ int adbprefDialog::defaultwindow() const { return defaultWindowCombo->currentInd
 int adbprefDialog::linterm() const { return linTermCombo->currentIndex(); }
 int adbprefDialog::macterm() const { return macTermCombo->currentIndex(); }
 
+int adbprefDialog::fmfont() const { return fmfontCombo->currentIndex(); }
 int adbprefDialog::lgfont() const { return lgfontCombo->currentIndex(); }
 int adbprefDialog::mdfont() const { return mdfontCombo->currentIndex(); }
 int adbprefDialog::smfont() const { return smfontCombo->currentIndex(); }
@@ -385,6 +386,7 @@ void adbprefDialog::setdefaultwindow(int index) { defaultWindowCombo->setCurrent
 void adbprefDialog::setlinterm(int index) { linTermCombo->setCurrentIndex(index); }
 void adbprefDialog::setmacterm(int index) { macTermCombo->setCurrentIndex(index); }
 
+void adbprefDialog::setfmfont(int index) { fmfontCombo->setCurrentIndex(index); }
 void adbprefDialog::setlgfont(int index) { lgfontCombo->setCurrentIndex(index); }
 void adbprefDialog::setmdfont(int index) { mdfontCombo->setCurrentIndex(index); }
 void adbprefDialog::setsmfont(int index) { smfontCombo->setCurrentIndex(index); }

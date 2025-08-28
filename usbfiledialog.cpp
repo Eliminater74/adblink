@@ -64,7 +64,7 @@ QString scriptDir;
 #include <QDebug>
 
 
-usbfileDialog::usbfileDialog(bool iskodi, QWidget *parent) :
+usbfileDialog::usbfileDialog(bool iskodi, int fmfont, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::usbfileDialog)
 {
@@ -79,15 +79,15 @@ usbfileDialog::usbfileDialog(bool iskodi, QWidget *parent) :
     ui->usblistWidget1->setProperty("currentDirectory", current_directory1);
     ui->usblistWidget2->setProperty("currentDirectory", current_directory2);
 
-/*
-    QFont font = ui->usblistWidget1->font(); // Get the current font
-    font.setPixelSize(20);                   // Set the desired pixel size
-    ui->usblistWidget1->setFont(font);       // Apply the new font
 
-    font = ui->usblistWidget2->font();       // Repeat for the second widget
-    font.setPixelSize(20);
+    QFont font = ui->usblistWidget1->font();
+    font.setPixelSize(fmfont);
+    ui->usblistWidget1->setFont(font);
+
+    font = ui->usblistWidget2->font();
+    font.setPixelSize(fmfont);
     ui->usblistWidget2->setFont(font);
-*/
+
 
 
     // Ensure drag-and-drop properties
@@ -158,6 +158,13 @@ void usbfileDialog::setMode(const int &modenum) {
 }
 
 
+///////////////////////////////////////////////////////////////////////////
+
+void usbfileDialog::setfmfont( int fmfontsize) {
+
+    fmfont=fmfontsize;
+
+}
 ///////////////////////////////////////////////////////////////////////////
 
 void usbfileDialog::setData(const QString &labelText) {

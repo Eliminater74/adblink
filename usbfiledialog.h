@@ -13,7 +13,7 @@ class usbfileDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit usbfileDialog(bool iskodi, QWidget *parent = nullptr);
+    explicit usbfileDialog(bool iskodi, int fmfontsize, QWidget *parent = nullptr);
     ~usbfileDialog();
 
 public:
@@ -21,6 +21,7 @@ public:
     void setADB(const QString &adbdata);
     void setPath1(QString currentdir);
     void setPath2(QString currentdir);
+    void setfmfont(int fmfontsize);
     void setadbdir(QString adbdir);
     void setMode(const int &modenum);
     void setPackagename(const QString &packagename);
@@ -59,6 +60,7 @@ public:
     QString current_directory1;
     QString rootShell;
 
+
 public slots:
     void on_usblistWidget1_doubleClicked(const QModelIndex &index);
     void on_usblistWidget2_doubleClicked(const QModelIndex &index);
@@ -78,6 +80,9 @@ public slots:
     void usbTimerEvent();
     void gather_push();
     void handleFilesDropped(const QStringList &fileNames, const QString &targetDir);
+
+private:
+int    fmfont;
 
 private slots:
     QString fix_directory(QString dirname);
