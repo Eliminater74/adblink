@@ -3276,6 +3276,156 @@
 
     ////////////////////////////////////////////////
 
+
+    void MainWindow::on_actionDownload_Kodi_triggered()
+    {
+         QJsonObject obj;
+         QJsonDocument doc(obj);
+         QFile jsonFile(databasedir + "adblink.json");
+         if (jsonFile.open(QIODevice::ReadOnly)) {
+   doc = QJsonDocument::fromJson(jsonFile.readAll());
+   obj = doc.object();
+   jsonFile.close();
+         } else {
+   logfile("Failed to open adblink.json");
+         }
+
+         QString downloadDir = obj["install"].toString();
+         if (downloadDir.isEmpty()) {
+   downloadDir = QDir::homePath();
+         }
+
+         QDir().mkpath(downloadDir);
+
+         QNetworkAccessManager *manager = new QNetworkAccessManager(this);
+         QNetworkRequest versionRequest(QUrl("https://api.github.com/repos/xbmc/xbmc/releases/latest"));
+         versionRequest.setHeader(QNetworkRequest::UserAgentHeader, "adblink/1.0");
+         QNetworkReply *versionReply = manager->get(versionRequest);
+         QString kodiVersion = "Unknown";
+         QEventLoop loop;
+         connect(versionReply, &QNetworkReply::finished, [&]() {
+             if (versionReply->error() == QNetworkReply::NoError) {
+                 QJsonDocument versionDoc = QJsonDocument::fromJson(versionReply->readAll());
+                 if (!versionDoc.isNull() && versionDoc.isObject()) {
+                     kodiVersion = versionDoc.object()["name"].toString();
+                     if (kodiVersion.isEmpty()) {
+                         kodiVersion = versionDoc.object()["tag_name"].toString();
+                     }
+                     kodiVersion.remove('v'); // Remove 'v' from version if present
+                 }
+             } else {
+                 logfile("Failed to fetch Kodi version: " + versionReply->errorString());
+             }
+             versionReply->deleteLater();
+             loop.quit();
+         });
+         loop.exec();
+
+         QDialog dialog(nullptr);
+         dialog.setStyleSheet("QDialog { border: 1px solid grey; }");
+         dialog.setWindowTitle("Select Download Option");
+         dialog.setFixedWidth(250);
+         dialog.setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint);
+         QVBoxLayout *layout = new QVBoxLayout(&dialog);
+         QLabel *label = new QLabel("Kodi " + kodiVersion);
+         QButtonGroup *group = new QButtonGroup(&dialog);
+         QRadioButton *optV7a = new QRadioButton("Download v7a (32Bit)");
+         QRadioButton *optV8a = new QRadioButton("Download v8a (64Bit)");
+         QRadioButton *optWebsite = new QRadioButton("Open website");
+         optV7a->setChecked(true);
+         group->addButton(optV7a, 0);
+         group->addButton(optV8a, 1);
+         group->addButton(optWebsite, 2);
+         layout->addWidget(label, 0, Qt::AlignHCenter);
+         layout->addWidget(optV7a);
+         layout->addWidget(optV8a);
+         layout->addWidget(optWebsite);
+         QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+
+         buttons->setCenterButtons(true);
+         layout->addWidget(buttons, 0, Qt::AlignHCenter);
+
+         connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+         connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+         if (dialog.exec() != QDialog::Accepted) {
+   return;
+         }
+
+         int selected = group->checkedId();
+         if (selected == 2) {
+   QDesktopServices::openUrl(QUrl("https://kodi.tv/download/android"));
+   return;
+         }
+
+         if (kodiVersion == "Unknown") {
+   QMessageBox::critical(nullptr, "Error", "Cannot download: Kodi version unknown. See log");
+   logfile("Download aborted: Unknown Kodi version");
+   return;
+         }
+
+         QString baseUrl = "https://mirrors.kodi.tv/releases/android/";
+         QString arch = (selected == 0 ? "arm/kodi-" : "arm64-v8a/kodi-");
+         QString filename = "kodi-" + kodiVersion + (selected == 0 ? "-armeabi-v7a.apk" : "-arm64-v8a.apk");
+         QUrl url(baseUrl + arch + kodiVersion + (selected == 0 ? "-armeabi-v7a.apk" : "-arm64-v8a.apk"));
+         QNetworkRequest request(url);
+         request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
+         QString filePath = QDir(downloadDir).filePath(filename);
+         QFile *file = new QFile(filePath);
+         if (file->open(QIODevice::WriteOnly)) {
+   QNetworkReply *reply = manager->get(request);
+   connect(reply, &QNetworkReply::readyRead, [=]() {
+       file->write(reply->readAll());
+   });
+   connect(reply, &QNetworkReply::finished, [this, reply, file, filePath]() { // Added 'this' to capture
+       file->close();
+       if (reply->error() == QNetworkReply::NoError) {
+           // Custom QMessageBox with OK and Install buttons
+           QMessageBox msgBox(nullptr);
+           msgBox.setWindowTitle("Download Success");
+           msgBox.setText("Kodi downloaded. See log for details");
+           QAbstractButton* okButton = msgBox.addButton(QMessageBox::Ok);
+           QAbstractButton* installButton = msgBox.addButton("Install", QMessageBox::ActionRole);
+
+           msgBox.exec();
+
+           if (msgBox.clickedButton() == installButton) {
+
+
+               QString selectedDescription;
+               if (!validateDeviceSelection(selectedDescription)) {
+                   return;
+               }
+
+               DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+
+               this->installAPK(filePath);
+
+
+
+
+           }
+
+           logfile("The Kodi APK file has been downloaded successfully to:\n" + filePath);
+       } else {
+           QMessageBox::critical(nullptr, "Download Failed", "Failed to download Kodi. See log");
+           logfile("Kodi download failed\n" + reply->errorString());
+       }
+       file->deleteLater();
+       reply->deleteLater();
+   });
+   connect(reply, &QNetworkReply::errorOccurred, [=](QNetworkReply::NetworkError) {
+       file->close();
+       file->deleteLater();
+       reply->deleteLater();
+   });
+         } else {
+   QMessageBox::critical(nullptr, "File Error", "Failed to open file for writing at:\n" + filePath);
+   file->deleteLater();
+         }
+    }
+
+/*
     void MainWindow::on_actionDownload_Kodi_triggered()
     {
 
@@ -3405,6 +3555,8 @@
 
 
     }
+
+*/
 
 
     ////////////////////////////////////////////////////////
@@ -7607,6 +7759,214 @@ QPushButton* MainWindow::setupDonateButton(QWidget* parent) {
 
 void MainWindow::projectivyAccess()
 {
+
+
+
+
+
+
+   QDialog dialog(nullptr);
+   dialog.setStyleSheet("QDialog { border: 1px solid grey; }");
+   dialog.setWindowTitle("Accessibility");
+   dialog.setFixedWidth(250);
+
+   QVBoxLayout *layout = new QVBoxLayout(&dialog);
+   QLabel *label = new QLabel("Projectivy Launcher");
+
+   QButtonGroup *group = new QButtonGroup(&dialog);
+   QRadioButton *penable   = new QRadioButton("Enable Accessibility");
+   QRadioButton *pdisable  = new QRadioButton("Disable Accessibility");
+   QRadioButton *pdownload = new QRadioButton("Download APK");
+   QRadioButton *pwebsite  = new QRadioButton("Projectivy Website");
+
+   penable->setChecked(true);
+   group->addButton(penable,   0);
+   group->addButton(pdisable,  1);
+   group->addButton(pdownload, 2);
+   group->addButton(pwebsite,  3);
+
+   layout->addWidget(label, 0, Qt::AlignHCenter);
+   layout->addWidget(penable);
+   layout->addWidget(pdisable);
+   layout->addWidget(pdownload);
+   layout->addWidget(pwebsite);
+
+   QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+   dialog.setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint);
+   buttons->setCenterButtons(true);
+   layout->addWidget(buttons, 0, Qt::AlignHCenter);
+
+   connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+   connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+
+   if (dialog.exec() != QDialog::Accepted) {
+        return;
+   }
+
+   int selected = group->checkedId();
+
+   QString projectivyEntry = "com.spocky.projengmenu/com.spocky.projengmenu.services.ProjectivyAccessibilityService";
+
+   QString apkdir = readInstall(databasedir);
+
+   if (selected == 2) {
+        QNetworkAccessManager *manager = new QNetworkAccessManager(this);
+        manager->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
+
+        QUrl apiUrl("https://api.github.com/repos/spocky/miproja1/releases/latest");
+        QNetworkRequest apiReq{apiUrl};
+        apiReq.setRawHeader("User-Agent", "QtApp");
+
+        QNetworkReply *reply = manager->get(apiReq);
+
+        connect(reply, &QNetworkReply::finished, this, [this, reply, manager, apkdir]() {
+            if (reply->error() != QNetworkReply::NoError) {
+                QMessageBox::critical(this, "API Error", reply->errorString());
+                reply->deleteLater();
+                return;
+            }
+
+            QJsonDocument doc = QJsonDocument::fromJson(reply->readAll());
+            reply->deleteLater();
+
+            if (!doc.isObject()) {
+                QMessageBox::critical(this, "Error", "Invalid JSON reply");
+                return;
+            }
+
+            QJsonObject obj = doc.object();
+            QJsonArray assets = obj["assets"].toArray();
+            if (assets.isEmpty()) {
+                QMessageBox::critical(this, "Error", "No assets found in release");
+                return;
+            }
+
+            QString apkUrl, apkName;
+            for (const QJsonValue &val : assets) {
+                QJsonObject asset = val.toObject();
+                QString name = asset["name"].toString();
+                if (name.endsWith(".apk")) {
+                    apkUrl = asset["browser_download_url"].toString();
+                    apkName = name;
+                    break;
+                }
+            }
+
+            if (apkUrl.isEmpty()) {
+                QMessageBox::critical(this, "Error", "No APK found in release assets");
+                return;
+            }
+
+            QNetworkRequest dlReq{QUrl(apkUrl)};
+            dlReq.setRawHeader("User-Agent", "QtApp");
+
+            QNetworkReply *dlReply = manager->get(dlReq);
+
+            connect(dlReply, &QNetworkReply::finished, this, [this, dlReply, apkName, apkdir]() { // Added 'this' to capture
+                if (dlReply->error() != QNetworkReply::NoError) {
+                    QMessageBox::critical(nullptr, "Download Failed", dlReply->errorString());
+                    dlReply->deleteLater();
+                    return;
+                }
+
+                QString path = apkdir + "/" + apkName;
+
+                QFile file(path);
+                if (!file.open(QIODevice::WriteOnly)) {
+                    QMessageBox::critical(nullptr, "File Error", "Cannot write to " + path);
+                } else {
+                    file.write(dlReply->readAll());
+                    file.close();
+                    logfile("Download complete, saved to: " + path);
+
+                    // Custom QMessageBox with OK and Download buttons
+                    QMessageBox msgBox(nullptr);
+                    msgBox.setWindowTitle("Download Complete");
+                    msgBox.setText("Download complete, see log for details");
+                    QAbstractButton* okButton = msgBox.addButton(QMessageBox::Ok);
+                    QAbstractButton* downloadButton = msgBox.addButton("Install", QMessageBox::ActionRole);
+
+                    msgBox.exec();
+
+                    if (msgBox.clickedButton() == downloadButton) {
+
+
+                        QString selectedDescription;
+                        if (!validateDeviceSelection(selectedDescription)) {
+                            return;
+                        }
+
+                        DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+                        this->installAPK(path);
+
+                    }
+
+
+
+
+
+                }
+
+                dlReply->deleteLater();
+            });
+        });
+   }
+   else if (selected == 3) {
+        QDesktopServices::openUrl(QUrl("https://github.com/spocky/miproja1/releases"));
+   }
+   else if (selected == 0 || selected == 1) {
+        QString selectedDescription;
+        if (!validateDeviceSelection(selectedDescription)) {
+            return;
+        }
+
+        DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+        if (!is_package("com.spocky.projengmenu")) {
+            QMessageBox::information(nullptr, "", "Projectivy not installed");
+            return;
+        }
+
+        QString currentList = getadbOutput(
+                                  "null -s " + device.daddr + " shell settings get secure enabled_accessibility_services"
+                                  ).trimmed();
+
+        QStringList entries = currentList.split(':', Qt::SkipEmptyParts);
+
+        if (selected == 0) {
+            if (!entries.contains(projectivyEntry))
+                entries.append(projectivyEntry);
+        } else {
+            entries.removeAll(projectivyEntry);
+        }
+
+        QString newList = entries.join(':');
+
+        QString cstring = "null -s " + device.daddr + " shell settings put secure enabled_accessibility_services '" + newList + "'";
+        getadbOutput(cstring);
+
+        cstring = "null -s " + device.daddr + " shell dumpsys accessibility";
+        QString result = getadbOutput(cstring);
+
+        bool bound = result.contains(QRegExp("Bound services:.*" + QRegExp::escape(projectivyEntry)));
+        bool enabled = result.contains(QRegExp("Enabled services:.*" + QRegExp::escape(projectivyEntry)));
+
+        if (bound || enabled) {
+            QMessageBox::information(nullptr, "Accessibility Status", "Service is active");
+            logfile("Projectivy service is active (bound or enabled).");
+        } else {
+            QMessageBox::warning(nullptr, "Accessibility Status", "Service not active");
+            logfile("Projectivy service NOT active.");
+        }
+   }
+}
+
+
+
+/*
+void MainWindow::projectivyAccess()
+{
    QDialog dialog(nullptr);
    dialog.setStyleSheet("QDialog { border: 1px solid grey; }");
    dialog.setWindowTitle("Accessibility");
@@ -7793,7 +8153,7 @@ if (bound || enabled) {
 
 } }
 
-
+*/
 /////////////////////////////////////////
 
 void MainWindow::createjson() {
