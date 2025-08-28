@@ -74,6 +74,8 @@ private:
     QComboBox *lgfontCombo;
     QComboBox *mdfontCombo;
     QComboBox *smfontCombo;
+     QComboBox *fmfontCombo;
+
 
     QComboBox *macTermCombo;
     QComboBox *linTermCombo;

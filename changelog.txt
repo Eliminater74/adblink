@@ -6,9 +6,16 @@ Download current Kodi version
 
 Check device Kodi version &
 compare to stable version.
+After download offer installation
  
+Download Projectivity
 Enable/Disable Projectivy
 Launcher Accessibility
+After download offer installation
+
+File manager:
+Selectable font size
+Check for busybox offer reinstall if missing.
 
 
 08/21/25

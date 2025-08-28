@@ -2504,6 +2504,16 @@
 
          fmdialog->setWindowModality(Qt::NonModal);
 
+
+         cstring = getadb() + " shell ls /data/local/tmp/adblink/busybox";
+         if (!getreturncode(cstring))
+         {
+            on_actionReiinstall_Busybox_triggered();
+         }
+
+
+
+
          cstring = getadb() + " shell ls /sdcard/xbmc_env.properties";
          if (getreturncode(cstring))
          {

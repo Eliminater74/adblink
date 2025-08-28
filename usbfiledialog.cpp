@@ -3,6 +3,7 @@
 #include "editordialog.h"
 #include "logfile.h"
 #include "getadbdata.h"
+#include "getreturncode.h"
 #include <QProcess>
 #include <QFile>
 #include <QString>
@@ -69,6 +70,7 @@ usbfileDialog::usbfileDialog(bool iskodi, QWidget *parent) :
 {
     ui->setupUi(this);
 
+
     // Initialize directories if empty
     if (current_directory1.isEmpty()) current_directory1 = "/sdcard/";
     if (current_directory2.isEmpty()) current_directory2 = "/sdcard/";
@@ -76,6 +78,17 @@ usbfileDialog::usbfileDialog(bool iskodi, QWidget *parent) :
     // Set currentDirectory property for drag-and-drop
     ui->usblistWidget1->setProperty("currentDirectory", current_directory1);
     ui->usblistWidget2->setProperty("currentDirectory", current_directory2);
+
+/*
+    QFont font = ui->usblistWidget1->font(); // Get the current font
+    font.setPixelSize(20);                   // Set the desired pixel size
+    ui->usblistWidget1->setFont(font);       // Apply the new font
+
+    font = ui->usblistWidget2->font();       // Repeat for the second widget
+    font.setPixelSize(20);
+    ui->usblistWidget2->setFont(font);
+*/
+
 
     // Ensure drag-and-drop properties
     ui->usblistWidget1->setDragEnabled(true);

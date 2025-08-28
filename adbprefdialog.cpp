@@ -132,6 +132,20 @@ void adbprefDialog::setupUiManual()
     mainLayout->addLayout(sfontRow);
 
 
+    fmfontCombo = new QComboBox(this);
+    fmfontCombo->setObjectName("smfontselect");
+    fmfontCombo->addItems({"10","12","14","16"});
+
+    QHBoxLayout *fmfontRow = new QHBoxLayout;
+    QLabel *fmfontLabel = new QLabel("File Manager font:", this);
+    fmfontRow->addWidget(fmfontLabel);
+    fmfontRow->addWidget(fmfontCombo);
+    fmfontRow->setSpacing(1);
+    mainLayout->addLayout(fmfontRow);
+
+
+
+
 
     // --- Platform dropdowns ---
     macTermCombo = new QComboBox(this);
