@@ -1530,14 +1530,26 @@
 
 
 
-
-
        QMessageBox::StandardButton reply;
          reply = QMessageBox::question(this, "Reboot Device", "Reboot Device?",
              QMessageBox::Yes|QMessageBox::No);
          if (reply == QMessageBox::Yes) {
             logfile("rebooting device");
             rebootDevice(" reboot");
+
+            QString daddr;
+            int selectedRow = deviceTable->currentRow();
+            daddr = deviceTable->item(selectedRow, 1)->text();
+            QString cstring =  "null disconnect " + daddr;
+            QString command=getadbOutput(cstring);
+
+            logfile(command);
+            logfile("disconnect: " + daddr);
+
+            if (selectedRow >= 0 && deviceTable->item(selectedRow, 2)) {
+                   deviceTable->setItem(selectedRow, 2, new QTableWidgetItem("Disconnected"));
+            }
+
          }
 
     }
@@ -7705,6 +7717,9 @@ void MainWindow::projectivyAccess()
 
                 QString path = apkdir + "/" + apkName;
 
+
+
+
                 QFile file(path);
                 if (!file.open(QIODevice::WriteOnly)) {
                     QMessageBox::critical(nullptr, "File Error", "Cannot write to " + path);
@@ -7715,7 +7730,7 @@ void MainWindow::projectivyAccess()
                     QMessageBox::information(nullptr, "Download Complete", "Download complete, see log for details");
                 }
 
-                dlReply->deleteLater();
+              dlReply->deleteLater();
             });
         });
    }
@@ -8621,8 +8636,11 @@ void MainWindow::setupMenus()
 
 
 
-menuUtility->addAction(actionAccess);
 
+//#ifdef ENABLE_ACTION_ACCESS
+ menuUtility->addAction(actionAccess);
+// qmake DEFINES+=ENABLE_ACTION_ACCESS
+//#endif
 
 
  menuUtility->addAction(Erase_adbLink_database);
