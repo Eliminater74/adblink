@@ -3747,7 +3747,6 @@
 
     for (const QString &item : list) {
                    QLabel *label = new QLabel(item, &dialog);
-                   label->setTextInteractionFlags(Qt::NoTextInteraction); // Prevent text selection
                    layout->addWidget(label);
     }
 
