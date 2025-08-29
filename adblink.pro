@@ -18,7 +18,6 @@ SOURCES += main.cpp\
     adbutils.cpp \
     connectadb.cpp \
     customlistwidget.cpp \
-    deviceinfodialog.cpp \
     getadbdata.cpp \
     getlocaladb.cpp \
     getreturncode.cpp \
@@ -61,7 +60,6 @@ HEADERS  += mainwindow.h \
     adbutils.h \
     connectadb.h \
     customlistwidget.h \
-    deviceinfodialog.h \
     devicerecord.h \
     getadbdata.h \
     getlocaladb.h \
@@ -98,7 +96,6 @@ HEADERS  += mainwindow.h \
 
 
 FORMS    +=  about.ui \
-    deviceinfodialog.ui \
     helpdialog.ui \
     scpdialog.ui \
     uninstalldialog.ui \

@@ -125,6 +125,7 @@ private slots:
     QString getadb();
     QString manufacturer();
     QString devicename();
+    QString devicerelease();
     int getandroid();
     bool isScoped();
     void writeBackup(QString dir);
@@ -186,6 +187,7 @@ private slots:
     void on_actionPreferences_triggered();
     bool on_actionReiinstall_Busybox_triggered(QString msg);
     void infoArchitecture();
+    void infolog();
     void on_actiondelthumb_triggered();
     void on_actionPush_remote_triggered();
     void on_actionCreate_kodi_data_triggered();

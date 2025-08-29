@@ -8,7 +8,6 @@
     #include "keyboarddialog.h"
     #include "usbfiledialog.h"
     #include "listfiledialog.h"
-    #include "deviceinfodialog.h"
     #include "cachedialog.h"
     #include "datadialog.h"
     #include "forcequitdialog.h"
@@ -501,8 +500,31 @@
         QString cstring = getadb() +   " shell getprop ro.product.device";
         QString device=getadbOutput(cstring);
 
+
+        device=device.trimmed();
+
+
+
         return device;
     }
+
+
+    //////////////////////////////////////////////
+    QString MainWindow::devicerelease()
+
+    {
+
+        QString cstring = getadb() +   " shell getprop ro.build.display.id";
+        QString device=getadbOutput(cstring);
+
+
+        device=device.trimmed();
+
+
+
+        return device;
+    }
+
 
 
     /////////////////////////////////////////////
@@ -1174,22 +1196,6 @@
                       port = device.port.isEmpty() ? "5555" : device.port;
                       daddr = device.daddr + ":" + port;
 
-                     // cstring = getadbpath() + " connect " + daddr;
-
-                 //     logfile(getadbpath() );
-
-
-
-                 //     logfile(daddr);
-
-
-                     // command = connectadb(cstring);
-
-                     // QString adbPath = getadbpath(); // e.g. "C:/Program Files/adblink/adbfiles/adb.exe"
-                      //QString daddr = "192.168.178.62:5555";
-
-                     // logfile("adbPath: " + adbPath);
-                     // logfile("Target IP: " + daddr);
 
                        command = connectadb(getadbpath(), QStringList() << "connect" << daddr);
 
@@ -1206,8 +1212,7 @@
                             return;
                       }
 
-                    //  logfile(cstring);
-                     // logfile(command);
+
 
                       if (command.contains("connected to")) {
 
@@ -1219,7 +1224,9 @@
                             deviceTable->setFocus();
 
                             logfile("Connected to " + daddr);
-                            logfile("Android version: " + s.setNum(getandroid()));
+                            // logfile("Android version: " + s.setNum(getandroid()));
+                            infolog();
+
                       } else {
 
                             deviceTable->setItem(selectedRow, 2, new QTableWidgetItem("NA"));
@@ -3686,11 +3693,6 @@
 ///////////////////////////////////////////////////////
     void MainWindow::infoArchitecture()
     {
-
-
-
-
-
     QString selectedDescription;
     if (!validateDeviceSelection(selectedDescription)) {
                    return;
@@ -3698,53 +3700,68 @@
 
     DeviceRecord device = queryDeviceRecord(selectedDescription);
 
-    battery();
-
-
-
-    QString cstring;
-
-
-
-    cstring = getadb() + " shell getprop ro.product.cpu.abi";
-    QString archi=getadbOutput(cstring);
+    QString cstring = getadb() + " shell getprop ro.product.cpu.abi";
+    QString archi = getadbOutput(cstring);
     QString android = QString::number(getandroid());
-    QString adevice=devicename();
-    QString manufact=manufacturer();
+    QString adevice = devicename();
+    QString bdevice = devicerelease();
+    QString manufact = manufacturer();
+    QString scoped = isScoped() ? "true" : "false";
+    QString battinf = battery();
 
-    QString scoped;
+
+
+    archi   =  "Architecture:    "+archi.trimmed();
+    android =  "Android version: "+android.trimmed();
+    adevice =  "Device name:     "+adevice.trimmed();
+    bdevice =  "Device release:  "+bdevice.trimmed();
+    manufact =  "Manufacturer:   "+manufact.trimmed();
+    battinf =  "Battery level:   "+battinf.trimmed();
+    scoped =   "Scoped storage:  "+scoped.trimmed();
+
+
+    logfile(" ");
+    logfile("Device: "+selectedDescription);
+    logfile("------------------------");
+    logfile(archi);
+    logfile(android);
+    logfile(adevice);
+    logfile(bdevice);
+    logfile(manufact);
+    logfile(battinf);
+    logfile(scoped);
+    logfile("------------------------");
 
     QStringList list;
+    list << archi << android << adevice << bdevice << manufact << battinf << scoped;
 
 
-    if (!isScoped())
-                   scoped = "false";
-    else scoped = "true";
 
-
-     QString kbase = "/sdcard/Android/data/";
-
-    list.append(archi);
-    list.append(android);
-    list.append(adevice);
-    list.append(manufact);
-    list.append(battery());
-    list.append(scoped);
-
-    deviceinfoDialog dialog(this);
+    QDialog dialog(this);
     dialog.setWindowModality(Qt::WindowModal);
     dialog.setWindowFlags(dialog.windowFlags() & ~Qt::WindowContextHelpButtonHint);
-
     dialog.setWindowTitle(device.description);
+    dialog.setFixedWidth(350);
+    QVBoxLayout *layout = new QVBoxLayout(&dialog);
 
-    dialog.devinfo(list);
 
+    for (const QString &item : list) {
+                   QLabel *label = new QLabel(item, &dialog);
+                   label->setTextInteractionFlags(Qt::NoTextInteraction); // Prevent text selection
+                   layout->addWidget(label);
+    }
+
+
+    QPushButton *okButton = new QPushButton("OK", &dialog);
+    layout->addWidget(okButton, 0, Qt::AlignCenter);
+
+
+    QObject::connect(okButton, &QPushButton::clicked, &dialog, &QDialog::accept);
+
+
+    dialog.setLayout(layout);
     dialog.setModal(true);
-
-    if(dialog.exec() == QDialog::Accepted)
-    {
-                   return;
-
+    dialog.exec();
     }
 
 
@@ -3756,7 +3773,50 @@
     //  adb shell getprop ro.build.version.release
 
 
+
+///////////////////////////////////////////////////////
+    void MainWindow::infolog()
+    {
+    QString selectedDescription;
+    if (!validateDeviceSelection(selectedDescription)) {
+                   return;
     }
+
+    DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+    QString cstring = getadb() + " shell getprop ro.product.cpu.abi";
+    QString archi = getadbOutput(cstring);
+    QString android = QString::number(getandroid());
+    QString adevice = devicename();
+    QString bdevice = devicerelease();
+    QString manufact = manufacturer();
+    QString scoped = isScoped() ? "true" : "false";
+    QString battinf = battery();
+
+
+
+    archi   =  "Architecture:    "+archi.trimmed();
+    android =  "Android version: "+android.trimmed();
+    adevice =  "Device name:     "+adevice.trimmed();
+    bdevice =  "Device release:  "+bdevice.trimmed();
+    manufact =  "Manufacturer:   "+manufact.trimmed();
+    battinf =  "Battery level:   "+battinf.trimmed();
+    scoped =   "Scoped storage:  "+scoped.trimmed();
+
+    logfile(" ");
+    logfile("Device: "+selectedDescription);
+    logfile("------------------------");
+    logfile(archi);
+    logfile(android);
+    logfile(adevice);
+    logfile(bdevice);
+    logfile(manufact);
+    logfile(battinf);
+    logfile(scoped);
+    logfile("------------------------");
+
+    }
+
 
 
 
