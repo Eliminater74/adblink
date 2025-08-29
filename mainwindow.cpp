@@ -3659,7 +3659,7 @@
           busybox_permissions();
 
 
-           QMessageBox::information(this,"","Busybox re-installed.");
+           QMessageBox::information(this,"","Busybox installed.");
 
           return true;
 
