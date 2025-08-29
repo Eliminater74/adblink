@@ -184,7 +184,7 @@ private slots:
 
     void on_clearAdhocButton_clicked();
     void on_actionPreferences_triggered();
-    void on_actionReiinstall_Busybox_triggered();
+    bool on_actionReiinstall_Busybox_triggered(QString msg);
     void infoArchitecture();
     void on_actiondelthumb_triggered();
     void on_actionPush_remote_triggered();

@@ -2508,7 +2508,8 @@
          cstring = getadb() + " shell ls /data/local/tmp/adblink/busybox";
          if (!getreturncode(cstring))
          {
-            on_actionReiinstall_Busybox_triggered();
+            if (!on_actionReiinstall_Busybox_triggered("Busybox not found. Install?"))
+               return;
          }
 
 
@@ -3584,14 +3585,14 @@
 
     ////////////////////////////////////////////////////////
 
-    void MainWindow::on_actionReiinstall_Busybox_triggered()
+    bool MainWindow::on_actionReiinstall_Busybox_triggered(QString msg)
     {
 
 
 
      QString selectedDescription;
      if (!validateDeviceSelection(selectedDescription)) {
-                              return;
+          return false;
      }
 
      DeviceRecord device = queryDeviceRecord(selectedDescription);
@@ -3605,12 +3606,12 @@
 
 
         QMessageBox::StandardButton reply;
-         reply = QMessageBox::question(this, "", "Re-install Busybox?",
+         reply = QMessageBox::question(this, "",msg,
                                        QMessageBox::Yes|QMessageBox::No);
          if (reply == QMessageBox::No)
          {
 
-             return;
+             return false;
          }
 
 
@@ -3637,7 +3638,7 @@
                    logfile(command);
                    
                    QMessageBox::critical(0,"","busybox install failed. See log.");
-                   return;
+                   return false;
                   }
              else
               {
@@ -3660,7 +3661,7 @@
 
            QMessageBox::information(this,"","Busybox re-installed.");
 
-          return;
+          return true;
 
 
     }
@@ -9069,7 +9070,12 @@ void MainWindow::setupMenus()
 
  connect(actionSwitch_View,          &QAction::triggered, this, &MainWindow::on_actionSwitch_View_triggered);
 
- connect(actionReiinstall_Busybox,   &QAction::triggered, this, &MainWindow::on_actionReiinstall_Busybox_triggered);
+// connect(actionReiinstall_Busybox,   &QAction::triggered, this, &MainWindow::on_actionReiinstall_Busybox_triggered);
+
+ connect(actionReiinstall_Busybox, &QAction::triggered, this, [this](bool checked) {
+     on_actionReiinstall_Busybox_triggered("Your message here");
+ });
+
  connect(infoArchitecture2,           &QAction::triggered, this, &MainWindow::on_infoArchitecture_triggered);
 
  connect(Erase_adbLink_database,     &QAction::triggered, this, &MainWindow::on_Erase_adbLink_database_triggered);
