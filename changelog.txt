@@ -2,14 +2,16 @@
 
 adblink 7.1
 
-Download current Kodi version
+Kodi downloads:
+Direct download of current
+version. 
 
-Check device Kodi version &
-compare to stable version.
-If needed offer download
-After download offer installation
+On connection, check device's
+Kodi version, offer direct download
+if needed. After download offer 
+installation.
  
-Download Projectivity
+Projectivity Launcher:
 Enable/Disable Projectivy
 Launcher Accessibility
 After download offer installation
@@ -17,6 +19,7 @@ After download offer installation
 File manager:
 Selectable font size
 Check for busybox, offer install if missing.
+
 
 
 08/21/25

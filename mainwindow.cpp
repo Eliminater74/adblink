@@ -5046,6 +5046,23 @@ void MainWindow::restoreButton_clicked() {
 
 
 
+
+     if (  returncode(getadbpath(), args)) {
+         cstring = "null -s "+ device.daddr + " shell cat /sdcard/xbmc_env.properties";
+         command = getadbOutput(cstring);
+         command.replace(QRegExp("[\r\n]"), "");
+         int startIndex = command.indexOf("=") + 1;
+         int endIndex = command.indexOf(".kodi") + 5;
+         xbmcpath = command.mid(startIndex, endIndex - startIndex);
+         xbmc_env = true;
+         mcpath = xbmcpath;
+    }
+
+
+
+
+/*
+
      if (  returncode(getadbpath(), args)    ) {
                                    cstring = "null -s "+ device.daddr + " shell cat /sdcard/xbmc_env.properties";
 
@@ -5070,13 +5087,13 @@ void MainWindow::restoreButton_clicked() {
     }
 
 
+*/
+
 
 
 
      cstring = "null -s "+ device.daddr +  " shell ps | grep " + device.xbmcpackage;
-
-
-      command = getadbOutput(cstring);
+     command = getadbOutput(cstring);
 
 
 
