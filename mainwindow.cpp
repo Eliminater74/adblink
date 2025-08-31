@@ -7860,10 +7860,17 @@ QPushButton* MainWindow::setupDonateButton(QWidget* parent) {
 void MainWindow::projectivyAccess()
 {
 
+   QString supported="";
+   QString r = "RS8145.3070N";
+   QString selectedDescription;
 
 
-
-
+   if (validateDeviceSelection(selectedDescription)) {
+        devicerelease();
+        if (r != devicerelease()) {
+            supported= "This device not tested";
+        }
+   }
 
    QDialog dialog(nullptr);
    dialog.setStyleSheet("QDialog { border: 1px solid grey; }");
@@ -7872,7 +7879,7 @@ void MainWindow::projectivyAccess()
 
    QVBoxLayout *layout = new QVBoxLayout(&dialog);
    QLabel *label = new QLabel("Projectivy Launcher");
-
+   QLabel *label2 = new QLabel(supported);
    QButtonGroup *group = new QButtonGroup(&dialog);
    QRadioButton *penable   = new QRadioButton("Enable Accessibility");
    QRadioButton *pdisable  = new QRadioButton("Disable Accessibility");
@@ -7890,6 +7897,7 @@ void MainWindow::projectivyAccess()
    layout->addWidget(pdisable);
    layout->addWidget(pdownload);
    layout->addWidget(pwebsite);
+   layout->addWidget(label2, 0, Qt::AlignHCenter);
 
    QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
    dialog.setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint);
@@ -8027,6 +8035,7 @@ void MainWindow::projectivyAccess()
             QMessageBox::information(nullptr, "", "Projectivy not installed");
             return;
         }
+
 
         QString currentList = getadbOutput(
                                   "null -s " + device.daddr + " shell settings get secure enabled_accessibility_services"
