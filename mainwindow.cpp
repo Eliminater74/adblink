@@ -271,7 +271,10 @@
              return;
          }
 
-            deviceTable = new NoHScrollTableWidget(this);
+
+         qDebug() << databasedir;
+
+           deviceTable = new NoHScrollTableWidget(this);
 
             createTables();
             createjson();
@@ -7513,28 +7516,35 @@ void MainWindow::deleteRecord(QString descrip)
 void MainWindow::on_Erase_adbLink_database_triggered()
 {
    QMessageBox msgBox;
-   msgBox.setWindowTitle(""); // Optional: Set window title if needed
-   msgBox.setText("Erase device database?");
-   msgBox.setInformativeText("WARNING: This action will delete all device records. Are you sure you want to proceed?");
+ //  msgBox.setStyleSheet("QMessageBox QLabel { font-weight: normal; }");
+    msgBox.setTextFormat(Qt::PlainText);
+   msgBox.setText("Initialize adblink?\nWARNING: This action will delete all device records and settings, then close and restart adblink. Are you sure you want to proceed?");
    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-   msgBox.setIcon(QMessageBox::Critical); // Set red error (critical) icon
+   msgBox.setIcon(QMessageBox::Critical);
+
    QMessageBox::StandardButton reply = static_cast<QMessageBox::StandardButton>(msgBox.exec());
 
    if (reply == QMessageBox::Yes)
    {
-                      QSqlQuery pquery;
-                      QString sqlstatement = "DROP TABLE device";
-                      pquery.exec(sqlstatement);
-                      if (!pquery.isActive())
-                      {
-                          logfile("SQLERROR: " + pquery.lastError().text());
-                          return;
+                      QDir dir(databasedir);
+                      if (dir.exists()) {
+                          dir.removeRecursively();
                       }
 
-                      createTables();
-                      loadDeviceTableX(deviceTable);;
+                      QCoreApplication::quit();
+                      QString program = QCoreApplication::applicationFilePath();
+                      QStringList arguments = QCoreApplication::arguments();
+                      QProcess::startDetached(program, arguments);
+
+
    }
+
+
 }
+
+
+
+
 
 //////////////////////////////////////////
 
@@ -9090,7 +9100,7 @@ void MainWindow::setupMenus()
  infoArchitecture2 = new QAction("System information", this);
  actionOculus = new QAction("Oculus Headset", this);
  actionAccess = new QAction("Projectivy Launcher", this);
- Erase_adbLink_database = new QAction("Erase device database", this);
+ Erase_adbLink_database = new QAction("Initialize adblink", this);
  actionSend_text = new QAction("Send text to device", this);
  actionGet_UID_from_APK_file = new QAction("Get package name", this);
  actionReload_devices = new QAction("Reload devices", this);
