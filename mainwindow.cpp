@@ -272,7 +272,7 @@
          }
 
 
-         qDebug() << databasedir;
+
 
            deviceTable = new NoHScrollTableWidget(this);
 
@@ -4759,8 +4759,9 @@
 }
 
 
-///////////////////////////////
- void MainWindow::dos_shell()
+////////////////////////////////
+
+void MainWindow::dos_shell()
  {
   QString sernum = "";
   QString port = "";
@@ -4768,20 +4769,17 @@
 
   QString selectedDescription;
   if (!validateDeviceSelection(selectedDescription)) {
-                 return;
+     return;
   }
-
-
-
 
   DeviceRecord device = queryDeviceRecord(selectedDescription);
 
   if (device.isusb) {
-                 port = "";
-                 daddr = device.daddr;
+     port = "";
+     daddr = device.daddr;
   } else {
-                 port = device.port.isEmpty() ? "5555" : device.port;
-                 daddr = device.daddr + ":" + port;
+     port = device.port.isEmpty() ? "5555" : device.port;
+     daddr = device.daddr + ":" + port;
   }
 
   QString programName = QCoreApplication::applicationName();
@@ -4790,27 +4788,36 @@
   QFile file(commstr);
 
   if (!file.open(QFile::WriteOnly | QFile::Text)) {
-                 logfile("error creating shell.bat!");
-                 QMessageBox::critical(this, "", "Error creating bat file!");
-                 return;
+     logfile("error creating shell.bat!");
+     QMessageBox::critical(this, "", "Error creating bat file!");
+     return;
   }
 
   QTextStream out(&file);
 
-  out << "echo off" << endl;
-
-  if (getlocaladb() == "")
-     out << "set PATH=%PATH%;" + adbfiles + ";" << endl;
-
-  out << "adb.exe -s " + daddr + " shell -t \"export PATH=\\$PATH:/data/local/tmp/adblink; export PS1=\\$HOSTNAME:\\$PWD\\$\\ ; sh -i\"" << endl;
+  out << "@echo off" << endl;
 
 
+  QString quotedAdbPath = "\"" + getadbpath() + "\"";
+
+  if (!QFile::exists(getadbpath())) {
+     file.close();
+     logfile("adb.exe not found at: " + getadbpath());
+     QMessageBox::critical(this, "", "adb.exe not found!");
+     return;
+  }
+
+
+  out << quotedAdbPath << " -s " + daddr + " shell -t \"export PATH=\\$PATH:/data/local/tmp/adblink; export PS1=\\$HOSTNAME:\\$PWD\\$\\ ; sh -i\"" << endl;
 
   file.flush();
   file.close();
 
   QProcess::startDetached("cmd.exe", QStringList() << "/c" << "start" << "" << commstr);
+
+
  }
+
 
 ///////////////////////////////////////////////////
 void MainWindow::writeBackup (QString dir) {

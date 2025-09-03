@@ -7,6 +7,7 @@
 #include <QJsonObject>
 #include <QFile>
 #include "getlocaladb.h"
+#include "logfile.h"
 
 QString getadbpath()
 {
@@ -28,7 +29,9 @@ QString getadbpath()
 
 
     if (!getlocaladb().isEmpty())
-        adbPath=getlocaladb();
+    { adbPath=getlocaladb();
+    logfile("external adb: "+adbPath);
+    }
 
    return adbPath;
 
