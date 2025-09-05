@@ -4213,7 +4213,11 @@
 
 
 
+
+           logfile("adb: "+getadbpath());
            logfile("detaching console process");
+
+
 
             QString cstring = "";
             QString command ="";
@@ -4404,7 +4408,7 @@
 
 
 
-
+              logfile("adb: "+getadbpath());
               logfile("detaching console process");
               logfile(device.daddr + ":" + device.port);
 

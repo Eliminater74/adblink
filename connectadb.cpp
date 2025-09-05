@@ -17,8 +17,8 @@ QString connectadb(const QString &adbPath, const QStringList &arguments)
 {
     logfile("Starting connection process");
 
-   // logfile("Executable: " + adbPath);
-   // logfile("Arguments: " + arguments.join(" "));
+    logfile("Executable: " + adbPath);
+    logfile("Arguments: " + arguments.join(" "));
 
     QFileInfo adbInfo(adbPath);
     //logfile("adb exists: " + QString::number(adbInfo.exists()));

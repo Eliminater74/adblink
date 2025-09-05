@@ -30,7 +30,7 @@ QString getadbpath()
 
     if (!getlocaladb().isEmpty())
     { adbPath=getlocaladb();
-    logfile("external adb: "+adbPath);
+    // logfile("external adb: "+adbPath);
     }
 
    return adbPath;
