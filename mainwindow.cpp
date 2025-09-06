@@ -2051,7 +2051,7 @@
                    file.close();
 
 
-                   logfile( getadb());
+                   // logfile( getadb());
 
                   cstring = getadb() + " push "+filename2+ " "+xpath+filename1;
 

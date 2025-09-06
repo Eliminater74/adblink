@@ -1,4 +1,3 @@
-
 #include "adbutils.h"
 #include <QCoreApplication>
 #include <QDir>
@@ -34,7 +33,7 @@ QString getadbpath()
     }
 
 
-    if (!QFile::exists(adbPath) || getlocaladb().isEmpty())  {
+    if (!QFile::exists(adbPath))  {
         logfile("Error: adb binary missing at path: " + adbPath);
   }
 
