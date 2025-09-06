@@ -3,6 +3,7 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QFileInfo>
+#include <QMessageBox>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QFile>
@@ -30,11 +31,15 @@ QString getadbpath()
 
     if (!getlocaladb().isEmpty())
     { adbPath=getlocaladb();
-    // logfile("external adb: "+adbPath);
     }
 
-   return adbPath;
 
-   //  return QString("\"%1\"").arg(adbPath);
+    if (!QFile::exists(adbPath) || getlocaladb().isEmpty())  {
+        logfile("Error: adb binary missing at path: " + adbPath);
+  }
+
+    return adbPath;
+
+
 
 }

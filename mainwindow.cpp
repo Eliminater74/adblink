@@ -120,10 +120,11 @@
         splashdir = adbfiles+"splash/";
 
 
-        if (!QFile::exists(adbfiles + "adb") && !QFile::exists(adbfiles + "adb.exe")) {
-            QMessageBox::critical(0, "", "adb binary missing!\n", QMessageBox::Cancel);
-            return;
-        }
+       if (!QFile::exists(adbfiles + "adb") && !QFile::exists(adbfiles + "adb.exe")) {
+           QMessageBox::critical(0, "", "adb binary missing!\n", QMessageBox::Cancel);
+
+     }
+
 
 
         if (os == 1) {
@@ -224,9 +225,21 @@
 
 
       logfile(program+" "+version);
+
+      if (os == 1) {
+            logfile("Windows");
+      } else if (os == 2) {
+            logfile("macOS");
+      } else if (os == 0) {
+            logfile("Linux");
+      } else {
+            logfile("Unknown OS");
+      }
+
       logfile(QCoreApplication::applicationDirPath());
       logfile(dtstr);
-      logfile(QDir::home().path());
+      logfile("Home: "+QDir::home().path());
+
 
 
 
@@ -245,16 +258,19 @@
          }
 
 
-         if (os == 1) {
-             logfile("Windows");
-         } else if (os == 2) {
-             logfile("macOS");
-         } else if (os == 0) {
-             logfile("Linux");
-         } else {
-             logfile("Unknown OS");
-         }
-         logfile("------------");
+
+         if(!getlocaladb().isEmpty())
+          logfile("External adb: "+getlocaladb());
+
+
+
+
+         logfile("------------------------");
+
+
+
+
+
 
 
          dbstring = databasedir + "adblink.db";
