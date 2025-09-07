@@ -479,7 +479,7 @@
        }
 
        bool result = (apiLevel >= 30) || (apiLevel == 29 && restrictedAccess);
-       logfile(QString("scoped storage is %1").arg(result ? "in effect" : "not in effect"));
+  //   logfile(QString("scoped storage is %1").arg(result ? "in effect" : "not in effect"));
        return result;
     }
 
@@ -5091,37 +5091,6 @@ void MainWindow::restoreButton_clicked() {
 
 
 
-/*
-
-     if (  returncode(getadbpath(), args)    ) {
-                                   cstring = "null -s "+ device.daddr + " shell cat /sdcard/xbmc_env.properties";
-
-                                   command = getadbOutput(cstring);
-                                   command.replace(QRegExp("[\r\n]"), "");
-
-                                   int startIndex = command.indexOf("=") + 1;
-                                   int endIndex = command.indexOf(".kodi") + 5;
-                                   xbmcpath = command.mid(startIndex, endIndex - startIndex);
-
-                                   QMessageBox::StandardButton reply;
-                                   reply = QMessageBox::question(this, "xbmc properties", "xbmc_env.properties file found on " + device.daddr + ".\nUse its values?",
-                                                                 QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-                                   if (reply == QMessageBox::Yes) {
-                  xbmc_env = true;
-                  mcpath = xbmcpath;
-                                   } else if (reply == QMessageBox::No) {
-                  xbmc_env = false;
-                                   } else if (reply == QMessageBox::Cancel) {
-                  return;
-                                   }
-    }
-
-
-*/
-
-
-
-
      cstring = "null -s "+ device.daddr +  " shell ps | grep " + device.xbmcpackage;
      command = getadbOutput(cstring);
 
@@ -5284,9 +5253,6 @@ void MainWindow::restoreButton_clicked() {
                                    cstring =  "null -s "+ device.daddr +  " shell rm /sdcard/xbmc_env.properties";
                                    command = getadbOutput(cstring);
 
-                                   // Always create xbmc_env.properties for scoped devices
-
-
 
              if (isScoped()) {
 
@@ -5296,7 +5262,7 @@ void MainWindow::restoreButton_clicked() {
 
                   if (command.contains("No such file or directory") || !command.isEmpty()) {
                     QMessageBox::critical(this, "", "Failed to create xbmc_env.properties on " + device.daddr);
-                    logfile(device.daddr + ": Error creating xbmc_env.properties: " + command); // Log error
+                    logfile(device.daddr + ": Error creating xbmc_env.properties: " + command);
                     return;
                   }
                                    } else if (n_data_root != "/sdcard/") {
