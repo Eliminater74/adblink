@@ -85,7 +85,6 @@
     #include <QtGlobal>
     #include <QHeaderView>
     #include <QStatusBar>
-    #include <QProgressBar>
     #include <QMenuBar>
     #include <QMenu>
     #include <QAction>
@@ -188,6 +187,7 @@
           QStatusBar *statusBar = new QStatusBar(this);
           setStatusBar(statusBar);
          progressBar = new QProgressBar(this);
+         progressBar->setFormat("");
          server_running = new QLabel("", this);
 
 #ifdef Q_OS_MAC
@@ -1561,16 +1561,22 @@
              QMessageBox::Yes|QMessageBox::No);
          if (reply == QMessageBox::Yes) {
             logfile("rebooting device");
-            rebootDevice(" reboot");
+           rebootDevice(" reboot");
 
             QString daddr;
             int selectedRow = deviceTable->currentRow();
             daddr = deviceTable->item(selectedRow, 1)->text();
-            QString cstring =  "null disconnect " + daddr;
-            QString command=getadbOutput(cstring);
 
+            QString cstring =  "null disconnect " + daddr;
+
+            if (!device.isusb)
+            {
+            QString command=getadbOutput(cstring);
             logfile(command);
             logfile("disconnect: " + daddr);
+            }
+
+
 
             if (selectedRow >= 0 && deviceTable->item(selectedRow, 2)) {
                    deviceTable->setItem(selectedRow, 2, new QTableWidgetItem("Disconnected"));
@@ -5028,8 +5034,9 @@ void MainWindow::backupButton_clicked()
                   command = RunLongProcess(cstring, "backup running for " + device.daddr);
                   if (QDir(dir + "userdata").exists()) { // Preserved original validation
                     writeBackup(dir);
-                    // QMessageBox::information(this, "", "Backup complete for " + device.daddr); // Added device.daddr
-                    logfile("Backup completed successfully for " + device.daddr); // Log success
+                    // QMessageBox::information(this, "", "backup complete for " + device.daddr); // Added device.daddr
+                    logfile("backup completed successfully for " + device.daddr); // Log success
+                    logfile("backup location: "+dir);
                   } else {
                     QMessageBox::critical(this, "", "Backup failed for " + device.daddr + ". See log."); // Added device.daddr
                     logfile(device.daddr + ": Error: Backup failed: " + command); // Log error
