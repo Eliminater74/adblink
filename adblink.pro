@@ -66,6 +66,7 @@ HEADERS  += mainwindow.h \
     getreturncode.h \
     helpdialog.h \
     logfile.h \
+    point.h \
     returncode.h \
     scpdialog.h \
     uninstalldialog.h \

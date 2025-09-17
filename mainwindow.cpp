@@ -26,6 +26,7 @@
     #include "adbutils.h"
     #include "getlocaladb.h"
     #include "version.h"
+    #include "point.h"
 
     #ifdef __WIN32__
       #include "windows.h"
@@ -224,7 +225,7 @@
       QString dtstr = dateTime.toString("MM/dd/yy hh:mm:ss");
 
 
-      logfile(program+" "+version);
+      logfile(program+" "+version+point);
 
       if (os == 1) {
             logfile("Windows");
@@ -1393,7 +1394,7 @@
              // Create Dialog2 and pass the donation value
              Dialog2 dialog2(this, donation);
              dialog2.setWindowModality(Qt::WindowModal);
-             dialog2.setaLabel(program + " " + version);
+             dialog2.setaLabel(program + " " + version+point);
              dialog2.exec();
     }
 
@@ -4266,12 +4267,24 @@
 
                       out  <<  "echo off"  << endl;
                       if(getlocaladb() == "")
-                          out  << "set PATH=%PATH%;"+adbfiles+";"<< endl;
-
+               //            out  << "set PATH=%PATH%;"+adbfiles+";"<< endl;
+                            out << "set PATH="+adbfiles+";%PATH%" << endl;
 
 
                        file.flush();
                        file.close();
+
+
+
+                       QString outputString;
+                       if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                          QTextStream in(&file);
+                          outputString = in.readAll();
+                          file.close();
+                       }
+                       logfile("cpath.bat:");
+                       logfile(outputString);
+
 
 
                        QProcess::startDetached("cmd.exe", QStringList() << "/c" << "start" << ""  << commstr);
@@ -4327,6 +4340,16 @@
 
                       file.flush();
                       file.close();
+
+
+                      QString outputString;
+                      if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                        QTextStream in(&file);
+                        outputString = in.readAll();
+                        file.close();
+                      }
+                      logfile("cpath.sh:");
+                      logfile(outputString);
 
 
                      // cstring = "chmod 0755 " + commstr ;
@@ -4472,6 +4495,17 @@
 
                  file.flush();
                  file.close();
+
+
+                 QString outputString;
+                 if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                    QTextStream in(&file);
+                    outputString = in.readAll();
+                    file.close();
+                 }
+                 logfile("console.sh:");
+                 logfile(outputString);
+
 
 
                   QString shelldir = '"' + scriptdir + "console.sh" + '"';
@@ -4664,11 +4698,14 @@
 
                  QTextStream out(&file);
 
-                 out << "set PATH=%PATH%;" + adbfiles + ";" + scrcpydir + ";" << endl;
+                 // out << "set PATH=%PATH%;" + adbfiles + ";" + scrcpydir + ";" << endl;
+                 out << "set PATH=" + adbfiles + ";" + scrcpydir + ";%PATH%" << endl;
+
                  out << "scrcpy.exe -s " + daddr + " " + argval << endl;
 
                  file.flush();
                  file.close();
+
 
                  QProcess::startDetached("cmd.exe", QStringList() << "/c" << "start" << "" << commstr);
               }
@@ -4800,6 +4837,8 @@ void MainWindow::dos_shell()
 
   DeviceRecord device = queryDeviceRecord(selectedDescription);
 
+
+
   if (device.isusb) {
      port = "";
      daddr = device.daddr;
@@ -4824,6 +4863,7 @@ void MainWindow::dos_shell()
   out << "@echo off" << endl;
 
 
+
   QString quotedAdbPath = "\"" + getadbpath() + "\"";
 
   if (!QFile::exists(getadbpath())) {
@@ -4838,6 +4878,15 @@ void MainWindow::dos_shell()
 
   file.flush();
   file.close();
+
+  QString outputString;
+  if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+     QTextStream in(&file);
+     outputString = in.readAll();
+     file.close();
+  }
+  logfile("shell.bat:");
+  logfile(outputString);
 
   QProcess::startDetached("cmd.exe", QStringList() << "/c" << "start" << "" << commstr);
 
