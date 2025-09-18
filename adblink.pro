@@ -96,7 +96,7 @@ HEADERS  += mainwindow.h \
  
 
 
-FORMS    +=  about.ui \
+FORMS    +=  \
     helpdialog.ui \
     scpdialog.ui \
     uninstalldialog.ui \

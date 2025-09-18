@@ -2,10 +2,8 @@
 #define ABOUT_H
 
 #include <QDialog>
-
-namespace Ui {
-class Dialog2;
-}
+#include <QLabel>
+#include <QPushButton>
 
 class Dialog2 : public QDialog
 {
@@ -18,10 +16,14 @@ public:
 
 private slots:
     void on_donate_clicked();
-    void on_pushButton_clicked();
 
 private:
-    Ui::Dialog2 *ui;
+    QLabel *alabel;
+    QLabel *linkLabel;
+    QLabel *thankLabel;
+    QLabel *thankLabel2;
+    QPushButton *donate;
+    QPushButton *pushButton;
 };
 
 #endif // ABOUT_H

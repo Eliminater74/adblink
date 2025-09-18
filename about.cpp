@@ -1,83 +1,100 @@
 #include "about.h"
-#include "ui_about.h"
 #include <QDesktopServices>
 #include <QUrl>
-#include <QDebug>
-#include <QLayout>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QPushButton>
+#include <QPixmap>
+#include <QIcon>
 
 Dialog2::Dialog2(QWidget *parent, const QString &donation) :
-    QDialog(parent),
-    ui(new Ui::Dialog2)
+    QDialog(parent)
 {
-    ui->setupUi(this);
-
     // Remove the help button from the window
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-    // Set size policy to fixed to prevent resizing
-    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    // Set fixed size for the dialog (client area)
+    setWindowTitle("About");
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     setFixedSize(300, 250);
 
-    // Disable the layout to allow manual positioning
-    setLayout
 
-        (nullptr);
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->setContentsMargins(10, 20, 10, 20);
+    layout->setSpacing(10);
 
-    // Center-align labels
-    ui->alabel->setAlignment(Qt::AlignCenter);
-    ui->thankLabel->setAlignment(Qt::AlignCenter);
-    ui->linkLabel->setAlignment(Qt::AlignCenter);
+   \
+    alabel = new QLabel("adblinkX 9999", this);
+    alabel->setFont(QFont("Arial", 16));
+    alabel->setAlignment(Qt::AlignCenter);
+    alabel->setFixedSize(280, 50);
+    layout->addWidget(alabel);
 
-    // Set fixed sizes for labels to fit within dialog
-    ui->alabel->setFixedSize(280, 50);
-    ui->thankLabel->setFixedSize(280, 50);
-    ui->linkLabel->setFixedSize(280, 50);
 
-    // Set up the donate button icon and size
-    QPixmap pix(":/assets/donate.png"); // 147x47
+    linkLabel = new QLabel(this);
+    linkLabel->setText("<a href=\"http://www.jocala.com\">http://www.jocala.com</a>");
+    linkLabel->setOpenExternalLinks(true);
+    linkLabel->setTextInteractionFlags(Qt::LinksAccessibleByMouse | Qt::TextSelectableByMouse);
+    linkLabel->setAlignment(Qt::AlignCenter);
+    linkLabel->setFixedSize(280, 50);
+    layout->addWidget(linkLabel);
+
+
+    donate = new QPushButton(this);
+    QPixmap pix(":/assets/donate.png");
     QIcon icon(pix);
-    ui->donate->setIcon(icon);
+    donate->setIcon(icon);
+    QPixmap scaledPix = pix.scaled(90, 36, Qt::KeepAspectRatio);
+    QSize scaledSize = scaledPix.size();
+    donate->setIconSize(scaledSize);
+    donate->setFixedSize(100, 40);
+    donate->setStyleSheet("QPushButton { margin: 2px; padding: 2px; }");
+    donate->setFlat(true);
 
-    // Scale the icon to fit within the button, preserving aspect ratio
-    QSize scaledSize = pix.scaled(90, 36, Qt::KeepAspectRatio).size(); // Approx. 90x29
-    ui->donate->setIconSize(scaledSize);
-    ui->donate->setFixedSize(QSize(100, 40)); // Enough room for icon + margins
 
-    // Reduce button margins to maximize icon space
-    ui->donate->setStyleSheet("QPushButton { margin: 2px; padding: 2px; }");
+    thankLabel = new QLabel("Thanks for your donation!", this);
+    thankLabel->setAlignment(Qt::AlignCenter);
+    thankLabel->setFixedSize(280, 50);
+    thankLabel->setWordWrap(true);
 
-    // Set fixed size for close button
-    ui->pushButton->setFixedSize(80, 30);
 
-    // Manually position all widgets
-    ui->alabel->move(10, 20);
-    ui->linkLabel->move(10, 50);
-    ui->thankLabel->move(10, 100);
-    ui->donate->move((300 - 100) / 2, 100);
-    ui->thankLabel2->move(40, 150);
-    ui->pushButton->move(110, 200);
+    thankLabel2 = new QLabel("Donations fund adblink's development!", this);
+    thankLabel2->setAlignment(Qt::AlignCenter);
+    thankLabel2->setFixedSize(280, 50);
+    thankLabel2->setWordWrap(true);
 
 
     if (donation == "jocala.com") {
-        ui->donate->setVisible(false);
-        ui->thankLabel->setText("Thanks for your donation!");
-        ui->thankLabel->setVisible(true);
-        ui->thankLabel2->setVisible(false);
+        donate->setVisible(false);
+        thankLabel->setVisible(true);
+        thankLabel2->setVisible(false);
     } else {
-        ui->donate->setVisible(true);
-        ui->thankLabel->setVisible(false);
-        ui->thankLabel2->setText("Donations fund adblink's development!");
-        ui->thankLabel2->setVisible(true);
+        donate->setVisible(true);
+        thankLabel->setVisible(false);
+        thankLabel2->setVisible(true);
     }
 
 
+    layout->addWidget(donate, 0, Qt::AlignHCenter);
+    layout->addWidget(thankLabel);
+    layout->addWidget(thankLabel2);
+
+
+    pushButton = new QPushButton("Close", this);
+    pushButton->setFixedSize(80, 30);
+    layout->addWidget(pushButton, 0, Qt::AlignHCenter);
+
+
+    layout->addStretch();
+
+
+    connect(donate, &QPushButton::clicked, this, &Dialog2::on_donate_clicked);
+    connect(pushButton, &QPushButton::clicked, this, &Dialog2::close);
 }
 
 Dialog2::~Dialog2()
 {
-    delete ui;
+
 }
 
 void Dialog2::on_donate_clicked()
@@ -86,12 +103,7 @@ void Dialog2::on_donate_clicked()
     QDesktopServices::openUrl(QUrl(link));
 }
 
-void Dialog2::on_pushButton_clicked()
-{
-    // Placeholder for other button functionality
-}
-
 void Dialog2::setaLabel(const QString &atext)
 {
-    ui->alabel->setText(atext);
+    alabel->setText(atext);
 }
