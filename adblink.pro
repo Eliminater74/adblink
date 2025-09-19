@@ -43,7 +43,6 @@ SOURCES += main.cpp\
     searchdialog.cpp \
     tcpipdialog.cpp \
     forcequitdialog.cpp \
-    pushfiledialog.cpp \
     adbprefdialog.cpp \
     setpdialog.cpp \
     sleepdialog.cpp \
@@ -85,7 +84,6 @@ HEADERS  += mainwindow.h \
     searchdialog.h \
     tcpipdialog.h \    
     forcequitdialog.h \
-    pushfiledialog.h \
     adbprefdialog.h \
     sleepdialog.h \
     setpdialog.h \
@@ -115,7 +113,6 @@ FORMS    +=  \
     searchdialog.ui \
     tcpipdialog.ui \
     forcequitdialog.ui \
-    pushfiledialog.ui \
     setpdialog.ui \
     sleepdialog.ui\
     oculusdialog.ui
