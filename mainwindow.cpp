@@ -328,8 +328,8 @@
 
      QString cstring = "null kill-server";
      QString command=getadbOutput(cstring);
-     logfile(command);
-     logfile("server stopped");
+ //    logfile(command);
+  //   logfile("server stopped");
 
 
        QDir dir(scriptdir);
@@ -7567,7 +7567,7 @@ void MainWindow::on_Erase_adbLink_database_triggered()
    QMessageBox msgBox;
  //  msgBox.setStyleSheet("QMessageBox QLabel { font-weight: normal; }");
     msgBox.setTextFormat(Qt::PlainText);
-   msgBox.setText("Initialize adblink?\nWARNING: This action will delete all device records and settings, then close and restart adblink. Are you sure you want to proceed?");
+   msgBox.setText("Initialize adblink?\nWARNING: This action will delete all device records and settings, then close adblink. Are you sure you want to proceed?");
    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
    msgBox.setIcon(QMessageBox::Critical);
 
@@ -7575,15 +7575,25 @@ void MainWindow::on_Erase_adbLink_database_triggered()
 
    if (reply == QMessageBox::Yes)
    {
+
+
+                      QSqlDatabase db = QSqlDatabase::database();
+                      if (db.isOpen()) {
+                          db.close();
+                      }
+
                       QDir dir(databasedir);
                       if (dir.exists()) {
                           dir.removeRecursively();
                       }
 
-                      QCoreApplication::quit();
-                      QString program = QCoreApplication::applicationFilePath();
-                      QStringList arguments = QCoreApplication::arguments();
-                      QProcess::startDetached(program, arguments);
+
+
+                     QCoreApplication::quit();
+
+     //                QString program = QCoreApplication::applicationFilePath();
+     //                QStringList arguments = QCoreApplication::arguments();
+     //               QProcess::startDetached(program, arguments);
 
 
    }
@@ -9105,10 +9115,14 @@ void MainWindow::initGridConnections() {
 
 void MainWindow::setupMenus()
 {
+
+
  menuBar = new QMenuBar(this);
  setMenuBar(menuBar);
+// menuBar->setNativeMenuBar(false);
 
- // File Menu
+
+  // File Menu
  menuFile = new QMenu("File", this);
  actionPreferences = new QAction("Preferences", this);
  actionView_adbLink_Log = new QAction("View adblink Log", this);

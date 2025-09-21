@@ -1,3 +1,10 @@
+09/21/25
+
+adblink.7.1.02
+
+Initialize now fully deletes adblink.db
+under Windows. 
+
 
 09/17/25
 
