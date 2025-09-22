@@ -1646,9 +1646,8 @@
        QString selectedDescription;
        DeviceRecord device;
 
-     cstring =  "null devices";
-     command=getadbOutput(cstring);
-
+       cstring = "null devices";
+       command = getadbOutput(cstring);
 
        mstringlist = command.split(QRegExp("[\t\n\r]"), QString::SkipEmptyParts);
 
@@ -1748,16 +1747,12 @@
             int disableroot = dialog.disableroot();
             QString scrcpy = dialog.scrcpy();
 
-            logfile("scrcpy value: " + scrcpy);
-
-            // Validate description (non-empty)
             if (description.isEmpty())
             {
                    QMessageBox::critical(this, "", "Description cannot be empty.");
                    return;
             }
 
-            // Check for duplicate description during insert
             if (isNewRecord)
             {
                    QSqlQuery checkQuery;
@@ -1813,38 +1808,54 @@
                    query.addBindValue(selectedDescription);
             }
 
-/*
-            if (!query.exec())
-            {
-                   logfile(QString("Query error: ") + query.lastError().text());
-                   logfile(QString("SQL statement: ") + sqlstatement);
-                   logfile(QString("Bound values: description=%1, scrcpy=%2").arg(description, scrcpy));
-                   QMessageBox::critical(this, "", (isNewRecord ? "Failed to insert into database: " : "Failed to update database: ") + query.lastError().text());
-                   return;
-            }
-            else
-            {
-                   logfile(QString("Query executed successfully for ") + (isNewRecord ? "INSERT" : "UPDATE"));
-            }
-
- */
-
             if (!query.exec())
             {
                    QString errorMessage = query.lastError().text();
                    logfile(QString("Query error: ") + errorMessage);
                    logfile(QString("SQL statement: ") + sqlstatement);
-                   logfile(QString("Bound values: description=%1, scrcpy=%2").arg(description, scrcpy));
+                   logfile(QString("Bound values: description=%1, daddr=%2, port=%3, isusb=%4, ostype=%5, data_root=%6, xbmcpackage=%7, pulldir=%8, disableroot=%9, filepath=%10, scrcpy=%11")
+                               .arg(description)
+                               .arg(daddr)
+                               .arg(port)
+                               .arg(isusb ? "true" : "false")
+                               .arg(ostype)
+                               .arg(data_root)
+                               .arg(xbmcpackage)
+                               .arg(pulldir)
+                               .arg(disableroot)
+                               .arg(filepath)
+                               .arg(scrcpy));
 
                    if (errorMessage.contains("Parameter count mismatch"))
                    {
-                  int result = QMessageBox::question(this,
-                                                     "Parameter Mismatch Error",
-                                                     "Parameter count mismatch detected. Would you like to re-initialize adblink?",
-                                                     QMessageBox::Yes | QMessageBox::No);
-                  if (result == QMessageBox::Yes)
+                  QMessageBox msgBox(this);
+                  msgBox.setWindowTitle("Parameter Mismatch Error");
+                  msgBox.setText("Parameter count mismatch detected. Would you like to re-initialize adblink?");
+                  msgBox.setIcon(QMessageBox::Question);
+
+                  QAbstractButton *yesButton = msgBox.addButton(QMessageBox::Yes);
+                  QAbstractButton *noButton = msgBox.addButton(QMessageBox::No);
+                  QAbstractButton *logButton = msgBox.addButton("Logfile", QMessageBox::ActionRole);
+
+                  bool done = false;
+                  while (!done)
                   {
-                        on_Erase_adbLink_database_triggered();
+                        msgBox.exec();
+                        QAbstractButton *clicked = msgBox.clickedButton();
+                        if (clicked == yesButton)
+                        {
+                            on_Erase_adbLink_database_triggered();
+                            done = true;
+                        }
+                        else if (clicked == noButton)
+                        {
+                            done = true;
+                        }
+                        else if (clicked == logButton)
+                        {
+                            on_actionView_adbLink_Log_triggered();
+                            // Dialog will reappear after log viewer closes
+                        }
                   }
                   return;
                    }
@@ -1859,17 +1870,11 @@
             {
                    logfile(QString("Query executed successfully for ") + (isNewRecord ? "INSERT" : "UPDATE"));
             }
-
-
-
-
-
        }
 
        QSqlDatabase::database().commit();
        loadDeviceTableX(deviceTable);
     }
-
 
 
     ///////////////////////////////////////////
