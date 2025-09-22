@@ -1813,6 +1813,7 @@
                    query.addBindValue(selectedDescription);
             }
 
+/*
             if (!query.exec())
             {
                    logfile(QString("Query error: ") + query.lastError().text());
@@ -1825,6 +1826,44 @@
             {
                    logfile(QString("Query executed successfully for ") + (isNewRecord ? "INSERT" : "UPDATE"));
             }
+
+ */
+
+            if (!query.exec())
+            {
+                   QString errorMessage = query.lastError().text();
+                   logfile(QString("Query error: ") + errorMessage);
+                   logfile(QString("SQL statement: ") + sqlstatement);
+                   logfile(QString("Bound values: description=%1, scrcpy=%2").arg(description, scrcpy));
+
+                   if (errorMessage.contains("Parameter count mismatch"))
+                   {
+                  int result = QMessageBox::question(this,
+                                                     "Parameter Mismatch Error",
+                                                     "Parameter count mismatch detected. Would you like to re-initialize adblink?",
+                                                     QMessageBox::Yes | QMessageBox::No);
+                  if (result == QMessageBox::Yes)
+                  {
+                        on_Erase_adbLink_database_triggered();
+                  }
+                  return;
+                   }
+                   else
+                   {
+                  QMessageBox::critical(this, "",
+                                        (isNewRecord ? "Failed to insert into database: " : "Failed to update database: ") + errorMessage);
+                  return;
+                   }
+            }
+            else
+            {
+                   logfile(QString("Query executed successfully for ") + (isNewRecord ? "INSERT" : "UPDATE"));
+            }
+
+
+
+
+
        }
 
        QSqlDatabase::database().commit();
@@ -7559,15 +7598,11 @@ void MainWindow::deleteRecord(QString descrip)
 
 }
 
-
-/////////////////////////////////////////////////////
-
 void MainWindow::on_Erase_adbLink_database_triggered()
 {
    QMessageBox msgBox;
- //  msgBox.setStyleSheet("QMessageBox QLabel { font-weight: normal; }");
-    msgBox.setTextFormat(Qt::PlainText);
-   msgBox.setText("Initialize adblink?\nWARNING: This action will delete all device records and settings, then close adblink. Are you sure you want to proceed?");
+   msgBox.setTextFormat(Qt::PlainText);
+   msgBox.setText("Initialize adblink?\nWARNING: This action will delete all device records and settings, then close and restart adblink. Are you sure you want to proceed?");
    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
    msgBox.setIcon(QMessageBox::Critical);
 
@@ -7576,33 +7611,40 @@ void MainWindow::on_Erase_adbLink_database_triggered()
    if (reply == QMessageBox::Yes)
    {
 
-
-                      QSqlDatabase db = QSqlDatabase::database();
-                      if (db.isOpen()) {
-                          db.close();
+                      // Close all database connections
+                      QStringList connections = QSqlDatabase::connectionNames();
+                      for (const QString& conn : connections) {
+                          QSqlDatabase db = QSqlDatabase::database(conn, false);
+                          if (db.isOpen()) {
+               QSqlQuery query(db);
+               query.clear();
+               if (db.transaction()) {
+              db.commit();
+               }
+               db.close();
+                          }
+                          QSqlDatabase::removeDatabase(conn);
                       }
 
+                      // Try normal deletion, then fall back to Windows command
                       QDir dir(databasedir);
-                      if (dir.exists()) {
-                          dir.removeRecursively();
+                      if (dir.exists() && !dir.removeRecursively()) {
+
+                    #ifdef Q_OS_WIN
+                          QString command = QString("cmd.exe /C rmdir /S /Q \"%1\"").arg(databasedir.replace("/", "\\"));
+                          QProcess::startDetached(command, QStringList());
+                     #endif
+
                       }
 
 
-
-                     QCoreApplication::quit();
-
-     //                QString program = QCoreApplication::applicationFilePath();
-     //                QStringList arguments = QCoreApplication::arguments();
-     //               QProcess::startDetached(program, arguments);
-
-
+                      QCoreApplication::quit();
+                      QString program = QCoreApplication::applicationFilePath();
+                      QStringList arguments = QCoreApplication::arguments();
+                      QProcess::startDetached(program, arguments);
    }
 
-
 }
-
-
-
 
 
 //////////////////////////////////////////
@@ -9237,6 +9279,8 @@ void MainWindow::setupMenus()
  connect(infoArchitecture2,           &QAction::triggered, this, &MainWindow::on_infoArchitecture_triggered);
 
  connect(Erase_adbLink_database,     &QAction::triggered, this, &MainWindow::on_Erase_adbLink_database_triggered);
+
+
  connect(actionSend_text,            &QAction::triggered, this, &MainWindow::on_actionSend_text_triggered);
  connect(actionGet_UID_from_APK_file,&QAction::triggered, this, &MainWindow::on_actionGet_UID_from_APK_file_triggered);
  connect(actionReload_devices,       &QAction::triggered, this, &MainWindow::on_actionReload_devices_triggered);
