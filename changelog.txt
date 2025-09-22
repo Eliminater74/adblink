@@ -1,3 +1,11 @@
+09/22/25
+
+adblink.7.1.03
+
+Check for parameter count mismatch,
+offer to re-initialize adblink if true
+
+
 09/21/25
 
 adblink.7.1.02
