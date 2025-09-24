@@ -1835,7 +1835,7 @@
 
                   QAbstractButton *yesButton = msgBox.addButton(QMessageBox::Yes);
                   QAbstractButton *noButton = msgBox.addButton(QMessageBox::No);
-                  QAbstractButton *logButton = msgBox.addButton("Logfile", QMessageBox::ActionRole);
+                //  QAbstractButton *logButton = msgBox.addButton("Logfile", QMessageBox::ActionRole);
 
                   bool done = false;
                   while (!done)
@@ -1851,11 +1851,15 @@
                         {
                             done = true;
                         }
-                        else if (clicked == logButton)
+
+                     /*
+                          else if (clicked == logButton)
                         {
-                            on_actionView_adbLink_Log_triggered();
-                            // Dialog will reappear after log viewer closes
+                             on_actionView_adbLink_Log_triggered();
+
                         }
+                    */
+
                   }
                   return;
                    }
@@ -7616,7 +7620,7 @@ void MainWindow::on_Erase_adbLink_database_triggered()
    if (reply == QMessageBox::Yes)
    {
 
-                      // Close all database connections
+
                       QStringList connections = QSqlDatabase::connectionNames();
                       for (const QString& conn : connections) {
                           QSqlDatabase db = QSqlDatabase::database(conn, false);
@@ -7631,14 +7635,14 @@ void MainWindow::on_Erase_adbLink_database_triggered()
                           QSqlDatabase::removeDatabase(conn);
                       }
 
-                      // Try normal deletion, then fall back to Windows command
+
                       QDir dir(databasedir);
                       if (dir.exists() && !dir.removeRecursively()) {
 
-                    #ifdef Q_OS_WIN
+                  /* #ifdef Q_OS_WIN
                           QString command = QString("cmd.exe /C rmdir /S /Q \"%1\"").arg(databasedir.replace("/", "\\"));
                           QProcess::startDetached(command, QStringList());
-                     #endif
+                     #endif  */
 
                       }
 
