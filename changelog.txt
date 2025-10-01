@@ -1,3 +1,11 @@
+10/01/25
+
+adblink.7.2.beta.02
+
+various bug fixes, relating
+to adb shell and adblink.json
+
+
 
 09/22/25
 

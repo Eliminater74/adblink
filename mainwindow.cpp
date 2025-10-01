@@ -3228,8 +3228,10 @@
          doc = QJsonDocument::fromJson(file.readAll());
          obj = doc.object();
 
-         QString dropdown = obj["dropdown"].toString();
+      //   QString dropdown = obj["dropdown"].toString();
+
          QString download = obj["download"].toString();
+         int mcheck = obj["dropdown"].toInt();
          QString install = obj["install"].toString();
          QString backup = obj["backup"].toString();
          QString donation = obj["donation"].toString();
@@ -3276,9 +3278,12 @@
 
          dialog.setdefaultwindow(defaultwindow);
 
-         dialog.setlinterm(dropdown.toInt());
-         dialog.setmacterm(dropdown.toInt());
+         //dialog.setlinterm(dropdown.toInt());
+        // dialog.setmacterm(dropdown.toInt());
 
+
+         dialog.setlinterm(mcheck);
+         dialog.setmacterm(mcheck);
 
          dialog.setdownloaddir(download);
          dialog.setlocaladb(localadb);
@@ -4279,9 +4284,7 @@
            file.open(QIODevice::ReadOnly);
            doc = QJsonDocument::fromJson(file.readAll());
            obj = doc.object();
-           QString dropdown = obj["dropdown"].toString();
-           int mcheck=dropdown.toInt();
-
+           int mcheck = obj["dropdown"].toInt();
 
 
 
@@ -4494,10 +4497,7 @@
               file.open(QIODevice::ReadOnly);
               doc = QJsonDocument::fromJson(file.readAll());
               obj = doc.object();
-              QString dropdown = obj["dropdown"].toString();
-              int mcheck = dropdown.toInt();
-
-
+              int mcheck = obj["dropdown"].toInt();
 
 
 
@@ -4592,6 +4592,8 @@
                     }
                  }
 
+
+
                  if (os == 2)
                  {
                     switch (mcheck)
@@ -4659,10 +4661,8 @@
               file.open(QIODevice::ReadOnly);
               doc = QJsonDocument::fromJson(file.readAll());
               obj = doc.object();
-
-              bool scrcpy = doc.object()["scrcpy"].toBool();
-              QString dropdown = obj["dropdown"].toString();
-              int mcheck = dropdown.toInt();
+              bool scrcpy = doc.object()["scrcpy"].toBool();   
+             int mcheck = obj["dropdown"].toInt();
 
 
               QString scrcpybat = scriptdir + "scrcpy.bat";
@@ -4869,7 +4869,7 @@
   return backup;
 }
 
-
+/*
 ////////////////////////////////
 
 void MainWindow::dos_shell()
@@ -4940,6 +4940,83 @@ void MainWindow::dos_shell()
 
 
  }
+*/
+
+
+
+//////////////////////////////////////////////////////////
+
+void MainWindow::dos_shell()
+
+{
+
+  QString sernum = "";
+  QString daddr;
+  QString selectedDescription;
+
+  if (!validateDeviceSelection(selectedDescription)) {
+                 return;
+  }
+
+  DeviceRecord device = queryDeviceRecord(selectedDescription);
+
+  daddr = device.daddr;
+
+ sernum = " -s "+daddr;
+
+
+
+  QString commstr = scriptdir+"/shell.bat";
+  QFile file(commstr);
+
+  if(!file.open(QFile::WriteOnly |
+                 QFile::Text))
+  {
+                 logfile("error creating shell.bat!");
+                 QMessageBox::critical(this,"","Error creating bat file!");
+                 return;
+  }
+
+
+  QTextStream out(&file);
+
+
+  out  <<  "echo off"  << endl;
+
+
+//  out  << "set PATH=%PATH%;"+adbfiles+";" << endl;
+
+
+
+    out << "set PATH=" + adbfiles + ";%PATH%" << endl;
+
+ // out  <<  "adb.exe "+ sernum + " shell"  << endl;
+
+  out <<  "adb.exe "+ sernum +  " shell -t \"export PATH=\\$PATH:/data/local/tmp/adblink; export PS1=\\$HOSTNAME:\\$PWD\\$\\ ; sh -i\"" << endl;
+
+
+  file.flush();
+  file.close();
+
+
+  QString outputString;
+  if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                 QTextStream in(&file);
+                 outputString = in.readAll();
+                 file.close();
+  }
+  logfile("shell.bat:");
+  logfile(outputString);
+
+
+  QProcess::startDetached("cmd.exe", QStringList() << "/c" << "start"  << "" << commstr);
+
+
+}
+
+
+
+
 
 
 ///////////////////////////////////////////////////
