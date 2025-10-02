@@ -4990,9 +4990,11 @@ void MainWindow::dos_shell()
 
     out << "set PATH=" + adbfiles + ";%PATH%" << endl;
 
- // out  <<  "adb.exe "+ sernum + " shell"  << endl;
+//  out  <<  "adb.exe "+ sernum + " shell"  << endl;
 
-  out <<  "adb.exe "+ sernum +  " shell -t \"export PATH=\\$PATH:/data/local/tmp/adblink; export PS1=\\$HOSTNAME:\\$PWD\\$\\ ; sh -i\"" << endl;
+//  out <<  "adb.exe "+ sernum +  " shell -t \"export PATH=\\$PATH:/data/local/tmp/adblink; export PS1=\\$HOSTNAME:\\$PWD\\$\\ ; sh -i\"" << endl;
+
+  out << "adb.exe " + sernum + " shell -t \"export PATH=\\\"$PATH:/data/local/tmp/adblink\\\"; export PS1=\\\"$HOSTNAME:$PWD\\\\$\\\"; sh -i\"" << endl;
 
 
   file.flush();
