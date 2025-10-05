@@ -2,7 +2,7 @@
 #define VERSION_H
 #include <QString>
 
-const QString version = "7.2.BETA";
+const QString version = "7.2";
 
 
 #endif // VERSION_H

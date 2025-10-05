@@ -1,26 +1,27 @@
-10/01/25
+10/05/25
 
-adblink.7.2.beta.02
+adblink.7.2
 
-various bug fixes, relating
-to adb shell and adblink.json
-
+adb shell and console
+code cleanup. 
 
 
 09/22/25
 
 adblink.7.1.03
 
-Check for parameter count mismatch,
-offer to re-initialize adblink if true
+Check for parameter count mismatch
+when saving database records. offer
+to reinitialize adblink if true
 
 
 09/21/25
 
 adblink.7.1.02
 
-Initialize now fully deletes adblink.db
-under Windows. 
+Reinitialize now fully deletes settings
+directory ~/AppData/Roaming/.jocala under
+Windows. 
 
 
 09/17/25

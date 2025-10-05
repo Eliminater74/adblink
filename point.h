@@ -1,5 +1,5 @@
 #ifndef POINT_H
 #define POINT_H
 #include <QString>
-const QString point = ".03";
+const QString point = "";
 #endif // POINT_H
