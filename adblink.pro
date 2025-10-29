@@ -139,4 +139,6 @@ CONFIG+=sdk_no_version_check
 
 OTHER_FILES +=
 
-
+macx {
+    QMAKE_LIBS_OPENGL = -framework OpenGL
+}
