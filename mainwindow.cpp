@@ -28,6 +28,7 @@
     #include "version.h"
     #include "point.h"
 
+
     #ifdef __WIN32__
       #include "windows.h"
     #endif
@@ -90,9 +91,9 @@
     #include <QMenu>
     #include <QAction>
     #include <QCoreApplication>
-#include <QButtonGroup>
-#include <QRadioButton>
-#include <QDialogButtonBox>
+    #include <QButtonGroup>
+    #include <QRadioButton>
+     #include <QDialogButtonBox>
 
     #ifdef Q_OS_LINUX
      int os=0;
