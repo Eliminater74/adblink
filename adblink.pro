@@ -19,6 +19,7 @@ SOURCES += main.cpp\
     connectadb.cpp \
     customlistwidget.cpp \
     getadbdata.cpp \
+    getdevices.cpp \
     getlocaladb.cpp \
     getreturncode.cpp \
     logfile.cpp \
@@ -61,6 +62,7 @@ HEADERS  += mainwindow.h \
     customlistwidget.h \
     devicerecord.h \
     getadbdata.h \
+    getdevices.h \
     getlocaladb.h \
     getreturncode.h \
     helpdialog.h \
